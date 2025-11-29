@@ -10,7 +10,7 @@ USB CDC text-based command interface for the yarobot_control_unit. Commands foll
 ```
 
 - Commands are case-insensitive
-- Axis letters: X, Y, Z, A, B, C, D (or numbers 0-6)
+- Axis letters: X, Y, Z, A, B, C, D, E (or numbers 0-7)
 - Parameters separated by spaces
 - Line ending: \n or \r\n
 - Response format: `OK [data]` or `ERROR [code] [message]`
@@ -20,12 +20,13 @@ USB CDC text-based command interface for the yarobot_control_unit. Commands foll
 
 ### Axis Mapping
 - **X** (0): Railway X axis - RMT+DMA servo
-- **Y** (1): Gripper Y axis - MCPWM+PCNT servo  
+- **Y** (1): Gripper Y axis - MCPWM+PCNT servo
 - **Z** (2): Selector Z axis - RMT+DMA servo
 - **A** (3): Picker Z axis - RMT+DMA servo
 - **B** (4): Picker Y axis - RMT+DMA servo
 - **C** (5): Picker jaw - MCPWM+PCNT stepper with floating switch
 - **D** (6): Picker retractor - LEDC stepper
+- **E** (7): Linear drive - I2C expander discrete axis (constant speed, homes to MAX)
 
 ## Motion Commands
 
@@ -37,7 +38,7 @@ MOVE <axis> <position> [velocity] [acceleration]
 **Description**: Commands the specified axis to move to an absolute position using a trapezoidal or S-curve motion profile. The motor accelerates to the specified velocity (or default), maintains it, then decelerates to stop exactly at the target position.
 
 **Parameters**:
-- `axis`: Motor axis letter (X-D) or number (0-6)
+- `axis`: Motor axis letter (X-E) or number (0-7)
 - `position`: Target position in configured units (mm or degrees)
 - `velocity`: Maximum velocity during move (units/sec), optional - uses configured default if omitted
 - `acceleration`: Maximum acceleration/deceleration (units/sec²), optional - uses configured default if omitted
@@ -71,7 +72,7 @@ MOVR <axis> <distance> [velocity] [acceleration]
 **Description**: Commands the specified axis to move a relative distance from its current position. Positive values move forward/clockwise, negative values move backward/counter-clockwise.
 
 **Parameters**:
-- `axis`: Motor axis letter (X-D) or number (0-6)
+- `axis`: Motor axis letter (X-E) or number (0-7)
 - `distance`: Relative distance to move in configured units (+/- for direction)
 - `velocity`: Maximum velocity during move (units/sec), optional
 - `acceleration`: Maximum acceleration/deceleration (units/sec²), optional
@@ -103,7 +104,7 @@ VEL <axis> <velocity> [acceleration]
 **Description**: Commands the axis to move at a constant velocity until stopped or a limit is reached. Used for jogging, continuous motion, or controlled deceleration to stop.
 
 **Parameters**:
-- `axis`: Motor axis letter (X-D) or number (0-6)
+- `axis`: Motor axis letter (X-E) or number (0-7)
 - `velocity`: Target velocity in units/sec (+/- for direction, 0 to stop)
 - `acceleration`: Acceleration to reach velocity (units/sec²), optional
 
@@ -136,7 +137,7 @@ STOP <axis|ALL> [EMERGENCY]
 **Description**: Stops motion on specified axis or all axes. Normal stop uses configured deceleration. Emergency stop halts immediately without deceleration.
 
 **Parameters**:
-- `axis`: Motor axis letter (X-D) or number (0-6) or ALL for all axes
+- `axis`: Motor axis letter (X-E) or number (0-7) or ALL for all axes
 - `EMERGENCY`: Optional flag for immediate stop without deceleration
 
 **Behavior**:
@@ -172,7 +173,7 @@ POS <axis|ALL>
 **Description**: Returns the current position of specified axis or all axes. Position is calculated from pulse counts and configured units per pulse.
 
 **Parameters**:
-- `axis`: Motor axis letter (X-D) or number (0-6) or ALL for all axes
+- `axis`: Motor axis letter (X-E) or number (0-7) or ALL for all axes
 
 **Behavior**:
 - Returns immediately with current position
@@ -200,7 +201,7 @@ STAT <axis|ALL>
 **Description**: Returns comprehensive status information for specified axis including position, motion state, and configuration.
 
 **Parameters**:
-- `axis`: Motor axis letter (X-D) or number (0-6) or ALL for all axes
+- `axis`: Motor axis letter (X-E) or number (0-7) or ALL for all axes
 
 **Status Fields**:
 - `AXIS`: Axis number
@@ -246,7 +247,7 @@ INFO
 **Response**:
 ```
 OK YAROBOT_CONTROL_UNIT V1.0
-AXES:6 (SERVO:0-3,STEPPER:4-5)
+AXES:8 (SERVO:0-4,STEPPER:5-6,DISCRETE:7)
 EMERGENCY:0
 MEMORY:145KB/320KB
 UPTIME:00:15:32
@@ -287,7 +288,7 @@ SETV <axis> <max_velocity> <max_acceleration>
 **Description**: Sets maximum velocity and acceleration limits for safe operation. These become the default values when velocity/acceleration parameters are omitted from motion commands.
 
 **Parameters**:
-- `axis`: Motor axis letter (X-D) or number (0-6)
+- `axis`: Motor axis letter (X-E) or number (0-7)
 - `max_velocity`: Maximum allowed velocity (units/sec)
 - `max_acceleration`: Maximum allowed acceleration (units/sec²)
 
@@ -328,7 +329,7 @@ EN <axis|ALL> <0|1>
 **Description**: Controls motor enable state via I2C expander outputs. Motors must be enabled before any motion commands.
 
 **Parameters**:
-- `axis`: Motor axis letter (X-D) or number (0-6) or ALL
+- `axis`: Motor axis letter (X-E) or number (0-7) or ALL
 - `state`: 0 = disable (motor freewheels), 1 = enable (motor holds position)
 
 **Behavior**:
@@ -358,7 +359,7 @@ BRAKE <axis|ALL> <0|1>
 **Description**: Controls electromagnetic brake for holding position when motor is disabled. Brake control via I2C expander outputs.
 
 **Parameters**:
-- `axis`: Motor axis letter (X-D) or number (0-6) or ALL
+- `axis`: Motor axis letter (X-E) or number (0-7) or ALL
 - `state`: 0 = release brake (motor can move), 1 = engage brake (axis locked)
 
 **Behavior**:
@@ -390,7 +391,7 @@ HOME <axis|ALL> [TYPE]
 **Description**: Executes homing sequence to establish absolute zero reference. Different strategies available based on axis type and hardware.
 
 **Parameters**:
-- `axis`: Motor axis letter (X-D) or number (0-6) or ALL
+- `axis`: Motor axis letter (X-E) or number (0-7) or ALL
 - `TYPE`: Homing method - AUTO (default), SWITCH, ZSIGNAL
   - AUTO: Selects best method based on axis type
   - SWITCH: Home to end switch only
@@ -426,7 +427,7 @@ CALB <axis>
 **Description**: Automatically measures and sets backlash compensation by performing test movements and measuring hysteresis.
 
 **Parameters**:
-- `axis`: Motor axis letter (X-D) or number (0-6)
+- `axis`: Motor axis letter (X-E) or number (0-7)
 
 **Procedure**:
 1. Moves forward set distance
@@ -462,7 +463,7 @@ ZERO <axis|ALL>
 **Description**: Sets the current position as the new zero reference without moving the motor. Useful for establishing work coordinates.
 
 **Parameters**:
-- `axis`: Motor axis letter (X-D) or number (0-6) or ALL
+- `axis`: Motor axis letter (X-E) or number (0-7) or ALL
 
 **Behavior**:
 - Updates position counter to zero
@@ -745,7 +746,7 @@ DIAG <axis>
 **Description**: Returns detailed diagnostic information for specified axis including counters, errors, and performance metrics.
 
 **Parameters**:
-- `axis`: Motor axis letter (X-D) or number (0-6)
+- `axis`: Motor axis letter (X-E) or number (0-7)
 
 **Diagnostic Fields**:
 - `PULSES_SENT`: Total pulses generated
@@ -807,8 +808,8 @@ STREAM 0                 # Stop all streaming
 
 **Stream Output Format**:
 ```
-STRM X:25.50,Y:180.00,Z:0.00,A:-45.25,B:10.00,C:0.00,D:100.00
-STRM X:26.15,Y:180.00,Z:0.50,A:-45.25,B:10.00,C:0.00,D:100.00
+STRM X:25.50,Y:180.00,Z:0.00,A:-45.25,B:10.00,C:0.00,D:100.00,E:0.00
+STRM X:26.15,Y:180.00,Z:0.50,A:-45.25,B:10.00,C:0.00,D:100.00,E:500.00
 ```
 
 **Response**:

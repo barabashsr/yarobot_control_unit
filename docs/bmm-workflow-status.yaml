@@ -15,10 +15,77 @@
 #   - {file-path}: File created/found (e.g., "docs/product-brief.md")
 #   - skipped: Optional/conditional workflow that was skipped
 
-generated: "2025-11-18"
+generated: "2025-11-29"
 project: "yarobot_control_unit"
-project_type: ""
-selected_track: ""
-field_type: ""
-workflow_path: ""
-workflow_status: ""
+project_type: "iot_embedded"
+selected_track: "bmad_method"
+field_type: "greenfield"
+workflow_path: "planning → prd → architecture"
+workflow_status: "prd_complete"
+
+# Phase Tracking
+phases:
+  analysis:
+    brainstorming: "docs/legacy/brainstorming-session-results-2025-11-18.md"
+    domain_research: "skipped"
+
+  planning:
+    product_brief: "completed_inline"
+    prd: "docs/prd.md"
+    status: "complete"
+
+  solutioning:
+    architecture: "pending"
+    ux_design: "skipped"  # Embedded system, no UI
+    epics_stories: "pending"
+    status: "not_started"
+
+# Planning Phase Documents (completed)
+planning_documents:
+  - path: "docs/planning_phase/PROJECT-TRACKER.md"
+    status: "complete"
+    last_updated: "2025-11-29"
+  - path: "docs/planning_phase/gpio-allocation-7motors.md"
+    status: "updated_with_todos"
+    notes: "E-Stop GPIO and E axis pins marked as TODO for architecture session"
+  - path: "docs/planning_phase/shift-register-control.md"
+    status: "complete"
+    notes: "Updated to TPIC6B595N, 24-bit chain with brake control"
+  - path: "docs/planning_phase/nvs-organization.md"
+    status: "complete"
+    notes: "Updated to 8 axes (motor_0-7)"
+  - path: "docs/planning_phase/motor-control-classes.md"
+    status: "complete"
+    notes: "Added LEDCMotor and DiscreteAxisController classes"
+  - path: "docs/planning_phase/command-interface.md"
+    status: "complete"
+    notes: "Updated to 8 axes including E axis"
+  - path: "docs/planning_phase/discrete-axis-e.md"
+    status: "complete"
+    notes: "Updated homing to MAX, floating switch with no measurement"
+  - path: "docs/planning_phase/yaml-configuration-system.md"
+    status: "complete"
+    notes: "Removed GPIO45 boot pin method"
+
+# PRD Alignment
+prd_alignment:
+  verified: "2025-11-29"
+  changes_made:
+    - "Added TPIC6B595N shift register documentation"
+    - "Added C-axis object width measurement (FR38-40)"
+    - "Updated axis count to 8 (X-E)"
+
+# Architecture Session TODOs
+architecture_session_todos:
+  - item: "E-Stop GPIO assignment"
+    description: "Resolve conflict between GPIO12 (SR_SCLK) and E-Stop"
+    files: ["gpio-allocation-7motors.md", "freertos-task-architecture.md"]
+  - item: "E axis I2C pin confirmation"
+    description: "Confirm GPB6/GPB7 on MCP23017 #2 for E_ENABLE/E_DIR"
+    files: ["gpio-allocation-7motors.md", "yaml-configuration-system.md", "discrete-axis-e.md"]
+
+# Next Steps
+next_steps:
+  - "Conduct GPIO allocation architecture session to resolve TODOs"
+  - "Create system architecture document"
+  - "Generate epics and stories from PRD"

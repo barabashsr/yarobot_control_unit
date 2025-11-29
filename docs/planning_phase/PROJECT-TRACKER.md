@@ -8,7 +8,7 @@ This document tracks all project aspects, design decisions, and implementation t
 ### ✅ Completed Documentation
 | Document | Description | Status |
 |----------|-------------|---------|
-| [README.md](../README.md) | Project overview and motor mapping | Updated - C on MCPWM, D on LEDC |
+| [README.md](../../README.md) | Project overview and motor mapping | Updated - C on MCPWM, D on LEDC |
 | [channel-letter-mapping.md](channel-letter-mapping.md) | X,Y,Z,A,B,C,D axis definitions | Updated - ROS2 compatibility added |
 | [gpio-allocation-7motors.md](gpio-allocation-7motors.md) | GPIO pin assignments | Updated - C/D pins separated |
 | [unified-cd-stepper-control.md](unified-cd-stepper-control.md) | C/D axis control (now independent) | Rewritten - Independent control |
@@ -31,6 +31,12 @@ This document tracks all project aspects, design decisions, and implementation t
 | Topic | Description | Priority |
 |-------|-------------|----------|
 | Error Recovery Procedures | I2C failures, position loss | Medium |
+
+### 🔧 TODO for Architecture Session
+| Item | Description | Files Affected |
+|------|-------------|----------------|
+| E-Stop GPIO | Resolve GPIO12 conflict with SR_SCLK | gpio-allocation-7motors.md, freertos-task-architecture.md |
+| E Axis I2C Pins | Confirm GPB6/GPB7 on MCP23017 #2 | gpio-allocation-7motors.md, yaml-configuration-system.md, discrete-axis-e.md |
 
 ## Hardware Architecture
 
@@ -56,9 +62,11 @@ I2C Bus (GPIO8=SDA, GPIO18=SCL):
 │   ├── GPB2-3: C axis MIN/MAX (GPB3 = floating switch)
 │   └── GPB4-5: D axis MIN/MAX
 │
-├── 0x21: MCP23017 #2 - General Purpose I/O
+├── 0x21: MCP23017 #2 - General Purpose I/O & E Axis
 │   ├── GPA0-7: 8 digital inputs
-│   └── GPB0-7: 8 digital outputs
+│   ├── GPB0-5: 6 digital outputs
+│   ├── GPB6: E_ENABLE - **TODO: Confirm in architecture session**
+│   └── GPB7: E_DIR - **TODO: Confirm in architecture session**
 │
 ├── 0x22: MCP23017 #3 - Servo Feedback
 │   ├── GPA0-4: Position complete inputs (X,Y,Z,A,B)

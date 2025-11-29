@@ -1,17 +1,24 @@
 # Shift Register Control for Direction and Enable Pins
 
 ## Overview
-Using serial shift registers (74HC595 or similar) to control motor direction and enable signals, saving GPIO pins while maintaining fast, reliable control.
+Using TPIC6B595N serial shift registers to control motor direction, enable, and brake signals with native 24V open-drain outputs, saving GPIO pins while maintaining fast, reliable control.
 
 ## Shift Register Selection
 
-### 74HC595 - 8-bit Serial-In, Parallel-Out
-- **Outputs**: 8 parallel outputs per chip
+### TPIC6B595N - 8-bit Serial-In, Parallel-Out (24V Open-Drain)
+- **Outputs**: 8 open-drain outputs per chip (150mA continuous each)
 - **Interface**: SPI-compatible (3-wire)
-- **Speed**: Up to 100MHz clock
+- **Speed**: Up to 25MHz clock
 - **Cascadable**: Yes, for multiple chips
-- **Output current**: 35mA per pin
+- **Output voltage**: Up to 50V (VDD clamp)
+- **Logic input**: 3.3V compatible (TTL levels)
 - **Latching**: Yes, prevents glitches during shifts
+
+**Why TPIC6B595N over 74HC595:**
+- Native 24V open-drain outputs - no level shifters needed
+- Higher current capability (150mA vs 35mA)
+- Direct interface to industrial motor drivers
+- Fail-safe with pull-up resistors (outputs float high when IC unpowered)
 
 ### Pin Requirements
 ```
@@ -24,9 +31,9 @@ ESP32-S3 → Shift Register:
 
 ## Control Signal Mapping
 
-### For 7 Motors (5 Servos + 2 Steppers)
+### 24-bit Chain: 3x TPIC6B595N (DIR/EN + Brakes)
 ```
-Shift Register 1 (U1):
+Shift Register 1 (U1) - Motor DIR/EN (X,Y,Z,A):
 Bit 0: X_DIR  (Servo)
 Bit 1: X_EN   (Servo)
 Bit 2: Y_DIR  (Servo)
@@ -36,7 +43,7 @@ Bit 5: Z_EN   (Servo)
 Bit 6: A_DIR  (Servo)
 Bit 7: A_EN   (Servo)
 
-Shift Register 2 (U2):
+Shift Register 2 (U2) - Motor DIR/EN (B,C,D):
 Bit 0: B_DIR  (Servo)
 Bit 1: B_EN   (Servo)
 Bit 2: C_DIR  (Stepper)
@@ -45,32 +52,52 @@ Bit 4: D_DIR  (Stepper)
 Bit 5: D_EN   (Stepper)
 Bit 6: SPARE_1
 Bit 7: SPARE_2
+
+Shift Register 3 (U3) - Brake Control:
+Bit 0: X_BRAKE_RLY (Servo brake relay)
+Bit 1: Y_BRAKE_RLY (Servo brake relay)
+Bit 2: Z_BRAKE_RLY (Servo brake relay)
+Bit 3: A_BRAKE_RLY (Servo brake relay)
+Bit 4: B_BRAKE_RLY (Servo brake relay)
+Bit 5: SPARE_RLY1
+Bit 6: SPARE_RLY2
+Bit 7: SPARE_RLY3
+
+Note: Brake logic is active-low (0 = brake engaged, 1 = brake released)
+      This ensures fail-safe operation on power loss.
 ```
 
 ## Hardware Design
 
-### Cascaded Configuration
+### Cascaded Configuration (3x TPIC6B595N)
 ```
-         ┌──────────┐      ┌──────────┐
-ESP32 ───┤   U1     ├─────►┤   U2     ├────►
-MOSI ────┤SER    Q7'├──────┤SER    Q7'├─ NC
-SCLK ────┤SRCLK     ├──┬───┤SRCLK     ├
-CS ──────┤RCLK      ├  └───┤RCLK      ├
-         │          ├      │          ├
-         │ Q0-Q7    ├      │ Q0-Q7    ├
-         └────┬─────┘      └────┬─────┘
-              │                 │
-         Motor 0-3         Motor 4-6
-         DIR/EN pins       DIR/EN pins
+         ┌──────────┐      ┌──────────┐      ┌──────────┐
+ESP32 ───┤   U1     ├─────►┤   U2     ├─────►┤   U3     ├────► NC
+MOSI ────┤SER    Q7'├──────┤SER    Q7'├──────┤SER    Q7'├
+SCLK ────┤SRCLK     ├──┬───┤SRCLK     ├──┬───┤SRCLK     ├
+CS ──────┤RCLK      ├  └───┤RCLK      ├  └───┤RCLK      ├
+         │          ├      │          ├      │          ├
+         │ DRAIN0-7 ├      │ DRAIN0-7 ├      │ DRAIN0-7 ├
+         └────┬─────┘      └────┬─────┘      └────┬─────┘
+              │                 │                 │
+         X,Y,Z,A           B,C,D             Brake Relays
+         DIR/EN            DIR/EN            (5 axes)
 ```
 
-### Output Protection
+### Output Configuration (Open-Drain with Pull-ups)
 ```
-74HC595 Output → 220Ω → Motor Driver Input
-                  │
-                  ├── 10kΩ → GND (Pull-down)
-                  │
-                  └── 0.1µF → GND (Noise filter)
+                    24V
+                     │
+                   [10kΩ] Pull-up resistor
+                     │
+TPIC6B595N Output ───┼───────► Motor Driver Input (24V logic)
+(Open Drain)         │
+                   [0.1µF] Noise filter (optional)
+                     │
+                    GND
+
+Logic: Output ON (sinking) = Signal LOW
+       Output OFF (open) = Signal HIGH (via pull-up)
 ```
 
 ## Software Implementation
@@ -85,7 +112,7 @@ CS ──────┤RCLK      ├  └───┤RCLK      ├
 class ShiftRegisterController {
 private:
     spi_device_handle_t spi_handle;
-    uint16_t current_state;  // Shadow register for 16 bits
+    uint32_t current_state;  // Shadow register for 24 bits (3x TPIC6B595N)
     SemaphoreHandle_t mutex;
     
 public:
@@ -124,8 +151,10 @@ public:
         // Create mutex for thread safety
         mutex = xSemaphoreCreateMutex();
         
-        // Initialize all outputs to safe state (disabled)
-        current_state = 0x0000;  // All enables OFF
+        // Initialize all outputs to safe state (motors disabled, brakes engaged)
+        // Bits 0-15: DIR/EN = 0 (all disabled)
+        // Bits 16-23: Brakes = 0 (all engaged, active-low logic)
+        current_state = 0x000000;
         return update();
     }
 ```
@@ -133,17 +162,18 @@ public:
 ### Fast Update Method
 ```cpp
     esp_err_t update() {
-        // Send 16 bits for two cascaded shift registers
-        uint8_t tx_data[2];
-        tx_data[0] = (current_state >> 8) & 0xFF;  // U2 data
-        tx_data[1] = current_state & 0xFF;         // U1 data
-        
+        // Send 24 bits for three cascaded TPIC6B595N shift registers
+        uint8_t tx_data[3];
+        tx_data[0] = (current_state >> 16) & 0xFF;  // U3 data (brakes)
+        tx_data[1] = (current_state >> 8) & 0xFF;   // U2 data (B,C,D DIR/EN)
+        tx_data[2] = current_state & 0xFF;          // U1 data (X,Y,Z,A DIR/EN)
+
         spi_transaction_t trans = {
-            .length = 16,
+            .length = 24,
             .tx_buffer = tx_data,
             .rx_buffer = NULL
         };
-        
+
         return spi_device_transmit(spi_handle, &trans);
     }
 ```
@@ -219,27 +249,46 @@ public:
 
 ### Emergency Stop Integration
 ```cpp
-    // Called from ISR - disable all motors immediately
+    // Called from ISR - disable all motors and engage all brakes immediately
     void IRAM_ATTR emergencyDisableAll() {
-        // Clear all enable bits (odd bits)
-        uint16_t emergency_state = current_state & 0x5555;  // Keep DIR, clear EN
-        
+        // Clear all enable bits (odd bits in lower 16 bits)
+        // Clear all brake bits (bits 16-20) to engage brakes (active-low)
+        uint32_t emergency_state = current_state & 0x005555;  // Keep DIR, clear EN and brakes
+
         // Direct SPI register access for speed
-        uint8_t tx_data[2];
-        tx_data[0] = (emergency_state >> 8) & 0xFF;
-        tx_data[1] = emergency_state & 0xFF;
-        
+        uint8_t tx_data[3];
+        tx_data[0] = (emergency_state >> 16) & 0xFF;  // Brakes engaged (0)
+        tx_data[1] = (emergency_state >> 8) & 0xFF;
+        tx_data[2] = emergency_state & 0xFF;
+
         // Bit-bang SPI for guaranteed timing in ISR
         gpio_set_level(SHIFT_REG_CS, 0);
-        
-        for (int i = 0; i < 16; i++) {
-            gpio_set_level(SHIFT_REG_MOSI, 
+
+        for (int i = 0; i < 24; i++) {
+            gpio_set_level(SHIFT_REG_MOSI,
                           (tx_data[i/8] & (0x80 >> (i%8))) ? 1 : 0);
             gpio_set_level(SHIFT_REG_SCLK, 1);
             gpio_set_level(SHIFT_REG_SCLK, 0);
         }
-        
+
         gpio_set_level(SHIFT_REG_CS, 1);  // Latch outputs
+    }
+
+    // Brake control methods (bits 16-20)
+    void engageBrake(uint8_t axis) {
+        if (axis > 4) return;  // Only X,Y,Z,A,B have brakes
+        xSemaphoreTake(mutex, portMAX_DELAY);
+        current_state &= ~(1 << (16 + axis));  // Clear bit = engage (active-low)
+        update();
+        xSemaphoreGive(mutex);
+    }
+
+    void releaseBrake(uint8_t axis) {
+        if (axis > 4) return;
+        xSemaphoreTake(mutex, portMAX_DELAY);
+        current_state |= (1 << (16 + axis));   // Set bit = release
+        update();
+        xSemaphoreGive(mutex);
     }
 };
 ```
@@ -312,11 +361,11 @@ void initializeShiftRegisters() {
 
 ## Advantages of This Approach
 
-1. **GPIO Savings**: Only 3-4 GPIOs control 14 signals
+1. **GPIO Savings**: Only 3-4 GPIOs control 24 signals (3x TPIC6B595N)
 2. **Atomic Updates**: All signals change simultaneously
-3. **EMI Reduction**: Slower edge rates than direct GPIO
+3. **Native 24V**: No level shifters needed for motor drivers
 4. **Expandability**: Easy to add more shift registers
-5. **Cost Effective**: 74HC595 chips are inexpensive
+5. **Fail-Safe**: Open-drain with pull-ups ensures safe state on power loss
 6. **Reliable**: Latched outputs prevent glitches
 
 ## Integration with Motor Control

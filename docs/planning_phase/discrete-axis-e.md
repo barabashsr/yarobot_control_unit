@@ -13,9 +13,11 @@ GPB7: E_DIR     - Direction (extend/retract)
 
 ### Input Signals (via MCP23017 #1 at 0x20)
 ```
-GPB6: E_LIMIT_MIN - Minimum position limit switch
-GPB7: E_LIMIT_MAX - Maximum position limit switch
+GPB6: E_LIMIT_MIN - Floating switch (like picker jaw, but NO measurement support)
+GPB7: E_LIMIT_MAX - Home position switch (axis homes to MAX)
 ```
+
+> **Note**: Unlike the C axis (picker jaw), the E axis MIN switch is floating but does NOT support object width measurement. This is because the E axis position is calculated from time and speed, making measurements imprecise.
 
 ## Characteristics
 
@@ -108,17 +110,23 @@ void update_axis_e_position() {
 
 ## Limit Switch Behavior
 
+### Switch Configuration
+- **MIN Switch**: Floating switch (position unknown when triggered, no measurement)
+- **MAX Switch**: Home position switch (known position = max_travel)
+
 ### Automatic Stopping
-- Hitting MIN limit during retraction: Stop, set position to 0
+- Hitting MIN limit during retraction: Stop immediately (position estimate only)
 - Hitting MAX limit during extension: Stop, set position to max_travel
 - Opposite direction movement allowed from limits
 
-### Homing Sequence
+### Homing Sequence (to MAX)
 ```
-1. If not at MIN limit: Retract until MIN limit
-2. Set current_position = 0
-3. Optional: Extend to known position for verification
+1. If not at MAX limit: Extend until MAX limit reached
+2. Set current_position = max_travel (known home position)
+3. Axis is now homed and ready for operation
 ```
+
+> **Important**: E axis homes to MAX, not MIN. This differs from most other axes because the MAX switch provides a known reference position while the MIN switch is floating.
 
 ## Safety Features
 
@@ -182,3 +190,5 @@ bool axis_e_update(void);  // Called from task loop
 2. **No velocity control**: Fixed speed operation
 3. **No intermediate feedback**: Only end positions known
 4. **Power loss**: Position lost, requires re-homing
+5. **No MIN switch measurement**: Unlike C axis, floating switch does not support object detection/measurement
+6. **Homes to MAX**: Unusual homing direction (most axes home to MIN)

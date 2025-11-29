@@ -1,7 +1,10 @@
 # Motor Control Class Architecture
 
 ## Overview
-Object-oriented architecture for ESP32-S3 motor control using ESP-IDF framework. Designed for 6-axis control (4 servo drives with RMT, 2 steppers with MCPWM).
+Object-oriented architecture for ESP32-S3 motor control using ESP-IDF framework. Designed for 8-axis control:
+- 5 servo axes (X,Y,Z,A,B) using RMT+DMA and MCPWM+PCNT
+- 2 stepper axes (C,D) using MCPWM+PCNT and LEDC
+- 1 discrete axis (E) using I2C expander for simple on/off control
 
 ## Base Classes
 
@@ -149,7 +152,7 @@ private:
 };
 ```
 
-### MCPWMMotor (Stepper Control)
+### MCPWMMotor (Servo Y and Stepper C Control)
 
 ```cpp
 class MCPWMMotor : public MotorInterface {
@@ -160,28 +163,138 @@ public:
         gpio_num_t enable_pin;
         mcpwm_unit_t mcpwm_unit;  // 0 or 1
     };
-    
+
     explicit MCPWMMotor(const Config& config);
     ~MCPWMMotor();
-    
+
     // Pulse counting
     int32_t getPulseCount() const;
     esp_err_t resetPulseCount();
-    
+
 private:
     // MCPWM handles
     mcpwm_timer_handle_t timer_;
     mcpwm_oper_handle_t operator_;
     mcpwm_cmpr_handle_t comparator_;
     mcpwm_gen_handle_t generator_;
-    
+
     // Pulse counter
     pcnt_unit_handle_t pcnt_unit_;
-    
+
     // Configuration
     esp_err_t configureMCPWM();
     esp_err_t configurePCNT();
     esp_err_t updateFrequency(uint32_t frequency);
+};
+```
+
+### LEDCMotor (Stepper D Control)
+
+```cpp
+class LEDCMotor : public MotorInterface {
+public:
+    struct Config {
+        gpio_num_t step_pin;
+        gpio_num_t dir_pin;
+        gpio_num_t enable_pin;
+        ledc_channel_t ledc_channel;
+        ledc_timer_t ledc_timer;
+    };
+
+    explicit LEDCMotor(const Config& config);
+    ~LEDCMotor();
+
+    // LEDC specific
+    esp_err_t setFrequency(uint32_t freq_hz);
+    esp_err_t setDuty(uint32_t duty);  // 0-100%
+
+    // Position tracking (software-based)
+    int32_t getEstimatedPulseCount() const;
+    esp_err_t resetPulseCount();
+
+private:
+    // LEDC handles
+    ledc_channel_t channel_;
+    ledc_timer_t timer_;
+
+    // Software pulse counting (estimated from time and frequency)
+    volatile int32_t pulse_count_;
+    uint32_t current_frequency_;
+    TickType_t motion_start_time_;
+
+    // Configuration
+    esp_err_t configureLEDC();
+    void updatePulseEstimate();
+};
+```
+
+### DiscreteAxisController (E Axis Control)
+
+```cpp
+class DiscreteAxisController : public MotorInterface {
+public:
+    struct Config {
+        uint8_t enable_expander_addr;   // MCP23017 I2C address
+        uint8_t enable_pin;             // Pin on expander (GPB6)
+        uint8_t dir_expander_addr;      // MCP23017 I2C address
+        uint8_t dir_pin;                // Pin on expander (GPB7)
+        uint8_t min_limit_expander_addr;
+        uint8_t min_limit_pin;          // Floating switch (like jaw)
+        uint8_t max_limit_expander_addr;
+        uint8_t max_limit_pin;          // Home switch
+        float speed;                    // Units per second
+        float max_travel;               // Maximum position
+    };
+
+    explicit DiscreteAxisController(const Config& config);
+    ~DiscreteAxisController();
+
+    // MotorInterface implementation
+    esp_err_t moveToPosition(float position, float velocity, float acceleration) override;
+    esp_err_t moveVelocity(float velocity, float acceleration) override;
+    esp_err_t stop(bool emergency = false) override;
+    float getCurrentPosition() const override;
+    float getTargetPosition() const override;
+    bool isMoving() const override;
+    bool isAtTarget() const override;
+
+    // Discrete-specific
+    esp_err_t extend();   // Move toward MAX limit
+    esp_err_t retract();  // Move toward MIN limit
+    bool isAtMinLimit() const;
+    bool isAtMaxLimit() const;
+
+    // Homing (to MAX switch, MIN is floating)
+    esp_err_t home();
+
+private:
+    I2CExpander* enable_expander_;
+    I2CExpander* limit_expander_;
+
+    // State
+    float calculated_position_;
+    float target_position_;
+    direction_t current_direction_;
+    TickType_t motion_start_time_;
+    float motion_start_position_;
+    bool is_moving_;
+
+    // Configuration
+    float speed_;          // Constant speed
+    float max_travel_;
+
+    // Limit switch states
+    volatile bool at_min_limit_;  // Floating switch (no measurement support)
+    volatile bool at_max_limit_;  // Home switch
+
+    // Update position based on time (called from task loop)
+    void updateCalculatedPosition();
+
+    // I/O control
+    void setEnable(bool enabled);
+    void setDirection(direction_t dir);
+    bool readMinLimit();
+    bool readMaxLimit();
 };
 ```
 

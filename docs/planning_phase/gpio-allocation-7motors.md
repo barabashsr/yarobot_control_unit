@@ -1,7 +1,9 @@
-# GPIO Allocation for 7-Motor System
+# GPIO Allocation for 8-Axis System
+
+> **TODO - ARCHITECTURE SESSION**: This document contains GPIO assignments that need final verification during the dedicated GPIO allocation architecture session. All conflicts are marked with TODO.
 
 ## Overview
-Updated GPIO allocation for 5 servo motors (X,Y,Z,A,B) and 2 ON/OFF stepper motors (C,D) using ESP32-S3 DevKit with shift registers for DIR/EN control.
+GPIO allocation for 5 servo motors (X,Y,Z,A,B), 2 stepper motors (C,D), and 1 discrete axis (E) using ESP32-S3 DevKit with shift registers for DIR/EN control.
 
 ## Peripheral Assignment Strategy
 
@@ -13,6 +15,7 @@ Updated GPIO allocation for 5 servo motors (X,Y,Z,A,B) and 2 ON/OFF stepper moto
 - **B (Servo)** → RMT Channel 3 + DMA (picker Y axis)
 - **C (Stepper)** → MCPWM0 Timer 1 + PCNT1 (picker jaw with floating switch)
 - **D (Stepper)** → LEDC (picker retractor, discrete positions)
+- **E (Discrete)** → MCP23017 I2C expander outputs (linear drive, two-state)
 
 ## GPIO Pin Allocation
 
@@ -72,7 +75,9 @@ Updated GPIO allocation for 5 servo motors (X,Y,Z,A,B) and 2 ON/OFF stepper moto
 ### Safety Signals
 | Signal | GPIO | Function | Notes |
 |--------|------|----------|-------|
-| E_STOP | GPIO16 | Input | Emergency stop (direct) |
+| E_STOP | **TODO** | Input | Emergency stop (direct) - **TODO: Resolve GPIO conflict in architecture session** |
+
+> **TODO - GPIO CONFLICT**: E-Stop pin assignment needs verification. freertos-task-architecture.md references GPIO12, but GPIO12 is used for SR_SCLK. GPIO16 was previously assigned but needs confirmation.
 
 ### USB Communication
 | Signal | GPIO | Function | Notes |
@@ -103,17 +108,21 @@ P17: E_LIMIT_MAX
 ```
 
 ### Expander 1 (Address 0x21) - General Purpose I/O & E Axis Control
+
+> **TODO - ARCHITECTURE SESSION**: E axis pin assignments on MCP23017 #2 need final confirmation. yaml-configuration-system.md shows GPB6/GPB7, but this conflicts with some GP output allocations.
+
 ```
-P00-P07: General Purpose Inputs
-P10-P15: General Purpose Outputs
-P16: E_ENABLE (E-axis enable output)
-P17: E_DIR (E-axis direction output)
+P00-P07: General Purpose Inputs (GPA0-7)
+P10-P15: General Purpose Outputs (GPB0-5)
+P16: E_ENABLE (E-axis enable output) - TODO: Confirm GPB6
+P17: E_DIR (E-axis direction output) - TODO: Confirm GPB7
 ```
 
 ## Shift Register Bit Mapping
 
-### 16-bit Shift Register Chain (2x 74HC595)
+### 24-bit Shift Register Chain (3x TPIC6B595N)
 ```
+Register #1 (U1) - Motor DIR/EN (X,Y,Z,A):
 Bit  0: X_DIR   (X-axis direction)
 Bit  1: X_EN    (X-axis enable)
 Bit  2: Y_DIR   (Y-axis direction)
@@ -122,14 +131,29 @@ Bit  4: Z_DIR   (Z-axis direction)
 Bit  5: Z_EN    (Z-axis enable)
 Bit  6: A_DIR   (A-axis direction)
 Bit  7: A_EN    (A-axis enable)
+
+Register #2 (U2) - Motor DIR/EN (B,C,D):
 Bit  8: B_DIR   (B-axis direction)
 Bit  9: B_EN    (B-axis enable)
 Bit 10: C_DIR   (C-axis direction)
 Bit 11: C_EN    (C-axis enable)
 Bit 12: D_DIR   (D-axis direction)
 Bit 13: D_EN    (D-axis enable)
-Bit 14: SPARE_OUT_1
-Bit 15: SPARE_OUT_2
+Bit 14: SPARE_1
+Bit 15: SPARE_2
+
+Register #3 (U3) - Brake Control (via optocoupler → relay):
+Bit 16: X_BRAKE_RLY (X-axis brake relay)
+Bit 17: Y_BRAKE_RLY (Y-axis brake relay)
+Bit 18: Z_BRAKE_RLY (Z-axis brake relay)
+Bit 19: A_BRAKE_RLY (A-axis brake relay)
+Bit 20: B_BRAKE_RLY (B-axis brake relay)
+Bit 21: SPARE_RLY1
+Bit 22: SPARE_RLY2
+Bit 23: SPARE_RLY3
+
+Note: Brake logic is active-low (0 = brake engaged, 1 = brake released)
+      Fail-safe operation on power loss.
 ```
 
 ## C and D Independent Control
@@ -226,16 +250,18 @@ public:
 ## GPIO Summary
 
 ### Total GPIO Usage:
-- Motor step signals: 7 GPIOs (X,Y,Z,A,B,C,D separate)
-- Shift register control: 4 GPIOs  
+- Motor step signals: 7 GPIOs (X,Y,Z,A,B,C,D - E uses I2C expander)
+- Shift register control: 4 GPIOs
 - Position feedback: 5 GPIOs
 - Z-signal inputs: 5 GPIOs
 - I2C bus: 4 GPIOs
-- E-stop: 1 GPIO
-- **Total: 26 GPIOs used**
+- E-stop: 1 GPIO (TODO: confirm assignment)
+- **Total: ~26 GPIOs used**
 
 ### Available for future use:
 - GPIO 13, 17, 21, 22, 23, 26, 27, 32, 33, 34
+
+> **Note**: E axis (linear drive) does not use direct GPIO - it is controlled via MCP23017 I2C expander pins.
 
 ## Initialization Code
 

@@ -32,7 +32,7 @@ typedef struct {
 
 ### 2. Motor Configuration Namespace (per axis)
 ```cpp
-// Namespace: "motor_0" through "motor_5"
+// Namespace: "motor_0" through "motor_7" (8 axes: X,Y,Z,A,B,C,D,E)
 typedef struct {
     // Basic parameters
     float steps_per_mm;          // Resolution
@@ -73,7 +73,7 @@ typedef struct {
 
 ### 3. Calibration Data Namespace
 ```cpp
-// Namespace: "calib_0" through "calib_5"
+// Namespace: "calib_0" through "calib_7" (8 axes: X,Y,Z,A,B,C,D,E)
 typedef struct {
     // Homing results
     float home_position;         // Absolute position at home
@@ -107,8 +107,8 @@ typedef struct {
 class NVSManager {
 private:
     nvs_handle_t system_handle;
-    nvs_handle_t motor_handles[6];
-    nvs_handle_t calib_handles[6];
+    nvs_handle_t motor_handles[8];  // 8 axes: X,Y,Z,A,B,C,D,E
+    nvs_handle_t calib_handles[8];  // 8 axes: X,Y,Z,A,B,C,D,E
     
 public:
     esp_err_t init() {
@@ -124,8 +124,8 @@ public:
         // Open namespaces
         ESP_ERROR_CHECK(nvs_open("system", NVS_READWRITE, &system_handle));
         
-        // Open motor namespaces
-        for (int i = 0; i < 6; i++) {
+        // Open motor namespaces (8 axes: X,Y,Z,A,B,C,D,E)
+        for (int i = 0; i < 8; i++) {
             char namespace_name[16];
             snprintf(namespace_name, sizeof(namespace_name), "motor_%d", i);
             ESP_ERROR_CHECK(nvs_open(namespace_name, NVS_READWRITE, &motor_handles[i]));
@@ -217,8 +217,8 @@ public:
     void commitTask(void* param) {
         while (1) {
             vTaskDelay(pdMS_TO_TICKS(5000));  // Every 5 seconds
-            
-            for (int i = 0; i < 6; i++) {
+
+            for (int i = 0; i < 8; i++) {  // 8 axes
                 if (position_dirty[i]) {
                     nvs_commit(motor_handles[i]);
                     position_dirty[i] = false;
@@ -246,17 +246,22 @@ void setDefaultMotorConfig(uint8_t axis, MotorConfig_t* config) {
     config->dir_active_high = true;
     config->enable_active_high = false;  // Active low enable
     
-    // Servo specific (axes 0-3)
-    if (axis < 4) {
+    // Servo specific (axes 0-4: X,Y,Z,A,B)
+    if (axis < 5) {
         config->use_position_complete = true;
         config->position_window = 20;     // pulses
         config->use_z_signal = true;
         config->homing_velocity = 10.0f;  // Slower for servos
-    } else {
-        // Stepper specific (axes 4-5)
+    } else if (axis < 7) {
+        // Stepper specific (axes 5-6: C,D)
         config->use_position_complete = false;
         config->use_z_signal = false;
         config->homing_velocity = 20.0f;  // Faster for steppers
+    } else {
+        // Discrete axis (axis 7: E)
+        config->use_position_complete = false;
+        config->use_z_signal = false;
+        config->homing_velocity = 100.0f; // Full speed for discrete
     }
     
     config->homing_backoff = 5.0f;       // mm
@@ -269,7 +274,7 @@ void setDefaultMotorConfig(uint8_t axis, MotorConfig_t* config) {
 ```cpp
 // SAVE <axis>
 Response cmdSave(uint8_t axis) {
-    if (axis >= 6) {
+    if (axis >= 8) {  // 8 axes: X,Y,Z,A,B,C,D,E
         return Response::error("Invalid axis");
     }
     
@@ -290,7 +295,7 @@ Response cmdSave(uint8_t axis) {
 ```cpp
 // LOAD <axis>
 Response cmdLoad(uint8_t axis) {
-    if (axis >= 6) {
+    if (axis >= 8) {  // 8 axes: X,Y,Z,A,B,C,D,E
         return Response::error("Invalid axis");
     }
     
@@ -308,7 +313,7 @@ Response cmdLoad(uint8_t axis) {
 ```cpp
 // DEFAULTS <axis>
 Response cmdDefaults(uint8_t axis) {
-    if (axis >= 6) {
+    if (axis >= 8) {  // 8 axes: X,Y,Z,A,B,C,D,E
         return Response::error("Invalid axis");
     }
     
@@ -331,7 +336,7 @@ Response cmdDefaults(uint8_t axis) {
 // Brownout detector callback
 void IRAM_ATTR brownout_handler(void) {
     // Quick save of critical data
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 8; i++) {  // 8 axes
         float pos = quick_position_read(i);
         nvs_set_blob_fast(motor_handles[i], "qpos", &pos, sizeof(float));
     }
@@ -396,9 +401,9 @@ void migrateConfiguration() {
 // Detect and recover from corrupted NVS
 esp_err_t verifyNVSIntegrity() {
     bool corrupted = false;
-    
-    // Check each motor config
-    for (int i = 0; i < 6; i++) {
+
+    // Check each motor config (8 axes)
+    for (int i = 0; i < 8; i++) {
         MotorConfig_t config;
         size_t length = sizeof(config);
         

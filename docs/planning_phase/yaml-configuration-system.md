@@ -17,19 +17,7 @@ The YaRobot Control Unit uses YAML-based configuration for all system parameters
 
 ## Mode Switching Methods
 
-### Method 1: Boot Pin
-Hold GPIO45 LOW during reset to enter CONFIG mode.
-```
-┌─────────────┐
-│   GPIO45    │──┐
-│             │  │
-│   ESP32-S3  │  ┴ 10kΩ → GND (CONFIG mode)
-│             │  
-│             │  ┴ 10kΩ → 3.3V (Normal boot)
-└─────────────┘
-```
-
-### Method 2: Command Interface
+### Method 1: Command Interface
 ```bash
 # Enter configuration mode
 MODE CONFIG
@@ -42,7 +30,7 @@ MODE OPERATE
 > OK OPERATION MODE ACTIVE
 ```
 
-### Method 3: Automatic Detection
+### Method 2: Automatic Detection
 System enters CONFIG mode if no valid configuration found in storage.
 
 ## YAML Transfer Protocol
