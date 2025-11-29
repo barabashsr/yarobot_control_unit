@@ -90,7 +90,7 @@ This is an embedded system project creating a hardware device with firmware that
 **Communication & Interface**
 - USB CDC serial interface with human-readable commands
 - Low-latency command processing (<10ms response time)
-- G-code compatible command set (G00, G01, etc.)
+- Simple text command set (MOVE, MOVR, VEL, STOP, etc.)
 - Comprehensive status reporting and event notifications
 - Error handling with clear diagnostic messages
 
@@ -100,12 +100,18 @@ This is an embedded system project creating a hardware device with firmware that
 - Persistent storage of calibration data
 - Per-axis enable/disable control
 
+**Status Display**
+- 128x64 OLED display for setup, troubleshooting, and status verification
+- Dedicated I2C bus (I2C1) isolated from critical I/O expanders
+- Real-time axis position and movement status
+- Error and event display with priority handling
+- E-stop status indication
+
 ### Growth Features (Post-MVP)
 
 **Enhanced Interfaces**
 - ROS2 hardware interface for ros2_control integration
 - Mock ROS2 mode for testing without full ROS stack
-- OLED display for field diagnostics and status
 - Advanced motion profiles (S-curve acceleration)
 
 **Extended Capabilities**
@@ -213,13 +219,13 @@ This abstraction layer handles:
 - Native 24V logic level compatibility (no level shifters needed for motor drivers)
 
 **Peripheral Expansion**
-- 3x MCP23017 I2C expanders for:
+- 3x MCP23017 I2C expanders (on I2C0 bus) for:
   - 14 limit switch inputs (2 per axis)
   - 8 general purpose digital inputs
   - 8 general purpose digital outputs
   - Servo feedback signals (InPos, alarms)
-- I2C bus at 400kHz for responsive I/O scanning
-- Optional SSD1306 OLED display for diagnostics
+- I2C0 bus at 400kHz for responsive I/O scanning
+- SSD1306 128x64 OLED display on dedicated I2C1 bus (isolated from critical I/O)
 
 **Physical Interface**
 - USB-C for host communication and power
@@ -315,8 +321,8 @@ This abstraction layer handles:
 - FR3: System can control 5 servo motors through STEP/DIR interfaces with position feedback
 - FR4: System can control 2 stepper motors with hardware position counting
 - FR5: System can control 1 discrete actuator (E axis) with time-based position calculation
-- FR6: Each axis can execute absolute position moves (G00/G01)
-- FR7: Each axis can execute relative position moves (G91 mode)
+- FR6: Each axis can execute absolute position moves (MOVE command)
+- FR7: Each axis can execute relative position moves (MOVR command)
 - FR8: Each axis can execute continuous jog movements
 - FR9: System can stop any axis motion immediately on command
 - FR10: System can enable/disable individual axes independently
@@ -336,8 +342,8 @@ This abstraction layer handles:
 
 - FR19: System accepts commands via USB CDC serial interface
 - FR20: System responds to commands within 10ms
-- FR21: System accepts G-code compatible motion commands
-- FR22: System accepts human-readable text commands (MOVE, STATUS, etc.)
+- FR21: System accepts human-readable text commands (MOVE, MOVR, VEL, STOP, etc.)
+- FR22: System accepts status query commands (POS, STAT, INFO, DIAG)
 - FR23: System provides command acknowledgment and error responses
 - FR24: System generates asynchronous event notifications
 - FR25: System reports comprehensive status for all axes on demand
@@ -371,7 +377,10 @@ This abstraction layer handles:
 - FR44: System reports motion status (idle, moving, error) per axis
 - FR45: System tracks and reports cumulative error counts
 - FR46: System monitors I2C communication health
-- FR47: System can display status on optional OLED screen
+- FR47: System displays axis positions and movement status on OLED screen
+- FR47a: System displays E-stop status with highest priority on OLED
+- FR47b: System displays errors and events on OLED for 2 seconds
+- FR47c: OLED operates on dedicated I2C bus isolated from limit switch I/O
 - FR48: System generates events for motion completion
 - FR49: System generates events for errors and faults
 - FR50: Users can query individual axis status or all axes
@@ -421,7 +430,7 @@ This abstraction layer handles:
 - NFR14: Commands must be parseable by common programming languages (Python, C++, etc.)
 - NFR15: System must support future ROS2 hardware_interface integration
 - NFR16: YAML configuration must follow standard YAML 1.2 specification
-- NFR17: G-code subset must be compatible with common CNC conventions
+- NFR17: Command syntax must be consistent and parseable by simple string operations
 - NFR18: Event messages must be distinguishable from command responses
 
 ### Maintainability

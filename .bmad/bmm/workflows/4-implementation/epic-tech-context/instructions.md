@@ -83,10 +83,12 @@ Continuing to regenerate tech spec...
 
   <step n="3" goal="Overview and scope">
     <action>Read COMPLETE found {recommended_inputs}.</action>
+    <action>CRITICAL: Check {output_folder}/bmm-workflow-status.yaml for mandatory_constraints section. Include ALL mandatory constraints that apply to this epic.</action>
+    <action>CRITICAL: Look for "MANDATORY:" sections in architecture.md - these constraints apply to ALL epics and must be included in {{system_arch_alignment}}.</action>
     <template-output file="{default_output_file}">
       Replace {{overview}} with a concise 1-2 paragraph summary referencing PRD context and goals
       Replace {{objectives_scope}} with explicit in-scope and out-of-scope bullets
-      Replace {{system_arch_alignment}} with a short alignment summary to the architecture (components referenced, constraints)
+      Replace {{system_arch_alignment}} with a short alignment summary to the architecture (components referenced, constraints). MUST include all MANDATORY constraints from architecture.
     </template-output>
   </step>
 

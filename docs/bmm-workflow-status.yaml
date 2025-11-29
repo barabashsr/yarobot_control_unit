@@ -20,8 +20,8 @@ project: "yarobot_control_unit"
 project_type: "iot_embedded"
 selected_track: "bmad_method"
 field_type: "greenfield"
-workflow_path: "planning → prd → architecture"
-workflow_status: "prd_complete"
+workflow_path: "planning → prd → architecture → epics"
+workflow_status: "epics_complete"
 
 # Phase Tracking
 phases:
@@ -35,10 +35,10 @@ phases:
     status: "complete"
 
   solutioning:
-    architecture: "pending"
+    architecture: "docs/architecture.md"
     ux_design: "skipped"  # Embedded system, no UI
-    epics_stories: "pending"
-    status: "not_started"
+    epics_stories: "docs/epics.md"
+    status: "complete"
 
 # Planning Phase Documents (completed)
 planning_documents:
@@ -46,8 +46,8 @@ planning_documents:
     status: "complete"
     last_updated: "2025-11-29"
   - path: "docs/planning_phase/gpio-allocation-7motors.md"
-    status: "updated_with_todos"
-    notes: "E-Stop GPIO and E axis pins marked as TODO for architecture session"
+    status: "superseded"
+    notes: "GPIO assignments consolidated into docs/architecture.md config headers"
   - path: "docs/planning_phase/shift-register-control.md"
     status: "complete"
     notes: "Updated to TPIC6B595N, 24-bit chain with brake control"
@@ -59,7 +59,7 @@ planning_documents:
     notes: "Added LEDCMotor and DiscreteAxisController classes"
   - path: "docs/planning_phase/command-interface.md"
     status: "complete"
-    notes: "Updated to 8 axes including E axis"
+    notes: "Updated with MODE, GETWIDTH, ALIAS, YAML transfer commands"
   - path: "docs/planning_phase/discrete-axis-e.md"
     status: "complete"
     notes: "Updated homing to MAX, floating switch with no measurement"
@@ -74,18 +74,85 @@ prd_alignment:
     - "Added TPIC6B595N shift register documentation"
     - "Added C-axis object width measurement (FR38-40)"
     - "Updated axis count to 8 (X-E)"
+    - "Moved OLED to MVP scope with dedicated I2C bus (FR47-47c)"
 
-# Architecture Session TODOs
-architecture_session_todos:
+# Architecture Session - RESOLVED
+architecture_session_resolved:
   - item: "E-Stop GPIO assignment"
-    description: "Resolve conflict between GPIO12 (SR_SCLK) and E-Stop"
-    files: ["gpio-allocation-7motors.md", "freertos-task-architecture.md"]
+    resolution: "Assigned GPIO16 (documented in config_gpio.h)"
   - item: "E axis I2C pin confirmation"
-    description: "Confirm GPB6/GPB7 on MCP23017 #2 for E_ENABLE/E_DIR"
-    files: ["gpio-allocation-7motors.md", "yaml-configuration-system.md", "discrete-axis-e.md"]
+    resolution: "Confirmed GPB6=E_ENABLE, GPB7=E_DIR on MCP23017 #1 (documented in config_i2c.h)"
+  - item: "OLED GPIO assignment"
+    resolution: "Assigned GPIO17=SDA, GPIO21=SCL on I2C_NUM_1 (documented in config_gpio.h)"
+
+# Architecture Decisions Made
+architecture_decisions:
+  - id: "ADR-001"
+    decision: "ESP32-S3-DevKitC-1 N16R8 platform"
+  - id: "ADR-002"
+    decision: "Layered component architecture (HAL → Drivers → Control → Interface)"
+  - id: "ADR-003"
+    decision: "TPIC6B595N shift registers for 24V logic"
+  - id: "ADR-004"
+    decision: "Separate I2C bus for OLED display"
+  - id: "ADR-005"
+    decision: "Text command protocol over USB CDC"
+
+# Key Configurations Documented
+configuration_headers:
+  - "config.h - Master include, feature flags"
+  - "config_gpio.h - All 28 GPIO pin assignments"
+  - "config_peripherals.h - RMT, MCPWM, PCNT, LEDC, SPI assignments"
+  - "config_timing.h - Timing constants (µs/ms)"
+  - "config_limits.h - Buffer sizes, queue depths, stack sizes"
+  - "config_commands.h - Command strings, error codes"
+  - "config_i2c.h - I2C addresses, MCP23017 pin mappings"
+  - "config_defaults.h - Default axis parameters"
+  - "config_oled.h - OLED display parameters"
+  - "config_yaml_schema.h - YAML keys, NVS mappings, validation macros"
+
+# MANDATORY Architecture Constraints for All Epics/Stories
+mandatory_constraints:
+  header_only_configuration:
+    description: "Every configurable value MUST be defined in a header file"
+    applies_to: "ALL epics and stories"
+    validation: "Code review MUST reject hardcoded values"
+    examples:
+      gpio: "Use GPIO_X_STEP, never GPIO_NUM_2"
+      timing: "Use TIMING_DIR_SETUP_US, never 20"
+      buffers: "Use LIMIT_CMD_MAX_LENGTH, never 256"
+      commands: "Use CMD_MOVE, never 'MOVE'"
+      errors: "Use ERR_INVALID_AXIS, never 'E002'"
+      yaml_keys: "Use YAML_KEY_VELOCITY, never 'velocity'"
+      i2c_addr: "Use I2C_ADDR_MCP23017_0, never 0x20"
+    reference: "docs/architecture.md - MANDATORY: Header-Only Configuration Requirement"
+
+# Epics and Stories Summary
+epics_summary:
+  document: "docs/epics.md"
+  created: "2025-11-29"
+  total_epics: 5
+  total_stories: 50
+  frs_covered: 61
+  epics:
+    - name: "Epic 1: Foundation & Infrastructure"
+      stories: 7
+      coverage: "Enables ALL (infrastructure)"
+    - name: "Epic 2: Communication & Command Interface"
+      stories: 7
+      coverage: "FR19-26, FR51-55"
+    - name: "Epic 3: Motor Control Core"
+      stories: 11
+      coverage: "FR1-10, FR43-44, FR48"
+    - name: "Epic 4: Safety & I/O Systems"
+      stories: 13
+      coverage: "FR11-18, FR33, FR35-42, FR45, FR49, FR56-61"
+    - name: "Epic 5: Configuration & Status Display"
+      stories: 12
+      coverage: "FR27-32, FR34, FR46-47c, FR50"
 
 # Next Steps
 next_steps:
-  - "Conduct GPIO allocation architecture session to resolve TODOs"
-  - "Create system architecture document"
-  - "Generate epics and stories from PRD"
+  - "Run implementation-readiness workflow to validate all artifacts"
+  - "Run sprint-planning workflow to create sprint-status.yaml"
+  - "Begin Phase 4: Implementation with Epic 1"

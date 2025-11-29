@@ -224,7 +224,7 @@ STAT ALL                 # Get status of all axes
 OK AXIS:0 POS:25.5 TGT:100.0 VEL:15.2 MOVING:1 ENABLED:1 COMPLETE:0 FAULT:0
 ```
 
-### INFO - Get System Information  
+### INFO - Get System Information
 ```
 INFO
 ```
@@ -234,6 +234,7 @@ INFO
 **Response Fields**:
 - System name and version
 - Number and types of axes
+- Current operational mode
 - System ready state
 - Emergency stop status
 - Available memory
@@ -248,6 +249,7 @@ INFO
 ```
 OK YAROBOT_CONTROL_UNIT V1.0
 AXES:8 (SERVO:0-4,STEPPER:5-6,DISCRETE:7)
+MODE:NORMAL
 EMERGENCY:0
 MEMORY:145KB/320KB
 UPTIME:00:15:32
@@ -317,6 +319,40 @@ SETB <axis> <backlash>
 Examples:
 ```
 SETB 0 0.05              # 0.05mm backlash compensation
+```
+
+### ALIAS - Set/Get Axis Alias
+```
+ALIAS <axis> [name]
+```
+
+**Description**: Sets or gets a human-readable alias for an axis. Aliases can be used in place of axis numbers in all commands.
+
+**Parameters**:
+- `axis`: Motor axis letter (X-E) or number (0-7)
+- `name`: Optional alias string (max 16 characters, alphanumeric + underscore)
+
+**Behavior**:
+- Without name parameter: returns current alias
+- With name parameter: sets new alias
+- Aliases are case-insensitive for matching
+- Aliases persist across power cycles (saved with SAVE)
+- Reserved names: ALL, NONE, X-E, 0-7
+
+**Examples**:
+```
+ALIAS X RAILWAY          # Set X axis alias to "RAILWAY"
+ALIAS Y GRIPPER          # Set Y axis alias to "GRIPPER"
+ALIAS C JAW              # Set C axis alias to "JAW"
+ALIAS X                  # Get current alias for X
+MOVE RAILWAY 100         # Move using alias instead of X
+```
+
+**Response**:
+```
+OK ALIAS:X=RAILWAY       # Alias set
+OK ALIAS:X=RAILWAY       # Query response
+ERROR E003 Invalid parameter  # Invalid alias name
 ```
 
 ## Control Commands
@@ -484,6 +520,29 @@ ZERO 2                   # Set new work origin for axis 2
 OK ZEROED               # Position set to zero
 ```
 
+### GETWIDTH - Get Last Measured Object Width (C axis)
+```
+GETWIDTH
+```
+
+**Description**: Returns the last object width measured by the C axis floating switch during a gripping operation. The width is calculated as the jaw position when the floating switch triggered.
+
+**Behavior**:
+- Returns 0.0 if no object has been measured since power-on
+- Value persists until next object detection or ZERO C command
+- Width is in configured units (typically mm)
+
+**Examples**:
+```
+GETWIDTH                 # Get last measured object width
+```
+
+**Response**:
+```
+OK WIDTH:12.5            # Last object was 12.5mm wide
+OK WIDTH:0.0             # No object measured yet
+```
+
 ## I/O Commands
 
 ### DIN - Read Digital Input
@@ -550,6 +609,40 @@ OK OUTPUT               # Output set successfully
 ERROR E003 Invalid parameter  # Invalid pin or value
 ```
 
+## Operational Mode Commands
+
+### MODE - Get/Set Operational Mode
+```
+MODE [NORMAL|CONFIG]
+```
+
+**Description**: Gets or sets the current operational mode. In CONFIG mode, motion commands are blocked to allow safe parameter changes.
+
+**Parameters**:
+- No parameter: Returns current mode
+- `NORMAL`: Switch to normal operation (motion enabled)
+- `CONFIG`: Switch to configuration mode (motion blocked)
+
+**Behavior**:
+- CONFIG mode blocks: MOVE, MOVR, VEL, HOME, CALB
+- CONFIG mode allows: All SET commands, SAVE, LOAD, STATUS queries
+- Switching to CONFIG stops all motion first
+- E-stop still functional in CONFIG mode
+
+**Examples**:
+```
+MODE                     # Query current mode
+MODE CONFIG              # Enter configuration mode
+MODE NORMAL              # Return to normal operation
+```
+
+**Response**:
+```
+OK MODE:NORMAL           # Current mode query
+OK MODE:CONFIG           # Mode changed to CONFIG
+ERROR E004 Motion active # Cannot change mode while moving
+```
+
 ## System Commands
 
 ### SAVE - Save Configuration
@@ -609,6 +702,118 @@ LOAD 1                   # Load configuration from slot 1
 ```
 OK LOADED FROM SLOT 0   # Configuration restored
 ERROR E010 Configuration error  # Invalid or corrupted data
+```
+
+### CFGSTART - Start YAML Configuration Transfer
+```
+CFGSTART
+```
+
+**Description**: Initiates YAML configuration transfer mode. System enters a special mode to receive YAML content line by line.
+
+**Behavior**:
+- Switches to CONFIG mode automatically
+- Clears receive buffer
+- Subsequent lines are treated as YAML content until CFGEND
+- Maximum YAML size: 8KB
+
+**Response**:
+```
+OK READY FOR YAML       # Ready to receive YAML lines
+ERROR E012 Command blocked in current mode  # E-stop active
+```
+
+### CFGDATA - Send YAML Configuration Line
+```
+CFGDATA <yaml_line>
+```
+
+**Description**: Sends one line of YAML configuration content. Must be called after CFGSTART.
+
+**Parameters**:
+- `yaml_line`: Single line of YAML content (no line ending needed)
+
+**Behavior**:
+- Appends line to receive buffer
+- Lines are validated for YAML syntax on CFGEND
+- Maximum line length: 256 characters
+
+**Examples**:
+```
+CFGDATA version: 1
+CFGDATA axes:
+CFGDATA   X:
+CFGDATA     alias: "RAILWAY"
+CFGDATA     units_per_pulse: 0.001
+```
+
+**Response**:
+```
+OK                      # Line received
+ERROR E010 Configuration error  # Buffer overflow
+```
+
+### CFGEND - End YAML Configuration Transfer
+```
+CFGEND [APPLY|VALIDATE]
+```
+
+**Description**: Ends YAML transfer and optionally applies the configuration.
+
+**Parameters**:
+- `APPLY`: Parse YAML and apply to running configuration (default)
+- `VALIDATE`: Parse YAML and validate only, don't apply
+
+**Behavior**:
+- Parses received YAML content
+- APPLY: Updates all axis parameters from YAML
+- VALIDATE: Reports any errors without changing configuration
+- Clears receive buffer after processing
+
+**Examples**:
+```
+CFGEND                   # Parse and apply configuration
+CFGEND VALIDATE          # Validate only, report errors
+CFGEND APPLY             # Explicit apply
+```
+
+**Response**:
+```
+OK CONFIG APPLIED       # Configuration updated successfully
+OK CONFIG VALID         # Validation passed (VALIDATE mode)
+ERROR E010 YAML parse error at line 15  # Syntax error
+ERROR E003 Unknown axis "Q" at line 8   # Invalid parameter
+```
+
+### CFGEXPORT - Export Configuration as YAML
+```
+CFGEXPORT
+```
+
+**Description**: Exports current configuration as YAML text. Sends complete YAML document line by line with YAML: prefix.
+
+**Behavior**:
+- Outputs current configuration in YAML format
+- Each line prefixed with "YAML:" for parsing
+- Ends with "OK EXPORT COMPLETE"
+- Can be captured and saved by host
+
+**Example Output**:
+```
+CFGEXPORT
+YAML:version: 1
+YAML:axes:
+YAML:  X:
+YAML:    alias: "RAILWAY"
+YAML:    units_per_pulse: 0.001
+YAML:    limits: [-500.0, 500.0]
+YAML:    velocity: 200.0
+YAML:    acceleration: 1000.0
+YAML:    backlash: 0.05
+YAML:  Y:
+YAML:    alias: "GRIPPER"
+...
+OK EXPORT COMPLETE
 ```
 
 ### RST - Reset Controller
@@ -894,6 +1099,8 @@ Triggered on I2C communication failure.
 | E009 | Communication error |
 | E010 | Configuration error |
 | E011 | Event buffer overflow |
+| E012 | Command blocked in current mode |
+| E013 | Motion active - stop first |
 
 ## Command Examples Session
 

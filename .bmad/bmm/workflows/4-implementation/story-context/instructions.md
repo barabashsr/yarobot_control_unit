@@ -111,6 +111,8 @@
     <action>Search source tree for modules, files, and symbols matching story intent and AC keywords (controllers, services, components, tests).</action>
     <action>Identify existing interfaces/APIs the story should reuse rather than recreate.</action>
     <action>Extract development constraints from Dev Notes and architecture (patterns, layers, testing requirements).</action>
+    <action>CRITICAL: Check {output_folder}/bmm-workflow-status.yaml for mandatory_constraints section. Include ALL mandatory constraints in every story context.</action>
+    <action>CRITICAL: Look for "MANDATORY:" sections in architecture.md - these constraints apply to ALL stories without exception.</action>
     <action>For all discovered code artifacts: convert absolute paths to project-relative format (strip {project-root} prefix).</action>
     <template-output file="{default_output_file}">
       Add artifacts.code entries with {path, kind, symbol, lines, reason}:
