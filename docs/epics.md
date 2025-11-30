@@ -20,10 +20,10 @@ This document provides the complete epic and story breakdown for yarobot_control
 | 1 | Foundation & Infrastructure | 7 | Enables ALL (infrastructure) |
 | 2 | Communication & Command Interface | 7 | FR19-26, FR51-55 |
 | 3 | Motor Control Core | 11 | FR1-10, FR43-44, FR48 |
-| 4 | Safety & I/O Systems | 13 | FR11-18, FR33, FR35-42, FR45, FR49, FR56-61 |
+| 4 | Safety & I/O Systems | 14 | FR11-18, FR33, FR35-42, FR45, FR49, FR56-64 |
 | 5 | Configuration & Status Display | 12 | FR27-32, FR34, FR46-47c, FR50 |
 
-**Total: 50 Stories covering 61 Functional Requirements**
+**Total: 51 Stories covering 64 Functional Requirements**
 
 ---
 
@@ -72,7 +72,7 @@ This document provides the complete epic and story breakdown for yarobot_control
 - FR34: Users can name axes with custom aliases for clarity
 
 **I/O and Peripheral Control (FR35-FR42):**
-- FR35: System can read 8 general-purpose digital inputs
+- FR35: System can read 4 general-purpose digital inputs (hardware design constraint)
 - FR36: System can control 8 general-purpose digital outputs
 - FR37: System can process servo feedback signals (InPos, alarms)
 - FR38: System can detect floating switch activation on C axis (picker jaw)
@@ -109,6 +109,11 @@ This document provides the complete epic and story breakdown for yarobot_control
 - FR60: Users can clear error conditions after resolution
 - FR61: System prevents unsafe operations when in error state
 
+**Driver Alarm Management (FR62-FR64):**
+- FR62: System can monitor driver alarm signals (ALARM_INPUT) for axes X-D in real-time
+- FR63: System can attempt to clear driver alarms via ALARM_CLEAR outputs (CLR command)
+- FR64: System prevents motion commands on axes with active driver alarms
+
 ---
 
 ## FR Coverage Map
@@ -118,7 +123,7 @@ This document provides the complete epic and story breakdown for yarobot_control
 | **Epic 1: Foundation** | Enables ALL (infrastructure) |
 | **Epic 2: Communication** | FR19-26, FR51-55 (13 FRs) |
 | **Epic 3: Motor Control** | FR1-10, FR43-44, FR48 (13 FRs) |
-| **Epic 4: Safety & I/O** | FR11-18, FR33, FR35-42, FR45, FR49, FR56-61 (25 FRs) |
+| **Epic 4: Safety & I/O** | FR11-18, FR33, FR35-42, FR45, FR49, FR56-64 (28 FRs) |
 | **Epic 5: Config & Display** | FR27-32, FR34, FR46-47c, FR50 (13 FRs) |
 
 ---
@@ -1397,11 +1402,11 @@ public:
 
 ## Epic 4: Safety & I/O Systems
 
-**Goal:** Implement safety monitoring, limit switches, E-stop, brake control, general-purpose I/O, and homing sequences for safe operation.
+**Goal:** Implement safety monitoring, limit switches, E-stop, brake control, driver alarm handling, general-purpose I/O, and homing sequences for safe operation.
 
-**User Value:** After this epic, the system monitors all safety conditions in real-time, stops motion when limits are reached, responds to emergency stop immediately, controls brakes appropriately, provides general-purpose I/O access, and can home all axes to known positions.
+**User Value:** After this epic, the system monitors all safety conditions in real-time, stops motion when limits are reached, responds to emergency stop immediately, controls brakes appropriately, detects and clears driver alarms, provides general-purpose I/O access, and can home all axes to known positions.
 
-**FR Coverage:** FR11, FR12, FR13, FR14, FR15, FR16, FR17, FR18, FR33, FR35, FR36, FR37, FR38, FR39, FR40, FR41, FR42, FR45, FR49, FR56, FR57, FR58, FR59, FR60, FR61
+**FR Coverage:** FR11, FR12, FR13, FR14, FR15, FR16, FR17, FR18, FR33, FR35, FR36, FR37, FR38, FR39, FR40, FR41, FR42, FR45, FR49, FR56, FR57, FR58, FR59, FR60, FR61, FR62, FR63, FR64
 
 ---
 
@@ -1433,22 +1438,33 @@ esp_err_t mcp23017_set_interrupt(uint8_t addr, uint8_t port, uint8_t mask, mcp23
 | Address | Port A Function | Port B Function |
 |---------|-----------------|-----------------|
 | I2C_ADDR_MCP23017_0 (0x20) | Limit switches X,Y,Z,A (8 pins) | Limit switches B,C,D,E (6 pins) + 2 spare |
-| I2C_ADDR_MCP23017_1 (0x21) | General-purpose inputs (8 pins) | General-purpose outputs (8 pins) |
-| I2C_ADDR_MCP23017_2 (0x22) | Servo feedback: InPos X,Y,Z,A,B (5 pins) + 3 spare | Servo alarms (5 pins) + 3 spare |
+| I2C_ADDR_MCP23017_1 (0x21) | ALARM_INPUT X-D (7 pins) + 1 spare | ALARM_CLEAR X-D (7 pins) + 1 spare |
+| I2C_ADDR_MCP23017_2 (0x22) | InPos X,Y,Z,A,B (5 pins) + 3 spare inputs | General outputs (8 pins) |
 
-**Interrupt Configuration:**
-**Given** GPIO_MCP_INT is connected to all MCP23017 INTA/INTB pins (active-low, open-drain)
-**When** any input changes state
-**Then** interrupt fires on ESP32-S3
-**And** ISR reads interrupt flags to identify source
+**Interrupt Configuration (6 separate interrupt lines):**
+| GPIO | MCP | Port | Function | Interrupt Use |
+|------|-----|------|----------|---------------|
+| GPIO_MCP0_INTA | #0 | A | X-A limit switches | Yes - safety critical |
+| GPIO_MCP0_INTB | #0 | B | B-E limit switches | Yes - safety critical |
+| GPIO_MCP1_INTA | #1 | A | ALARM_INPUT signals | Yes - driver faults |
+| GPIO_MCP1_INTB | #1 | B | ALARM_CLEAR outputs | No - outputs only |
+| GPIO_MCP2_INTA | #2 | A | InPos + spare inputs | Optional - polling OK |
+| GPIO_MCP2_INTB | #2 | B | GP outputs | No - outputs only |
+
+**Given** each MCP23017 has separate INTA/INTB lines routed to ESP32 GPIOs
+**When** an input changes state on a monitored port
+**Then** corresponding interrupt fires on ESP32-S3
+**And** ISR identifies source MCP and port from GPIO that triggered
 
 **Prerequisites:** Epic 1 complete, Epic 3 complete
 
 **Technical Notes:**
 - Implement in `components/drivers/mcp23017/`
 - Use espressif/mcp23017 component from ESP Component Registry
-- Configure interrupt-on-change for limit switch inputs
-- Polling fallback if interrupt not reliable
+- Configure interrupt-on-change for limit switch inputs (MCP0)
+- Configure interrupt-on-change for ALARM_INPUT (MCP1 Port A)
+- InPos signals (MCP2) can use polling - not time-critical
+- Polling fallback at TIMING_I2C_POLL_MS (5ms) if interrupt missed
 - I2C mutex required for thread-safe access
 - FR35, FR36, FR37 foundation
 
@@ -1483,11 +1499,14 @@ esp_err_t mcp23017_set_interrupt(uint8_t addr, uint8_t port, uint8_t mask, mcp23
 **When** limit switch state changes
 **Then** safety_monitor is notified within TIMING_I2C_POLL_MS + TIMING_SAFETY_RESPONSE_MS
 
-**Interrupt Mode (Optional Optimization):**
-**Given** MCP23017 interrupt is configured
+**Interrupt Mode (Primary - Safety Critical):**
+**Given** MCP23017 #0 interrupts are configured:
+- GPIO_MCP0_INTA for Port A (X,Y,Z,A limits)
+- GPIO_MCP0_INTB for Port B (B,C,D,E limits)
 **When** any limit switch activates
-**Then** GPIO_MCP_INT triggers ESP32 ISR
-**And** ISR signals safety_monitor_task via task notification
+**Then** corresponding GPIO triggers ESP32 ISR
+**And** ISR signals safety_monitor_task via task notification (NOTIFY_LIMIT)
+**And** safety task reads MCP0 to identify which switch triggered
 
 **Polarity Configuration (FR18):**
 **Given** limit switch polarity may be NO or NC
@@ -1735,22 +1754,33 @@ OK X:00 Y:00 Z:01 A:00 B:00 C:10 D:00 E:--
 
 **Acceptance Criteria:**
 
-**Digital Inputs (8 pins on MCP23017_1 Port A):**
+**Digital Inputs (4 pins across MCP23017_1 and MCP23017_2):**
+| Pin | MCP | Port | Config Define |
+|-----|-----|------|---------------|
+| DIN0 | #1 | A7 | MCP1_GP_IN_0 |
+| DIN1 | #2 | A5 | MCP2_GP_IN_1 |
+| DIN2 | #2 | A6 | MCP2_GP_IN_2 |
+| DIN3 | #2 | A7 | MCP2_GP_IN_3 |
+
 **Given** I send `DIN` (CMD_DIN)
 **When** command executes
-**Then** response is `OK 0b10110100` (binary) or `OK 180` (decimal)
+**Then** response is `OK 0b1010` (4-bit binary) or `OK 10` (decimal)
 
-**Given** I send `DIN 3` (read input 3)
-**Then** response is `OK DIN3 1` (or 0)
+**Given** I send `DIN 2` (read input 2)
+**Then** response is `OK DIN2 1` (or 0)
 
-**Given** input aliases are configured (e.g., "SENSOR1" = DIN0)
+**Given** input aliases are configured (e.g., "SENSOR1" = DIN1)
 **When** I send `DIN SENSOR1`
 **Then** response is `OK SENSOR1 1`
 
-**Digital Outputs (8 pins on MCP23017_1 Port B):**
+**Digital Outputs (8 pins on MCP23017_2 Port B):**
+| Pin | MCP | Port | Config Define |
+|-----|-----|------|---------------|
+| DOUT0-7 | #2 | B0-B7 | MCP2_GP_OUT_1..8 |
+
 **Given** I send `DOUT 5 1` (CMD_DOUT)
 **When** command executes
-**Then** output 5 is set HIGH
+**Then** output 5 is set HIGH (MCP2_GP_OUT_6)
 **And** response is RESP_OK
 
 **Given** I send `DOUT` (query all)
@@ -1758,7 +1788,7 @@ OK X:00 Y:00 Z:01 A:00 B:00 C:10 D:00 E:--
 
 **Given** output alias "LIGHT" = DOUT7
 **When** I send `DOUT LIGHT 1`
-**Then** output 7 is set HIGH
+**Then** output 7 is set HIGH (MCP2_GP_OUT_8)
 
 **Input Debouncing (FR41):**
 **Given** TIMING_DEBOUNCE_MS is configured (default 10ms)
@@ -1767,32 +1797,34 @@ OK X:00 Y:00 Z:01 A:00 B:00 C:10 D:00 E:--
 **And** rapid toggling is filtered out
 
 **Input Event Notifications:**
-**Given** input event mode is enabled for DIN0
-**When** DIN0 changes from 0 to 1
-**Then** event published: `EVENT DIN DIN0 1`
+**Given** input event mode is enabled for DIN1
+**When** DIN1 changes from 0 to 1
+**Then** event published: `EVENT DIN DIN1 1`
 
 **Prerequisites:** Story 4.1
 
 **Technical Notes:**
 - Implement commands in `components/control/command_executor/`
-- FR35: 8 digital inputs
-- FR36: 8 digital outputs
+- FR35: 4 digital inputs (hardware limitation - 3 on MCP2 + 1 on MCP1)
+- FR36: 8 digital outputs (MCP2 Port B)
 - FR41: debouncing
 - FR42: pin names/aliases
+- DIN0 shares MCP1 with alarm signals - coordinate I2C access
+- Inputs can use GPIO_MCP2_INTA interrupt or polling
 
 ---
 
-### Story 4.8: Servo Feedback Processing
+### Story 4.8: Servo Feedback Processing (InPos Signals)
 
 **As a** user,
-**I want** servo feedback signals processed,
-**So that** I know when moves complete and if drives report alarms.
+**I want** servo InPos feedback signals processed,
+**So that** I know when moves complete and can trust position confirmation.
 
 **Acceptance Criteria:**
 
 **InPos Signal Processing:**
 **Given** servo X completes a move (drive reports position reached)
-**When** InPos_X signal goes active on MCP23017_2
+**When** InPos_X signal goes active on MCP23017_2 Port A
 **Then** this confirms motion completion
 **And** internal state updated to IDLE
 
@@ -1801,29 +1833,21 @@ OK X:00 Y:00 Z:01 A:00 B:00 C:10 D:00 E:--
 **Then** event published: `EVENT ERROR X E010` (ERR_INPOS_TIMEOUT)
 **And** axis state set to ERROR
 
-**Alarm Signal Processing:**
-**Given** servo X drive has alarm condition
-**When** Alarm_X signal goes active on MCP23017_2
-**Then** event published: `EVENT ALARM X`
-**And** X axis motion stopped
-**And** X axis state set to ERROR
-
 **CMD_SERVOSTAT Command:**
 **Given** I send `SERVOSTAT` (CMD_SERVOSTAT)
 **When** command executes
-**Then** response shows servo status:
+**Then** response shows servo InPos status:
 ```
-OK X:INPOS:1,ALM:0 Y:INPOS:1,ALM:0 Z:INPOS:0,ALM:0 A:INPOS:1,ALM:0 B:INPOS:1,ALM:0
+OK X:INPOS:1 Y:INPOS:1 Z:INPOS:0 A:INPOS:1 B:INPOS:1
 ```
 
 **Prerequisites:** Story 4.1, Story 3.6
 
 **Technical Notes:**
-- InPos signals on MCP23017_2 Port A (5 pins)
-- Alarm signals on MCP23017_2 Port B (5 pins)
-- FR37: servo feedback processing
+- InPos signals on MCP23017_2 Port A (5 pins for servo axes X,Y,Z,A,B)
+- FR37: servo feedback processing (InPos portion)
 - InPos is confirmation, not position source (servos track internally)
-- Alarms require manual reset of servo drive
+- Alarm handling is separate in Story 4.14 (uses MCP23017_1)
 
 ---
 
@@ -1851,9 +1875,11 @@ OK X:INPOS:1,ALM:0 Y:INPOS:1,ALM:0 Z:INPOS:0,ALM:0 A:INPOS:1,ALM:0 B:INPOS:1,ALM
 6. Width stored for query
 
 **Floating Switch Input:**
-**Given** floating switch is on dedicated MCP23017 input (MCP0_PB6 or similar)
+**Given** floating switch is connected to MCP23017_0 spare pin (MCP0_PB6)
 **When** switch activates during closing motion
-**Then** position recorded
+**Then** GPIO_MCP0_INTB triggers interrupt (same as B-E limit switches)
+**And** safety task identifies floating switch vs limit switch
+**And** position recorded
 **And** event generated (FR39)
 
 **CMD_WIDTH Command (FR40):**
@@ -1868,7 +1894,8 @@ OK X:INPOS:1,ALM:0 Y:INPOS:1,ALM:0 Z:INPOS:0,ALM:0 A:INPOS:1,ALM:0 B:INPOS:1,ALM
 **Prerequisites:** Story 4.2, Story 3.7
 
 **Technical Notes:**
-- Floating switch is different from limit switches
+- Floating switch uses MCP0 spare pin (PB6) - shares interrupt with B-E limits
+- Floating switch is different from limit switches - doesn't set error state
 - Only C axis has this feature (picker jaw)
 - FR38: detect floating switch
 - FR39: measure and report width via event
@@ -2111,6 +2138,95 @@ OK X POS:0.000 EN:1 MOV:0 ERR:0 LIM:00 HOMED:1
 - FR33: homing sequences
 - Stepper axes especially need homing (no absolute position)
 - E axis (discrete) doesn't need homing (fixed endpoints)
+
+---
+
+### Story 4.14: Driver Alarm Monitoring & Clearance
+
+**As a** user,
+**I want** driver alarms detected and clearable,
+**So that** I know when motor drivers have faults and can attempt to recover without power cycling.
+
+**Acceptance Criteria:**
+
+**Alarm Detection (FR62):**
+**Given** motor driver X enters alarm state (overcurrent, overheat, position error, etc.)
+**When** ALARM_INPUT_X signal goes active on MCP23017_1 Port A
+**Then** event published: `EVENT ALARM X`
+**And** X axis motion stopped immediately
+**And** X axis state set to ALARM
+**And** OLED shows "ALARM X" with high priority
+
+**Given** multiple drivers have alarms
+**When** alarms are active on X and Z
+**Then** events published: `EVENT ALARM X`, `EVENT ALARM Z`
+**And** both axes stopped and set to ALARM state
+
+**Alarm Status Query:**
+**Given** I send `STAT X`
+**When** X has active alarm
+**Then** response includes alarm status:
+```
+OK X POS:123.456 EN:1 MOV:0 ERR:0 LIM:00 HOMED:1 ALM:1
+```
+
+**Given** I send `STAT`
+**Then** response shows alarm status for all axes:
+```
+OK X:ALM:0 Y:ALM:1 Z:ALM:0 A:ALM:0 B:ALM:0 C:ALM:0 D:ALM:0
+```
+
+**Motion Blocking (FR64):**
+**Given** axis X has active alarm (ALM:1)
+**When** I send `MOVE X 100`
+**Then** response is `ERROR E014 Driver alarm active`
+**And** motion not started
+
+**Given** axis X alarm is cleared (ALM:0)
+**When** I send `MOVE X 100`
+**Then** motion executes normally
+
+**Alarm Clearance (FR63):**
+**Given** axis X has active alarm
+**When** I send `CLR X` (CMD_CLR)
+**Then** ALARM_CLEAR_X output pulses on MCP23017_1 Port B
+**And** system waits TIMING_ALARM_CLEAR_PULSE_MS (100ms default)
+**And** ALARM_CLEAR_X output deasserts
+**And** system checks ALARM_INPUT_X after TIMING_ALARM_CHECK_DELAY_MS (50ms)
+
+**Given** alarm clears successfully (ALARM_INPUT_X inactive)
+**Then** response is `OK`
+**And** event published: `EVENT ALARMCLR X`
+**And** X axis state returns to IDLE
+**And** motion commands allowed again
+
+**Given** alarm persists after clear attempt
+**Then** response is `ERROR E015 Alarm clear failed`
+**And** axis remains in ALARM state
+**And** user should check physical cause (motor, driver, wiring)
+
+**CLR ALL Command:**
+**Given** multiple axes have alarms
+**When** I send `CLR ALL`
+**Then** clear attempted on all axes with active alarms
+**And** results reported:
+```
+OK X:CLEARED Y:FAILED Z:CLEARED
+```
+
+**Prerequisites:** Story 4.1 (MCP23017 driver), Story 4.10 (error tracking)
+
+**Technical Notes:**
+- ALARM_INPUT signals on MCP23017_1 (0x21) Port A pins 0-6 for axes X-D
+- ALARM_CLEAR outputs on MCP23017_1 (0x21) Port B pins 0-6 for axes X-D
+- Interrupt on GPIO_MCP1_INTA for alarm detection (see architecture)
+- FR62: monitor ALARM_INPUT signals
+- FR63: CLR command pulses ALARM_CLEAR outputs
+- FR64: block motion when alarm active
+- E axis (discrete actuator) has no alarm signals
+- Clear pulse polarity/duration may need per-driver configuration
+- Alarm states tracked in axis_state[].alarm_active
+- ISR handler queues notification to safety task (process_alarm_inputs)
 
 ---
 
@@ -2812,7 +2928,7 @@ C.limit_max: 200.0 (default: 1000.0)
 | FR33 | Homing sequences | Epic 4 | 4.13 | Planned |
 | FR34 | Custom axis aliases | Epic 5 | 5.8 | Planned |
 | **I/O and Peripheral Control** |
-| FR35 | Read 8 general-purpose digital inputs | Epic 4 | 4.7 | Planned |
+| FR35 | Read 4 general-purpose digital inputs | Epic 4 | 4.7 | Planned |
 | FR36 | Control 8 general-purpose digital outputs | Epic 4 | 4.7 | Planned |
 | FR37 | Process servo feedback signals | Epic 4 | 4.8 | Planned |
 | FR38 | Detect C axis floating switch | Epic 4 | 4.9 | Planned |
@@ -2845,9 +2961,12 @@ C.limit_max: 200.0 (default: 1000.0)
 | FR59 | Log errors for troubleshooting | Epic 4 | 4.12 | Planned |
 | FR60 | Clear error conditions | Epic 4 | 4.10 | Planned |
 | FR61 | Prevent unsafe operations in error state | Epic 4 | 4.10 | Planned |
+| FR62 | Monitor driver alarm signals (ALARM_INPUT) | Epic 4 | 4.14 | Planned |
+| FR63 | Clear driver alarms (CLR command) | Epic 4 | 4.14 | Planned |
+| FR64 | Block motion on axes with active alarms | Epic 4 | 4.14 | Planned |
 
 **Coverage Summary:**
-- Total FRs: 61 (including FR47a, FR47b, FR47c as sub-requirements)
+- Total FRs: 64 (including FR47a, FR47b, FR47c as sub-requirements)
 - All FRs mapped to stories: ✓
 - All FRs have implementation plan: ✓
 
@@ -2870,7 +2989,7 @@ Epic 2: Communication & Command Interface (7 stories)
     ↓ Provides command framework
 Epic 3: Motor Control Core (11 stories)
     ↓ Core product functionality
-Epic 4: Safety & I/O Systems (13 stories)
+Epic 4: Safety & I/O Systems (14 stories)
     ↓ Safety and I/O integration
 Epic 5: Configuration & Status Display (12 stories)
     └ Configuration and user interface

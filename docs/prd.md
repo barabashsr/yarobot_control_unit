@@ -362,7 +362,7 @@ This abstraction layer handles:
 
 **I/O and Peripheral Control**
 
-- FR35: System can read 8 general-purpose digital inputs
+- FR35: System can read 4 general-purpose digital inputs (hardware design constraint)
 - FR36: System can control 8 general-purpose digital outputs
 - FR37: System can process servo feedback signals (InPos, alarms)
 - FR38: System can detect floating switch activation on C axis (picker jaw)
@@ -370,6 +370,12 @@ This abstraction layer handles:
 - FR40: System can query last measured object width from C axis
 - FR41: System provides configurable input debouncing
 - FR42: Users can read/write I/O using pin names or aliases
+
+**Driver Alarm Management**
+
+- FR62: System can monitor driver alarm signals (ALARM_INPUT) for axes X-D in real-time
+- FR63: System can attempt to clear driver alarms via ALARM_CLEAR outputs (CLR command)
+- FR64: System prevents motion commands on axes with active driver alarms
 
 **Status and Monitoring**
 

@@ -184,28 +184,594 @@ yarobot_control_unit/
 
 These patterns ensure consistent implementation across all components:
 
+### Streaming Double-Buffer Pulse Generation
+
+> **⚠️ ARCHITECTURE CONSTRAINT - APPLIES TO ALL MOTION**
+>
+> **All pulse generation uses streaming double-buffer architecture.** This is non-negotiable.
+>
+> - Short moves, long moves, and continuous jogging use the **same streaming infrastructure**
+> - No special-case code paths for "small" vs "large" motions
+> - Buffer swap happens via DMA callback - zero CPU involvement during transmission
+> - Motion length is **unlimited** - profile generator streams pulses on-demand
+
+**Why Double-Buffer Everywhere:**
+
+1. **Consistency** - One code path to test, debug, and maintain
+2. **Unlimited motion** - No buffer size limits on travel distance
+3. **Smooth continuous motion** - VEL (jog) command works seamlessly
+4. **Predictable timing** - DMA handles transmission, CPU handles profile math
+5. **Clean abort** - Stop command just stops refilling buffers
+
+#### Buffer Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                     RMT DMA Double-Buffer                           │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│   ┌──────────────┐         ┌──────────────┐                        │
+│   │  Buffer A    │         │  Buffer B    │                        │
+│   │  (512 sym)   │         │  (512 sym)   │                        │
+│   └──────┬───────┘         └──────┬───────┘                        │
+│          │                        │                                 │
+│          ▼                        ▼                                 │
+│   ┌──────────────────────────────────────────┐                     │
+│   │            RMT DMA Engine                 │                     │
+│   │  (transmits while CPU fills other buf)   │                     │
+│   └──────────────────┬───────────────────────┘                     │
+│                      │                                              │
+│                      ▼                                              │
+│              ┌──────────────┐                                       │
+│              │  GPIO Output │ ────► STEP pulse to motor driver     │
+│              └──────────────┘                                       │
+│                                                                     │
+│   ┌─────────────────────────────────────────────────────────────┐  │
+│   │                    Profile Generator                         │  │
+│   │  ┌─────────┐   ┌─────────┐   ┌─────────┐   ┌─────────┐     │  │
+│   │  │  Accel  │ → │ Const V │ → │  Decel  │ → │  Done   │     │  │
+│   │  │  Phase  │   │  Phase  │   │  Phase  │   │  State  │     │  │
+│   │  └─────────┘   └─────────┘   └─────────┘   └─────────┘     │  │
+│   │                                                              │  │
+│   │  Generates next batch of RMT symbols on TX-done callback    │  │
+│   └─────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+#### Streaming State Machine
+
+```
+                    ┌─────────────┐
+                    │    IDLE     │
+                    └──────┬──────┘
+                           │ start_motion()
+                           ▼
+                    ┌─────────────┐
+                    │   PRIMING   │  ← Fill both buffers before TX start
+                    └──────┬──────┘
+                           │ buffers ready
+                           ▼
+                    ┌─────────────┐
+            ┌──────►│  STREAMING  │◄─────┐
+            │       └──────┬──────┘      │
+            │              │             │
+    TX-done callback       │             │ more pulses needed
+    (swap buffers)         │             │
+            │              ▼             │
+            │       ┌─────────────┐      │
+            └───────┤  REFILLING  ├──────┘
+                    └──────┬──────┘
+                           │ profile complete OR stop()
+                           ▼
+                    ┌─────────────┐
+                    │  DRAINING   │  ← Transmit remaining buffer, no refill
+                    └──────┬──────┘
+                           │ TX complete
+                           ▼
+                    ┌─────────────┐
+                    │    IDLE     │
+                    └─────────────┘
+```
+
+#### IPulseGenerator Interface (Streaming)
+
+```cpp
+// Streaming pulse generator interface - ALL implementations use this
+class IPulseGenerator {
+public:
+    virtual ~IPulseGenerator() = default;
+
+    // === Motion Control ===
+
+    // Start a position move (finite pulses with trapezoidal profile)
+    virtual esp_err_t startMove(
+        int32_t pulses,           // Target pulse count (signed for direction)
+        float max_velocity,       // pulses/sec
+        float acceleration        // pulses/sec²
+    ) = 0;
+
+    // Start continuous motion (velocity mode - infinite until stop)
+    virtual esp_err_t startVelocity(
+        float velocity,           // pulses/sec (signed for direction)
+        float acceleration        // ramp rate to target velocity
+    ) = 0;
+
+    // Controlled stop (decelerate to zero)
+    virtual esp_err_t stop(float deceleration) = 0;
+
+    // Emergency stop (immediate halt, no decel ramp)
+    virtual void stopImmediate() = 0;
+
+    // === Status ===
+    virtual bool isRunning() const = 0;
+    virtual int64_t getPulseCount() const = 0;      // Pulses generated so far
+    virtual float getCurrentVelocity() const = 0;   // Instantaneous velocity
+
+    // === Callbacks ===
+    using MotionCompleteCallback = std::function<void(int64_t total_pulses)>;
+    virtual void setCompletionCallback(MotionCompleteCallback cb) = 0;
+};
+```
+
+#### RMT Implementation Details
+
+```cpp
+// RMT-specific streaming implementation
+class RmtPulseGenerator : public IPulseGenerator {
+private:
+    // Double buffer configuration
+    static constexpr size_t BUFFER_SYMBOLS = 512;  // Per buffer
+    rmt_symbol_word_t buffer_a_[BUFFER_SYMBOLS];
+    rmt_symbol_word_t buffer_b_[BUFFER_SYMBOLS];
+
+    // Buffer state
+    enum class BufferState { IDLE, TRANSMITTING, READY };
+    struct {
+        rmt_symbol_word_t* data;
+        size_t count;
+        BufferState state;
+    } buffers_[2];
+    uint8_t active_buffer_;      // Currently being transmitted by DMA
+    uint8_t fill_buffer_;        // Currently being filled by CPU
+
+    // Profile state
+    enum class ProfilePhase { ACCEL, CONST, DECEL, DONE };
+    struct {
+        ProfilePhase phase;
+        float current_velocity;
+        float target_velocity;
+        float acceleration;
+        int64_t pulses_remaining;
+        int64_t pulses_generated;
+        bool is_continuous;      // true for VEL command
+    } profile_;
+
+    // RMT handles
+    rmt_channel_handle_t channel_;
+    rmt_encoder_handle_t encoder_;
+
+    // Hardware constants
+    static constexpr uint32_t RMT_RESOLUTION_HZ = 80000000;  // 80MHz
+    static constexpr uint16_t MIN_SYMBOL_TICKS = 40;         // 500ns minimum
+    static constexpr uint16_t MAX_SYMBOL_TICKS = 0x7FFF;     // 15-bit max
+
+public:
+    // Called by RMT TX-done ISR
+    static bool IRAM_ATTR onTxDone(
+        rmt_channel_handle_t channel,
+        const rmt_tx_done_event_data_t* event,
+        void* user_ctx
+    ) {
+        auto* self = static_cast<RmtPulseGenerator*>(user_ctx);
+        BaseType_t woken = pdFALSE;
+
+        // Signal motion task to refill the just-completed buffer
+        xTaskNotifyFromISR(self->motion_task_, NOTIFY_BUFFER_DONE,
+                          eSetBits, &woken);
+
+        // Swap to next buffer if ready
+        if (self->buffers_[self->fill_buffer_].state == BufferState::READY) {
+            self->active_buffer_ = self->fill_buffer_;
+            self->fill_buffer_ = 1 - self->fill_buffer_;
+            // Continue transmission with next buffer
+            rmt_transmit(channel, self->encoder_,
+                        self->buffers_[self->active_buffer_].data,
+                        self->buffers_[self->active_buffer_].count * sizeof(rmt_symbol_word_t),
+                        &self->tx_config_);
+        }
+
+        return woken == pdTRUE;
+    }
+
+private:
+    // Fill one buffer with next batch of profile pulses
+    size_t fillBuffer(rmt_symbol_word_t* buffer, size_t max_symbols) {
+        size_t count = 0;
+
+        while (count < max_symbols && profile_.phase != ProfilePhase::DONE) {
+            // Calculate period for current velocity
+            float period_sec = 1.0f / fabsf(profile_.current_velocity);
+            uint32_t half_period_ticks = (uint32_t)(period_sec * RMT_RESOLUTION_HZ / 2);
+
+            // Clamp to valid range
+            half_period_ticks = std::clamp(half_period_ticks,
+                                           (uint32_t)MIN_SYMBOL_TICKS,
+                                           (uint32_t)MAX_SYMBOL_TICKS);
+
+            // Create RMT symbol (one STEP pulse)
+            buffer[count].duration0 = half_period_ticks;
+            buffer[count].level0 = 1;
+            buffer[count].duration1 = half_period_ticks;
+            buffer[count].level1 = 0;
+            count++;
+
+            // Update profile state
+            profile_.pulses_generated++;
+            if (!profile_.is_continuous) {
+                profile_.pulses_remaining--;
+            }
+
+            // Update velocity based on current phase
+            updateProfilePhase();
+        }
+
+        return count;
+    }
+
+    void updateProfilePhase() {
+        switch (profile_.phase) {
+            case ProfilePhase::ACCEL:
+                profile_.current_velocity += profile_.acceleration / profile_.current_velocity;
+                if (profile_.current_velocity >= profile_.target_velocity) {
+                    profile_.current_velocity = profile_.target_velocity;
+                    profile_.phase = ProfilePhase::CONST;
+                }
+                // Check if we need to start decel (for position moves)
+                if (!profile_.is_continuous && needsDecelNow()) {
+                    profile_.phase = ProfilePhase::DECEL;
+                }
+                break;
+
+            case ProfilePhase::CONST:
+                // Velocity stays constant
+                if (!profile_.is_continuous && needsDecelNow()) {
+                    profile_.phase = ProfilePhase::DECEL;
+                }
+                break;
+
+            case ProfilePhase::DECEL:
+                profile_.current_velocity -= profile_.acceleration / profile_.current_velocity;
+                if (profile_.current_velocity <= 0 || profile_.pulses_remaining <= 0) {
+                    profile_.phase = ProfilePhase::DONE;
+                }
+                break;
+
+            case ProfilePhase::DONE:
+                break;
+        }
+    }
+
+    bool needsDecelNow() const {
+        // Calculate pulses needed to decelerate from current velocity to zero
+        // d = v² / (2a)
+        float decel_pulses = (profile_.current_velocity * profile_.current_velocity)
+                           / (2.0f * profile_.acceleration);
+        return profile_.pulses_remaining <= (int64_t)decel_pulses;
+    }
+};
+```
+
+#### Buffer Configuration Constants
+
+Add to `config_limits.h`:
+
+```c
+// ============================================================================
+// PULSE GENERATION BUFFER SIZES
+// ============================================================================
+// Double-buffer streaming for unlimited motion length
+#define LIMIT_RMT_BUFFER_SYMBOLS    512     // Symbols per buffer (×2 for double)
+#define LIMIT_RMT_BUFFER_COUNT      2       // Always 2 for double-buffering
+#define LIMIT_MCPWM_BUFFER_PULSES   256     // MCPWM pulse batch size
+#define LIMIT_LEDC_BUFFER_PULSES    128     // LEDC pulse batch size
+
+// Timing constraints
+#define LIMIT_MIN_PULSE_PERIOD_NS   500     // 2MHz max pulse rate
+#define LIMIT_MAX_PULSE_PERIOD_NS   1000000000  // 1Hz min pulse rate (1 second)
+```
+
+#### Motion Examples
+
+**Short Move (10 pulses):**
+```
+1. startMove(10, 1000, 5000) called
+2. PRIMING: Fill buffer A (10 symbols), buffer B empty
+3. STREAMING: Transmit buffer A
+4. DRAINING: No refill needed - motion < 1 buffer
+5. TX-done: Profile complete, fire callback
+```
+
+**Long Move (100,000 pulses):**
+```
+1. startMove(100000, 50000, 10000) called
+2. PRIMING: Fill buffer A (512 sym), fill buffer B (512 sym)
+3. STREAMING: Transmit A, refill A when done, swap to B
+4. Continue until pulses_remaining < 512
+5. DRAINING: Final partial buffer, no refill
+6. TX-done: Profile complete, fire callback
+```
+
+**Continuous Jog (VEL command):**
+```
+1. startVelocity(10000, 5000) called
+2. PRIMING: Fill buffer A, fill buffer B (both at accel ramp)
+3. STREAMING: Endless loop - refill buffers with constant-velocity pulses
+4. stop(5000) called → switch to DECEL phase
+5. DRAINING: Decel ramp completes
+6. TX-done: Motion stopped, fire callback
+```
+
+### SI Units Convention (ROS2 Compatible)
+
+> **⚠️ ARCHITECTURE CONSTRAINT - APPLIES TO ALL INTERFACES**
+>
+> **All external interfaces use SI units.** This is non-negotiable.
+>
+> | Quantity | Unit | Symbol | Notes |
+> |----------|------|--------|-------|
+> | Linear position | meters | m | Not mm, not inches |
+> | Angular position | radians | rad | Not degrees |
+> | Linear velocity | meters/second | m/s | |
+> | Angular velocity | radians/second | rad/s | |
+> | Linear acceleration | meters/second² | m/s² | |
+> | Angular acceleration | radians/second² | rad/s² | |
+> | Time | seconds | s | |
+>
+> **ROS2 Compatibility:** These units match REP-103 (Standard Units of Measure) for seamless future integration with ros2_control hardware_interface.
+
+#### Unit Domains
+
+The system has three unit domains with clear boundaries:
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         EXTERNAL DOMAIN                                 │
+│                     (Host Interface - SI Units)                         │
+│                                                                         │
+│   Commands:    MOVE X 0.150 0.050      (150mm at 50mm/s)               │
+│                VEL Y 1.571             (90°/s in radians)              │
+│   Responses:   POS X 0.150             (position in meters)            │
+│   Config:      limits: [-0.500, 0.500] (±500mm in meters)              │
+│                                                                         │
+│   Units: meters, radians, seconds                                       │
+└────────────────────────────┬────────────────────────────────────────────┘
+                             │
+                             │ IMotor interface (SI units)
+                             ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         MOTOR DOMAIN                                    │
+│                    (Unit Conversion Layer)                              │
+│                                                                         │
+│   AxisConfig:                                                           │
+│     pulses_per_meter = 1000000.0   (1µm resolution)                    │
+│     pulses_per_radian = 10000.0    (0.1mrad resolution)                │
+│                                                                         │
+│   Conversion (linear axis example):                                     │
+│     position_m = 0.150                                                  │
+│     pulses = position_m * pulses_per_meter = 150000                    │
+│     velocity_pps = velocity_mps * pulses_per_meter                     │
+│                                                                         │
+│   Position tracking in SI units (meters or radians)                     │
+│   Soft limit checking in SI units                                       │
+└────────────────────────────┬────────────────────────────────────────────┘
+                             │
+                             │ IPulseGenerator interface (pulses)
+                             ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         PULSE DOMAIN                                    │
+│                    (Hardware Abstraction)                               │
+│                                                                         │
+│   startMove(150000, 50000.0f, accel_pps2)                              │
+│                                                                         │
+│   Units: pulses, pulses/second, pulses/second²                         │
+│   No awareness of physical units - pure pulse counting                  │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+#### Axis Configuration Structure
+
+```cpp
+// Per-axis configuration - stored in NVS, loaded at startup
+struct AxisConfig {
+    // === Unit Conversion ===
+    float pulses_per_unit;        // pulses/meter (linear) or pulses/radian (rotary)
+    bool is_rotary;               // true = radians, false = meters
+
+    // === Soft Limits (SI units) ===
+    float limit_min;              // meters or radians
+    float limit_max;              // meters or radians
+
+    // === Motion Parameters (SI units) ===
+    float max_velocity;           // m/s or rad/s
+    float max_acceleration;       // m/s² or rad/s²
+
+    // === Compensation ===
+    float backlash;               // meters or radians
+    float home_offset;            // meters or radians
+
+    // === Identity ===
+    char alias[LIMIT_ALIAS_MAX_LENGTH + 1];  // Human-readable name
+};
+
+// Compile-time validation
+static_assert(sizeof(AxisConfig) <= 64, "AxisConfig must fit in NVS blob");
+```
+
+#### Unit Conversion Implementation
+
+```cpp
+class ServoMotor : public IMotor {
+private:
+    AxisConfig config_;
+    std::unique_ptr<IPulseGenerator> pulse_gen_;
+    float current_position_;      // SI units (meters or radians)
+
+    // Convert SI units to pulses
+    int32_t toPulses(float si_units) const {
+        return static_cast<int32_t>(si_units * config_.pulses_per_unit);
+    }
+
+    // Convert pulses to SI units
+    float toSIUnits(int64_t pulses) const {
+        return static_cast<float>(pulses) / config_.pulses_per_unit;
+    }
+
+    // Convert velocity: SI units/sec → pulses/sec
+    float toVelocityPPS(float velocity_si) const {
+        return fabsf(velocity_si) * config_.pulses_per_unit;
+    }
+
+    // Convert acceleration: SI units/sec² → pulses/sec²
+    float toAccelPPS2(float accel_si) const {
+        return accel_si * config_.pulses_per_unit;
+    }
+
+public:
+    esp_err_t moveAbsolute(float position, float velocity) override {
+        // Validate against soft limits (SI units)
+        if (position < config_.limit_min || position > config_.limit_max) {
+            return ESP_ERR_INVALID_ARG;
+        }
+        if (velocity > config_.max_velocity) {
+            velocity = config_.max_velocity;
+        }
+
+        // Calculate delta in SI units
+        float delta = position - current_position_;
+
+        // Apply backlash compensation if direction changed
+        // ... (backlash logic)
+
+        // Convert to pulse domain
+        int32_t pulses = toPulses(delta);
+        float velocity_pps = toVelocityPPS(velocity);
+        float accel_pps2 = toAccelPPS2(config_.max_acceleration);
+
+        // Delegate to pulse generator (no unit awareness)
+        return pulse_gen_->startMove(pulses, velocity_pps, accel_pps2);
+    }
+
+    float getPosition() const override {
+        // Return position in SI units
+        return current_position_;
+    }
+
+    float getVelocity() const override {
+        // Convert current pulse rate to SI units
+        float velocity_pps = pulse_gen_->getCurrentVelocity();
+        return velocity_pps / config_.pulses_per_unit;
+    }
+};
+```
+
+#### Typical Axis Configurations
+
+| Axis | Type | pulses_per_unit | Resolution | Typical Range |
+|------|------|-----------------|------------|---------------|
+| X (Railway) | Linear | 1,000,000 | 1 µm/pulse | ±0.5 m |
+| Y (Gripper rotation) | Rotary | 10,000 | 0.1 mrad/pulse | 0 to 2π rad |
+| Z (Vertical) | Linear | 500,000 | 2 µm/pulse | 0 to 0.3 m |
+| A, B (Picker) | Linear | 1,000,000 | 1 µm/pulse | ±0.2 m |
+| C (Stepper) | Rotary | 3,200 | 1.96 mrad/pulse | ±2π rad |
+| D (Stepper) | Linear | 200,000 | 5 µm/pulse | 0 to 0.1 m |
+| E (Discrete) | Binary | 1 | N/A | 0 or 1 |
+
+#### YAML Configuration (SI Units)
+
+```yaml
+axes:
+  X:
+    alias: "RAILWAY"
+    type: linear                    # meters
+    pulses_per_unit: 1000000.0      # 1 million pulses/meter = 1µm resolution
+    limits: [-0.500, 0.500]         # ±500mm in meters
+    max_velocity: 0.200             # 200mm/s in m/s
+    max_acceleration: 1.0           # 1 m/s²
+    backlash: 0.00005               # 50µm in meters
+    home_offset: 0.0
+
+  Y:
+    alias: "GRIPPER"
+    type: rotary                    # radians
+    pulses_per_unit: 10000.0        # 10000 pulses/radian
+    limits: [0.0, 6.283185]         # 0 to 2π radians (360°)
+    max_velocity: 6.283185          # 2π rad/s (360°/s)
+    max_acceleration: 31.415927     # 10π rad/s² (1800°/s²)
+    backlash: 0.0
+    home_offset: 0.0
+
+  # ... other axes
+```
+
+#### Command Examples (SI Units)
+
+```
+# Linear axis (X) - all values in meters
+MOVE X 0.150 0.050        # Move to 150mm at 50mm/s
+MOVR X -0.025 0.100       # Move -25mm relative at 100mm/s
+VEL X 0.030               # Jog at 30mm/s
+POS X                     # Response: OK 0.150000
+
+# Rotary axis (Y) - all values in radians
+MOVE Y 1.570796 3.14159   # Move to π/2 rad (90°) at π rad/s (180°/s)
+VEL Y -0.523599           # Jog at -30°/s (in radians: -π/6)
+POS Y                     # Response: OK 1.570796
+
+# Setting limits (SI units)
+SETL X -0.500 0.500       # Set limits to ±500mm (in meters)
+SETV X 0.300              # Set max velocity to 300mm/s (in m/s)
+```
+
 ### Motor Control Pattern
 
 ```cpp
 // All motor types implement this interface
+// ALL PARAMETERS IN SI UNITS (meters, radians, seconds)
 class IMotor {
 public:
+    // Position moves - position in meters (linear) or radians (rotary)
     virtual esp_err_t moveAbsolute(float position, float velocity) = 0;
     virtual esp_err_t moveRelative(float delta, float velocity) = 0;
-    virtual esp_err_t stop() = 0;
-    virtual esp_err_t stopImmediate() = 0;
-    virtual float getPosition() const = 0;
+
+    // Velocity mode - velocity in m/s or rad/s
+    virtual esp_err_t moveVelocity(float velocity) = 0;
+
+    // Stop commands
+    virtual esp_err_t stop() = 0;              // Controlled deceleration
+    virtual esp_err_t stopImmediate() = 0;     // Emergency stop
+
+    // Status - returns SI units
+    virtual float getPosition() const = 0;     // meters or radians
+    virtual float getVelocity() const = 0;     // m/s or rad/s
     virtual bool isMoving() const = 0;
+
+    // Enable/disable
     virtual void enable(bool en) = 0;
+
+    // Configuration
+    virtual const AxisConfig& getConfig() const = 0;
+    virtual esp_err_t setConfig(const AxisConfig& config) = 0;
 };
 
 // Composition: Motor uses injected pulse generator and position tracker
 class ServoMotor : public IMotor {
 private:
+    AxisConfig config_;
     std::unique_ptr<IPulseGenerator> pulse_gen_;
     std::unique_ptr<IPositionTracker> tracker_;
     ShiftRegisterController* shift_reg_;
     uint8_t axis_id_;
+    float current_position_;  // SI units
     // ...
 };
 ```
@@ -531,11 +1097,17 @@ components/config/include/
 │   │   ├── GPIO_SR_MOSI              # Data
 │   │   └── GPIO_SR_SCLK              # Clock
 │   │
-│   ├── I2C Bus 0 (MCP23017s) - J1 pins 11-14
+│   ├── I2C Bus 0 (MCP23017s) - J1 pins 11-12
 │   │   ├── GPIO_I2C_SCL              # Clock (400kHz)
-│   │   ├── GPIO_I2C_SDA              # Data
-│   │   ├── GPIO_I2C_INT0             # MCP #0 interrupt (limits)
-│   │   └── GPIO_I2C_INT1             # MCP #1 interrupt (GP I/O)
+│   │   └── GPIO_I2C_SDA              # Data
+│   │
+│   ├── MCP23017 Interrupts (6 lines for 3 MCPs × INTA/INTB)
+│   │   ├── GPIO_MCP0_INTA            # MCP #0 Port A (X-A limits) - J1-13
+│   │   ├── GPIO_MCP0_INTB            # MCP #0 Port B (B-E limits) - J3-10
+│   │   ├── GPIO_MCP1_INTA            # MCP #1 Port A (ALARM_INPUT) - J1-14
+│   │   ├── GPIO_MCP1_INTB            # MCP #1 Port B (ALARM_CLEAR) - J3-9
+│   │   ├── GPIO_MCP2_INTA            # MCP #2 Port A (InPos signals) - J3-16
+│   │   └── GPIO_MCP2_INTB            # MCP #2 Port B (GP outputs) - J3-17
 │   │
 │   ├── Safety
 │   │   └── GPIO_E_STOP               # Emergency stop input (J1-19)
@@ -640,7 +1212,7 @@ components/config/include/
 │   │   ├── CMD_POS, CMD_STAT, CMD_INFO
 │   │   ├── CMD_EN, CMD_BRAKE, CMD_HOME, CMD_ZERO, CMD_CALB
 │   │   ├── CMD_GETWIDTH, CMD_SETU, CMD_SETL, CMD_SETV, CMD_SETB, CMD_ALIAS
-│   │   ├── CMD_DIN, CMD_DOUT, CMD_MODE
+│   │   ├── CMD_DIN, CMD_DOUT, CMD_MODE, CMD_CLR
 │   │   ├── CMD_SAVE, CMD_LOAD, CMD_RST, CMD_ECHO
 │   │   ├── CMD_TEST, CMD_LOG, CMD_DIAG, CMD_STREAM
 │   │   └── CMD_CFGSTART, CMD_CFGDATA, CMD_CFGEND, CMD_CFGEXPORT
@@ -677,8 +1249,8 @@ components/config/include/
 │   │
 │   ├── Device Addresses
 │   │   ├── I2C_ADDR_MCP23017_0       # 0x20 - Limit switches
-│   │   ├── I2C_ADDR_MCP23017_1       # 0x21 - GP I/O + E axis
-│   │   ├── I2C_ADDR_MCP23017_2       # 0x22 - Servo feedback (optional)
+│   │   ├── I2C_ADDR_MCP23017_1       # 0x21 - ALARM signals
+│   │   ├── I2C_ADDR_MCP23017_2       # 0x22 - Servo feedback & general I/O
 │   │   └── I2C_ADDR_SSD1306          # 0x3C - OLED display
 │   │
 │   ├── MCP23017 #0 Pin Mappings (Limit Switches)
@@ -691,22 +1263,37 @@ components/config/include/
 │   │   ├── MCP0_D_LIMIT_MIN/MAX      # 12,13 - D axis
 │   │   └── MCP0_E_LIMIT_MIN/MAX      # 14,15 - E axis
 │   │
-│   └── MCP23017 #1 Pin Mappings (General I/O)
-│       ├── MCP1_GP_IN_0..7           # 0-7   - General inputs
-│       └── MCP1_GP_OUT_0..7          # 8-15  - General outputs
+│   ├── MCP23017 #1 Pin Mappings (ALARM Signals)
+│   │   ├── MCP1_X/Y/Z/A/B/C/D_ALARM_INPUT  # 0-6  - ALARM_INPUT (Port A)
+│   │   ├── MCP1_GP_IN_0              # 7     - Spare input (Port A)
+│   │   ├── MCP1_X/Y/Z/A/B/C/D_ALARM_CLEAR  # 8-14 - ALARM_CLEAR (Port B)
+│   │   └── MCP1_GP_OUT_0             # 15    - Spare output (Port B)
+│   │
+│   └── MCP23017 #2 Pin Mappings (Servo Feedback & General I/O)
+│       ├── MCP2_X/Y/Z/A/B_INPOS      # 0-4   - InPos signals (Port A)
+│       ├── MCP2_GP_IN_1..3           # 5-7   - Spare inputs (Port A)
+│       └── MCP2_GP_OUT_1..8          # 8-15  - General outputs (Port B)
 │
-├── config_defaults.h                 # Default runtime parameters
-│   ├── Generic Defaults
-│   │   ├── DEFAULT_UNITS_PER_PULSE   # 0.001f
-│   │   ├── DEFAULT_LIMIT_MIN         # -1000.0f
-│   │   ├── DEFAULT_LIMIT_MAX         # 1000.0f
-│   │   ├── DEFAULT_MAX_VELOCITY      # 100.0f
-│   │   ├── DEFAULT_MAX_ACCELERATION  # 500.0f
-│   │   ├── DEFAULT_BACKLASH          # 0.0f
-│   │   └── DEFAULT_HOME_OFFSET       # 0.0f
+├── config_defaults.h                 # Default runtime parameters (SI UNITS)
+│   ├── Generic Defaults (Linear Axis)
+│   │   ├── DEFAULT_PULSES_PER_UNIT   # 1000000.0f (1 million pulses/meter = 1µm)
+│   │   ├── DEFAULT_IS_ROTARY         # false
+│   │   ├── DEFAULT_LIMIT_MIN         # -1.0f (meters)
+│   │   ├── DEFAULT_LIMIT_MAX         # 1.0f (meters)
+│   │   ├── DEFAULT_MAX_VELOCITY      # 0.1f (m/s = 100mm/s)
+│   │   ├── DEFAULT_MAX_ACCELERATION  # 1.0f (m/s²)
+│   │   ├── DEFAULT_BACKLASH          # 0.0f (meters)
+│   │   └── DEFAULT_HOME_OFFSET       # 0.0f (meters)
+│   │
+│   ├── Rotary Axis Defaults
+│   │   ├── DEFAULT_ROTARY_PULSES_PER_UNIT  # 10000.0f (pulses/radian)
+│   │   ├── DEFAULT_ROTARY_LIMIT_MIN  # 0.0f (radians)
+│   │   ├── DEFAULT_ROTARY_LIMIT_MAX  # 6.283185f (2π radians)
+│   │   ├── DEFAULT_ROTARY_MAX_VEL    # 3.14159f (π rad/s = 180°/s)
+│   │   └── DEFAULT_ROTARY_MAX_ACCEL  # 10.0f (rad/s²)
 │   │
 │   └── E-Axis Specific (discrete)
-│       ├── E_AXIS_UNITS_PER_PULSE    # 1.0f
+│       ├── E_AXIS_PULSES_PER_UNIT    # 1.0f (binary: 0 or 1)
 │       ├── E_AXIS_MAX_VELOCITY       # 1.0f
 │       ├── E_AXIS_LIMIT_MIN          # 0.0f
 │       └── E_AXIS_LIMIT_MAX          # 1.0f
@@ -842,11 +1429,26 @@ components/config/include/
 // ============================================================================
 // I2C BUS 0 (MCP23017 Expanders)
 // ============================================================================
-// Grouped on left side (J1 pins 11-14)
+// I2C lines grouped on left side (J1 pins 11-12)
 #define GPIO_I2C_SCL        GPIO_NUM_18     // I2C clock - J1-11
 #define GPIO_I2C_SDA        GPIO_NUM_8      // I2C data - J1-12
-#define GPIO_I2C_INT0       GPIO_NUM_3      // MCP23017 #0 interrupt - J1-13
-#define GPIO_I2C_INT1       GPIO_NUM_46     // MCP23017 #1 interrupt - J1-14
+
+// ============================================================================
+// MCP23017 INTERRUPT LINES (6 GPIOs for 3 MCPs × 2 interrupts each)
+// ============================================================================
+// Each MCP23017 has separate INTA (Port A) and INTB (Port B) outputs
+
+// MCP23017 #0 (0x20) - Limit Switches
+#define GPIO_MCP0_INTA      GPIO_NUM_3      // Port A interrupts (X-A limits) - J1-13
+#define GPIO_MCP0_INTB      GPIO_NUM_38     // Port B interrupts (B-E limits) - J3-10
+
+// MCP23017 #1 (0x21) - ALARM Signals
+#define GPIO_MCP1_INTA      GPIO_NUM_46     // Port A interrupts (ALARM_INPUT) - J1-14
+#define GPIO_MCP1_INTB      GPIO_NUM_39     // Port B (ALARM_CLEAR outputs - no interrupt) - J3-9
+
+// MCP23017 #2 (0x22) - Servo Feedback & General I/O
+#define GPIO_MCP2_INTA      GPIO_NUM_48     // Port A interrupts (InPos + spare inputs) - J3-16
+#define GPIO_MCP2_INTB      GPIO_NUM_47     // Port B (GP outputs - no interrupt) - J3-17
 
 // ============================================================================
 // SAFETY SIGNALS
@@ -1046,6 +1648,7 @@ components/config/include/
 #define CMD_LOG             "LOG"
 #define CMD_DIAG            "DIAG"
 #define CMD_STREAM          "STREAM"
+#define CMD_CLR             "CLR"           // Clear alarm/fault
 #define CMD_CFGSTART        "CFGSTART"
 #define CMD_CFGDATA         "CFGDATA"
 #define CMD_CFGEND          "CFGEND"
@@ -1076,6 +1679,8 @@ components/config/include/
 #define ERR_EVENT_OVERFLOW          "E011"
 #define ERR_MODE_BLOCKED            "E012"
 #define ERR_MOTION_ACTIVE           "E013"
+#define ERR_DRIVER_ALARM            "E014"
+#define ERR_ALARM_CLEAR_FAILED      "E015"
 
 // ============================================================================
 // ERROR MESSAGES
@@ -1093,6 +1698,19 @@ components/config/include/
 #define MSG_EVENT_OVERFLOW          "Event buffer overflow"
 #define MSG_MODE_BLOCKED            "Command blocked in current mode"
 #define MSG_MOTION_ACTIVE           "Motion active - stop first"
+#define MSG_DRIVER_ALARM            "Driver alarm active"
+#define MSG_ALARM_CLEAR_FAILED      "Alarm clear failed"
+
+// ============================================================================
+// EVENT TYPES (for async notifications)
+// ============================================================================
+#define EVT_MOTION_COMPLETE         "DONE"
+#define EVT_LIMIT_TRIGGERED         "LIMIT"
+#define EVT_ESTOP_ACTIVATED         "ESTOP"
+#define EVT_ALARM_TRIGGERED         "ALARM"
+#define EVT_ALARM_CLEARED           "ALARMCLR"
+#define EVT_HOMING_COMPLETE         "HOMED"
+#define EVT_POSITION_UPDATE         "POS"
 
 #endif // CONFIG_COMMANDS_H
 ```
@@ -1112,9 +1730,9 @@ components/config/include/
 // ============================================================================
 // MCP23017 I/O EXPANDER ADDRESSES
 // ============================================================================
-#define I2C_ADDR_MCP23017_0 0x20            // Limit switches (14 switches)
-#define I2C_ADDR_MCP23017_1 0x21            // GP I/O + E axis control
-#define I2C_ADDR_MCP23017_2 0x22            // Servo feedback signals (optional)
+#define I2C_ADDR_MCP23017_0 0x20            // Limit switches (all 8 axes)
+#define I2C_ADDR_MCP23017_1 0x21            // ALARM signals (ALARM_INPUT + ALARM_CLEAR)
+#define I2C_ADDR_MCP23017_2 0x22            // Servo feedback (InPos) & general I/O
 
 // ============================================================================
 // SSD1306 OLED DISPLAY (on dedicated I2C_NUM_1 bus)
@@ -1143,27 +1761,55 @@ components/config/include/
 #define MCP0_E_LIMIT_MAX    15              // GPB7
 
 // ============================================================================
-// MCP23017 PIN MAPPINGS - EXPANDER 1 (GP I/O + E axis)
+// MCP23017 PIN MAPPINGS - EXPANDER 1 (ALARM Signals)
 // ============================================================================
-#define MCP1_GP_IN_0        0               // GPA0 - General input
-#define MCP1_GP_IN_1        1               // GPA1 - General input
-#define MCP1_GP_IN_2        2               // GPA2 - General input
-#define MCP1_GP_IN_3        3               // GPA3 - General input
-#define MCP1_GP_IN_4        4               // GPA4 - General input
-#define MCP1_GP_IN_5        5               // GPA5 - General input
-#define MCP1_GP_IN_6        6               // GPA6 - General input
-#define MCP1_GP_IN_7        7               // GPA7 - General input
-#define MCP1_GP_OUT_0       8               // GPB0 - General output
-#define MCP1_GP_OUT_1       9               // GPB1 - General output
-#define MCP1_GP_OUT_2       10              // GPB2 - General output
-#define MCP1_GP_OUT_3       11              // GPB3 - General output
-#define MCP1_GP_OUT_4       12              // GPB4 - General output
-#define MCP1_GP_OUT_5       13              // GPB5 - General output
-#define MCP1_GP_OUT_6       14              // GPB6 - General output
-#define MCP1_GP_OUT_7       15              // GPB7 - General output
+// Port A (GPA*) - ALARM_INPUT Signals (Inputs) - 7 axes + 1 spare
+#define MCP1_X_ALARM_INPUT  0               // GPA0 - X driver alarm input
+#define MCP1_Y_ALARM_INPUT  1               // GPA1 - Y driver alarm input
+#define MCP1_Z_ALARM_INPUT  2               // GPA2 - Z driver alarm input
+#define MCP1_A_ALARM_INPUT  3               // GPA3 - A driver alarm input
+#define MCP1_B_ALARM_INPUT  4               // GPA4 - B driver alarm input
+#define MCP1_C_ALARM_INPUT  5               // GPA5 - C stepper alarm input
+#define MCP1_D_ALARM_INPUT  6               // GPA6 - D stepper alarm input
+#define MCP1_GP_IN_0        7               // GPA7 - Spare input
 
-// Note: E axis DIR/EN now controlled via shift register (bits 21-22)
-// for unified control approach across all axes
+// Port B (GPB*) - ALARM_CLEAR Outputs - 7 axes + 1 spare
+#define MCP1_X_ALARM_CLEAR  8               // GPB0 - Clear X driver alarm
+#define MCP1_Y_ALARM_CLEAR  9               // GPB1 - Clear Y driver alarm
+#define MCP1_Z_ALARM_CLEAR  10              // GPB2 - Clear Z driver alarm
+#define MCP1_A_ALARM_CLEAR  11              // GPB3 - Clear A driver alarm
+#define MCP1_B_ALARM_CLEAR  12              // GPB4 - Clear B driver alarm
+#define MCP1_C_ALARM_CLEAR  13              // GPB5 - Clear C stepper alarm
+#define MCP1_D_ALARM_CLEAR  14              // GPB6 - Clear D stepper alarm
+#define MCP1_GP_OUT_0       15              // GPB7 - Spare output
+
+// Note: ALARM_INPUT detects driver fault conditions. ALARM_CLEAR pulses
+// can attempt alarm reset. Polarity and duration are driver-dependent.
+
+// ============================================================================
+// MCP23017 PIN MAPPINGS - EXPANDER 2 (Servo Feedback & General I/O)
+// ============================================================================
+// Port A (GPA*) - InPos Signals + Spare Inputs
+#define MCP2_X_INPOS        0               // GPA0 - X servo in-position
+#define MCP2_Y_INPOS        1               // GPA1 - Y servo in-position
+#define MCP2_Z_INPOS        2               // GPA2 - Z servo in-position
+#define MCP2_A_INPOS        3               // GPA3 - A servo in-position
+#define MCP2_B_INPOS        4               // GPA4 - B servo in-position
+#define MCP2_GP_IN_1        5               // GPA5 - Spare input
+#define MCP2_GP_IN_2        6               // GPA6 - Spare input
+#define MCP2_GP_IN_3        7               // GPA7 - Spare input
+
+// Port B (GPB*) - General Purpose Outputs
+#define MCP2_GP_OUT_1       8               // GPB0 - General output
+#define MCP2_GP_OUT_2       9               // GPB1 - General output
+#define MCP2_GP_OUT_3       10              // GPB2 - General output
+#define MCP2_GP_OUT_4       11              // GPB3 - General output
+#define MCP2_GP_OUT_5       12              // GPB4 - General output
+#define MCP2_GP_OUT_6       13              // GPB5 - General output
+#define MCP2_GP_OUT_7       14              // GPB6 - General output
+#define MCP2_GP_OUT_8       15              // GPB7 - General output
+
+// Note: ALARM_INPUT and ALARM_CLEAR signals are on MCP23017 #1 (0x21).
 
 #endif // CONFIG_I2C_H
 ```
@@ -1241,45 +1887,55 @@ components/config/include/
 #endif // CONFIG_SR_H
 ```
 
-### config_defaults.h — Default Axis Parameters
+### config_defaults.h — Default Axis Parameters (SI Units)
 
 ```c
 #ifndef CONFIG_DEFAULTS_H
 #define CONFIG_DEFAULTS_H
 
 // ============================================================================
-// DEFAULT AXIS CONFIGURATION
-// These values are used when no NVS configuration exists
+// SI UNITS: All values in meters, radians, seconds
+// ROS2 REP-103 compliant for future ros2_control integration
 // ============================================================================
 
-// Units per pulse (default: 0.001 = 1000 pulses/mm or 1000 pulses/degree)
-#define DEFAULT_UNITS_PER_PULSE     0.001f
-
-// Position limits (default: ±1000 units)
-#define DEFAULT_LIMIT_MIN           -1000.0f
-#define DEFAULT_LIMIT_MAX           1000.0f
-
-// Velocity (default: 100 units/sec)
-#define DEFAULT_MAX_VELOCITY        100.0f
-
-// Acceleration (default: 500 units/sec²)
-#define DEFAULT_MAX_ACCELERATION    500.0f
-
-// Backlash compensation (default: none)
-#define DEFAULT_BACKLASH            0.0f
-
-// Home offset (default: none)
-#define DEFAULT_HOME_OFFSET         0.0f
+// ============================================================================
+// MATH CONSTANTS
+// ============================================================================
+#define CONST_PI                    3.14159265f
+#define CONST_2PI                   6.28318531f
+#define CONST_DEG_TO_RAD            0.01745329f     // π/180
+#define CONST_RAD_TO_DEG            57.2957795f     // 180/π
 
 // ============================================================================
-// AXIS-SPECIFIC OVERRIDES (use these instead of defaults where different)
+// DEFAULT LINEAR AXIS CONFIGURATION (meters)
 // ============================================================================
+#define DEFAULT_PULSES_PER_UNIT     1000000.0f  // 1M pulses/meter = 1µm resolution
+#define DEFAULT_IS_ROTARY           false
+#define DEFAULT_LIMIT_MIN           -1.0f       // -1 meter
+#define DEFAULT_LIMIT_MAX           1.0f        // +1 meter
+#define DEFAULT_MAX_VELOCITY        0.1f        // 0.1 m/s = 100 mm/s
+#define DEFAULT_MAX_ACCELERATION    1.0f        // 1 m/s²
+#define DEFAULT_BACKLASH            0.0f        // meters
+#define DEFAULT_HOME_OFFSET         0.0f        // meters
 
-// E-axis (discrete) - fixed speed, binary positions
-#define E_AXIS_UNITS_PER_PULSE      1.0f    // 1 unit = 1 "step" (time-based)
-#define E_AXIS_MAX_VELOCITY         1.0f    // Fixed speed
-#define E_AXIS_LIMIT_MIN            0.0f
-#define E_AXIS_LIMIT_MAX            1.0f    // 0=retracted, 1=extended
+// ============================================================================
+// DEFAULT ROTARY AXIS CONFIGURATION (radians)
+// ============================================================================
+#define DEFAULT_ROTARY_PULSES_PER_UNIT  10000.0f    // pulses/radian
+#define DEFAULT_ROTARY_LIMIT_MIN        0.0f        // radians
+#define DEFAULT_ROTARY_LIMIT_MAX        CONST_2PI   // 2π rad (360°)
+#define DEFAULT_ROTARY_MAX_VEL          CONST_PI    // π rad/s (180°/s)
+#define DEFAULT_ROTARY_MAX_ACCEL        10.0f       // rad/s²
+
+// ============================================================================
+// E-AXIS (DISCRETE ACTUATOR) - binary positions
+// ============================================================================
+#define E_AXIS_PULSES_PER_UNIT      1.0f        // 1 pulse = 1 unit (binary)
+#define E_AXIS_IS_ROTARY            false
+#define E_AXIS_LIMIT_MIN            0.0f        // retracted
+#define E_AXIS_LIMIT_MAX            1.0f        // extended
+#define E_AXIS_MAX_VELOCITY         1.0f        // units/sec (actuation speed)
+#define E_AXIS_MAX_ACCELERATION     10.0f       // units/sec²
 
 #endif // CONFIG_DEFAULTS_H
 ```
@@ -1370,15 +2026,20 @@ static const char* const YAML_AXIS_NAMES[LIMIT_NUM_AXES] = {
 };
 
 // ============================================================================
-// PER-AXIS PARAMETER KEYS
+// PER-AXIS PARAMETER KEYS (SI Units: meters, radians, seconds)
 // ============================================================================
 #define YAML_KEY_ALIAS              "alias"
-#define YAML_KEY_UNITS_PER_PULSE    "units_per_pulse"
-#define YAML_KEY_LIMITS             "limits"
-#define YAML_KEY_VELOCITY           "velocity"
-#define YAML_KEY_ACCELERATION       "acceleration"
-#define YAML_KEY_BACKLASH           "backlash"
-#define YAML_KEY_HOME_OFFSET        "home_offset"
+#define YAML_KEY_TYPE               "type"              // "linear" or "rotary"
+#define YAML_KEY_PULSES_PER_UNIT    "pulses_per_unit"   // pulses/meter or pulses/radian
+#define YAML_KEY_LIMITS             "limits"            // [min, max] in meters or radians
+#define YAML_KEY_MAX_VELOCITY       "max_velocity"      // m/s or rad/s
+#define YAML_KEY_MAX_ACCELERATION   "max_acceleration"  // m/s² or rad/s²
+#define YAML_KEY_BACKLASH           "backlash"          // meters or radians
+#define YAML_KEY_HOME_OFFSET        "home_offset"       // meters or radians
+
+// Axis type values
+#define YAML_VAL_TYPE_LINEAR        "linear"    // meters
+#define YAML_VAL_TYPE_ROTARY        "rotary"    // radians
 
 // ============================================================================
 // SYSTEM PARAMETER KEYS
@@ -1558,14 +2219,15 @@ ESP32-S3 NVS is used for persistent configuration storage.
 
 ```
 Per-Axis Keys (X=0 to E=7):
-├── ax{n}_units      (float)   Units per pulse (e.g., 0.001 mm/pulse)
-├── ax{n}_min        (float)   Position limit minimum
-├── ax{n}_max        (float)   Position limit maximum
-├── ax{n}_vel        (float)   Max velocity (units/sec)
-├── ax{n}_acc        (float)   Max acceleration (units/sec²)
-├── ax{n}_blash      (float)   Backlash compensation
+├── ax{n}_ppu        (float)   Pulses per unit (pulses/meter or pulses/radian)
+├── ax{n}_rotary     (u8)      Axis type: 0=linear(meters), 1=rotary(radians)
+├── ax{n}_min        (float)   Position limit minimum (meters or radians)
+├── ax{n}_max        (float)   Position limit maximum (meters or radians)
+├── ax{n}_vel        (float)   Max velocity (m/s or rad/s)
+├── ax{n}_acc        (float)   Max acceleration (m/s² or rad/s²)
+├── ax{n}_blash      (float)   Backlash compensation (meters or radians)
 ├── ax{n}_alias      (str:16)  Human-readable alias
-└── ax{n}_home_off   (float)   Home position offset
+└── ax{n}_home_off   (float)   Home position offset (meters or radians)
 
 System Keys:
 ├── sys_version      (u32)     Configuration version number
@@ -1582,24 +2244,29 @@ Configuration transferred via serial using CFGSTART/CFGDATA/CFGEND commands.
 
 ```yaml
 # yarobot_config.yaml
+# All units follow SI convention (ROS2 REP-103 compatible):
+#   Linear: meters (m), m/s, m/s²
+#   Rotary: radians (rad), rad/s, rad/s²
 version: 1
 
 axes:
   X:
     alias: "RAILWAY"
-    units_per_pulse: 0.001    # mm per pulse
-    limits: [-500.0, 500.0]   # [min, max] in units
-    velocity: 200.0           # max velocity (units/sec)
-    acceleration: 1000.0      # max accel (units/sec²)
-    backlash: 0.05            # backlash compensation
-    home_offset: 0.0          # offset after homing
+    type: linear              # meters (SI base unit)
+    pulses_per_unit: 1000000  # pulses/meter (1µm resolution)
+    limits: [-0.5, 0.5]       # ±500mm in meters
+    max_velocity: 0.2         # 200mm/s in m/s
+    max_acceleration: 1.0     # 1000mm/s² in m/s²
+    backlash: 0.00005         # 50µm in meters
+    home_offset: 0.0
 
   Y:
     alias: "GRIPPER"
-    units_per_pulse: 0.01     # degrees per pulse
-    limits: [0.0, 360.0]
-    velocity: 720.0
-    acceleration: 3600.0
+    type: rotary              # radians (SI base unit)
+    pulses_per_unit: 5729.58  # pulses/radian (1000 pulses/rev ÷ 2π)
+    limits: [0.0, 6.283185]   # 0-360° in radians
+    max_velocity: 12.566      # 720°/s in rad/s
+    max_acceleration: 62.83   # 3600°/s² in rad/s²
     backlash: 0.0
     home_offset: 0.0
 
@@ -1742,13 +2409,109 @@ void process_limit_switch(uint8_t axis, bool min_triggered, bool max_triggered) 
 }
 ```
 
+### Driver Alarm Handling
+
+Motor drivers (servo and stepper) may enter alarm states (overcurrent, overheat, position error, etc.). The system provides dedicated alarm detection and clearing for all 7 motor axes (X, Y, Z, A, B, C, D) via **MCP23017 #1 (0x21)**:
+
+**Alarm Detection (ALARM_INPUT signals):**
+- ALARM_INPUT signals on MCP23017 #1 Port A (GPA0-GPA6) for axes X-D
+- Monitored via GPIO_MCP1_INTA interrupt
+- When driver enters alarm state, corresponding ALARM_INPUT goes active
+- Generates `EVENT ALARM <axis>` async notification to host
+
+**Alarm Clearing (ALARM_CLEAR outputs):**
+- ALARM_CLEAR outputs on MCP23017 #1 Port B (GPB0-GPB6) for axes X-D
+- Pulse these outputs to attempt alarm reset
+- Pulse polarity and duration are driver-dependent (consult driver docs)
+- Generates `EVENT ALARMCLR <axis>` on successful clear
+
+**CLR Command:**
+```
+CLR <axis>              # Clear alarm for specific axis (X, Y, Z, A, B, C, D)
+CLR ALL                 # Clear alarms for all axes
+```
+
+**Response:**
+```
+OK                      # Alarm cleared successfully
+ERROR E014 Driver alarm active    # Alarm still present after clear attempt
+ERROR E015 Alarm clear failed     # Clear operation failed
+```
+
+```c
+// Alarm clear via MCP23017 #1 Port B
+esp_err_t clear_driver_alarm(uint8_t axis) {
+    if (axis >= LIMIT_NUM_MOTOR_AXES) return ESP_ERR_INVALID_ARG;  // 0-6 for X-D
+
+    // Check if alarm is actually active
+    uint8_t alarm_input_pin = MCP1_X_ALARM_INPUT + axis;
+    if (!mcp23017_get_pin(&mcp1, alarm_input_pin)) {
+        return ESP_OK;  // No alarm to clear
+    }
+
+    // Pulse the ALARM_CLEAR output (duration/polarity driver-specific)
+    uint8_t alarm_clear_pin = MCP1_X_ALARM_CLEAR + axis;
+    mcp23017_set_pin(&mcp1, alarm_clear_pin, 1);  // Assert
+    vTaskDelay(pdMS_TO_TICKS(100));               // Hold 100ms (adjust per driver)
+    mcp23017_set_pin(&mcp1, alarm_clear_pin, 0);  // Release
+
+    // Check if alarm cleared
+    vTaskDelay(pdMS_TO_TICKS(50));
+    if (mcp23017_get_pin(&mcp1, alarm_input_pin)) {
+        // Alarm still active
+        return ESP_ERR_INVALID_STATE;
+    }
+
+    // Publish alarm cleared event
+    EventManager::publish(Event{
+        .type = EVT_ALARM_CLEARED,
+        .axis = axis,
+        .timestamp = esp_timer_get_time()
+    });
+
+    return ESP_OK;
+}
+
+// Alarm detection ISR handler
+void IRAM_ATTR mcp1_inta_isr(void* arg) {
+    BaseType_t woken = pdFALSE;
+    xTaskNotifyFromISR(safety_task_handle, NOTIFY_ALARM, eSetBits, &woken);
+    portYIELD_FROM_ISR(woken);
+}
+
+// Process alarm interrupt in safety task
+void process_alarm_inputs(void) {
+    uint8_t port_a = mcp23017_read_port(&mcp1, MCP23017_PORT_A);
+
+    for (uint8_t axis = 0; axis < LIMIT_NUM_MOTOR_AXES; axis++) {
+        bool alarm_active = (port_a >> axis) & 0x01;
+
+        if (alarm_active && !axis_state[axis].alarm_active) {
+            // New alarm detected
+            axis_state[axis].alarm_active = true;
+            motor_stop(axis);  // Stop axis motion
+
+            EventManager::publish(Event{
+                .type = EVT_ALARM_TRIGGERED,
+                .axis = axis,
+                .timestamp = esp_timer_get_time()
+            });
+        }
+    }
+}
+```
+
 ### Error Categories
 
 | Category | Examples | Response | Recovery |
 |----------|----------|----------|----------|
 | **Critical** | E-stop, I2C lost, runaway | Stop all, engage brakes | Power cycle or RST |
-| **Axis** | Limit hit, driver fault | Stop axis only | CLR command |
+| **Axis** | Limit hit, driver alarm | Stop axis only | CLR command |
 | **Warning** | USB timeout, retry success | Log, continue | Auto-clear |
+
+**Alarm vs Fault Distinction:**
+- **Driver Alarm (E014)**: Detected via ALARM_INPUT, recoverable with CLR command
+- **Motor Fault (E008)**: Internal communication/hardware failure, may require power cycle
 
 ### Safety Task (Core 0, Priority 24 - Highest)
 
@@ -1760,12 +2523,13 @@ void safety_monitor_task(void* param) {
         // Wait for safety events or periodic check
         if (xTaskNotifyWait(0, ULONG_MAX, &notify, pdMS_TO_TICKS(TIMING_SAFETY_POLL_MS))) {
             if (notify & NOTIFY_ESTOP) handle_estop();
-            if (notify & NOTIFY_LIMIT)  process_limit_switches();
+            if (notify & NOTIFY_LIMIT) process_limit_switches();
+            if (notify & NOTIFY_ALARM) process_alarm_inputs();
         }
 
         // Periodic checks at TIMING_SAFETY_POLL_MS interval
         monitor_estop_gpio();
-        check_driver_faults();
+        check_driver_alarms();
         update_brake_timers();
         check_motion_timeouts();
     }
@@ -1984,6 +2748,28 @@ idf.py coredump-info
 **Context:** Need simple, debuggable host interface.
 **Decision:** Human-readable text commands over USB CDC.
 **Rationale:** Works with any serial terminal, easy debugging, no special tooling needed.
+
+### ADR-006: Streaming Double-Buffer Pulse Generation
+**Context:** Need to support both short point-to-point moves and unlimited-length continuous motion (jogging) without code path divergence. Single pre-computed buffers limit maximum travel distance and require different handling for VEL commands.
+**Decision:** All pulse generation (RMT, MCPWM, LEDC) uses streaming double-buffer architecture with DMA callback-driven buffer swap.
+**Rationale:**
+- **One code path** - Short moves, long moves, and continuous jog all use identical streaming infrastructure
+- **Unlimited motion length** - Profile generator streams pulses on-demand; no buffer size limits travel
+- **Zero-copy DMA** - CPU fills buffer B while DMA transmits buffer A; no timing jitter
+- **Clean abort** - Stop command switches profile to DECEL phase; buffers drain naturally
+- **Testability** - Single streaming state machine easier to unit test than conditional paths
+**Trade-offs:** Slightly more complex initial implementation; ~4KB RAM per RMT channel for double buffers (acceptable given 8MB PSRAM).
+
+### ADR-007: SI Units Convention (ROS2 REP-103 Compatible)
+**Context:** Need consistent unit system across all axes (linear and rotary), host API, configuration, and internal calculations. Must support future ros2_control integration without unit conversion at integration boundary.
+**Decision:** All external interfaces use SI base units: meters (linear position), radians (angular position), seconds (time). Derived units follow: m/s, m/s², rad/s, rad/s².
+**Rationale:**
+- **ROS2 Compatibility** - REP-103 compliance enables direct ros2_control integration
+- **Consistency** - Same unit system for linear (X,Y,Z,C,D) and rotary (A,B,E) axes
+- **Precision** - Float32 provides sub-micrometer resolution at meter scale
+- **Physical intuition** - SI units are unambiguous; no mm vs inch confusion
+- **Three-domain separation** - External (SI) → Motor (conversion layer) → Pulse (hardware) keeps each domain clean
+**Trade-offs:** Configuration values are small decimals (0.1 m instead of 100 mm), but inline comments in YAML provide human-readable equivalents.
 
 ---
 

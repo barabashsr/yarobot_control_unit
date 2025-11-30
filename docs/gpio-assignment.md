@@ -85,17 +85,17 @@ View with USB connector at bottom.
     7    7    A_STEP (RMT)        A-STEP  ║  │ 32   │  ║  A-Z   A_Z_SIGNAL           41     7
     8   15    B_STEP (RMT)        B-STEP  ║  │ S3   │  ║  B-Z   B_Z_SIGNAL           40     8
    ───  ────  ────────────────────  ────  ║  │      │  ║  ────  ────────────────────  ────  ───
-    9   16    C_STEP (MCPWM)      C-STEP  ║  │WROOM │  ║  SPARE (available)          39     9
-   10   17    D_STEP (LEDC)       D-STEP  ║  │  1   │  ║  SPARE (available)          38    10
+    9   16    C_STEP (MCPWM)      C-STEP  ║  │WROOM │  ║  INT   MCP1_INTB            39     9
+   10   17    D_STEP (LEDC)       D-STEP  ║  │  1   │  ║  INT   MCP0_INTB            38    10
    ───  ────  ────────────────────  ────  ║  │      │  ║  ────  ────────────────────  ────  ───
    11   18    I2C_SCL (I2C0)        I2C   ║  │N16R8 │  ║  RSVD  [PSRAM]              37    11
    12    8    I2C_SDA (I2C0)        I2C   ║  │      │  ║  RSVD  [PSRAM]              36    12
-   13    3    I2C_INT0 (MCP0)       I2C   ║  └──────┘  ║  RSVD  [PSRAM]              35    13
-   14   46    I2C_INT1 (MCP1)       I2C   ║            ║  BOOT  (Boot Mode)           0    14
+   13    3    MCP0_INTA             INT   ║  └──────┘  ║  RSVD  [PSRAM]              35    13
+   14   46    MCP1_INTA             INT   ║            ║  BOOT  (Boot Mode)           0    14
    ───  ────  ────────────────────  ────  ║            ║  ────  ────────────────────  ────  ───
    15    9    SR_OE                 SPI   ║            ║  SPARE (available)          45    15
-   16   10    SR_CS (Latch)         SPI   ║            ║  SPARE (available)          48    16
-   17   11    SR_MOSI               SPI   ║            ║  SPARE (available)          47    17
+   16   10    SR_CS (Latch)         SPI   ║            ║  INT   MCP2_INTA            48    16
+   17   11    SR_MOSI               SPI   ║            ║  INT   MCP2_INTB            47    17
    18   12    SR_SCLK               SPI   ║            ║  OLED  OLED_SCL (I2C1)      21    18
    ───  ────  ────────────────────  ────  ║            ║  ────  ────────────────────  ────  ───
    19   13    E_STOP                SAFE  ║            ║  USB   USB D+               20    19
@@ -150,16 +150,16 @@ OTHER SIGNAL GROUPS
 ┌─ I2C BUS 0 (MCP23017 Expanders) ────┐          ┌─ RESERVED (PSRAM) ───────────┐
 │  GPIO 18 → I2C_SCL   Pin 11        │          │  GPIO 37 → [PSRAM]     Pin 11│
 │  GPIO 8  → I2C_SDA   Pin 12        │          │  GPIO 36 → [PSRAM]     Pin 12│
-│  GPIO 3  → I2C_INT0  Pin 13        │          │  GPIO 35 → [PSRAM]     Pin 13│
-│  GPIO 46 → I2C_INT1  Pin 14        │          └──────────────────────────────┘
+│  GPIO 3  → MCP0_INTA     Pin 13    │          │  GPIO 35 → [PSRAM]     Pin 13│
+│  GPIO 46 → MCP1_INTA     Pin 14    │          └──────────────────────────────┘
 └────────────────────────────────────┘
 
-┌─ SPI (SHIFT REGISTERS) ────────────┐          ┌─ SPARE GPIOs (5 available) ──┐
-│  GPIO 9  → SR_OE     Pin 15        │          │  GPIO 39 → SPARE       Pin 9 │
-│  GPIO 10 → SR_CS     Pin 16        │          │  GPIO 38 → SPARE       Pin 10│
+┌─ SPI (SHIFT REGISTERS) ────────────┐          ┌─ MCP INT (Right Side) ───────┐
+│  GPIO 9  → SR_OE     Pin 15        │          │  GPIO 39 → MCP1_INTB   Pin 9 │
+│  GPIO 10 → SR_CS     Pin 16        │          │  GPIO 38 → MCP0_INTB   Pin 10│
 │  GPIO 11 → SR_MOSI   Pin 17        │          │  GPIO 45 → SPARE       Pin 15│
-│  GPIO 12 → SR_SCLK   Pin 18        │          │  GPIO 48 → SPARE       Pin 16│
-└────────────────────────────────────┘          │  GPIO 47 → SPARE       Pin 17│
+│  GPIO 12 → SR_SCLK   Pin 18        │          │  GPIO 48 → MCP2_INTA   Pin 16│
+└────────────────────────────────────┘          │  GPIO 47 → MCP2_INTB   Pin 17│
                                                 └──────────────────────────────┘
 ┌─ OLED I2C1 (split across sides) ───┐
 │  GPIO 14 → OLED_SDA  Pin 20 (L)    │          ┌─ USB (FIXED) ────────────────┐
@@ -180,6 +180,7 @@ OTHER SIGNAL GROUPS
 | **STEP** | Motor Step Output | Pulse outputs to motor drivers (RMT/MCPWM/LEDC) |
 | **FB** | Position Feedback | Servo position complete signals |
 | **Z-SIG** | Z-Signal/Index | Servo encoder index pulses |
+| **INT** | MCP23017 Interrupt | Interrupt lines from I2C expanders (INTA/INTB) |
 | **SPI** | Shift Register Bus | TPIC6B595N chain for DIR/EN/BRAKE |
 | **I2C** | I2C Bus 0 | MCP23017 expanders (limit switches, GP I/O) |
 | **OLED** | I2C Bus 1 | Dedicated OLED display bus (isolated) |
@@ -234,12 +235,13 @@ OTHER SIGNAL GROUPS
 |------------|-----------|--------------|---------|
 | **Left (J1)** | 4-8 | Servo STEP | X, Y, Z, A, B step pulses |
 | **Left (J1)** | 9-10 | Stepper STEP | C, D step pulses |
-| **Left (J1)** | 11-14 | I2C Bus 0 | SCL, SDA, INT0, INT1 |
+| **Left (J1)** | 11-14 | I2C Bus 0 | SCL, SDA, MCP0_INTA, MCP1_INTA |
 | **Left (J1)** | 15-18 | SPI (Shift Reg) | OE, CS, MOSI, SCLK |
 | **Left (J1)** | 19 | Safety | E-stop input |
 | **Left (J1)** | 20 | OLED | I2C1 SDA |
 | **Right (J3)** | 4-8 | Z-Signals | X, Y, Z, A, B index pulses |
-| **Right (J3)** | 9-10, 15-17 | SPARE | 5 available GPIOs |
+| **Right (J3)** | 9-10, 16-17 | MCP Interrupts | MCP0_INTB, MCP1_INTB, MCP2_INTA, MCP2_INTB |
+| **Right (J3)** | 15 | SPARE | 1 available GPIO (GPIO45, strapping) |
 | **Right (J3)** | 18 | OLED | I2C1 SCL |
 
 ---
@@ -272,7 +274,7 @@ E axis limit switches are on MCP23017 #0 (0x20) GPB6-GPB7, same as all other axe
 
 ### InPos Signals - Via I2C Expander (NOT GPIO!)
 
-**IMPORTANT:** InPos (Position Complete) signals are read via **MCP23017 #2 (0x22)**, not ESP32 GPIOs.
+**IMPORTANT:** InPos (Position Complete) signals are read via **MCP23017 #2 (0x22) Port A**, not ESP32 GPIOs.
 This is because InPos doesn't require fast interrupt response - I2C polling at 400kHz is sufficient.
 
 | Axis | MCP23017 | Port.Pin | Notes |
@@ -282,6 +284,22 @@ This is because InPos doesn't require fast interrupt response - I2C polling at 4
 | Z | 0x22 | GPA2 | Z servo InPos |
 | A | 0x22 | GPA3 | A servo InPos |
 | B | 0x22 | GPA4 | B servo InPos |
+
+### ALARM Signals - Via I2C Expander
+
+ALARM_INPUT and ALARM_CLEAR signals are on **MCP23017 #1 (0x21)** for all 7 motor axes (XYZABCD).
+
+| Axis | MCP23017 | ALARM_INPUT | ALARM_CLEAR | Notes |
+|------|----------|-------------|-------------|-------|
+| X | 0x21 | GPA0 | GPB0 | X servo/driver |
+| Y | 0x21 | GPA1 | GPB1 | Y servo/driver |
+| Z | 0x21 | GPA2 | GPB2 | Z servo/driver |
+| A | 0x21 | GPA3 | GPB3 | A servo/driver |
+| B | 0x21 | GPA4 | GPB4 | B servo/driver |
+| C | 0x21 | GPA5 | GPB5 | C stepper driver |
+| D | 0x21 | GPA6 | GPB6 | D stepper driver |
+
+> **Note:** See MCP23017 #1 section for complete pin assignment including spare pins (GP_IN_0, GP_OUT_0).
 
 ### SPI (Shift Register Chain)
 
@@ -300,8 +318,19 @@ This is because InPos doesn't require fast interrupt response - I2C polling at 4
 |--------|------|------|-----------------|-------|
 | I2C_SCL | GPIO18 | Left | J1-11 | Main I2C clock (400kHz) |
 | I2C_SDA | GPIO8 | Left | J1-12 | Main I2C data |
-| I2C_INT0 | GPIO3 | Left | J1-13 | MCP23017 #0 interrupt (limits) |
-| I2C_INT1 | GPIO46 | Left | J1-14 | MCP23017 #1 interrupt (GP I/O) |
+
+### MCP23017 Interrupt Lines (6 GPIOs for 3 MCPs × 2 interrupts)
+
+| Signal | GPIO | Side | Header Position | MCP Device | Port |
+|--------|------|------|-----------------|------------|------|
+| MCP0_INTA | GPIO3 | Left | J1-13 | MCP23017 #0 (0x20) | Port A (limits MIN/MAX X-A) |
+| MCP0_INTB | GPIO38 | Right | J3-10 | MCP23017 #0 (0x20) | Port B (limits MIN/MAX B-E) |
+| MCP1_INTA | GPIO46 | Left | J1-14 | MCP23017 #1 (0x21) | Port A (ALARM_INPUT signals) |
+| MCP1_INTB | GPIO39 | Right | J3-9 | MCP23017 #1 (0x21) | Port B (ALARM_CLEAR outputs - no interrupt) |
+| MCP2_INTA | GPIO48 | Right | J3-16 | MCP23017 #2 (0x22) | Port A (InPos + spare inputs) |
+| MCP2_INTB | GPIO47 | Right | J3-17 | MCP23017 #2 (0x22) | Port B (GP outputs - no interrupt) |
+
+> **Note:** Each MCP23017 has separate INTA (Port A) and INTB (Port B) interrupt outputs. Interrupts are only meaningful for input ports. Output ports (GPB on MCP#1 and MCP#2) don't generate interrupts but the GPIO lines are still connected for consistency.
 
 ### I2C Bus 1 (OLED Display - Isolated)
 
@@ -325,15 +354,13 @@ This is because InPos doesn't require fast interrupt response - I2C polling at 4
 | USB_D- | GPIO19 | Native USB |
 | USB_D+ | GPIO20 | Native USB |
 
-### Spare GPIOs (5 available for future use)
+### Spare GPIOs (1 available for future use)
 
 | GPIO | Side | Header Position | Notes |
 |------|------|-----------------|-------|
-| GPIO39 | Right | J3-9 | Former JTAG MTCK |
-| GPIO38 | Right | J3-10 | Former RGB LED (v1.1) |
 | GPIO45 | Right | J3-15 | Strapping pin (safe after boot) |
-| GPIO48 | Right | J3-16 | Available |
-| GPIO47 | Right | J3-17 | Available |
+
+> **Note:** GPIO38, GPIO39, GPIO47, GPIO48 were previously spare but are now allocated to MCP23017 interrupt lines (INTA/INTB for 3 expanders). GPIO45 remains as spare since it's a strapping pin and was avoided for interrupt use.
 
 ---
 
@@ -349,8 +376,8 @@ Reserved:  19, 20 (USB), 22-25 (N/A), 26-37 (Flash/PSRAM)
 Strapping: 0, 3, 45, 46 (use with caution)
 
 Total Available: 30 GPIOs
-Total Used:      23 GPIOs
-Spare:           7 GPIOs (38, 39, 43, 44, 45, 47, 48)
+Total Used:      27 GPIOs
+Spare:           3 GPIOs (43, 44, 48)
 ```
 
 ### Final GPIO Assignment Table
@@ -379,8 +406,13 @@ Spare:           7 GPIOs (38, 39, 43, 44, 45, 47, 48)
 | **I2C Bus 0 (MCP23017)** |||||
 | I2C_SCL | 18 | Left | J1-11 | I2C0_SCL | I2C Main |
 | I2C_SDA | 8 | Left | J1-12 | I2C0_SDA | I2C Main |
-| I2C_INT0 | 3 | Left | J1-13 | GPIO Input | I2C Main |
-| I2C_INT1 | 46 | Left | J1-14 | GPIO Input | I2C Main |
+| **MCP23017 Interrupts (6 lines)** |||||
+| MCP0_INTA | 3 | Left | J1-13 | GPIO Input | MCP #0 Port A |
+| MCP0_INTB | 38 | Right | J3-10 | GPIO Input | MCP #0 Port B |
+| MCP1_INTA | 46 | Left | J1-14 | GPIO Input | MCP #1 Port A |
+| MCP1_INTB | 39 | Right | J3-9 | GPIO Input | MCP #1 Port B |
+| MCP2_INTA | 48 | Right | J3-16 | GPIO Input | MCP #2 Port A |
+| MCP2_INTB | 47 | Right | J3-17 | GPIO Input | MCP #2 Port B |
 | **I2C Bus 1 (OLED)** |||||
 | OLED_SDA | 14 | Left | J1-20 | I2C1_SDA | I2C OLED |
 | OLED_SCL | 21 | Right | J3-18 | I2C1_SCL | I2C OLED |
@@ -488,8 +520,40 @@ TPIC6B595N outputs are open-drain with internal clamp diodes:
 | Device | Address | Function |
 |--------|---------|----------|
 | MCP23017 #0 | 0x20 | Limit switches (all 8 axes) |
-| MCP23017 #1 | 0x21 | General I/O + E axis control |
-| MCP23017 #2 | 0x22 | Servo feedback (optional) |
+| MCP23017 #1 | 0x21 | ALARM signals (ALARM_INPUT + ALARM_CLEAR for 7 axes) |
+| MCP23017 #2 | 0x22 | Servo feedback (InPos) & general purpose I/O |
+
+### MCP23017 I2C Address Configuration (A0, A1, A2 Pins)
+
+The MCP23017 I2C address is set by the hardware address pins A0, A1, A2. These pins must be externally biased (not left floating).
+
+**Address Configuration:**
+- Connect pin to **GND** = Logic 0
+- Connect pin to **VCC (3.3V)** = Logic 1
+
+| A2 | A1 | A0 | I2C Address | YaRobot Assignment |
+|----|----|----|-------------|-------------------|
+| GND | GND | GND | **0x20** | MCP23017 #0 - Limit Switches |
+| GND | GND | VCC | **0x21** | MCP23017 #1 - ALARM Signals |
+| GND | VCC | GND | **0x22** | MCP23017 #2 - Servo Feedback & GP I/O |
+| GND | VCC | VCC | 0x23 | (available) |
+| VCC | GND | GND | 0x24 | (available) |
+| VCC | GND | VCC | 0x25 | (available) |
+| VCC | VCC | GND | 0x26 | (available) |
+| VCC | VCC | VCC | 0x27 | (available) |
+
+**Hardware Wiring for YaRobot:**
+
+| Device | A2 | A1 | A0 | Address |
+|--------|-----|-----|-----|---------|
+| MCP23017 #0 | GND | GND | GND | 0x20 |
+| MCP23017 #1 | GND | GND | VCC | 0x21 |
+| MCP23017 #2 | GND | VCC | GND | 0x22 |
+
+**Important Notes:**
+- **RESET pin**: Must be connected to VCC via pull-up resistor (10kΩ typical). Leaving RESET floating causes erratic behavior.
+- **Maximum devices**: Up to 8 MCP23017s on a single I2C bus (128 GPIO total)
+- **Pull-ups on SDA/SCL**: Required - typically 4.7kΩ to 10kΩ to VCC
 
 ### MCP23017 #0 - Limit Switches (0x20)
 
@@ -517,51 +581,88 @@ Organized by axis pair (MIN/MAX adjacent):
 **Configuration:**
 - All pins configured as inputs with pull-ups enabled
 - Interrupt-on-change enabled for all pins
-- INTA output connected to ESP32 GPIO3
+- INTA output connected to ESP32 (see `GPIO_MCP0_INTA` in config_gpio.h)
+- INTB output connected to ESP32 (see `GPIO_MCP0_INTB` in config_gpio.h)
 
-### MCP23017 #1 - General I/O (0x21)
+### MCP23017 #1 - ALARM Signals (0x21)
+
+**Port A (GPA*) - ALARM_INPUT Signals (Inputs)**
+
+All 7 motor axes (X, Y, Z, A, B, C, D) ALARM_INPUT signals grouped on Port A for alarm detection.
+
+| Pin | Port.Bit | Function | Axis | Direction | Notes |
+|-----|----------|----------|------|-----------|-------|
+| GPA0 | A.0 | X_ALARM_INPUT | X | Input | X servo/driver alarm signal |
+| GPA1 | A.1 | Y_ALARM_INPUT | Y | Input | Y servo/driver alarm signal |
+| GPA2 | A.2 | Z_ALARM_INPUT | Z | Input | Z servo/driver alarm signal |
+| GPA3 | A.3 | A_ALARM_INPUT | A | Input | A servo/driver alarm signal |
+| GPA4 | A.4 | B_ALARM_INPUT | B | Input | B servo/driver alarm signal |
+| GPA5 | A.5 | C_ALARM_INPUT | C | Input | C stepper driver alarm signal |
+| GPA6 | A.6 | D_ALARM_INPUT | D | Input | D stepper driver alarm signal |
+| GPA7 | A.7 | GP_IN_0 | - | Input | General purpose spare input |
+
+**Port B (GPB*) - ALARM_CLEAR Outputs**
+
+All 7 motor axes (X, Y, Z, A, B, C, D) ALARM_CLEAR outputs grouped on Port B for alarm reset functionality.
+
+| Pin | Port.Bit | Function | Axis | Direction | Notes |
+|-----|----------|----------|------|-----------|-------|
+| GPB0 | B.0 | X_ALARM_CLEAR | X | Output | Clear X servo/driver alarm |
+| GPB1 | B.1 | Y_ALARM_CLEAR | Y | Output | Clear Y servo/driver alarm |
+| GPB2 | B.2 | Z_ALARM_CLEAR | Z | Output | Clear Z servo/driver alarm |
+| GPB3 | B.3 | A_ALARM_CLEAR | A | Output | Clear A servo/driver alarm |
+| GPB4 | B.4 | B_ALARM_CLEAR | B | Output | Clear B servo/driver alarm |
+| GPB5 | B.5 | C_ALARM_CLEAR | C | Output | Clear C stepper driver alarm |
+| GPB6 | B.6 | D_ALARM_CLEAR | D | Output | Clear D stepper driver alarm |
+| GPB7 | B.7 | GP_OUT_0 | - | Output | General purpose spare output |
+
+> **Architecture Note - Alarm Handling:** ALARM_INPUT signals detect driver fault conditions (overcurrent, overheat, position error, etc.). ALARM_CLEAR outputs can pulse to attempt alarm reset after the cause is addressed. Specific pulse polarity and duration are driver-dependent - consult driver documentation.
+
+**Configuration:**
+- Port A: All inputs with pull-ups enabled (ALARM_INPUT signals)
+- Port B: All outputs (ALARM_CLEAR signals)
+- INTA output connected to ESP32 (see `GPIO_MCP1_INTA` in config_gpio.h)
+- INTB output connected to ESP32 (see `GPIO_MCP1_INTB` in config_gpio.h)
+
+### MCP23017 #2 - Servo Feedback & General I/O (0x22)
+
+**Port A (GPA*) - InPos Signals + Spare Inputs**
+
+All 5 servo axis InPos (In-Position) signals grouped on Port A, with spare inputs for expansion.
+
+| Pin | Port.Bit | Function | Axis | Direction | Notes |
+|-----|----------|----------|------|-----------|-------|
+| GPA0 | A.0 | X_INPOS | X | Input | X servo in-position signal |
+| GPA1 | A.1 | Y_INPOS | Y | Input | Y servo in-position signal |
+| GPA2 | A.2 | Z_INPOS | Z | Input | Z servo in-position signal |
+| GPA3 | A.3 | A_INPOS | A | Input | A servo in-position signal |
+| GPA4 | A.4 | B_INPOS | B | Input | B servo in-position signal |
+| GPA5 | A.5 | GP_IN_1 | - | Input | General purpose spare input |
+| GPA6 | A.6 | GP_IN_2 | - | Input | General purpose spare input |
+| GPA7 | A.7 | GP_IN_3 | - | Input | General purpose spare input |
+
+**Port B (GPB*) - General Purpose Outputs**
+
+All 8 pins available as general purpose outputs for expansion.
 
 | Pin | Port.Bit | Function | Direction | Notes |
 |-----|----------|----------|-----------|-------|
-| GPA0 | A.0 | GP_IN_0 | Input | General purpose |
-| GPA1 | A.1 | GP_IN_1 | Input | General purpose |
-| GPA2 | A.2 | GP_IN_2 | Input | General purpose |
-| GPA3 | A.3 | GP_IN_3 | Input | General purpose |
-| GPA4 | A.4 | GP_IN_4 | Input | General purpose |
-| GPA5 | A.5 | GP_IN_5 | Input | General purpose |
-| GPA6 | A.6 | GP_IN_6 | Input | General purpose |
-| GPA7 | A.7 | GP_IN_7 | Input | General purpose |
-| GPB0 | B.0 | GP_OUT_0 | Output | General purpose |
-| GPB1 | B.1 | GP_OUT_1 | Output | General purpose |
-| GPB2 | B.2 | GP_OUT_2 | Output | General purpose |
-| GPB3 | B.3 | GP_OUT_3 | Output | General purpose |
-| GPB4 | B.4 | GP_OUT_4 | Output | General purpose |
-| GPB5 | B.5 | GP_OUT_5 | Output | General purpose |
-| GPB6 | B.6 | GP_OUT_6 | Output | General purpose |
-| GPB7 | B.7 | GP_OUT_7 | Output | General purpose |
-
-> **Note:** E axis DIR/EN now controlled via shift register (bits 21-22) for unified control approach.
+| GPB0 | B.0 | GP_OUT_1 | Output | General purpose output |
+| GPB1 | B.1 | GP_OUT_2 | Output | General purpose output |
+| GPB2 | B.2 | GP_OUT_3 | Output | General purpose output |
+| GPB3 | B.3 | GP_OUT_4 | Output | General purpose output |
+| GPB4 | B.4 | GP_OUT_5 | Output | General purpose output |
+| GPB5 | B.5 | GP_OUT_6 | Output | General purpose output |
+| GPB6 | B.6 | GP_OUT_7 | Output | General purpose output |
+| GPB7 | B.7 | GP_OUT_8 | Output | General purpose output |
 
 **Configuration:**
-- Port A: All inputs with pull-ups
-- Port B: All outputs
-- INTB output connected to ESP32 GPIO46
+- Port A: All inputs with pull-ups enabled (InPos + spare inputs)
+- Port B: All outputs (general purpose)
+- INTA output connected to ESP32 (see `GPIO_MCP2_INTA` in config_gpio.h)
+- INTB output connected to ESP32 (see `GPIO_MCP2_INTB` in config_gpio.h)
 
-### MCP23017 #2 - Servo Feedback (0x22) - Optional
-
-| Pin | Port.Bit | Function | Axis | Notes |
-|-----|----------|----------|------|-------|
-| GPA0 | A.0 | X_INPOS | X | In-position signal |
-| GPA1 | A.1 | X_ALARM | X | Alarm output |
-| GPA2 | A.2 | Y_INPOS | Y | In-position signal |
-| GPA3 | A.3 | Y_ALARM | Y | Alarm output |
-| GPA4 | A.4 | Z_INPOS | Z | In-position signal |
-| GPA5 | A.5 | Z_ALARM | Z | Alarm output |
-| GPA6 | A.6 | A_INPOS | A | In-position signal |
-| GPA7 | A.7 | A_ALARM | A | Alarm output |
-| GPB0 | B.0 | B_INPOS | B | In-position signal |
-| GPB1 | B.1 | B_ALARM | B | Alarm output |
-| GPB2-7 | B.2-7 | SPARE | - | Future expansion |
+> **Note:** ALARM_INPUT and ALARM_CLEAR signals have been moved to MCP23017 #1 (0x21) to consolidate all alarm-related I/O on a single device.
 
 ---
 
@@ -623,11 +724,26 @@ Organized by axis pair (MIN/MAX adjacent):
 // ============================================================================
 // I2C BUS 0 (MCP23017 Expanders)
 // ============================================================================
-// Grouped on left side (J1 pins 11-14)
+// I2C lines grouped on left side (J1 pins 11-12)
 #define GPIO_I2C_SCL        GPIO_NUM_18     // I2C clock - J1-11
 #define GPIO_I2C_SDA        GPIO_NUM_8      // I2C data - J1-12
-#define GPIO_I2C_INT0       GPIO_NUM_3      // MCP23017 #0 interrupt - J1-13
-#define GPIO_I2C_INT1       GPIO_NUM_46     // MCP23017 #1 interrupt - J1-14
+
+// ============================================================================
+// MCP23017 INTERRUPT LINES (6 GPIOs for 3 MCPs × 2 interrupts each)
+// ============================================================================
+// Each MCP23017 has separate INTA (Port A) and INTB (Port B) outputs
+
+// MCP23017 #0 (0x20) - Limit Switches
+#define GPIO_MCP0_INTA      GPIO_NUM_3      // Port A interrupts (X-A limits) - J1-13
+#define GPIO_MCP0_INTB      GPIO_NUM_38     // Port B interrupts (B-E limits) - J3-10
+
+// MCP23017 #1 (0x21) - ALARM Signals
+#define GPIO_MCP1_INTA      GPIO_NUM_46     // Port A interrupts (ALARM_INPUT) - J1-14
+#define GPIO_MCP1_INTB      GPIO_NUM_39     // Port B (ALARM_CLEAR outputs - no interrupt) - J3-9
+
+// MCP23017 #2 (0x22) - Servo Feedback & General I/O
+#define GPIO_MCP2_INTA      GPIO_NUM_48     // Port A interrupts (InPos + spare inputs) - J3-16
+#define GPIO_MCP2_INTB      GPIO_NUM_47     // Port B (GP outputs - no interrupt) - J3-17
 
 // ============================================================================
 // SAFETY SIGNALS
@@ -649,11 +765,7 @@ Organized by axis pair (MIN/MAX adjacent):
 // ============================================================================
 // SPARE GPIOs (available for future use)
 // ============================================================================
-// GPIO38 - J3-10 (former RGB LED on v1.1)
-// GPIO39 - J3-9  (former JTAG MTCK)
-// GPIO45 - J3-15 (strapping, safe after boot)
-// GPIO47 - J3-17
-// GPIO48 - J3-16
+// GPIO45 - J3-15 (strapping pin, safe after boot - kept as spare to avoid boot issues)
 
 #endif // CONFIG_GPIO_H
 ```
