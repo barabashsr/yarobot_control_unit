@@ -35,20 +35,21 @@ USB CDC text-based command interface for the yarobot_control_unit. Commands foll
 MOVE <axis> <position> [velocity] [acceleration]
 ```
 
-**Description**: Commands the specified axis to move to an absolute position using a trapezoidal or S-curve motion profile. The motor accelerates to the specified velocity (or default), maintains it, then decelerates to stop exactly at the target position.
+**Description**: Commands the specified axis to move to an absolute position using a trapezoidal motion profile (S-curve post-MVP). The motor accelerates to the specified velocity (or default), maintains it, then decelerates to stop exactly at the target position.
 
 **Parameters**:
 - `axis`: Motor axis letter (X-E) or number (0-7)
-- `position`: Target position in configured units (mm or degrees)
-- `velocity`: Maximum velocity during move (units/sec), optional - uses configured default if omitted
-- `acceleration`: Maximum acceleration/deceleration (units/sec²), optional - uses configured default if omitted
+- `position`: Target position in SI units (meters for linear, radians for rotary)
+- `velocity`: Maximum velocity during move (m/s or rad/s), optional - uses configured default if omitted
+- `acceleration`: Maximum acceleration/deceleration (m/s² or rad/s²), optional - uses configured default if omitted
 
 **Behavior**:
 - Validates position against software limits before executing
-- For servo motors (0-3), uses RMT peripheral for precise pulse generation
-- For steppers (4-5), uses MCPWM with pulse counting
+- For servo motors (0-4), uses RMT peripheral for precise pulse generation
+- For steppers (5-6), uses MCPWM/LEDC with pulse counting
 - Non-blocking: returns immediately, motion executes asynchronously
-- Overwrites any previous motion in progress
+- **Blends to new target if axis is already moving** - no "axis busy" errors
+- Profile recalculated on-the-fly from current position/velocity to new target
 
 **Examples**:
 ```
@@ -105,15 +106,16 @@ VEL <axis> <velocity> [acceleration]
 
 **Parameters**:
 - `axis`: Motor axis letter (X-E) or number (0-7)
-- `velocity`: Target velocity in units/sec (+/- for direction, 0 to stop)
-- `acceleration`: Acceleration to reach velocity (units/sec²), optional
+- `velocity`: Target velocity in SI units (m/s or rad/s), +/- for direction, 0 to stop
+- `acceleration`: Acceleration to reach velocity (m/s² or rad/s²), optional - **overrides config for this command only**
 
 **Behavior**:
-- Accelerates from current velocity to target velocity
+- **Smoothly ramps from current velocity to target velocity** (no discontinuity)
 - Maintains constant velocity indefinitely
-- Automatically stops at software limits
+- Automatically decelerates to stop at software limits
 - Velocity of 0 performs controlled deceleration to stop
-- Overwrites any position move in progress
+- **Blends smoothly** if issued during MOVE or VEL mode - no abrupt transitions
+- Acceleration parameter overrides config.max_acceleration for this command only
 
 **Examples**:
 ```
@@ -142,10 +144,14 @@ STOP <axis|ALL> [EMERGENCY]
 
 **Behavior**:
 - Normal stop: Decelerates at configured rate to zero velocity
-- Emergency stop: Immediately stops pulse generation (may lose position)
+  - DMA buffer is drained for position accuracy
+  - **New MOVE commands can blend from decelerating state** (no wait required)
+- Emergency stop: Immediately stops pulse generation
+  - Position preserved but may have small error from aborted buffer
+- `STOP ALL EMERGENCY`: Enters STATE_ESTOP_ACTIVE (same as hardware E-stop)
+  - All axes marked UNHOMED after recovery
+  - Requires RST command to clear
 - ALL: Stops all axes simultaneously
-- Clears any queued motion commands
-- Emergency stop sets system flag requiring RST to clear
 
 **Priority**: Highest priority command (255 for EMERGENCY, 200 for normal)
 
@@ -258,17 +264,31 @@ READY
 
 ## Configuration Commands
 
-### SETU - Set Units Per Pulse
+### SCALE - Set Axis Scaling Parameters
 ```
-SETU <axis> <units_per_pulse>
+SCALE <axis> PPR <pulses_per_rev>    # Set pulses per motor revolution
+SCALE <axis> UPR <units_per_rev>     # Set SI units per motor revolution
+SCALE <axis>                          # Query current scaling
 ```
-- Configure the scaling factor
+- Configure the scaling parameters for position conversion
+- `pulses_per_rev`: Driver PA14 setting or stepper microsteps (e.g., 10000)
+- `units_per_rev`: Physical travel per revolution in SI units:
+  - Linear axes: meters (e.g., 0.005 for 5mm ball screw lead)
+  - Rotary axes: radians (e.g., 6.283185 for direct drive = 2π)
+- Derived: `pulses_per_unit = pulses_per_rev / units_per_rev`
 
 Examples:
 ```
-SETU 0 0.001             # 1 pulse = 0.001mm
-SETU 1 0.01              # 1 pulse = 0.01 degrees
+SCALE X PPR 10000        # Set X to 10000 pulses/rev (servo driver PA14)
+SCALE X UPR 0.005        # Set X to 5mm ball screw (0.005 m/rev)
+                         # Result: 2,000,000 pulses/meter
+SCALE Y PPR 10000        # Set Y pulses/rev
+SCALE Y UPR 6.283185     # Direct drive rotary (2π rad/rev)
+                         # Result: ~1,592 pulses/radian
+SCALE X                  # Query: OK X PPR:10000 UPR:0.005 PPU:2000000
 ```
+
+> **Note:** All position/velocity values in commands use SI units (meters, radians, m/s, rad/s).
 
 ### SETL - Set Limits
 ```
@@ -744,7 +764,9 @@ CFGDATA version: 1
 CFGDATA axes:
 CFGDATA   X:
 CFGDATA     alias: "RAILWAY"
-CFGDATA     units_per_pulse: 0.001
+CFGDATA     type: linear
+CFGDATA     pulses_per_rev: 10000
+CFGDATA     units_per_rev: 0.005
 ```
 
 **Response**:
@@ -805,11 +827,13 @@ YAML:version: 1
 YAML:axes:
 YAML:  X:
 YAML:    alias: "RAILWAY"
-YAML:    units_per_pulse: 0.001
-YAML:    limits: [-500.0, 500.0]
-YAML:    velocity: 200.0
-YAML:    acceleration: 1000.0
-YAML:    backlash: 0.05
+YAML:    type: linear
+YAML:    pulses_per_rev: 10000
+YAML:    units_per_rev: 0.005
+YAML:    limits: [-0.500, 0.500]
+YAML:    max_velocity: 0.200
+YAML:    max_acceleration: 1.0
+YAML:    backlash: 0.00005
 YAML:  Y:
 YAML:    alias: "GRIPPER"
 ...
@@ -1034,6 +1058,15 @@ EVENT <type> <axis> <data>
 
 ### Event Types
 
+#### BOOT (system startup)
+```
+EVENT BOOT V1.0.0 AXES:8 STATE:IDLE
+```
+Sent immediately after successful system initialization. Host can use this to detect firmware ready without polling.
+- `V1.0.0`: Firmware version
+- `AXES:8`: Number of configured axes
+- `STATE:IDLE`: Initial system state (motors disabled)
+
 #### OBJECT_DETECTED (C axis only)
 ```
 EVENT OBJECT_DETECTED C WIDTH:12.5 TIME:1234567890
@@ -1101,6 +1134,13 @@ Triggered on I2C communication failure.
 | E011 | Event buffer overflow |
 | E012 | Command blocked in current mode |
 | E013 | Motion active - stop first |
+| E014 | Driver alarm active |
+| E015 | Alarm clear failed |
+| E016 | Z-signal drift exceeded threshold |
+| E017 | CFGSTART rejected: axes moving |
+| E018 | YAML parse error |
+| E019 | Configuration validation failed |
+| E030 | Config exceeds 8KB buffer limit |
 
 ## Command Examples Session
 

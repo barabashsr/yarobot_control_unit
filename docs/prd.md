@@ -214,16 +214,15 @@ This abstraction layer handles:
 
 **Signal Generation**
 - STEP pulses via RMT+DMA, MCPWM, or LEDC peripherals for precise timing
-- DIR, ENABLE, and BRAKE signals via 3x TPIC6B595N shift registers (24V open-drain outputs)
+- DIR, ENABLE, BRAKE, and ALARM_CLEAR signals via 5x TPIC6B595N shift registers (40-bit chain, 24V open-drain outputs)
 - Hardware pulse counting for position feedback
 - Native 24V logic level compatibility (no level shifters needed for motor drivers)
 
 **Peripheral Expansion**
-- 3x MCP23017 I2C expanders (on I2C0 bus) for:
-  - 14 limit switch inputs (2 per axis)
-  - 8 general purpose digital inputs
-  - 8 general purpose digital outputs
-  - Servo feedback signals (InPos, alarms)
+- 2x MCP23017 I2C expanders (on I2C0 bus) for inputs only:
+  - MCP23017 #0 (0x20): 16 limit switch inputs (2 per axis for all 8 axes)
+  - MCP23017 #1 (0x21): 7 ALARM_INPUT signals + 5 InPos signals + 4 spare inputs
+- 8 general purpose digital outputs via shift register SR4 (bits 32-39)
 - I2C0 bus at 400kHz for responsive I/O scanning
 - SSD1306 128x64 OLED display on dedicated I2C1 bus (isolated from critical I/O)
 

@@ -361,7 +361,7 @@ esp_err_t spi_hal_transfer(spi_host_device_t host, const uint8_t* tx, uint8_t* r
 **I2C Bus 0 (MCP23017 Expanders):**
 - **Given** I2C0 is initialized at I2C_FREQ_HZ on GPIO_I2C_SDA/GPIO_I2C_SCL
 - **When** I scan the bus
-- **Then** devices respond at I2C_ADDR_MCP23017_0, I2C_ADDR_MCP23017_1, I2C_ADDR_MCP23017_2
+- **Then** devices respond at I2C_ADDR_MCP23017_0 (0x20), I2C_ADDR_MCP23017_1 (0x21)
 - **And** read/write to MCP23017 registers succeeds without timeout
 
 **I2C Bus 1 (OLED - Isolated):**
@@ -856,7 +856,7 @@ EVENT ESTOP ACTIVE
 
 **Given** SPI2 is initialized per Story 1.6 hardware verification
 **When** I call shift register API functions
-**Then** the 24-bit chain (3x TPIC6B595N) is updated correctly
+**Then** the 40-bit chain (5x TPIC6B595N) is updated correctly
 
 **API:**
 ```c
@@ -864,9 +864,11 @@ esp_err_t sr_init(void);
 esp_err_t sr_set_direction(uint8_t axis, bool forward);  // SR_X_DIR..SR_E_DIR
 esp_err_t sr_set_enable(uint8_t axis, bool enable);      // SR_X_EN..SR_E_EN
 esp_err_t sr_set_brake(uint8_t axis, bool release);      // SR_X_BRAKE..SR_E_BRAKE (servos only)
+esp_err_t sr_set_alarm_clear(uint8_t axis, bool active); // SR_X_ALARM_CLR..SR_D_ALARM_CLR
+esp_err_t sr_set_gp_output(uint8_t pin, bool level);     // SR_GP_OUT_0..SR_GP_OUT_7 (SR4)
 esp_err_t sr_update(void);                                // Latch current state to outputs
 void sr_emergency_disable_all(void);                      // ISR-safe, all outputs LOW
-uint32_t sr_get_state(void);                              // Read current 24-bit state
+uint64_t sr_get_state(void);                              // Read current 40-bit state
 ```
 
 **Bit Position Verification:**
@@ -881,7 +883,7 @@ uint32_t sr_get_state(void);                              // Read current 24-bit
 **Fail-Safe Behavior:**
 **Given** `sr_emergency_disable_all()` is called
 **When** outputs are latched
-**Then** all 24 bits are 0 (SR_SAFE_STATE)
+**Then** all 40 bits are 0 (SR_SAFE_STATE)
 **And** all brakes engage (active-low logic)
 **And** all motors disabled
 
@@ -892,9 +894,9 @@ uint32_t sr_get_state(void);                              // Read current 24-bit
 
 **Technical Notes:**
 - Implement in `components/drivers/tpic6b595/`
-- Use SPI DMA for efficient 24-bit transfers
-- Maintain shadow register in RAM for read-back
-- Bit positions from `config_sr.h`
+- Use SPI DMA for efficient 40-bit transfers (5 bytes)
+- Maintain shadow register in RAM for read-back (uint64_t)
+- Bit positions from `config_sr.h`: SR0-SR3 for motor control (4 bits/axis), SR4 for GP outputs
 - Thread-safe with mutex (multiple axes may update simultaneously)
 - ISR-safe emergency function uses direct register access
 
@@ -1121,17 +1123,18 @@ public:
 - IPulseGenerator (RMT or MCPWM)
 - IPositionTracker
 - ShiftRegisterController reference
-- Axis configuration (units_per_pulse, limits, velocity from config_defaults.h)
+- Axis configuration (pulses_per_rev, units_per_rev, limits, velocity from config_defaults.h)
 
 **When** I call `moveAbsolute(100.0, 50.0)`
 **Then:**
 1. Target position validated against limits (DEFAULT_LIMIT_MIN, DEFAULT_LIMIT_MAX or configured)
 2. Direction calculated and set via shift register
-3. Pulse count calculated: `(target - current) / units_per_pulse`
-4. Velocity converted to frequency: `velocity / units_per_pulse`
-5. Pulse generator started
-6. State set to MOVING
-7. On completion: EVT_MOTION_COMPLETE published
+3. Derived pulses_per_unit = pulses_per_rev / units_per_rev
+4. Pulse count calculated: `(target - current) * pulses_per_unit`
+5. Velocity converted to frequency: `velocity * pulses_per_unit`
+6. Pulse generator started
+7. State set to MOVING
+8. On completion: EVT_MOTION_COMPLETE published
 
 **Enable/Disable:**
 **Given** I call `enable(true)`
@@ -1420,7 +1423,7 @@ public:
 
 **Given** I2C0 is initialized (verified in Story 1.6)
 **When** I call MCP23017 driver functions
-**Then** all three expanders respond correctly
+**Then** both expanders respond correctly (inputs only - all outputs via shift registers)
 
 **API:**
 ```c
@@ -1428,28 +1431,25 @@ esp_err_t mcp23017_init(uint8_t addr);
 esp_err_t mcp23017_set_direction(uint8_t addr, uint8_t port, uint8_t direction);  // 0=output, 1=input
 esp_err_t mcp23017_set_pullup(uint8_t addr, uint8_t port, uint8_t pullup);
 esp_err_t mcp23017_read_port(uint8_t addr, uint8_t port, uint8_t* value);
-esp_err_t mcp23017_write_port(uint8_t addr, uint8_t port, uint8_t value);
 esp_err_t mcp23017_read_pin(uint8_t addr, uint8_t port, uint8_t pin, bool* value);
-esp_err_t mcp23017_write_pin(uint8_t addr, uint8_t port, uint8_t pin, bool value);
 esp_err_t mcp23017_set_interrupt(uint8_t addr, uint8_t port, uint8_t mask, mcp23017_isr_t handler);
 ```
 
-**Expander Configuration (from config_i2c.h):**
+**Expander Configuration (from config_i2c.h) - INPUTS ONLY:**
 | Address | Port A Function | Port B Function |
 |---------|-----------------|-----------------|
-| I2C_ADDR_MCP23017_0 (0x20) | Limit switches X,Y,Z,A (8 pins) | Limit switches B,C,D,E (6 pins) + 2 spare |
-| I2C_ADDR_MCP23017_1 (0x21) | ALARM_INPUT X-D (7 pins) + 1 spare | ALARM_CLEAR X-D (7 pins) + 1 spare |
-| I2C_ADDR_MCP23017_2 (0x22) | InPos X,Y,Z,A,B (5 pins) + 3 spare inputs | General outputs (8 pins) |
+| I2C_ADDR_MCP23017_0 (0x20) | Limit switches X,Y,Z,A (8 pins) | Limit switches B,C,D,E (8 pins) |
+| I2C_ADDR_MCP23017_1 (0x21) | ALARM_INPUT X-D (7 pins) + 1 spare | InPos X,Y,Z,A,B (5 pins) + 3 spare inputs |
 
-**Interrupt Configuration (6 separate interrupt lines):**
+> **Note:** All outputs (DIR, EN, BRAKE, ALARM_CLEAR, GP_OUT) are handled via 5x TPIC6B595N shift registers for fast SPI updates.
+
+**Interrupt Configuration (4 interrupt lines for 2 MCPs):**
 | GPIO | MCP | Port | Function | Interrupt Use |
 |------|-----|------|----------|---------------|
 | GPIO_MCP0_INTA | #0 | A | X-A limit switches | Yes - safety critical |
 | GPIO_MCP0_INTB | #0 | B | B-E limit switches | Yes - safety critical |
 | GPIO_MCP1_INTA | #1 | A | ALARM_INPUT signals | Yes - driver faults |
-| GPIO_MCP1_INTB | #1 | B | ALARM_CLEAR outputs | No - outputs only |
-| GPIO_MCP2_INTA | #2 | A | InPos + spare inputs | Optional - polling OK |
-| GPIO_MCP2_INTB | #2 | B | GP outputs | No - outputs only |
+| GPIO_MCP1_INTB | #1 | B | InPos signals | Optional - polling OK |
 
 **Given** each MCP23017 has separate INTA/INTB lines routed to ESP32 GPIOs
 **When** an input changes state on a monitored port
@@ -1463,10 +1463,10 @@ esp_err_t mcp23017_set_interrupt(uint8_t addr, uint8_t port, uint8_t mask, mcp23
 - Use espressif/mcp23017 component from ESP Component Registry
 - Configure interrupt-on-change for limit switch inputs (MCP0)
 - Configure interrupt-on-change for ALARM_INPUT (MCP1 Port A)
-- InPos signals (MCP2) can use polling - not time-critical
+- InPos signals (MCP1 Port B) can use polling - not time-critical
 - Polling fallback at TIMING_I2C_POLL_MS (5ms) if interrupt missed
 - I2C mutex required for thread-safe access
-- FR35, FR36, FR37 foundation
+- FR35, FR37 foundation (FR36 GP outputs via shift registers)
 
 ---
 
@@ -1482,17 +1482,17 @@ esp_err_t mcp23017_set_interrupt(uint8_t addr, uint8_t port, uint8_t mask, mcp23
 **When** I query limit switch status
 **Then** each switch state is reported correctly
 
-**Limit Switch Mapping (from config_i2c.h):**
+**Limit Switch Mapping (from config_i2c.h) - All on MCP23017 #0 (0x20):**
 | Axis | Min Switch | Max Switch |
 |------|------------|------------|
-| X | MCP0_PA0 | MCP0_PA1 |
-| Y | MCP0_PA2 | MCP0_PA3 |
-| Z | MCP0_PA4 | MCP0_PA5 |
-| A | MCP0_PA6 | MCP0_PA7 |
-| B | MCP0_PB0 | MCP0_PB1 |
-| C | MCP0_PB2 | MCP0_PB3 |
-| D | MCP0_PB4 | MCP0_PB5 |
-| E | None | None |
+| X | MCP0_GPA0 | MCP0_GPA1 |
+| Y | MCP0_GPA2 | MCP0_GPA3 |
+| Z | MCP0_GPA4 | MCP0_GPA5 |
+| A | MCP0_GPA6 | MCP0_GPA7 |
+| B | MCP0_GPB0 | MCP0_GPB1 |
+| C | MCP0_GPB2 | MCP0_GPB3 (floating switch) |
+| D | MCP0_GPB4 | MCP0_GPB5 |
+| E | MCP0_GPB6 | MCP0_GPB7 |
 
 **Polling/Interrupt Behavior:**
 **Given** i2c_monitor_task is running at TIMING_I2C_POLL_MS (5ms) interval
@@ -1739,7 +1739,7 @@ OK X:00 Y:00 Z:01 A:00 B:00 C:10 D:00 E:--
 
 **Technical Notes:**
 - InPos signal from servo drives indicates position reached
-- Servo InPos inputs: MCP23017_2 Port A
+- Servo InPos inputs: MCP23017 #1 (0x21) Port B (pins GPB0-GPB4)
 - Steppers: position always "lost" on power cycle
 - FR16: position loss detection
 - Consider using servo encoder feedback directly in future (encoder counting)
@@ -1754,13 +1754,13 @@ OK X:00 Y:00 Z:01 A:00 B:00 C:10 D:00 E:--
 
 **Acceptance Criteria:**
 
-**Digital Inputs (4 pins across MCP23017_1 and MCP23017_2):**
-| Pin | MCP | Port | Config Define |
-|-----|-----|------|---------------|
-| DIN0 | #1 | A7 | MCP1_GP_IN_0 |
-| DIN1 | #2 | A5 | MCP2_GP_IN_1 |
-| DIN2 | #2 | A6 | MCP2_GP_IN_2 |
-| DIN3 | #2 | A7 | MCP2_GP_IN_3 |
+**Digital Inputs (4 spare pins on MCP23017 #1):**
+| Pin | MCP | Port.Pin | Config Define |
+|-----|-----|----------|---------------|
+| DIN0 | #1 | GPA7 | MCP1_GP_IN_0 |
+| DIN1 | #1 | GPB5 | MCP1_GP_IN_1 |
+| DIN2 | #1 | GPB6 | MCP1_GP_IN_2 |
+| DIN3 | #1 | GPB7 | MCP1_GP_IN_3 |
 
 **Given** I send `DIN` (CMD_DIN)
 **When** command executes
@@ -1773,14 +1773,14 @@ OK X:00 Y:00 Z:01 A:00 B:00 C:10 D:00 E:--
 **When** I send `DIN SENSOR1`
 **Then** response is `OK SENSOR1 1`
 
-**Digital Outputs (8 pins on MCP23017_2 Port B):**
-| Pin | MCP | Port | Config Define |
-|-----|-----|------|---------------|
-| DOUT0-7 | #2 | B0-B7 | MCP2_GP_OUT_1..8 |
+**Digital Outputs (8 pins on shift register SR4):**
+| Pin | SR | Bit | Config Define |
+|-----|-----|-----|---------------|
+| DOUT0-7 | SR4 | Q0-Q7 | SR_GP_OUT_0..SR_GP_OUT_7 (bits 32-39) |
 
 **Given** I send `DOUT 5 1` (CMD_DOUT)
 **When** command executes
-**Then** output 5 is set HIGH (MCP2_GP_OUT_6)
+**Then** output 5 is set HIGH via shift register (SR_GP_OUT_5, bit 37)
 **And** response is RESP_OK
 
 **Given** I send `DOUT` (query all)
@@ -1788,7 +1788,7 @@ OK X:00 Y:00 Z:01 A:00 B:00 C:10 D:00 E:--
 
 **Given** output alias "LIGHT" = DOUT7
 **When** I send `DOUT LIGHT 1`
-**Then** output 7 is set HIGH (MCP2_GP_OUT_8)
+**Then** output 7 is set HIGH via shift register (SR_GP_OUT_7, bit 39)
 
 **Input Debouncing (FR41):**
 **Given** TIMING_DEBOUNCE_MS is configured (default 10ms)
@@ -1801,16 +1801,16 @@ OK X:00 Y:00 Z:01 A:00 B:00 C:10 D:00 E:--
 **When** DIN1 changes from 0 to 1
 **Then** event published: `EVENT DIN DIN1 1`
 
-**Prerequisites:** Story 4.1
+**Prerequisites:** Story 4.1, Story 3.1 (shift register driver)
 
 **Technical Notes:**
 - Implement commands in `components/control/command_executor/`
-- FR35: 4 digital inputs (hardware limitation - 3 on MCP2 + 1 on MCP1)
-- FR36: 8 digital outputs (MCP2 Port B)
+- FR35: 4 digital inputs (spare pins on MCP23017 #1)
+- FR36: 8 digital outputs via shift register SR4 (bits 32-39)
 - FR41: debouncing
 - FR42: pin names/aliases
-- DIN0 shares MCP1 with alarm signals - coordinate I2C access
-- Inputs can use GPIO_MCP2_INTA interrupt or polling
+- Digital inputs share MCP1 with alarm/InPos signals - coordinate I2C access
+- Outputs via SPI shift register for fast updates
 
 ---
 
@@ -1824,7 +1824,7 @@ OK X:00 Y:00 Z:01 A:00 B:00 C:10 D:00 E:--
 
 **InPos Signal Processing:**
 **Given** servo X completes a move (drive reports position reached)
-**When** InPos_X signal goes active on MCP23017_2 Port A
+**When** InPos_X signal goes active on MCP23017 #1 (0x21) Port B, pin GPB0
 **Then** this confirms motion completion
 **And** internal state updated to IDLE
 
@@ -1844,10 +1844,10 @@ OK X:INPOS:1 Y:INPOS:1 Z:INPOS:0 A:INPOS:1 B:INPOS:1
 **Prerequisites:** Story 4.1, Story 3.6
 
 **Technical Notes:**
-- InPos signals on MCP23017_2 Port A (5 pins for servo axes X,Y,Z,A,B)
+- InPos signals on MCP23017 #1 (0x21) Port B (5 pins: GPB0-GPB4 for servo axes X,Y,Z,A,B)
 - FR37: servo feedback processing (InPos portion)
 - InPos is confirmation, not position source (servos track internally)
-- Alarm handling is separate in Story 4.14 (uses MCP23017_1)
+- Alarm handling is separate in Story 4.14 (uses MCP23017 #1 Port A)
 
 ---
 
@@ -1875,10 +1875,10 @@ OK X:INPOS:1 Y:INPOS:1 Z:INPOS:0 A:INPOS:1 B:INPOS:1
 6. Width stored for query
 
 **Floating Switch Input:**
-**Given** floating switch is connected to MCP23017_0 spare pin (MCP0_PB6)
+**Given** floating switch is connected to C_LIMIT_MAX input (MCP0 GPB3)
 **When** switch activates during closing motion
 **Then** GPIO_MCP0_INTB triggers interrupt (same as B-E limit switches)
-**And** safety task identifies floating switch vs limit switch
+**And** safety task identifies floating switch vs hard limit switch
 **And** position recorded
 **And** event generated (FR39)
 
@@ -1894,8 +1894,8 @@ OK X:INPOS:1 Y:INPOS:1 Z:INPOS:0 A:INPOS:1 B:INPOS:1
 **Prerequisites:** Story 4.2, Story 3.7
 
 **Technical Notes:**
-- Floating switch uses MCP0 spare pin (PB6) - shares interrupt with B-E limits
-- Floating switch is different from limit switches - doesn't set error state
+- Floating switch uses C_LIMIT_MAX input (MCP0 GPB3) - shares interrupt with B-E limits
+- Floating switch is different from hard limit switches - doesn't set error state
 - Only C axis has this feature (picker jaw)
 - FR38: detect floating switch
 - FR39: measure and report width via event
@@ -1995,7 +1995,7 @@ OK I2C0:OK(1234) I2C1:OK(5678)
 **Given** I send `I2C SCAN`
 **Then** response lists all detected devices:
 ```
-OK 0x20:MCP23017 0x21:MCP23017 0x22:MCP23017 0x3C:OLED
+OK 0x20:MCP23017 0x21:MCP23017 0x3C:OLED
 ```
 
 **Error Recovery (FR58):**
@@ -2189,10 +2189,10 @@ OK X:ALM:0 Y:ALM:1 Z:ALM:0 A:ALM:0 B:ALM:0 C:ALM:0 D:ALM:0
 **Alarm Clearance (FR63):**
 **Given** axis X has active alarm
 **When** I send `CLR X` (CMD_CLR)
-**Then** ALARM_CLEAR_X output pulses on MCP23017_1 Port B
+**Then** ALARM_CLEAR_X output pulses via shift register (SR_X_ALARM_CLR, bit 3)
 **And** system waits TIMING_ALARM_CLEAR_PULSE_MS (100ms default)
 **And** ALARM_CLEAR_X output deasserts
-**And** system checks ALARM_INPUT_X after TIMING_ALARM_CHECK_DELAY_MS (50ms)
+**And** system checks ALARM_INPUT_X on MCP23017 #1 after TIMING_ALARM_CHECK_DELAY_MS (50ms)
 
 **Given** alarm clears successfully (ALARM_INPUT_X inactive)
 **Then** response is `OK`
@@ -2217,11 +2217,11 @@ OK X:CLEARED Y:FAILED Z:CLEARED
 **Prerequisites:** Story 4.1 (MCP23017 driver), Story 4.10 (error tracking)
 
 **Technical Notes:**
-- ALARM_INPUT signals on MCP23017_1 (0x21) Port A pins 0-6 for axes X-D
-- ALARM_CLEAR outputs on MCP23017_1 (0x21) Port B pins 0-6 for axes X-D
+- ALARM_INPUT signals on MCP23017 #1 (0x21) Port A pins GPA0-GPA6 for axes X-D
+- ALARM_CLEAR outputs on shift register bits SR_X_ALARM_CLR through SR_D_ALARM_CLR (bits 3, 7, 11, 15, 19, 23, 27)
 - Interrupt on GPIO_MCP1_INTA for alarm detection (see architecture)
 - FR62: monitor ALARM_INPUT signals
-- FR63: CLR command pulses ALARM_CLEAR outputs
+- FR63: CLR command pulses ALARM_CLEAR via shift register
 - FR64: block motion when alarm active
 - E axis (discrete actuator) has no alarm signals
 - Clear pulse polarity/duration may need per-driver configuration
@@ -2271,14 +2271,19 @@ system:
 axes:
   X:
     alias: "RAILWAY"
-    units_per_pulse: 0.01
-    max_velocity: 100.0
-    acceleration: 500.0
-    limit_min: 0.0
-    limit_max: 1000.0
+    type: linear                    # linear (meters) or rotary (radians)
+    pulses_per_rev: 10000           # Driver PA14 setting (pulses per motor revolution)
+    units_per_rev: 0.005            # Physical travel per rev: 5mm ball screw = 0.005 m/rev
+    # Derived: pulses_per_unit = pulses_per_rev / units_per_rev = 2,000,000 pulses/meter
+    max_velocity: 0.200             # 200mm/s in m/s (SI units)
+    max_acceleration: 1.0           # 1 m/s² (SI units)
+    limits: [-0.500, 0.500]         # ±500mm in meters (SI units)
     home_direction: -1
-    home_velocity: 10.0
+    home_velocity: 0.010            # 10mm/s in m/s
     brake_strategy: "on_disable"
+    z_signal:
+      enabled: true                 # Enable Z-signal position sync
+      drift_threshold: 100          # Alarm if drift > 100 pulses
   # ... Y, Z, A, B, C, D, E
 
 io:
@@ -2379,7 +2384,9 @@ system:
 axes:
   X:
     alias: "RAILWAY"
-    units_per_pulse: 0.01
+    type: linear
+    pulses_per_rev: 10000
+    units_per_rev: 0.005
     ...
 OK CONFIG END
 ```
@@ -2552,41 +2559,50 @@ OK CONFIG END
 
 ---
 
-### Story 5.7: Scaling Ratio Configuration (CMD_RATIO)
+### Story 5.7: Scaling Ratio Configuration (CMD_SCALE)
 
 **As a** user,
 **I want** to set custom scaling ratios per axis,
-**So that** positions are in meaningful units (mm, degrees, etc.).
+**So that** positions are in meaningful SI units (meters, radians).
 
 **Acceptance Criteria:**
 
-**CMD_RATIO Command (FR32):**
-**Given** I send `RATIO X 0.01` (CMD_RATIO)
+**CMD_SCALE Command (FR32):**
+**Given** I send `SCALE X PPR 10000` (pulses per revolution)
 **When** command executes
-**Then** X axis units_per_pulse is set to 0.01
-**And** position 100.0 now corresponds to 10000 pulses
+**Then** X axis pulses_per_rev is set to 10000
 **And** response is RESP_OK
 
-**Given** I send `RATIO X` (query)
-**Then** response is `OK X RATIO 0.01`
+**Given** I send `SCALE X UPR 0.005` (units per revolution - meters for linear, radians for rotary)
+**When** command executes
+**Then** X axis units_per_rev is set to 0.005 (5mm ball screw lead)
+**And** derived pulses_per_unit = 10000 / 0.005 = 2,000,000 pulses/meter
+**And** response is RESP_OK
 
-**Given** I send `RATIO` (query all)
-**Then** response is `OK X:0.01 Y:0.005 Z:0.01 A:0.1 B:0.1 C:0.02 D:0.05 E:1.0`
+**Given** I send `SCALE X` (query)
+**Then** response is `OK X PPR:10000 UPR:0.005 PPU:2000000`
+
+**Given** I send `SCALE` (query all)
+**Then** response shows all axes scaling:
+```
+OK X:PPR:10000,UPR:0.005 Y:PPR:10000,UPR:6.283 Z:PPR:10000,UPR:0.010 ...
+```
 
 **Unit Verification:**
-**Given** X ratio is 0.01 (mm per pulse)
-**When** I send `MOVE X 100`
-**Then** motor moves 10000 pulses
-**And** position reports 100.0 (mm)
+**Given** X has PPR=10000, UPR=0.005 (pulses_per_unit = 2,000,000)
+**When** I send `MOVE X 0.150` (move to 150mm in meters)
+**Then** motor moves 300,000 pulses
+**And** position reports 0.150 (meters)
 
 **Prerequisites:** Story 3.6
 
 **Technical Notes:**
-- Ratio = user_units_per_pulse
+- Two fundamental parameters: pulses_per_rev (driver setting) and units_per_rev (mechanical lead/ratio)
+- Derived: pulses_per_unit = pulses_per_rev / units_per_rev
+- All external values in SI units: meters (linear) or radians (rotary)
 - Affects: MOVE, MOVR, VEL, POS, limits
-- Velocity scaled: units/sec → pulses/sec
-- FR32: custom scaling ratios
-- Common ratios: mm/pulse, degrees/pulse, radians/pulse
+- Velocity scaled: SI units/sec → pulses/sec
+- FR32: custom scaling ratios (now using intuitive rev-based parameters)
 
 ---
 
