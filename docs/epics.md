@@ -22,8 +22,9 @@ This document provides the complete epic and story breakdown for yarobot_control
 | 3 | Motor Control Core | 11 | FR1-10, FR43-44, FR48 |
 | 4 | Safety & I/O Systems | 14 | FR11-18, FR33, FR35-42, FR45, FR49, FR56-64 |
 | 5 | Configuration & Status Display | 12 | FR27-32, FR34, FR46-47c, FR50 |
+| 6 | Advanced Position Feedback | 6 | FR65-70 (Z-signal, InPos, position sync) |
 
-**Total: 51 Stories covering 64 Functional Requirements**
+**Total: 57 Stories covering 70 Functional Requirements**
 
 ---
 
@@ -114,6 +115,14 @@ This document provides the complete epic and story breakdown for yarobot_control
 - FR63: System can attempt to clear driver alarms via ALARM_CLEAR outputs (CLR command)
 - FR64: System prevents motion commands on axes with active driver alarms
 
+**Advanced Position Feedback (FR65-FR70):**
+- FR65: System can read Z-signal (encoder index pulse) from servo axes (X, Y, Z, A, B)
+- FR66: System can detect position drift via Z-signal comparison during motion
+- FR67: System can apply deferred Z-signal corrections when axis becomes IDLE
+- FR68: System provides configurable Z-signal fallback during homing (auto/confirm/fail)
+- FR69: System can report Z-signal synchronization events and drift alarms
+- FR70: System can use InPos signals to confirm motion completion and detect following errors
+
 ---
 
 ## FR Coverage Map
@@ -125,6 +134,7 @@ This document provides the complete epic and story breakdown for yarobot_control
 | **Epic 3: Motor Control** | FR1-10, FR43-44, FR48 (13 FRs) |
 | **Epic 4: Safety & I/O** | FR11-18, FR33, FR35-42, FR45, FR49, FR56-64 (28 FRs) |
 | **Epic 5: Config & Display** | FR27-32, FR34, FR46-47c, FR50 (13 FRs) |
+| **Epic 6: Position Feedback** | FR65-70 (6 FRs) |
 
 ---
 
@@ -1713,10 +1723,9 @@ OK X:00 Y:00 Z:01 A:00 B:00 C:10 D:00 E:--
 **And** axis state set to ERROR
 
 **Position Loss Conditions:**
-1. **Servo following error**: Drive reports position error > threshold (via InPos signal going inactive during motion for extended time)
-2. **Unexpected motion**: Position changes while axis should be idle
-3. **Power cycle**: All positions marked as "not homed" on boot
-4. **E-stop**: Positions flagged as potentially lost (servos may have coasted)
+1. **Power cycle**: All positions marked as "not homed" on boot
+2. **E-stop**: Positions flagged as potentially lost (servos may have coasted)
+3. **Motion watchdog timeout**: Motion expected but no progress detected
 
 **CMD_POSOK Command (Position Acknowledge):**
 **Given** axis X is in POSLOS (position loss) state
@@ -1735,14 +1744,13 @@ OK X:00 Y:00 Z:01 A:00 B:00 C:10 D:00 E:--
 **Then** stepper positions marked as "unknown" (requires homing)
 **And** `STAT C` shows HOMED:0
 
-**Prerequisites:** Story 4.1 (for servo feedback signals), Story 3.6
+**Prerequisites:** Story 4.1, Story 3.6
 
 **Technical Notes:**
-- InPos signal from servo drives indicates position reached
-- Servo InPos inputs: MCP23017 #1 (0x21) Port B (pins GPB0-GPB4)
+- Basic position loss detection based on system state changes
 - Steppers: position always "lost" on power cycle
 - FR16: position loss detection
-- Consider using servo encoder feedback directly in future (encoder counting)
+- **Advanced position feedback (Z-signal sync, InPos confirmation) is in Epic 6**
 
 ---
 
@@ -1814,24 +1822,18 @@ OK X:00 Y:00 Z:01 A:00 B:00 C:10 D:00 E:--
 
 ---
 
-### Story 4.8: Servo Feedback Processing (InPos Signals)
+### Story 4.8: Servo Feedback Processing (Basic InPos)
 
 **As a** user,
-**I want** servo InPos feedback signals processed,
-**So that** I know when moves complete and can trust position confirmation.
+**I want** servo InPos feedback signals read and reported,
+**So that** I can query servo position-in-range status.
 
 **Acceptance Criteria:**
 
-**InPos Signal Processing:**
-**Given** servo X completes a move (drive reports position reached)
-**When** InPos_X signal goes active on MCP23017 #1 (0x21) Port B, pin GPB0
-**Then** this confirms motion completion
-**And** internal state updated to IDLE
-
-**Given** InPos_X does not activate within TIMING_INPOS_TIMEOUT_MS after motion should complete
-**When** timeout occurs
-**Then** event published: `EVENT ERROR X E010` (ERR_INPOS_TIMEOUT)
-**And** axis state set to ERROR
+**InPos Signal Reading:**
+**Given** servo driver X reports position reached (InPos_X active on MCP23017 #1 Port B, pin GPB0)
+**When** I query servo status
+**Then** InPos state is reported
 
 **CMD_SERVOSTAT Command:**
 **Given** I send `SERVOSTAT` (CMD_SERVOSTAT)
@@ -1845,9 +1847,10 @@ OK X:INPOS:1 Y:INPOS:1 Z:INPOS:0 A:INPOS:1 B:INPOS:1
 
 **Technical Notes:**
 - InPos signals on MCP23017 #1 (0x21) Port B (5 pins: GPB0-GPB4 for servo axes X,Y,Z,A,B)
-- FR37: servo feedback processing (InPos portion)
-- InPos is confirmation, not position source (servos track internally)
+- FR37: servo feedback processing (InPos portion - basic read)
+- InPos is read-only status in this story (no timeout/error handling)
 - Alarm handling is separate in Story 4.14 (uses MCP23017 #1 Port A)
+- **Advanced InPos processing (motion confirmation, timeout errors) is in Epic 6 Story 6.5**
 
 ---
 
@@ -2081,10 +2084,10 @@ ERROR E020 I2C communication failure: 0x20
 
 ---
 
-### Story 4.13: Homing Sequences
+### Story 4.13: Homing Sequences (Limit-Based)
 
 **As a** user,
-**I want** to home axes to known positions,
+**I want** to home axes to known positions using limit switches,
 **So that** I can establish accurate position references.
 
 **Acceptance Criteria:**
@@ -2092,34 +2095,49 @@ ERROR E020 I2C communication failure: 0x20
 **CMD_HOME Command (FR33):**
 **Given** X axis is enabled
 **When** I send `HOME X` (CMD_HOME)
-**Then** X axis executes homing sequence:
+**Then** X axis executes basic homing sequence:
 1. Move toward home limit at homing speed (DEFAULT_HOMING_VELOCITY)
-2. Stop when min limit switch activates
-3. Back off limit by small amount
-4. Move slowly toward limit again
-5. Stop at limit activation
-6. Set position to 0 (or configured home offset)
-7. Response: RESP_OK
-8. Event: `EVENT HOMED X`
-**And** axis position is now referenced
+2. Stop when limit switch activates
+3. Event: `EVENT HOMING X LIMIT_HIT POS:<pos>`
+4. Back off limit by homing_backoff distance
+5. Event: `EVENT HOMING X BACKOFF POS:<pos>`
+6. Move slowly toward limit again (homing_velocity_slow)
+7. Stop at limit activation
+8. Set position to 0 (or configured home offset)
+9. Response: RESP_OK
+10. Event: `EVENT HOMING X COMPLETE POS:0.000`
+**And** axis position is now referenced (HOMED:1)
 
 **Given** I send `HOME` (no axis)
 **Then** all axes home in sequence (one at a time)
 **And** order defined by HOMING_SEQUENCE_ORDER from config
 
+**Homing State Events:**
+```
+EVENT HOMING X SEEK_LIMIT POS:0.150
+EVENT HOMING X LIMIT_HIT POS:-0.002
+EVENT HOMING X BACKOFF POS:-0.002
+EVENT HOMING X COMPLETE POS:0.000
+```
+
 **Homing Direction:**
 **Given** axis home direction is configurable
-**When** HOME_DIR_X = -1 (negative)
-**Then** X homes toward min limit
-**When** HOME_DIR_X = +1 (positive)
-**Then** X homes toward max limit
+**When** homing.direction = "min" (config)
+**Then** axis homes toward min limit
+**When** homing.direction = "max"
+**Then** axis homes toward max limit
 
 **Homing Abort:**
 **Given** homing is in progress
 **When** I send `STOP` or E-stop activates
 **Then** homing aborts
-**And** event: `EVENT HOMEABORT <axis>`
+**And** event: `EVENT HOMING <axis> FAILED ABORTED`
 **And** axis position remains "not homed"
+
+**Backoff Collision Detection:**
+**Given** homing is in BACKOFF phase
+**When** opposite limit is hit during backoff
+**Then** homing fails with `EVENT HOMING <axis> FAILED BACKOFF_COLLISION`
 
 **Home Status Query:**
 **Given** I send `STAT X`
@@ -2132,12 +2150,12 @@ OK X POS:0.000 EN:1 MOV:0 ERR:0 LIM:00 HOMED:1
 
 **Technical Notes:**
 - Implement in `components/control/motion_controller/` or dedicated homing component
-- Two-stage homing: fast approach, slow final
+- Two-stage homing: fast approach, slow final (limit-only)
 - Uses limit switches as home sensors
-- Some axes may have dedicated home switch (separate from limits)
-- FR33: homing sequences
+- FR33: homing sequences (basic limit-based)
 - Stepper axes especially need homing (no absolute position)
-- E axis (discrete) doesn't need homing (fixed endpoints)
+- E axis (discrete) doesn't need homing (NONE mode switches)
+- **Z-signal homing (SEEK_ZSIGNAL phase) is in Epic 6 Story 6.3**
 
 ---
 
@@ -2901,6 +2919,312 @@ C.limit_max: 200.0 (default: 1000.0)
 
 ---
 
+## Epic 6: Advanced Position Feedback
+
+**Goal:** Implement Z-signal synchronization, enhanced InPos processing, and precision homing for servo axes.
+
+**User Value:** After this epic, servo axes achieve sub-pulse position accuracy through Z-signal synchronization, motion completion is confirmed via InPos signals with timeout detection, and homing uses encoder index pulses for maximum repeatability.
+
+**FR Coverage:** FR65-70
+
+**Prerequisites:** Epic 3 (motor control), Epic 4 (basic homing, InPos reading)
+
+---
+
+### Story 6.1: Z-Signal GPIO Configuration
+
+**As a** developer,
+**I want** Z-signal GPIO inputs configured with interrupts,
+**So that** encoder index pulses can be captured for position synchronization.
+
+**Acceptance Criteria:**
+
+**GPIO Configuration:**
+**Given** Z-signal inputs are defined in config_gpio.h
+**When** system initializes
+**Then** GPIO_X_Z_SIGNAL through GPIO_B_Z_SIGNAL are configured as inputs
+**And** interrupt on rising edge enabled
+**And** ISR handlers registered for each Z-signal
+
+**Z-Signal Pin Assignments (from architecture):**
+| Axis | GPIO | Board Location |
+|------|------|----------------|
+| X | GPIO_X_Z_SIGNAL | J3-4 (row 4) |
+| Y | GPIO_Y_Z_SIGNAL | J3-5 (row 5) |
+| Z | GPIO_Z_Z_SIGNAL | J3-6 (row 6) |
+| A | GPIO_A_Z_SIGNAL | J3-7 (row 7) |
+| B | GPIO_B_Z_SIGNAL | J3-8 (row 8) |
+
+**ISR Registration:**
+**Given** Z-signal GPIO is configured
+**When** rising edge detected on GPIO_X_Z_SIGNAL
+**Then** ISR `onZSignal()` is called for X axis
+**And** ISR executes in < 5µs (IRAM_ATTR)
+
+**Prerequisites:** Story 1.3 (config headers), Story 3.6 (servo motor class)
+
+**Technical Notes:**
+- Z-signals are direct GPIO (not via I2C expander) for low latency
+- All 5 servo axes have Z-signal capability
+- Steppers (C, D) and discrete (E) do not have Z-signals
+- FR65: Read Z-signal from servo axes
+
+---
+
+### Story 6.2: Z-Signal Drift Detection
+
+**As a** user,
+**I want** position drift detected via Z-signal comparison,
+**So that** I'm alerted when mechanical slip or missed steps occur.
+
+**Acceptance Criteria:**
+
+**Z-Signal Counting:**
+**Given** axis X has been homed with Z-signal
+**When** axis moves and crosses Z-signal position
+**Then** `z_signal_count_` increments
+**And** expected pulse count calculated: `expected = z_signal_count * pulses_per_rev`
+
+**Drift Detection:**
+**Given** axis X Z-signal triggers during motion
+**When** actual `pulse_count_` differs from `expected`
+**Then** drift calculated: `drift = actual - expected`
+**And** event published: `EVENT ZSYNC X DETECTED DRIFT:<drift>`
+
+**Deferred Correction (Architecture Constraint):**
+**Given** drift is detected during motion
+**When** drift is non-zero
+**Then** correction is NOT applied immediately (could cause trajectory discontinuity)
+**And** drift accumulated in `z_pending_correction_`
+**And** correction applied when motion completes (axis IDLE)
+
+**Drift Threshold Alarm:**
+**Given** `z_signal.drift_threshold: 100` in config
+**When** detected drift exceeds threshold
+**Then** event published: `EVENT ALARM X ERR_ZSYNC_DRIFT`
+**And** alarm state set (does NOT stop motion - informational)
+
+**Prerequisites:** Story 6.1, Story 3.6
+
+**Technical Notes:**
+- Implement `onZSignal()` ISR callback per architecture
+- Drift detection is per-revolution accuracy check
+- FR66: Detect position drift via Z-signal
+- FR69: Report Z-signal events and drift alarms
+
+---
+
+### Story 6.3: Z-Signal Homing (SEEK_ZSIGNAL Phase)
+
+**As a** user,
+**I want** homing to use Z-signal for maximum repeatability,
+**So that** position reference is accurate to within one encoder count.
+
+**Acceptance Criteria:**
+
+**Extended Homing Sequence (Servo Axes):**
+**Given** axis X has `z_signal.enabled: true` in config
+**When** I send `HOME X`
+**Then** homing sequence includes Z-signal phase:
+1. SEEK_LIMIT: Move toward limit at homing velocity
+2. LIMIT_HIT: Stop on limit switch
+3. BACKOFF: Back off by `homing.backoff` distance
+4. **SEEK_ZSIGNAL: Move slowly, wait for Z-signal**
+5. SET_HOME: Reset `pulse_count_=0`, `z_signal_count_=0`
+6. COMPLETE: Fire `EVENT HOMING X COMPLETE POS:0.000`
+
+**Homing Events:**
+```
+EVENT HOMING X SEEK_LIMIT POS:0.150
+EVENT HOMING X LIMIT_HIT POS:-0.002
+EVENT HOMING X BACKOFF POS:0.010
+EVENT HOMING X SEEK_ZSIGNAL POS:0.003
+EVENT HOMING X COMPLETE POS:0.000
+```
+
+**Z-Signal Timeout & Fallback (FR68):**
+**Given** `z_signal.fallback: auto` in config (default)
+**When** Z-signal not detected within one motor revolution × 3 retries
+**Then** fallback to limit-only homing
+**And** event: `EVENT HOMING_DEGRADED X`
+**And** homing completes with reduced accuracy
+
+**Given** `z_signal.fallback: confirm` in config
+**When** Z-signal not found after 3 retries
+**Then** homing pauses
+**And** event: `EVENT HOMING_PAUSED X`
+**And** user must send `HOME X SWITCH` to continue with limit-only
+
+**Given** `z_signal.fallback: fail` in config
+**When** Z-signal not found after 3 retries
+**Then** homing fails
+**And** event: `EVENT HOMING X FAILED ZSIGNAL_TIMEOUT`
+**And** axis remains UNHOMED
+
+**Z-Signal Ignored During Backoff:**
+**Given** axis is in BACKOFF phase
+**When** Z-signal triggers
+**Then** Z-signal is ignored (only processed in SEEK_ZSIGNAL phase)
+
+**Prerequisites:** Story 4.13 (basic homing), Story 6.1, Story 6.2
+
+**Technical Notes:**
+- Extends Story 4.13 homing with SEEK_ZSIGNAL phase
+- Only servo axes (X, Y, Z, A, B) have Z-signal homing
+- Steppers use limit-only homing (Story 4.13)
+- FR68: Configurable Z-signal fallback
+
+---
+
+### Story 6.4: Deferred Z-Signal Correction
+
+**As a** user,
+**I want** accumulated Z-signal drift corrections applied safely,
+**So that** position accuracy is maintained without mid-motion jumps.
+
+**Acceptance Criteria:**
+
+**Correction Applied on Motion Complete:**
+**Given** `z_pending_correction_` is non-zero
+**When** motion completes (axis transitions to IDLE)
+**Then** `applyDeferredZCorrection()` is called
+**And** `pulse_count_` adjusted by accumulated correction
+**And** `current_position_` recalculated from corrected pulse count
+**And** event: `EVENT ZSYNC X CORRECTED DRIFT:<correction>`
+**And** `z_pending_correction_` reset to 0
+
+**Correction Not Applied During Motion:**
+**Given** axis is in MOVING state
+**When** Z-signal drift is detected
+**Then** drift is accumulated only
+**And** no position modification occurs
+**And** motion trajectory continues unaffected
+
+**Accumulated Drift Tracking:**
+**Given** multiple Z-signals occur during long move
+**When** each Z-signal detects drift
+**Then** all drifts accumulated in `z_pending_correction_`
+**And** total drift reported at motion complete
+
+**CMD_ZSYNC Query:**
+**Given** I send `ZSYNC X` (query Z-signal status)
+**When** command executes
+**Then** response shows:
+```
+OK X ZSYNC:1 COUNT:15 DRIFT:3 PENDING:0 TOTAL_CORRECTED:47
+```
+- ZSYNC: Z-signal enabled (1) or disabled (0)
+- COUNT: Z-signals seen since home
+- DRIFT: Last detected drift (pulses)
+- PENDING: Correction awaiting application
+- TOTAL_CORRECTED: Cumulative corrections applied
+
+**Prerequisites:** Story 6.2, Story 3.11 (motion completion events)
+
+**Technical Notes:**
+- `applyDeferredZCorrection()` called from motion task context (not ISR)
+- FR67: Apply deferred Z-signal corrections
+- Architecture requires deferred correction to prevent trajectory discontinuities
+
+---
+
+### Story 6.5: InPos Motion Confirmation
+
+**As a** user,
+**I want** InPos signals to confirm motion completion,
+**So that** I know the servo drive reports position reached.
+
+**Acceptance Criteria:**
+
+**InPos Confirmation After Motion:**
+**Given** axis X completes commanded move
+**When** InPos_X signal goes active on MCP23017 #1 Port B
+**Then** motion confirmed complete
+**And** event: `EVENT MOTION_CONFIRMED X`
+
+**InPos Timeout Error:**
+**Given** axis X commanded motion completes (pulses generated)
+**When** InPos_X does not activate within TIMING_INPOS_TIMEOUT_MS (default 500ms)
+**Then** event: `EVENT ERROR X E010` (ERR_INPOS_TIMEOUT)
+**And** axis state set to ERROR
+**And** indicates servo following error or mechanical issue
+
+**InPos During Motion Monitoring:**
+**Given** axis X is moving (continuous motion or position move)
+**When** InPos_X goes inactive during motion
+**Then** this is expected (servo is seeking position)
+**And** no error generated
+
+**Given** axis X is in IDLE state
+**When** InPos_X goes inactive unexpectedly
+**Then** event: `EVENT WARNING X INPOS_LOST`
+**And** indicates possible external disturbance
+
+**Enhanced STAT Response:**
+**Given** I send `STAT X`
+**Then** response includes InPos confirmation:
+```
+OK X POS:100.000 EN:1 MOV:0 ERR:0 LIM:00 HOMED:1 INPOS:1 CONFIRMED:1
+```
+- INPOS: Current InPos signal state
+- CONFIRMED: Last motion was InPos-confirmed
+
+**Prerequisites:** Story 4.8 (basic InPos reading), Story 3.11
+
+**Technical Notes:**
+- InPos signals on MCP23017 #1 (0x21) Port B (GPB0-GPB4)
+- Interrupt on GPIO_MCP1_INTB for InPos changes
+- FR70: Use InPos for motion confirmation and following error detection
+- This extends basic InPos reading from Story 4.8 with timeout/confirmation logic
+
+---
+
+### Story 6.6: Position Synchronization Events
+
+**As a** user,
+**I want** comprehensive position synchronization events,
+**So that** the host can monitor position accuracy in real-time.
+
+**Acceptance Criteria:**
+
+**Z-Signal Events:**
+```
+EVENT ZSYNC X DETECTED DRIFT:5        # Z-signal triggered, drift detected
+EVENT ZSYNC X CORRECTED DRIFT:5       # Correction applied
+EVENT ALARM X ERR_ZSYNC_DRIFT         # Drift exceeded threshold
+EVENT HOMING_DEGRADED X               # Z-signal homing fell back to limit-only
+```
+
+**InPos Events:**
+```
+EVENT MOTION_CONFIRMED X              # InPos confirmed motion complete
+EVENT ERROR X E010                    # InPos timeout (ERR_INPOS_TIMEOUT)
+EVENT WARNING X INPOS_LOST            # InPos went inactive while idle
+```
+
+**Event Subscription:**
+**Given** event system from Story 2.7
+**When** Z-signal or InPos event occurs
+**Then** event is published via EventManager
+**And** host receives event via USB CDC
+
+**Event Filtering:**
+**Given** I send `EVTFILT ZSYNC 0` (disable Z-sync events)
+**When** Z-signal events occur
+**Then** events are not sent to host (still processed internally)
+
+**Given** I send `EVTFILT ZSYNC 1` (enable Z-sync events)
+**Then** Z-signal events are sent to host
+
+**Prerequisites:** Story 2.7, Story 6.2, Story 6.5
+
+**Technical Notes:**
+- Events use EVENT_* constants from config_commands.h
+- Host can filter verbose events if not needed
+- FR69: Report Z-signal synchronization events
+
+---
+
 ## FR Coverage Matrix
 
 | FR | Description | Epic | Story | Status |
@@ -2980,9 +3304,16 @@ C.limit_max: 200.0 (default: 1000.0)
 | FR62 | Monitor driver alarm signals (ALARM_INPUT) | Epic 4 | 4.14 | Planned |
 | FR63 | Clear driver alarms (CLR command) | Epic 4 | 4.14 | Planned |
 | FR64 | Block motion on axes with active alarms | Epic 4 | 4.14 | Planned |
+| **Advanced Position Feedback** |
+| FR65 | Read Z-signal from servo axes | Epic 6 | 6.1 | Planned |
+| FR66 | Detect position drift via Z-signal | Epic 6 | 6.2 | Planned |
+| FR67 | Apply deferred Z-signal corrections | Epic 6 | 6.4 | Planned |
+| FR68 | Configurable Z-signal fallback during homing | Epic 6 | 6.3 | Planned |
+| FR69 | Report Z-signal sync events and drift alarms | Epic 6 | 6.2, 6.6 | Planned |
+| FR70 | InPos motion confirmation and following error detection | Epic 6 | 6.5 | Planned |
 
 **Coverage Summary:**
-- Total FRs: 64 (including FR47a, FR47b, FR47c as sub-requirements)
+- Total FRs: 70 (including FR47a, FR47b, FR47c as sub-requirements)
 - All FRs mapped to stories: ✓
 - All FRs have implementation plan: ✓
 
@@ -2992,7 +3323,7 @@ C.limit_max: 200.0 (default: 1000.0)
 
 ### Epic Breakdown Complete
 
-This document decomposes the YaRobot Control Unit PRD into **5 epics** containing **50 user stories** that fully cover all **61 functional requirements**.
+This document decomposes the YaRobot Control Unit PRD into **6 epics** containing **57 user stories** that fully cover all **70 functional requirements**.
 
 ### Epic Execution Order
 
@@ -3008,7 +3339,9 @@ Epic 3: Motor Control Core (11 stories)
 Epic 4: Safety & I/O Systems (14 stories)
     ↓ Safety and I/O integration
 Epic 5: Configuration & Status Display (12 stories)
-    └ Configuration and user interface
+    ↓ Configuration and user interface
+Epic 6: Advanced Position Feedback (6 stories)
+    └ Z-signal sync, InPos confirmation, precision homing
 ```
 
 ### Story Dependencies
@@ -3018,6 +3351,7 @@ Stories within each epic generally depend on earlier stories in the same epic. K
 - **Epic 3** depends on Epic 1 (hardware init), Epic 2 (command dispatch)
 - **Epic 4** depends on Epic 3 (motor control for limit-triggered stops)
 - **Epic 5** depends on Epic 2 (command framework), Epic 4 (status data)
+- **Epic 6** depends on Epic 3 (motor control), Epic 4 (basic homing, InPos reading)
 
 ### Implementation Recommendation
 
@@ -3025,6 +3359,7 @@ Stories within each epic generally depend on earlier stories in the same epic. K
 2. **Phase 2 (Core):** Complete Epic 2 and Epic 3 in parallel tracks (communication + motor control)
 3. **Phase 3 (Safety):** Complete Epic 4 to add safety systems
 4. **Phase 4 (Polish):** Complete Epic 5 for configuration and display
+5. **Phase 5 (Precision):** Complete Epic 6 for advanced position feedback (optional for basic operation)
 
 ### Command Summary
 
@@ -3037,6 +3372,7 @@ All commands use CMD_* constants defined in `config_commands.h`:
 | Status | CMD_STAT, CMD_POS, CMD_INFO, CMD_DIAG, CMD_LIM |
 | Config | CMD_CFG*, CMD_SET, CMD_SAVE, CMD_LOAD, CMD_RATIO, CMD_ALIAS |
 | I/O | CMD_DIN, CMD_DOUT, CMD_WIDTH, CMD_SERVOSTAT |
+| Position Sync | CMD_ZSYNC, CMD_EVTFILT |
 | System | CMD_ECHO, CMD_MODE, CMD_ERRCNT, CMD_CLRERR, CMD_LOG, CMD_I2C |
 
 ### Technical Constants Reference

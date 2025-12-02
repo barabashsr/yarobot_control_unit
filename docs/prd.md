@@ -107,6 +107,20 @@ This is an embedded system project creating a hardware device with firmware that
 - Error and event display with priority handling
 - E-stop status indication
 
+### MVP Phase 2 - Advanced Position Feedback
+
+**Z-Signal Synchronization (Epic 6)**
+- Z-signal (encoder index pulse) reading from 5 servo axes
+- Position drift detection via Z-signal comparison
+- Deferred drift corrections applied when motion completes
+- Z-signal homing for maximum repeatability
+- Configurable fallback behavior (auto/confirm/fail)
+
+**InPos Confirmation (Epic 6)**
+- InPos signal monitoring for motion confirmation
+- Timeout detection for servo following errors
+- Position loss warning on unexpected InPos changes
+
 ### Growth Features (Post-MVP)
 
 **Enhanced Interfaces**
@@ -116,10 +130,8 @@ This is an embedded system project creating a hardware device with firmware that
 
 **Extended Capabilities**
 - Coordinated multi-axis motion
-- Homing sequences with Z-signal support
-- Servo feedback processing (InPos signals)
 - Temperature monitoring for motor protection
-- Position synchronization across axes
+- Multi-axis synchronized motion
 
 **Developer Features**
 - Python/C++ libraries for host integration
@@ -406,6 +418,15 @@ This abstraction layer handles:
 - FR59: System logs errors for troubleshooting
 - FR60: Users can clear error conditions after resolution
 - FR61: System prevents unsafe operations when in error state
+
+**Advanced Position Feedback**
+
+- FR65: System can read Z-signal (encoder index pulse) from servo axes (X, Y, Z, A, B)
+- FR66: System can detect position drift via Z-signal comparison during motion
+- FR67: System can apply deferred Z-signal corrections when axis becomes IDLE
+- FR68: System provides configurable Z-signal fallback during homing (auto/confirm/fail)
+- FR69: System can report Z-signal synchronization events and drift alarms
+- FR70: System can use InPos signals to confirm motion completion and detect following errors
 
 ---
 

@@ -12,6 +12,21 @@ Key architectural principles:
 
 ## Project Initialization
 
+**Development Environment Setup:**
+
+Before running any `idf.py` commands, source the ESP-IDF environment:
+
+```bash
+# Source ESP-IDF environment (required before each terminal session)
+get_idf
+
+# Or use full path if alias not configured:
+# . /Users/sergeybarabash/robo/esp/v5.4/esp-idf/export.sh
+
+# Verify environment is active
+idf.py --version
+```
+
 **First implementation step:**
 
 ```bash
@@ -82,6 +97,16 @@ The following behavioral decisions define how the system responds to operator co
 | 18 | Feed | **Feed override is post-MVP** | Master calculates scaled velocities; no FEED command for MVP |
 | 19 | Profile | **Trapezoidal for MVP**, S-curve later | Simple accel-cruise-decel; S-curve as future enhancement |
 | 20 | Config | **Error on YAML overflow** | Return ERROR E030 if config exceeds 8KB buffer; require shorter config |
+| 21 | Limits | **EndSwitchMode per switch** (MIN/MAX independent) | Four modes: NONE, HARD_STOP, RESTRICT, EVENT_ONLY; HARD_STOP default |
+| 22 | Limits | **Always stop first** on limit trigger | Eliminates velocity-check race condition; host must re-issue command |
+| 23 | Limits | **Controlled deceleration** for all stops | Never hard stop; prevents mechanical damage |
+| 24 | Limits | **Both-limits fault detection** | If MIN and MAX both active, set FAULT state (wiring error) |
+| 25 | Boot | **BOOT → LIMIT events → LIMITS_SCANNED** | Host receives boot event immediately, then limit status, then scan complete |
+| 26 | Homing | **Full state events** during homing | EVENT HOMING <axis> <state> POS:<pos> for each transition |
+| 27 | Homing | **Z-signal fallback configurable** | auto/confirm/fail per axis; auto = fallback to limit-only after 3 retries |
+| 28 | Homing | **Backoff collision detection** | If opposite limit hit during backoff, abort with HOMING FAILED |
+| 29 | Safety | **Fully event-driven** safety task | No polling; interrupts + FreeRTOS software timers for all safety checks |
+| 30 | Config | **soft_limit_buffer** per axis | Default 5mm/5° buffer before hardware limit for velocity mode decel |
 
 ## Project Structure
 
@@ -963,6 +988,19 @@ struct AxisConfig {
 
 #### Homing Implementation
 
+> **⚠️ ARCHITECTURE DECISION — HOMING STATE EVENTS**
+>
+> Host receives events for **every homing state transition** with position data:
+> ```
+> EVENT HOMING <axis> <state> POS:<position>
+> ```
+> States: `SEEK_LIMIT`, `LIMIT_HIT`, `BACKOFF`, `SEEK_ZSIGNAL`, `COMPLETE`, `FAILED`
+>
+> **Z-Signal Fallback** (configurable via `z_signal.fallback`):
+> - `auto`: After 3 retries, fallback to limit-only; send `EVENT HOMING_DEGRADED`
+> - `confirm`: After 3 retries, pause; send `EVENT HOMING_PAUSED`, await `HOME <axis> SWITCH`
+> - `fail`: After 3 retries, abort with `EVENT HOMING <axis> FAILED ZSIGNAL_TIMEOUT`
+
 ```cpp
 class ServoMotor : public IMotor {
 public:
@@ -970,7 +1008,17 @@ public:
     esp_err_t startHoming() {
         if (isMoving()) return ESP_ERR_INVALID_STATE;
 
+        // Check if axis has switches configured
+        if (config_.switch_min_mode == END_SWITCH_MODE_NONE &&
+            config_.switch_max_mode == END_SWITCH_MODE_NONE) {
+            return ESP_ERR_NOT_SUPPORTED;  // Cannot home axis with no switches
+        }
+
         homing_state_ = HomingState::SEEK_LIMIT;
+        zsignal_retry_count_ = 0;
+
+        // Publish state event
+        publishHomingEvent(HOMING_STATE_SEEK_LIMIT);
 
         // Move toward limit at homing velocity
         float direction = config_.homing_direction ? -1.0f : 1.0f;
@@ -984,8 +1032,11 @@ public:
     void onLimitDuringHoming(bool is_min_limit) {
         if (homing_state_ != HomingState::SEEK_LIMIT) return;
 
-        stopImmediate();
+        stopControlled();  // Controlled decel, not hard stop
+        publishHomingEvent(HOMING_STATE_LIMIT_HIT);
+
         homing_state_ = HomingState::BACKOFF;
+        publishHomingEvent(HOMING_STATE_BACKOFF);
 
         // Back off from limit
         float backoff = config_.homing_direction ?
@@ -995,7 +1046,18 @@ public:
 
     // Called when backoff move completes
     void onBackoffComplete() {
+        // Check if we hit opposite limit during backoff (collision)
+        if (opposite_limit_hit_) {
+            homing_state_ = HomingState::UNHOMED;
+            publishHomingEvent(HOMING_STATE_FAILED, "BACKOFF_COLLISION");
+            return;
+        }
+
+        // Ignore any Z-signals detected during backoff
+        z_signal_during_backoff_ = false;
+
         homing_state_ = HomingState::SEEK_ZSIGNAL;
+        publishHomingEvent(HOMING_STATE_SEEK_ZSIGNAL);
 
         // Move slowly toward limit, watching for Z-signal
         float direction = config_.homing_direction ? -1.0f : 1.0f;
@@ -1004,10 +1066,69 @@ public:
 
     // Called when Z-signal detected during SEEK_ZSIGNAL phase
     void onZSignalDuringHoming() {
+        // Ignore Z-signals during backoff phase
+        if (homing_state_ == HomingState::BACKOFF) {
+            z_signal_during_backoff_ = true;
+            return;
+        }
+
         if (homing_state_ != HomingState::SEEK_ZSIGNAL) return;
 
-        stopImmediate();
+        stopControlled();
+        completeHoming();
+    }
 
+    // Called if Z-signal not found within one revolution
+    void onZSignalTimeout() {
+        if (homing_state_ != HomingState::SEEK_ZSIGNAL) return;
+
+        zsignal_retry_count_++;
+        if (zsignal_retry_count_ < 3) {
+            // Retry: back off and seek again
+            homing_state_ = HomingState::BACKOFF;
+            float backoff = config_.homing_direction ?
+                config_.homing_backoff : -config_.homing_backoff;
+            moveRelative(backoff, config_.homing_velocity);
+            return;
+        }
+
+        // 3 retries exhausted - apply fallback behavior
+        stopControlled();
+
+        switch (config_.zsignal_fallback) {
+            case ZSIGNAL_FALLBACK_AUTO:
+                // Fallback to limit-only homing
+                EventManager::publish(Event{ .type = EVT_HOMING_DEGRADED, .axis = axis_index_ });
+                completeHomingLimitOnly();
+                break;
+
+            case ZSIGNAL_FALLBACK_CONFIRM:
+                // Pause and wait for user command
+                homing_state_ = HomingState::PAUSED;
+                EventManager::publish(Event{ .type = EVT_HOMING_PAUSED, .axis = axis_index_ });
+                break;
+
+            case ZSIGNAL_FALLBACK_FAIL:
+            default:
+                homing_state_ = HomingState::UNHOMED;
+                publishHomingEvent(HOMING_STATE_FAILED, "ZSIGNAL_TIMEOUT");
+                break;
+        }
+    }
+
+private:
+    void publishHomingEvent(const char* state, const char* reason = nullptr) {
+        Event evt = {
+            .type = EVT_HOMING,
+            .axis = axis_index_,
+            .data.position = getPosition()
+        };
+        strncpy(evt.data.homing_state, state, sizeof(evt.data.homing_state));
+        if (reason) strncpy(evt.data.homing_reason, reason, sizeof(evt.data.homing_reason));
+        EventManager::publish(evt);
+    }
+
+    void completeHoming() {
         // === ESTABLISH HOME REFERENCE ===
         pulse_count_.store(0, std::memory_order_release);
         z_signal_count_.store(0, std::memory_order_release);
@@ -1016,17 +1137,23 @@ public:
         current_position_ = config_.home_offset;
 
         homing_state_ = HomingState::HOMED;
-
-        EventManager::publish(Event{
-            .type = EVT_HOMING_COMPLETE,
-            .axis = axis_index_,
-            .data.position = current_position_
-        });
+        publishHomingEvent(HOMING_STATE_COMPLETE);
     }
 
-private:
-    enum class HomingState { UNHOMED, SEEK_LIMIT, BACKOFF, SEEK_ZSIGNAL, HOMED };
+    void completeHomingLimitOnly() {
+        // Limit-only homing (degraded mode - no Z-signal reference)
+        pulse_count_.store(0, std::memory_order_release);
+        current_position_ = config_.home_offset;
+
+        homing_state_ = HomingState::HOMED;
+        publishHomingEvent(HOMING_STATE_COMPLETE);
+    }
+
+    enum class HomingState { UNHOMED, SEEK_LIMIT, BACKOFF, SEEK_ZSIGNAL, PAUSED, HOMED };
     HomingState homing_state_ = HomingState::UNHOMED;
+    uint8_t zsignal_retry_count_ = 0;
+    bool z_signal_during_backoff_ = false;
+    bool opposite_limit_hit_ = false;
 };
 ```
 
@@ -2895,7 +3022,7 @@ components/config/include/
 // ============================================================================
 #define EVT_BOOT                    "BOOT"      // System ready: "EVENT BOOT V1.0.0 AXES:8 STATE:IDLE"
 #define EVT_MOTION_COMPLETE         "DONE"
-#define EVT_LIMIT_TRIGGERED         "LIMIT"
+#define EVT_LIMIT_TRIGGERED         "LIMIT"     // "EVENT LIMIT <axis> MIN|MAX"
 #define EVT_ESTOP_ACTIVATED         "ESTOP"
 #define EVT_ALARM_TRIGGERED         "ALARM"
 #define EVT_ALARM_CLEARED           "ALARMCLR"
@@ -2904,7 +3031,42 @@ components/config/include/
 #define EVT_ZSYNC_DETECTED          "ZSYNC"     // Z-signal drift detected (not yet corrected)
 #define EVT_ZSYNC_CORRECTED         "ZSYNCD"    // Z-signal correction applied (after motion complete)
 #define EVT_SOFT_LIMIT_APPROACH     "SLIMIT"    // Approaching soft limit in velocity mode
+#define EVT_SOFT_LIMIT_REACHED      "SLIMIT"    // "EVENT SOFT_LIMIT <axis> POS:<pos> TARGET:<tgt>"
 #define EVT_PCNT_MISMATCH           "PCNTM"     // Stepper PCNT mismatch detected (warning only)
+
+// Homing state events (sent during homing sequence)
+#define EVT_HOMING                  "HOMING"    // "EVENT HOMING <axis> <state> POS:<pos>"
+#define EVT_HOMING_DEGRADED         "HOMEDEG"   // Z-signal fallback to limit-only homing
+#define EVT_HOMING_PAUSED           "HOMEPAUSE" // Homing paused, awaiting user command
+
+// Boot sequence events
+#define EVT_LIMITS_SCANNED          "LIMITSCAN" // Boot limit scan complete
+
+// Fault events
+#define EVT_SWITCH_FAULT            "SWFAULT"   // "EVENT SWITCH_FAULT <axis> BOTH_ACTIVE"
+
+// ============================================================================
+// HOMING STATE VALUES (for EVT_HOMING events)
+// ============================================================================
+#define HOMING_STATE_SEEK_LIMIT     "SEEK_LIMIT"
+#define HOMING_STATE_LIMIT_HIT      "LIMIT_HIT"
+#define HOMING_STATE_BACKOFF        "BACKOFF"
+#define HOMING_STATE_SEEK_ZSIGNAL   "SEEK_ZSIGNAL"
+#define HOMING_STATE_COMPLETE       "COMPLETE"
+#define HOMING_STATE_FAILED         "FAILED"
+
+// ============================================================================
+// END SWITCH MODES
+// All stop modes use controlled deceleration (not hard stop) to prevent damage
+// ============================================================================
+typedef enum {
+    END_SWITCH_MODE_NONE = 0,       // No switch present; skip limit handling
+    END_SWITCH_MODE_HARD_STOP,      // Decelerate to stop, set error, restrict motion (default)
+    END_SWITCH_MODE_RESTRICT,       // Decelerate to stop, allow away-motion, no error
+    END_SWITCH_MODE_EVENT_ONLY      // Send event, don't stop motion (position markers)
+} EndSwitchMode;
+
+#define END_SWITCH_MODE_DEFAULT     END_SWITCH_MODE_HARD_STOP
 
 #endif // CONFIG_COMMANDS_H
 ```
@@ -3243,6 +3405,18 @@ static const char* const YAML_AXIS_NAMES[LIMIT_NUM_AXES] = {
 #define YAML_KEY_ZSIGNAL            "z_signal"          // Z-signal sync config section
 #define YAML_KEY_ZSIGNAL_ENABLED    "enabled"           // Enable Z-signal position sync (bool)
 #define YAML_KEY_ZSIGNAL_THRESHOLD  "drift_threshold"   // Alarm threshold in pulses (0 = no alarm)
+#define YAML_KEY_ZSIGNAL_FALLBACK   "fallback"          // "auto", "confirm", "fail" - Z-signal retry behavior
+
+// End switch configuration (nested under "switches" key)
+#define YAML_KEY_SWITCHES           "switches"          // Switch config section
+#define YAML_KEY_SWITCH_MIN         "min"               // MIN switch config
+#define YAML_KEY_SWITCH_MAX         "max"               // MAX switch config
+#define YAML_KEY_SWITCH_MODE        "mode"              // "NONE", "HARD_STOP", "RESTRICT", "EVENT_ONLY"
+#define YAML_KEY_SWITCH_DEBOUNCE    "debounce_ms"       // Per-switch debounce override (ms)
+
+// Calibration/safety configuration
+#define YAML_KEY_MECHANICAL_MAX     "mechanical_max_travel"  // Max travel from datasheet (for calibration timeout)
+#define YAML_KEY_SOFT_LIMIT_BUFFER  "soft_limit_buffer"      // Distance before hard limit for soft decel (m or rad)
 
 // Axis type values
 #define YAML_VAL_TYPE_LINEAR        "linear"    // meters
@@ -3251,7 +3425,8 @@ static const char* const YAML_AXIS_NAMES[LIMIT_NUM_AXES] = {
 // ============================================================================
 // SYSTEM PARAMETER KEYS
 // ============================================================================
-#define YAML_KEY_DEBOUNCE_MS        "debounce_ms"
+#define YAML_KEY_DEBOUNCE_MS        "debounce_ms"               // Legacy - use default_switch_debounce_ms
+#define YAML_KEY_DEFAULT_SWITCH_DEBOUNCE "default_switch_debounce_ms"  // System-wide default (20ms)
 #define YAML_KEY_IDLE_TIMEOUT_S     "idle_timeout_s"
 #define YAML_KEY_LOG_LEVEL          "log_level"
 
@@ -3682,22 +3857,207 @@ brake_state_t brake_states[LIMIT_NUM_SERVOS];  // X,Y,Z,A,B only (servos)
 
 ### Limit Switch Handling
 
-14 limit switches on MCP23017 expanders with interrupt-driven detection:
+14 limit switches on MCP23017 expanders with interrupt-driven detection.
+
+> **⚠️ ARCHITECTURE DECISION — END SWITCH MODES**
+>
+> Each switch (MIN and MAX) is independently configurable with one of four modes:
+>
+> | Mode | Behavior | Use Case |
+> |------|----------|----------|
+> | `NONE` | No switch present; skip handling | Continuous rotation axes |
+> | `HARD_STOP` | Decelerate, set error, restrict motion | Crash protection (default) |
+> | `RESTRICT` | Decelerate, allow away-motion, no error | Working envelope, object detection |
+> | `EVENT_ONLY` | Send event, don't stop motion | Position markers, optical sensors |
+>
+> **All stop modes use controlled deceleration** (not instantaneous stop) to prevent mechanical damage.
+
+**YAML Configuration:**
+```yaml
+system:
+  default_switch_debounce_ms: 20    # System-wide default
+
+axes:
+  X:
+    mechanical_max_travel: 0.600    # For CALIBRATE timeout
+    soft_limit_buffer: 0.005        # 5mm decel zone before hard limit
+    switches:
+      min:
+        mode: HARD_STOP             # NONE, HARD_STOP, RESTRICT, EVENT_ONLY
+        debounce_ms: 10             # Optional override (e.g., optical sensor)
+      max:
+        mode: HARD_STOP
+
+  C:  # Picker jaw - object detection
+    switches:
+      min:
+        mode: RESTRICT              # Object detection, no error
+      max:
+        mode: HARD_STOP             # Hard limit protection
+```
+
+**Limit Switch Processing:**
 
 ```c
-// Limit switch response (task context, <5ms latency)
+// Limit switch response - ALWAYS STOP FIRST, then check direction
+// This eliminates race condition between velocity check and trigger
 void process_limit_switch(uint8_t axis, bool min_triggered, bool max_triggered) {
-    float velocity = get_current_velocity(axis);
+    EndSwitchMode min_mode = axis_config[axis].switch_min_mode;
+    EndSwitchMode max_mode = axis_config[axis].switch_max_mode;
 
-    // Only stop if moving toward triggered limit
-    if ((min_triggered && velocity < 0) || (max_triggered && velocity > 0)) {
-        stop_axis_immediate(axis);
-        set_axis_error(axis, ERR_LIMIT_SWITCH);
-
-        // Still allow motion away from limit
-        axis_state[axis].can_move_positive = !max_triggered;
-        axis_state[axis].can_move_negative = !min_triggered;
+    // Check for wiring fault: both limits active simultaneously
+    if (min_triggered && max_triggered) {
+        set_axis_fault(axis, FAULT_SWITCH_BOTH_ACTIVE);
+        EventManager::publish(Event{
+            .type = EVT_SWITCH_FAULT,
+            .axis = axis,
+            .data.fault = FAULT_SWITCH_BOTH_ACTIVE
+        });
+        return;
     }
+
+    // Process MIN switch
+    if (min_triggered && min_mode != END_SWITCH_MODE_NONE) {
+        if (min_mode == END_SWITCH_MODE_EVENT_ONLY) {
+            // Just notify, don't stop
+            EventManager::publish(Event{
+                .type = EVT_LIMIT_TRIGGERED,
+                .axis = axis,
+                .data.limit = LIMIT_MIN
+            });
+        } else {
+            // HARD_STOP or RESTRICT: always stop first (controlled decel)
+            stop_axis_controlled(axis);
+
+            // Send event
+            EventManager::publish(Event{
+                .type = EVT_LIMIT_TRIGGERED,
+                .axis = axis,
+                .data.limit = LIMIT_MIN
+            });
+
+            // Set motion restrictions
+            axis_state[axis].can_move_negative = false;
+            axis_state[axis].can_move_positive = true;
+
+            // Set error state only for HARD_STOP
+            if (min_mode == END_SWITCH_MODE_HARD_STOP) {
+                set_axis_error(axis, ERR_POSITION_LIMIT);
+            }
+        }
+    }
+
+    // Process MAX switch (similar logic)
+    if (max_triggered && max_mode != END_SWITCH_MODE_NONE) {
+        if (max_mode == END_SWITCH_MODE_EVENT_ONLY) {
+            EventManager::publish(Event{
+                .type = EVT_LIMIT_TRIGGERED,
+                .axis = axis,
+                .data.limit = LIMIT_MAX
+            });
+        } else {
+            stop_axis_controlled(axis);
+
+            EventManager::publish(Event{
+                .type = EVT_LIMIT_TRIGGERED,
+                .axis = axis,
+                .data.limit = LIMIT_MAX
+            });
+
+            axis_state[axis].can_move_positive = false;
+            axis_state[axis].can_move_negative = true;
+
+            if (max_mode == END_SWITCH_MODE_HARD_STOP) {
+                set_axis_error(axis, ERR_POSITION_LIMIT);
+            }
+        }
+    }
+}
+
+// Motion validation - allows away-motion after limit hit
+bool validate_motion_direction(uint8_t axis, float target_position) {
+    float current = axis_state[axis].position;
+
+    // Check if moving toward restricted direction
+    if (target_position > current && !axis_state[axis].can_move_positive) {
+        return false;  // Cannot move positive (MAX limit active)
+    }
+    if (target_position < current && !axis_state[axis].can_move_negative) {
+        return false;  // Cannot move negative (MIN limit active)
+    }
+    return true;
+}
+```
+
+**Boot Sequence - Power-On Limit Detection:**
+
+```c
+void boot_limit_scan(void) {
+    // Send BOOT event first
+    EventManager::publish(Event{ .type = EVT_BOOT, ... });
+
+    // Scan all limit switches
+    for (uint8_t axis = 0; axis < LIMIT_NUM_AXES; axis++) {
+        bool min_active = read_limit_switch(axis, LIMIT_MIN);
+        bool max_active = read_limit_switch(axis, LIMIT_MAX);
+
+        // Check for fault condition
+        if (min_active && max_active) {
+            set_axis_fault(axis, FAULT_SWITCH_BOTH_ACTIVE);
+            EventManager::publish(Event{
+                .type = EVT_SWITCH_FAULT,
+                .axis = axis
+            });
+            continue;
+        }
+
+        // Set restrictions and send events for active limits
+        if (min_active) {
+            axis_state[axis].can_move_negative = false;
+            EventManager::publish(Event{
+                .type = EVT_LIMIT_TRIGGERED,
+                .axis = axis,
+                .data.limit = LIMIT_MIN
+            });
+        }
+        if (max_active) {
+            axis_state[axis].can_move_positive = false;
+            EventManager::publish(Event{
+                .type = EVT_LIMIT_TRIGGERED,
+                .axis = axis,
+                .data.limit = LIMIT_MAX
+            });
+        }
+    }
+
+    // Signal scan complete
+    EventManager::publish(Event{ .type = EVT_LIMITS_SCANNED });
+}
+```
+
+**CLR Command - Error Clearing:**
+
+CLR clears error flag regardless of limit state; motion restrictions remain based on current switch state:
+
+```c
+esp_err_t clear_axis_limit_error(uint8_t axis) {
+    // Clear error state
+    axis_state[axis].error_code = 0;
+
+    // Re-check current limit state and update restrictions
+    bool min_active = read_limit_switch(axis, LIMIT_MIN);
+    bool max_active = read_limit_switch(axis, LIMIT_MAX);
+
+    axis_state[axis].can_move_negative = !min_active;
+    axis_state[axis].can_move_positive = !max_active;
+
+    // Notify host
+    EventManager::publish(Event{
+        .type = EVT_ALARM_CLEARED,
+        .axis = axis
+    });
+
+    return ESP_OK;
 }
 ```
 
@@ -3810,23 +4170,46 @@ void process_alarm_inputs(void) {
 
 ### Safety Task (Core 0, Priority 24 - Highest)
 
+> **⚠️ ARCHITECTURE DECISION — FULLY EVENT-DRIVEN SAFETY**
+>
+> The safety task uses **interrupt-driven architecture only** — no periodic polling.
+> - Limit switches: MCP23017 INTA/INTB interrupts
+> - Driver alarms: MCP23017 interrupt
+> - E-stop: Direct GPIO interrupt
+> - Brake timers: FreeRTOS software timers with callbacks
+> - Motion watchdog: FreeRTOS software timer
+
 ```c
+// Software timers for time-based safety checks
+static TimerHandle_t brake_idle_timers[LIMIT_NUM_SERVOS];
+static TimerHandle_t motion_watchdog_timer;
+
+// Timer callback - notifies safety task on expiry
+void brake_idle_timer_callback(TimerHandle_t timer) {
+    uint8_t axis = (uint8_t)(uintptr_t)pvTimerGetTimerID(timer);
+    xTaskNotify(safety_task_handle, NOTIFY_BRAKE_IDLE | (axis << 8), eSetBits);
+}
+
+void motion_watchdog_callback(TimerHandle_t timer) {
+    xTaskNotify(safety_task_handle, NOTIFY_WATCHDOG, eSetBits);
+}
+
 void safety_monitor_task(void* param) {
     while (1) {
         uint32_t notify;
 
-        // Wait for safety events or periodic check
-        if (xTaskNotifyWait(0, ULONG_MAX, &notify, pdMS_TO_TICKS(TIMING_SAFETY_POLL_MS))) {
-            if (notify & NOTIFY_ESTOP) handle_estop();
-            if (notify & NOTIFY_LIMIT) process_limit_switches();
-            if (notify & NOTIFY_ALARM) process_alarm_inputs();
-        }
+        // Wait indefinitely for safety events (no polling)
+        xTaskNotifyWait(0, ULONG_MAX, &notify, portMAX_DELAY);
 
-        // Periodic checks at TIMING_SAFETY_POLL_MS interval
-        monitor_estop_gpio();
-        check_driver_alarms();
-        update_brake_timers();
-        check_motion_timeouts();
+        // Process notifications
+        if (notify & NOTIFY_ESTOP) handle_estop();
+        if (notify & NOTIFY_LIMIT) process_limit_switches();
+        if (notify & NOTIFY_ALARM) process_alarm_inputs();
+        if (notify & NOTIFY_BRAKE_IDLE) {
+            uint8_t axis = (notify >> 8) & 0xFF;
+            engage_brake(axis);
+        }
+        if (notify & NOTIFY_WATCHDOG) handle_motion_timeout();
     }
 }
 ```
