@@ -8,6 +8,7 @@
 #include "command_executor.h"
 #include "command_parser.h"      // For is_valid_axis()
 #include "response_formatter.h"
+#include "event_manager.h"
 #include "config.h"              // For FIRMWARE_NAME, FIRMWARE_VERSION_STRING
 #include "config_commands.h"
 #include "config_limits.h"
@@ -154,6 +155,14 @@ esp_err_t cmd_executor_init(void)
 
     s_initialized = true;
     ESP_LOGI(TAG, "Initialized with %d built-in commands", (int)BUILTIN_COUNT);
+
+    // Initialize event manager (Story 2-7)
+    // Event manager initializes its own task and publishes EVT_BOOT
+    esp_err_t event_ret = event_manager_init();
+    if (event_ret != ESP_OK) {
+        ESP_LOGW(TAG, "Event manager init failed: 0x%x (non-fatal)", event_ret);
+        // Non-fatal: system can operate without events
+    }
 
     return ESP_OK;
 }
@@ -373,15 +382,21 @@ static const char* state_to_mode_string(SystemState state)
 /**
  * @brief Publish mode change event
  *
- * Formats and logs a mode change event. Full event system (story 2-7) will
- * provide event_publish() for actual USB transmission.
+ * Creates and publishes a MODE_CHANGED event via the event manager.
+ * The event is delivered to all subscribers including USB output.
  *
  * @param[in] new_state The new system state
  */
 static void publish_mode_event(SystemState new_state)
 {
-    ESP_LOGI(TAG, "EVENT MODE %s", state_to_mode_string(new_state));
-    // TODO (Story 2-7): Call event_publish() to send EVENT MODE <mode> to USB
+    Event event = {
+        .type = EVTTYPE_MODE_CHANGED,
+        .axis = 0xFF,  // System-wide event
+        .data.mode_name = state_to_mode_string(new_state),
+        .timestamp = esp_timer_get_time()
+    };
+    event_publish(&event);
+    ESP_LOGD(TAG, "Published MODE event: %s", state_to_mode_string(new_state));
 }
 
 /**

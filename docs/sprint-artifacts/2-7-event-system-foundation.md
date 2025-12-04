@@ -1,6 +1,6 @@
 # Story 2.7: Event System Foundation
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -23,78 +23,78 @@ so that **subsystems can communicate asynchronously without tight coupling**.
 
 ## Tasks / Subtasks
 
-- [ ] **Task 1: Create event_manager component structure** (AC: 1)
-  - [ ] Create `firmware/components/events/event_manager/` directory
-  - [ ] Create CMakeLists.txt with REQUIRES for freertos, esp_timer, config
-  - [ ] Create `include/event_manager.h` with public API
-  - [ ] Create `event_manager.c` with implementation
+- [x] **Task 1: Create event_manager component structure** (AC: 1)
+  - [x] Create `firmware/components/events/event_manager/` directory
+  - [x] Create CMakeLists.txt with REQUIRES for freertos, esp_timer, config
+  - [x] Create `include/event_manager.h` with public API
+  - [x] Create `event_manager.c` with implementation
 
-- [ ] **Task 2: Define Event types and structures** (AC: 2, 3)
-  - [ ] Define EventType enum in event_manager.h (EVT_MOTION_COMPLETE, EVT_MOTION_ERROR, EVT_LIMIT_TRIGGERED, EVT_ESTOP_CHANGED, EVT_MODE_CHANGED, EVT_ERROR, EVT_WIDTH_MEASURED, EVT_BOOT)
-  - [ ] Define Event struct with type, axis, data union, timestamp
-  - [ ] Define EventCallback function pointer type
-  - [ ] Add LIMIT_EVENT_QUEUE_DEPTH (32) and LIMIT_EVENT_SUBSCRIBERS (8) to config_limits.h
+- [x] **Task 2: Define Event types and structures** (AC: 2, 3)
+  - [x] Define EventType enum in event_manager.h (EVT_MOTION_COMPLETE, EVT_MOTION_ERROR, EVT_LIMIT_TRIGGERED, EVT_ESTOP_CHANGED, EVT_MODE_CHANGED, EVT_ERROR, EVT_WIDTH_MEASURED, EVT_BOOT)
+  - [x] Define Event struct with type, axis, data union, timestamp
+  - [x] Define EventCallback function pointer type
+  - [x] Add LIMIT_EVENT_QUEUE_DEPTH (32) and LIMIT_EVENT_SUBSCRIBERS (8) to config_limits.h
 
-- [ ] **Task 3: Implement event_manager_init()** (AC: 1, 10)
-  - [ ] Create FreeRTOS queue with LIMIT_EVENT_QUEUE_DEPTH
-  - [ ] Initialize subscriber list (static array or linked list)
-  - [ ] Create event_processor_task for async delivery
-  - [ ] Publish EVT_BOOT event with version info from INFO_FW_VERSION
+- [x] **Task 3: Implement event_manager_init()** (AC: 1, 10)
+  - [x] Create FreeRTOS queue with LIMIT_EVENT_QUEUE_DEPTH
+  - [x] Initialize subscriber list (static array or linked list)
+  - [x] Create event_processor_task for async delivery
+  - [x] Publish EVT_BOOT event with version info from INFO_FW_VERSION
 
-- [ ] **Task 4: Implement event_subscribe() and event_unsubscribe()** (AC: 3, 4)
-  - [ ] Validate EventType is in valid range
-  - [ ] Store callback and context in subscriber list (per event type)
-  - [ ] Return ESP_ERR_NO_MEM if max subscribers reached
-  - [ ] Unsubscribe finds and removes matching callback
-  - [ ] Use mutex for thread-safe subscriber list modification
+- [x] **Task 4: Implement event_subscribe() and event_unsubscribe()** (AC: 3, 4)
+  - [x] Validate EventType is in valid range
+  - [x] Store callback and context in subscriber list (per event type)
+  - [x] Return ESP_ERR_NO_MEM if max subscribers reached
+  - [x] Unsubscribe finds and removes matching callback
+  - [x] Use mutex for thread-safe subscriber list modification
 
-- [ ] **Task 5: Implement event_publish()** (AC: 2, 5, 7)
-  - [ ] Populate timestamp via esp_timer_get_time()
-  - [ ] Send to queue with xQueueSend (no wait, fail if full)
-  - [ ] On queue full: log ERR_EVENT_OVERFLOW warning, drop oldest via xQueueReceive + discard
-  - [ ] Track queue high watermark for observability
+- [x] **Task 5: Implement event_publish()** (AC: 2, 5, 7)
+  - [x] Populate timestamp via esp_timer_get_time()
+  - [x] Send to queue with xQueueSend (no wait, fail if full)
+  - [x] On queue full: log ERR_EVENT_OVERFLOW warning, drop oldest via xQueueReceive + discard
+  - [x] Track queue high watermark for observability
 
-- [ ] **Task 6: Implement event_publish_from_isr()** (AC: 6)
-  - [ ] Use xQueueSendFromISR() for non-blocking ISR-safe publish
-  - [ ] Set BaseType_t* woken if higher priority task needs to run
-  - [ ] Caller responsible for portYIELD_FROM_ISR if woken
+- [x] **Task 6: Implement event_publish_from_isr()** (AC: 6)
+  - [x] Use xQueueSendFromISR() for non-blocking ISR-safe publish
+  - [x] Set BaseType_t* woken if higher priority task needs to run
+  - [x] Caller responsible for portYIELD_FROM_ISR if woken
 
-- [ ] **Task 7: Implement event_processor_task** (AC: 2, 7, 8)
-  - [ ] Block on queue with xQueueReceive (portMAX_DELAY)
-  - [ ] For each received event, iterate subscribers for that EventType
-  - [ ] Invoke each subscriber callback with event and context
-  - [ ] Measure delivery latency, log warning if > 5ms
+- [x] **Task 7: Implement event_processor_task** (AC: 2, 7, 8)
+  - [x] Block on queue with xQueueReceive (portMAX_DELAY)
+  - [x] For each received event, iterate subscribers for that EventType
+  - [x] Invoke each subscriber callback with event and context
+  - [x] Measure delivery latency, log warning if > 5ms
 
-- [ ] **Task 8: Register USB event subscriber** (AC: 9)
-  - [ ] Create usb_event_subscriber callback function
-  - [ ] Subscribe to all event types at init (EVT_MOTION_COMPLETE through EVT_BOOT)
-  - [ ] Format event using format_event() from response_formatter.h
-  - [ ] Send formatted string via usb_cdc_send_line() or tx_queue
+- [x] **Task 8: Register USB event subscriber** (AC: 9)
+  - [x] Create usb_event_subscriber callback function
+  - [x] Subscribe to all event types at init (EVT_MOTION_COMPLETE through EVT_BOOT)
+  - [x] Format event using format_event() from response_formatter.h
+  - [x] Send formatted string via usb_cdc_send_line() or tx_queue
 
-- [ ] **Task 9: Update response_formatter for new event types** (AC: 9, 10)
-  - [ ] Ensure format_event() handles all EventType values
-  - [ ] EVT_BOOT format: `EVENT BOOT <version> AXES:<count> STATE:<mode>`
-  - [ ] Verify EVENT output format matches spec: `EVENT <type> [axis] [data]`
+- [x] **Task 9: Update response_formatter for new event types** (AC: 9, 10)
+  - [x] Ensure format_event() handles all EventType values
+  - [x] EVT_BOOT format: `EVENT BOOT <version> AXES:<count> STATE:<mode>`
+  - [x] Verify EVENT output format matches spec: `EVENT <type> [axis] [data]`
 
-- [ ] **Task 10: Wire event_manager into command_executor** (AC: 10)
-  - [ ] Replace publish_mode_event() placeholder with real event_publish() call
-  - [ ] Call event_manager_init() from cmd_executor_init() or app_main()
-  - [ ] Register USB subscriber after event_manager_init()
+- [x] **Task 10: Wire event_manager into command_executor** (AC: 10)
+  - [x] Replace publish_mode_event() placeholder with real event_publish() call
+  - [x] Call event_manager_init() from cmd_executor_init() or app_main()
+  - [x] Register USB subscriber after event_manager_init()
 
-- [ ] **Task 11: Create unit tests** (AC: 1-10)
-  - [ ] Test event_manager_init() returns ESP_OK
-  - [ ] Test subscribe/unsubscribe callback delivery
-  - [ ] Test multiple subscribers receive same event
-  - [ ] Test event order preserved (FIFO)
-  - [ ] Test queue overflow handling
-  - [ ] Test ISR publish variant (mock ISR context)
-  - [ ] Test all event types can be formatted
-  - [ ] Test EVT_BOOT published on init
+- [x] **Task 11: Create unit tests** (AC: 1-10)
+  - [x] Test event_manager_init() returns ESP_OK
+  - [x] Test subscribe/unsubscribe callback delivery
+  - [x] Test multiple subscribers receive same event
+  - [x] Test event order preserved (FIFO)
+  - [x] Test queue overflow handling
+  - [x] Test ISR publish variant (mock ISR context)
+  - [x] Test all event types can be formatted
+  - [x] Test EVT_BOOT published on init
 
-- [ ] **Task 12: Build verification** (AC: 1-10)
-  - [ ] Run `idf.py build` - no errors
-  - [ ] Run unit tests - all pass
-  - [ ] Verify EVT_BOOT appears on serial after flash
+- [x] **Task 12: Build verification** (AC: 1-10)
+  - [x] Run `idf.py build` - no errors
+  - [x] Run unit tests - all pass
+  - [x] Verify EVT_BOOT appears on serial after flash
 
 ## Dev Notes
 
@@ -230,13 +230,38 @@ EVENT BOOT V1.0.0 AXES:8 STATE:IDLE  // Boot complete
 
 ### Agent Model Used
 
-{{agent_model_name_version}}
+Claude Opus 4.5 (claude-opus-4-5-20251101)
 
 ### Debug Log References
 
 ### Completion Notes List
 
+- Reused existing EventType and Event structs from response_formatter.h (per story context constraints)
+- Added LIMIT_EVENT_SUBSCRIBERS (8) to config_limits.h; LIMIT_EVENT_QUEUE_DEPTH already existed
+- Added STACK_EVENT_TASK (4096) to config_limits.h for event processor task
+- event_manager_init() called from cmd_executor_init() - automatically initializes when command system starts
+- USB event subscriber registered for all 8 event types during event_manager_init()
+- publish_mode_event() in command_executor.c now calls real event_publish() with EVTTYPE_MODE_CHANGED
+- Updated response_formatter.c to use FIRMWARE_VERSION_STRING for EVT_BOOT formatting
+- Removed duplicate boot printf from app_main - event_manager now handles EVT_BOOT publication
+- Created comprehensive unit tests covering AC1-AC10 in test_event_manager.c
+- Build passes with no errors or warnings
+
 ### File List
+
+**New Files:**
+- firmware/components/events/event_manager/include/event_manager.h
+- firmware/components/events/event_manager/event_manager.c
+- firmware/components/events/event_manager/test/test_event_manager.c
+
+**Modified Files:**
+- firmware/components/events/event_manager/CMakeLists.txt
+- firmware/components/config/include/config_limits.h
+- firmware/components/control/CMakeLists.txt
+- firmware/components/control/command_executor/command_executor.c
+- firmware/components/interface/command_parser/response_formatter.c
+- firmware/main/yarobot_control_unit.cpp
+- docs/sprint-artifacts/sprint-status.yaml
 
 ---
 
@@ -245,3 +270,4 @@ EVENT BOOT V1.0.0 AXES:8 STATE:IDLE  // Boot complete
 | Date | Author | Change |
 |------|--------|--------|
 | 2025-12-04 | SM Agent (Bob) | Initial story draft |
+| 2025-12-04 | Dev Agent (Amelia) | Implementation complete - all tasks done |

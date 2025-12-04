@@ -564,16 +564,6 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/yarobot_hal/cmake_install.cmake")
-endif()
-
-if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  # Include the install script for the subdirectory.
-  include("/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/test_utils/cmake_install.cmake")
-endif()
-
-if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  # Include the install script for the subdirectory.
   include("/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/espressif__tinyusb/cmake_install.cmake")
 endif()
 
@@ -585,6 +575,21 @@ endif()
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
   include("/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/usb_cdc/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/event_manager/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/yarobot_hal/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/test_utils/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
@@ -620,11 +625,6 @@ endif()
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
   include("/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/tpic6b595/cmake_install.cmake")
-endif()
-
-if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  # Include the install script for the subdirectory.
-  include("/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/event_manager/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)

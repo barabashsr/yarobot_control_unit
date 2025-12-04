@@ -10,6 +10,7 @@
 
 #include "response_formatter.h"
 #include "command_parser.h"
+#include "config.h"
 #include "config_commands.h"
 #include "config_limits.h"
 
@@ -139,9 +140,9 @@ esp_err_t format_event(char* buf, size_t len, const Event* event)
             break;
 
         case EVTTYPE_BOOT:
-            // Format: EVENT BOOT V1.0.0 AXES:8 STATE:IDLE
-            written = snprintf(buf, len, "%s %s V1.0.0 AXES:%d STATE:IDLE" RESP_TERMINATOR,
-                               RESP_EVENT, EVT_BOOT, LIMIT_NUM_AXES);
+            // Format: EVENT BOOT V<version> AXES:<count> STATE:IDLE
+            written = snprintf(buf, len, "%s %s V%s AXES:%d STATE:IDLE" RESP_TERMINATOR,
+                               RESP_EVENT, EVT_BOOT, FIRMWARE_VERSION_STRING, LIMIT_NUM_AXES);
             break;
 
         case EVTTYPE_MODE_CHANGED:

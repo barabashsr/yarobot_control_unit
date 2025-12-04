@@ -161,6 +161,68 @@ depend:
 	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
+# Convenience name for target.
+esp-idf/event_manager/CMakeFiles/__idf_event_manager.dir/rule:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 esp-idf/event_manager/CMakeFiles/__idf_event_manager.dir/rule
+.PHONY : esp-idf/event_manager/CMakeFiles/__idf_event_manager.dir/rule
+
+# Convenience name for target.
+__idf_event_manager: esp-idf/event_manager/CMakeFiles/__idf_event_manager.dir/rule
+.PHONY : __idf_event_manager
+
+# fast build rule for target.
+__idf_event_manager/fast:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/event_manager/CMakeFiles/__idf_event_manager.dir/build.make esp-idf/event_manager/CMakeFiles/__idf_event_manager.dir/build
+.PHONY : __idf_event_manager/fast
+
+event_manager.obj: event_manager.c.obj
+.PHONY : event_manager.obj
+
+# target to build an object file
+event_manager.c.obj:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/event_manager/CMakeFiles/__idf_event_manager.dir/build.make esp-idf/event_manager/CMakeFiles/__idf_event_manager.dir/event_manager.c.obj
+.PHONY : event_manager.c.obj
+
+event_manager.i: event_manager.c.i
+.PHONY : event_manager.i
+
+# target to preprocess a source file
+event_manager.c.i:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/event_manager/CMakeFiles/__idf_event_manager.dir/build.make esp-idf/event_manager/CMakeFiles/__idf_event_manager.dir/event_manager.c.i
+.PHONY : event_manager.c.i
+
+event_manager.s: event_manager.c.s
+.PHONY : event_manager.s
+
+# target to generate assembly for a file
+event_manager.c.s:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/event_manager/CMakeFiles/__idf_event_manager.dir/build.make esp-idf/event_manager/CMakeFiles/__idf_event_manager.dir/event_manager.c.s
+.PHONY : event_manager.c.s
+
+test/test_event_manager.obj: test/test_event_manager.c.obj
+.PHONY : test/test_event_manager.obj
+
+# target to build an object file
+test/test_event_manager.c.obj:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/event_manager/CMakeFiles/__idf_event_manager.dir/build.make esp-idf/event_manager/CMakeFiles/__idf_event_manager.dir/test/test_event_manager.c.obj
+.PHONY : test/test_event_manager.c.obj
+
+test/test_event_manager.i: test/test_event_manager.c.i
+.PHONY : test/test_event_manager.i
+
+# target to preprocess a source file
+test/test_event_manager.c.i:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/event_manager/CMakeFiles/__idf_event_manager.dir/build.make esp-idf/event_manager/CMakeFiles/__idf_event_manager.dir/test/test_event_manager.c.i
+.PHONY : test/test_event_manager.c.i
+
+test/test_event_manager.s: test/test_event_manager.c.s
+.PHONY : test/test_event_manager.s
+
+# target to generate assembly for a file
+test/test_event_manager.c.s:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/event_manager/CMakeFiles/__idf_event_manager.dir/build.make esp-idf/event_manager/CMakeFiles/__idf_event_manager.dir/test/test_event_manager.c.s
+.PHONY : test/test_event_manager.c.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -173,6 +235,13 @@ help:
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
+	@echo "... __idf_event_manager"
+	@echo "... event_manager.obj"
+	@echo "... event_manager.i"
+	@echo "... event_manager.s"
+	@echo "... test/test_event_manager.obj"
+	@echo "... test/test_event_manager.i"
+	@echo "... test/test_event_manager.s"
 .PHONY : help
 
 

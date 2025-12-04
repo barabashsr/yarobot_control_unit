@@ -11,6 +11,7 @@ idf_component_register(
     REQUIRES
         config
         command_parser
+        event_manager
         freertos
         test_utils
         usb_cdc

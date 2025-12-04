@@ -1943,32 +1943,6 @@ __idf_command_parser/fast:
 .PHONY : __idf_command_parser/fast
 
 #=============================================================================
-# Target rules for targets named __idf_yarobot_hal
-
-# Build rule for target.
-__idf_yarobot_hal: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 __idf_yarobot_hal
-.PHONY : __idf_yarobot_hal
-
-# fast build rule for target.
-__idf_yarobot_hal/fast:
-	$(MAKE) $(MAKESILENT) -f esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/build.make esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/build
-.PHONY : __idf_yarobot_hal/fast
-
-#=============================================================================
-# Target rules for targets named __idf_test_utils
-
-# Build rule for target.
-__idf_test_utils: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 __idf_test_utils
-.PHONY : __idf_test_utils
-
-# fast build rule for target.
-__idf_test_utils/fast:
-	$(MAKE) $(MAKESILENT) -f esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/build.make esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/build
-.PHONY : __idf_test_utils/fast
-
-#=============================================================================
 # Target rules for targets named __idf_espressif__tinyusb
 
 # Build rule for target.
@@ -2006,6 +1980,45 @@ __idf_usb_cdc: cmake_check_build_system
 __idf_usb_cdc/fast:
 	$(MAKE) $(MAKESILENT) -f esp-idf/usb_cdc/CMakeFiles/__idf_usb_cdc.dir/build.make esp-idf/usb_cdc/CMakeFiles/__idf_usb_cdc.dir/build
 .PHONY : __idf_usb_cdc/fast
+
+#=============================================================================
+# Target rules for targets named __idf_event_manager
+
+# Build rule for target.
+__idf_event_manager: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 __idf_event_manager
+.PHONY : __idf_event_manager
+
+# fast build rule for target.
+__idf_event_manager/fast:
+	$(MAKE) $(MAKESILENT) -f esp-idf/event_manager/CMakeFiles/__idf_event_manager.dir/build.make esp-idf/event_manager/CMakeFiles/__idf_event_manager.dir/build
+.PHONY : __idf_event_manager/fast
+
+#=============================================================================
+# Target rules for targets named __idf_yarobot_hal
+
+# Build rule for target.
+__idf_yarobot_hal: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 __idf_yarobot_hal
+.PHONY : __idf_yarobot_hal
+
+# fast build rule for target.
+__idf_yarobot_hal/fast:
+	$(MAKE) $(MAKESILENT) -f esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/build.make esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/build
+.PHONY : __idf_yarobot_hal/fast
+
+#=============================================================================
+# Target rules for targets named __idf_test_utils
+
+# Build rule for target.
+__idf_test_utils: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 __idf_test_utils
+.PHONY : __idf_test_utils
+
+# fast build rule for target.
+__idf_test_utils/fast:
+	$(MAKE) $(MAKESILENT) -f esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/build.make esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/build
+.PHONY : __idf_test_utils/fast
 
 #=============================================================================
 # Target rules for targets named __idf_control
@@ -2200,6 +2213,7 @@ help:
 	@echo "... __idf_espressif__i2c_bus"
 	@echo "... __idf_espressif__mcp23017"
 	@echo "... __idf_espressif__tinyusb"
+	@echo "... __idf_event_manager"
 	@echo "... __idf_fatfs"
 	@echo "... __idf_freertos"
 	@echo "... __idf_hal"

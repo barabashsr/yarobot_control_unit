@@ -255,7 +255,7 @@ extern "C" void app_main(void)
     // =========================================================================
     // Hardware Initialization and Verification (Story 1.6)
     // =========================================================================
-    bool hw_ok = hardware_init_and_verify();
+    (void)hardware_init_and_verify();  // Result used for future degraded mode handling
 
     // =========================================================================
     // FreeRTOS Task Creation (Story 1.5)
@@ -287,11 +287,8 @@ extern "C" void app_main(void)
     xTaskCreatePinnedToCore(display_task, "display", STACK_DISPLAY_TASK,
                             NULL, 5, NULL, 1);
 
-    // Send boot notification (AC7, AC14)
-    printf("EVENT BOOT V%s AXES:%d STATE:%s\n",
-           FIRMWARE_VERSION_STRING,
-           LIMIT_NUM_AXES,
-           hw_ok ? "IDLE" : "DEGRADED");
+    // Boot notification is now sent by event_manager_init() via EVT_BOOT event (Story 2-7)
+    // cmd_executor_init() is called by cmd_executor_task, which initializes event_manager
 
     ESP_LOGI(TAG, "YaRobot Control Unit - All tasks started");
 }

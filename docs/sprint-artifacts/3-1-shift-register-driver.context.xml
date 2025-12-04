@@ -1,0 +1,228 @@
+<story-context id="3-1-shift-register-driver" v="1.0">
+  <metadata>
+    <epicId>3</epicId>
+    <storyId>3.1</storyId>
+    <title>Shift Register Driver</title>
+    <status>drafted</status>
+    <generatedAt>2025-12-04</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/3-1-shift-register-driver.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>the shift register chain operational</iWant>
+    <soThat>I can control direction, enable, brake, and alarm-clear signals for all motor axes</soThat>
+    <tasks>
+      <task id="1" ac="1">Create component structure - directory, CMakeLists.txt, header, implementation</task>
+      <task id="2" ac="2-6">Define configuration in config_sr.h - bit positions for all axes and GP outputs</task>
+      <task id="3" ac="1,7,9,11,12">Verify/add GPIO definitions in config_gpio.h - SR_MOSI, SR_CLK, SR_LATCH, SR_OE</task>
+      <task id="4" ac="1,12">Implement sr_init() - SPI config, GPIO setup, mutex init, safe state latch</task>
+      <task id="5" ac="2-6,8">Implement shadow register and bit manipulation - set/get helpers, all sr_set_* functions</task>
+      <task id="6" ac="7,11">Implement sr_update() - mutex, SPI transfer, latch pulse</task>
+      <task id="7" ac="9">Implement sr_emergency_disable_all() - ISR-safe, OE HIGH, direct SPI, &lt;100µs</task>
+      <task id="8" ac="10">Implement thread safety - mutex for all sr_set_* functions</task>
+      <task id="9" ac="1-12">Create unit tests - test_tpic6b595.c with Unity framework</task>
+      <task id="10" ac="1-12">Build and hardware verification - logic analyzer, timing measurement</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1">sr_init() returns ESP_OK and 40-bit chain ready for operation</ac>
+    <ac id="2">sr_set_direction(axis, forward) sets/clears corresponding SR_x_DIR bit</ac>
+    <ac id="3">sr_set_enable(axis, enable) sets/clears corresponding SR_x_EN bit</ac>
+    <ac id="4">sr_set_brake(axis, release) sets/clears SR_x_BRAKE bit (axes X-D only)</ac>
+    <ac id="5">sr_set_alarm_clear(axis, active) sets/clears SR_x_ALARM_CLR bit (axes X-D only)</ac>
+    <ac id="6">sr_set_gp_output(pin, level) sets/clears SR_GP_OUT_n bit (0-7)</ac>
+    <ac id="7">sr_update() shifts all 40 bits via SPI and latches to outputs</ac>
+    <ac id="8">sr_get_state() returns current 40-bit shadow register as uint64_t</ac>
+    <ac id="9">sr_emergency_disable_all() sets all bits to 0, OE HIGH, completes within 100µs</ac>
+    <ac id="10">Thread safety maintained via mutex for concurrent sr_set_* calls</ac>
+    <ac id="11">sr_update() pulses GPIO_SR_LATCH after SPI transfer</ac>
+    <ac id="12">GPIO_SR_OE remains LOW during normal operation</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-3.md</path>
+        <title>Epic 3 Technical Specification</title>
+        <section>Data Models and Contracts - Shift Register Bit Map</section>
+        <snippet>Defines 40-bit chain layout: 4 bits per axis [DIR, EN, BRAKE, ALARM_CLR] for X-E, plus 8 GP outputs on SR4.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-3.md</path>
+        <title>Epic 3 Technical Specification</title>
+        <section>APIs and Interfaces - ShiftRegisterController API</section>
+        <snippet>Defines public API: sr_init, sr_set_direction, sr_set_enable, sr_set_brake, sr_set_alarm_clear, sr_set_gp_output, sr_update, sr_emergency_disable_all, sr_get_state.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-3.md</path>
+        <title>Epic 3 Technical Specification</title>
+        <section>MANDATORY Architecture Constraints</section>
+        <snippet>Header-Only Configuration: Every configurable value MUST be defined in a header file. No magic numbers in source code.</snippet>
+      </doc>
+      <doc>
+        <path>docs/epics.md</path>
+        <title>Epic Breakdown</title>
+        <section>Story 3.1: Shift Register Driver</section>
+        <snippet>Full story definition including API specification, bit position verification criteria, and fail-safe behavior requirements.</snippet>
+      </doc>
+    </docs>
+
+    <code>
+      <file>
+        <path>firmware/components/config/include/config_sr.h</path>
+        <kind>config-header</kind>
+        <symbol>SR_X_DIR, SR_EN_BIT, SR_SET_BIT, SR_SAFE_STATE</symbol>
+        <lines>1-288</lines>
+        <reason>EXISTING - Complete shift register bit position definitions and helper macros. Implements 4-bits-per-axis layout with macros SR_DIR_BIT(axis), SR_EN_BIT(axis), etc. No changes needed.</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_gpio.h</path>
+        <kind>config-header</kind>
+        <symbol>GPIO_SR_OE, GPIO_SR_CS, GPIO_SR_MOSI, GPIO_SR_SCLK</symbol>
+        <lines>86-105</lines>
+        <reason>EXISTING - GPIO pins defined: OE=GPIO9, CS=GPIO10, MOSI=GPIO11, SCLK=GPIO12. Note: CS is same as LATCH (RCLK). No changes needed.</reason>
+      </file>
+      <file>
+        <path>firmware/components/yarobot_hal/spi_hal/include/spi_hal.h</path>
+        <kind>interface</kind>
+        <symbol>spi_hal_sr_write, spi_hal_sr_set_oe</symbol>
+        <lines>59-77</lines>
+        <reason>EXISTING - SPI HAL provides sr_write(data, bits) and sr_set_oe(enable) functions. Evaluate whether to reuse HAL or implement direct in tpic6b595 component.</reason>
+      </file>
+      <file>
+        <path>firmware/components/yarobot_hal/spi_hal/spi_hal.c</path>
+        <kind>implementation</kind>
+        <symbol>spi_hal_sr_write, spi_hal_sr_set_oe, yarobot_spi_init</symbol>
+        <lines>119-168</lines>
+        <reason>EXISTING - Full SPI implementation with OE control. Uses SPI_DMA_DISABLED, 1MHz clock. Consider reusing for tpic6b595 driver or wrap with higher-level API.</reason>
+      </file>
+      <file>
+        <path>firmware/components/events/event_manager/CMakeLists.txt</path>
+        <kind>build-template</kind>
+        <symbol>idf_component_register</symbol>
+        <lines>1-8</lines>
+        <reason>TEMPLATE - Follow this CMakeLists.txt pattern for new tpic6b595 component. Uses WHOLE_ARCHIVE for Unity test registration.</reason>
+      </file>
+      <file>
+        <path>firmware/components/events/event_manager/test/test_event_manager.c</path>
+        <kind>test-template</kind>
+        <symbol>TEST_CASE, Unity assertions</symbol>
+        <lines>1-100</lines>
+        <reason>TEMPLATE - Follow this test file structure for test_tpic6b595.c. Uses Unity TEST_CASE macro with tag pattern "[component_name]".</reason>
+      </file>
+    </code>
+
+    <dependencies>
+      <esp-idf version="5.4+">
+        <component>driver/spi_master</component>
+        <component>driver/gpio</component>
+        <component>freertos</component>
+        <component>unity</component>
+        <component>log</component>
+      </esp-idf>
+      <managed-components>
+        <component>espressif/mcp23017 ^0.1.1</component>
+        <component>espressif/esp_tinyusb ^1.0.0</component>
+      </managed-components>
+    </dependencies>
+  </artifacts>
+
+  <interfaces>
+    <interface>
+      <name>ShiftRegisterController</name>
+      <kind>C API</kind>
+      <signature>
+esp_err_t sr_init(void);
+esp_err_t sr_set_direction(uint8_t axis, bool forward);
+esp_err_t sr_set_enable(uint8_t axis, bool enable);
+esp_err_t sr_set_brake(uint8_t axis, bool release);
+esp_err_t sr_set_alarm_clear(uint8_t axis, bool active);
+esp_err_t sr_set_gp_output(uint8_t pin, bool level);
+esp_err_t sr_update(void);
+void sr_emergency_disable_all(void);
+uint64_t sr_get_state(void);
+      </signature>
+      <path>firmware/components/drivers/tpic6b595/include/tpic6b595.h (NEW)</path>
+    </interface>
+    <interface>
+      <name>SPI HAL (existing)</name>
+      <kind>C API</kind>
+      <signature>
+esp_err_t yarobot_spi_init(spi_host_device_t host, gpio_num_t mosi, gpio_num_t sclk, gpio_num_t cs);
+esp_err_t spi_hal_sr_write(uint64_t data, size_t bits);
+esp_err_t spi_hal_sr_set_oe(bool enable);
+bool spi_hal_is_initialized(void);
+      </signature>
+      <path>firmware/components/yarobot_hal/spi_hal/include/spi_hal.h</path>
+    </interface>
+    <interface>
+      <name>Shift Register Bit Macros (existing)</name>
+      <kind>C Macros</kind>
+      <signature>
+#define SR_DIR_BIT(axis)       ((axis) * 4 + 0)
+#define SR_EN_BIT(axis)        ((axis) * 4 + 1)
+#define SR_BRAKE_BIT(axis)     ((axis) * 4 + 2)
+#define SR_ALARM_CLR_BIT(axis) ((axis) * 4 + 3)
+#define SR_SET_BIT(data, bit)  ((data) | (1ULL &lt;&lt; (bit)))
+#define SR_CLR_BIT(data, bit)  ((data) &amp; ~(1ULL &lt;&lt; (bit)))
+#define SR_GET_BIT(data, bit)  (((data) >> (bit)) &amp; 1)
+      </signature>
+      <path>firmware/components/config/include/config_sr.h</path>
+    </interface>
+  </interfaces>
+
+  <constraints>
+    <constraint type="architecture" priority="mandatory">
+      Header-Only Configuration: Every configurable value MUST be defined in a header file. No magic numbers in source code. GPIO pins from config_gpio.h, shift register bits from config_sr.h.
+    </constraint>
+    <constraint type="architecture" priority="mandatory">
+      Dual-Core Separation: Core 0 handles communication and safety, Core 1 handles motion control. Shift register driver may be called from either core - must be thread-safe.
+    </constraint>
+    <constraint type="safety" priority="mandatory">
+      sr_emergency_disable_all() must be ISR-safe (no mutex, no blocking RTOS calls) and complete within 100µs. Uses direct GPIO and SPI register access.
+    </constraint>
+    <constraint type="hardware" priority="mandatory">
+      TPIC6B595N open-drain outputs with external 24V pull-ups. OE active-LOW: outputs enabled when LOW, tristated when HIGH. Safe state = all bits 0 = all enables OFF, all brakes engaged.
+    </constraint>
+    <constraint type="timing" priority="mandatory">
+      GPIO_SR_LATCH pulse must be minimum 20ns (TPIC6B595N spec). DIR signal must be stable before first STEP pulse in motor operation.
+    </constraint>
+    <constraint type="pattern" priority="recommended">
+      Follow component structure pattern from event_manager: CMakeLists.txt with WHOLE_ARCHIVE, test/ subdirectory with Unity tests, include/ for public headers.
+    </constraint>
+    <constraint type="design" priority="recommended">
+      Evaluate reusing existing spi_hal functions vs. implementing direct SPI in tpic6b595. HAL already provides spi_hal_sr_write() and spi_hal_sr_set_oe() - may reduce code duplication.
+    </constraint>
+  </constraints>
+
+  <tests>
+    <standards>
+      Unit tests use Unity framework (ESP-IDF built-in). Tests are registered via WHOLE_ARCHIVE in CMakeLists.txt. Each test case uses TEST_CASE macro with tag pattern "[component_name]" for filtering. Test files located in component's test/ subdirectory. Tests run on target via "idf.py build flash monitor" with Unity test output.
+    </standards>
+    <locations>
+      <location>firmware/components/drivers/tpic6b595/test/test_tpic6b595.c (NEW)</location>
+      <location>firmware/components/events/event_manager/test/test_event_manager.c (REFERENCE)</location>
+      <location>firmware/components/interface/command_parser/test/test_*.c (REFERENCE)</location>
+    </locations>
+    <ideas>
+      <idea ac="1">Test sr_init() returns ESP_OK on first call; verify re-init also returns ESP_OK (idempotent)</idea>
+      <idea ac="2">Test sr_set_direction for all 8 axes; verify correct bit positions using sr_get_state()</idea>
+      <idea ac="3">Test sr_set_enable for all 8 axes; verify SR_X_EN through SR_E_EN bits</idea>
+      <idea ac="4">Test sr_set_brake for axes 0-6 (X-D); verify E axis (7) returns error or is ignored</idea>
+      <idea ac="5">Test sr_set_alarm_clear for axes 0-6; verify pulse behavior if required</idea>
+      <idea ac="6">Test sr_set_gp_output for pins 0-7; verify SR_GP_OUT_0 through SR_GP_OUT_7</idea>
+      <idea ac="7">Test sr_update transfers correct bytes; verify with logic analyzer if hardware available</idea>
+      <idea ac="8">Test sr_get_state returns current shadow register after multiple set operations</idea>
+      <idea ac="9">Test sr_emergency_disable_all sets all bits to 0; measure timing if possible</idea>
+      <idea ac="10">Test concurrent calls from multiple tasks don't corrupt shadow register</idea>
+      <idea ac="11">Verify GPIO_SR_LATCH is pulsed on sr_update (hardware verification)</idea>
+      <idea ac="12">Verify GPIO_SR_OE is LOW after sr_init (outputs enabled)</idea>
+      <idea>Test invalid axis parameters (>7) return ESP_ERR_INVALID_ARG</idea>
+      <idea>Test invalid GP pin parameters (>7) return ESP_ERR_INVALID_ARG</idea>
+      <idea>Test bit position macros: SR_DIR_BIT(0)==0, SR_EN_BIT(0)==1, etc.</idea>
+    </ideas>
+  </tests>
+</story-context>

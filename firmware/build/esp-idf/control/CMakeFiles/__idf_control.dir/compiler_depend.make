@@ -135,6 +135,7 @@ esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/command_executor.c
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_timing.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_yaml_schema.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/include/command_executor.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/events/event_manager/include/event_manager.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/interface/command_parser/include/command_parser.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/interface/command_parser/include/response_formatter.h
 
@@ -290,6 +291,8 @@ esp-idf/control/CMakeFiles/__idf_control.dir/tasks/task_stubs.c.obj: /Users/serg
 /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/tasks/include/task_defs.h:
 
 /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/interface/command_parser/include/command_parser.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/events/event_manager/include/event_manager.h:
 
 /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_yaml_schema.h:
 

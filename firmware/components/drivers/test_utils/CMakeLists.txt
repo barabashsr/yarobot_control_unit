@@ -5,4 +5,5 @@ idf_component_register(
         config
         yarobot_hal
         esp_driver_gpio
+        usb_cdc
 )

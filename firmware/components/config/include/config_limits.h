@@ -57,6 +57,9 @@
 /** @brief Event notification queue depth */
 #define LIMIT_EVENT_QUEUE_DEPTH         32
 
+/** @brief Maximum subscribers per event type */
+#define LIMIT_EVENT_SUBSCRIBERS         8
+
 /** @brief Background work queue depth */
 #define LIMIT_BACKGROUND_QUEUE_DEPTH    32
 
@@ -144,6 +147,9 @@
 
 /** @brief Background worker task stack size (bytes) */
 #define STACK_BACKGROUND_TASK       8192
+
+/** @brief Event processor task stack size (bytes) */
+#define STACK_EVENT_TASK            4096
 
 /** @} */ // end limits_stack
 
