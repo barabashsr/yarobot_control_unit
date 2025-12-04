@@ -1930,6 +1930,19 @@ __idf_wifi_provisioning/fast:
 .PHONY : __idf_wifi_provisioning/fast
 
 #=============================================================================
+# Target rules for targets named __idf_command_parser
+
+# Build rule for target.
+__idf_command_parser: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 __idf_command_parser
+.PHONY : __idf_command_parser
+
+# fast build rule for target.
+__idf_command_parser/fast:
+	$(MAKE) $(MAKESILENT) -f esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/build.make esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/build
+.PHONY : __idf_command_parser/fast
+
+#=============================================================================
 # Target rules for targets named __idf_yarobot_hal
 
 # Build rule for target.
@@ -2045,19 +2058,6 @@ __idf_main: cmake_check_build_system
 __idf_main/fast:
 	$(MAKE) $(MAKESILENT) -f esp-idf/main/CMakeFiles/__idf_main.dir/build.make esp-idf/main/CMakeFiles/__idf_main.dir/build
 .PHONY : __idf_main/fast
-
-#=============================================================================
-# Target rules for targets named __idf_command_parser
-
-# Build rule for target.
-__idf_command_parser: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 __idf_command_parser
-.PHONY : __idf_command_parser
-
-# fast build rule for target.
-__idf_command_parser/fast:
-	$(MAKE) $(MAKESILENT) -f esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/build.make esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/build
-.PHONY : __idf_command_parser/fast
 
 project_elf_src_esp32s3.obj: project_elf_src_esp32s3.c.obj
 .PHONY : project_elf_src_esp32s3.obj

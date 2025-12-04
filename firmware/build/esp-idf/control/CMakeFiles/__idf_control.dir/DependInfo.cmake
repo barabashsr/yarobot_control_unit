@@ -8,6 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/command_executor.c" "esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/command_executor.c.obj" "gcc" "esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/command_executor.c.obj.d"
   "/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/tasks/task_stubs.c" "esp-idf/control/CMakeFiles/__idf_control.dir/tasks/task_stubs.c.obj" "gcc" "esp-idf/control/CMakeFiles/__idf_control.dir/tasks/task_stubs.c.obj.d"
   )
 

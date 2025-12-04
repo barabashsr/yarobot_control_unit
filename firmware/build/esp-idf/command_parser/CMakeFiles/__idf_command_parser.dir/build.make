@@ -86,17 +86,33 @@ esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/command_parser.c.s: c
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/__idf_command_parser.dir/command_parser.c.s"
 	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/command_parser && /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/bin/xtensa-esp32s3-elf-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/interface/command_parser/command_parser.c -o CMakeFiles/__idf_command_parser.dir/command_parser.c.s
 
+esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/response_formatter.c.obj: esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/flags.make
+esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/response_formatter.c.obj: /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/interface/command_parser/response_formatter.c
+esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/response_formatter.c.obj: esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/response_formatter.c.obj"
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/command_parser && /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/bin/xtensa-esp32s3-elf-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/response_formatter.c.obj -MF CMakeFiles/__idf_command_parser.dir/response_formatter.c.obj.d -o CMakeFiles/__idf_command_parser.dir/response_formatter.c.obj -c /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/interface/command_parser/response_formatter.c
+
+esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/response_formatter.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/__idf_command_parser.dir/response_formatter.c.i"
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/command_parser && /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/bin/xtensa-esp32s3-elf-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/interface/command_parser/response_formatter.c > CMakeFiles/__idf_command_parser.dir/response_formatter.c.i
+
+esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/response_formatter.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/__idf_command_parser.dir/response_formatter.c.s"
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/command_parser && /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/bin/xtensa-esp32s3-elf-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/interface/command_parser/response_formatter.c -o CMakeFiles/__idf_command_parser.dir/response_formatter.c.s
+
 # Object files for target __idf_command_parser
 __idf_command_parser_OBJECTS = \
-"CMakeFiles/__idf_command_parser.dir/command_parser.c.obj"
+"CMakeFiles/__idf_command_parser.dir/command_parser.c.obj" \
+"CMakeFiles/__idf_command_parser.dir/response_formatter.c.obj"
 
 # External object files for target __idf_command_parser
 __idf_command_parser_EXTERNAL_OBJECTS =
 
 esp-idf/command_parser/libcommand_parser.a: esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/command_parser.c.obj
+esp-idf/command_parser/libcommand_parser.a: esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/response_formatter.c.obj
 esp-idf/command_parser/libcommand_parser.a: esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/build.make
 esp-idf/command_parser/libcommand_parser.a: esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking C static library libcommand_parser.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking C static library libcommand_parser.a"
 	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/command_parser && $(CMAKE_COMMAND) -P CMakeFiles/__idf_command_parser.dir/cmake_clean_target.cmake
 	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/command_parser && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/__idf_command_parser.dir/link.txt --verbose=$(VERBOSE)
 

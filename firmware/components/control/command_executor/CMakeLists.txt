@@ -1,0 +1,11 @@
+idf_component_register(
+    SRCS
+        "command_executor.c"
+    INCLUDE_DIRS
+        "include"
+    REQUIRES
+        config
+        command_parser
+        freertos
+        log
+)

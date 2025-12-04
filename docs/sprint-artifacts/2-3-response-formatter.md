@@ -1,6 +1,6 @@
 # Story 2.3: Response Formatter
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -27,54 +27,54 @@ so that **I can programmatically process controller output**.
 
 ## Tasks / Subtasks
 
-- [ ] **Task 1: Create Response Formatter Header** (AC: 1-3, 11, 14)
-  - [ ] Create `firmware/components/interface/command_parser/include/response_formatter.h`
-  - [ ] Define API functions per Tech Spec:
+- [x] **Task 1: Create Response Formatter Header** (AC: 1-3, 11, 14)
+  - [x] Create `firmware/components/interface/command_parser/include/response_formatter.h`
+  - [x] Define API functions per Tech Spec:
     ```c
     esp_err_t format_ok(char* buf, size_t len);
     esp_err_t format_ok_data(char* buf, size_t len, const char* fmt, ...);
     esp_err_t format_error(char* buf, size_t len, const char* code, const char* msg);
     esp_err_t format_event(char* buf, size_t len, const Event* event);
     ```
-  - [ ] Include config_commands.h for RESP_*, ERR_*, MSG_* constants
-  - [ ] Include Event struct definition (from event_manager.h or define locally)
+  - [x] Include config_commands.h for RESP_*, ERR_*, MSG_* constants
+  - [x] Include Event struct definition (from event_manager.h or define locally)
 
-- [ ] **Task 2: Implement format_ok()** (AC: 4, 10, 11)
-  - [ ] Generate `OK\r\n` response
-  - [ ] Check buffer length before writing
-  - [ ] Return ESP_ERR_INVALID_SIZE if buffer too small
-  - [ ] Use RESP_OK constant from config_commands.h
+- [x] **Task 2: Implement format_ok()** (AC: 4, 10, 11)
+  - [x] Generate `OK\r\n` response
+  - [x] Check buffer length before writing
+  - [x] Return ESP_ERR_INVALID_SIZE if buffer too small
+  - [x] Use RESP_OK constant from config_commands.h
 
-- [ ] **Task 3: Implement format_ok_data()** (AC: 1, 5, 10, 11, 14)
-  - [ ] Support printf-style format string and varargs
-  - [ ] Generate `OK <formatted_data>\r\n`
-  - [ ] Use vsnprintf for safe formatting
-  - [ ] Append `\r\n` terminator
-  - [ ] Return ESP_ERR_INVALID_SIZE if result truncated
-  - [ ] Use RESP_OK constant
+- [x] **Task 3: Implement format_ok_data()** (AC: 1, 5, 10, 11, 14)
+  - [x] Support printf-style format string and varargs
+  - [x] Generate `OK <formatted_data>\r\n`
+  - [x] Use vsnprintf for safe formatting
+  - [x] Append `\r\n` terminator
+  - [x] Return ESP_ERR_INVALID_SIZE if result truncated
+  - [x] Use RESP_OK constant
 
-- [ ] **Task 4: Implement format_error()** (AC: 2, 6, 10, 11, 14)
-  - [ ] Generate `ERROR <code> <message>\r\n`
-  - [ ] Use snprintf for safe formatting
-  - [ ] Append `\r\n` terminator
-  - [ ] Use RESP_ERROR constant
-  - [ ] Validate code and message are not NULL
+- [x] **Task 4: Implement format_error()** (AC: 2, 6, 10, 11, 14)
+  - [x] Generate `ERROR <code> <message>\r\n`
+  - [x] Use snprintf for safe formatting
+  - [x] Append `\r\n` terminator
+  - [x] Use RESP_ERROR constant
+  - [x] Validate code and message are not NULL
 
-- [ ] **Task 5: Define Event Structure** (AC: 3, 7-9)
-  - [ ] Define EventType enum matching Tech Spec:
+- [x] **Task 5: Define Event Structure** (AC: 3, 7-9)
+  - [x] Define EventType enum matching Tech Spec:
     ```c
     typedef enum {
-        EVT_MOTION_COMPLETE,
-        EVT_MOTION_ERROR,
-        EVT_LIMIT_TRIGGERED,
-        EVT_ESTOP_CHANGED,
-        EVT_MODE_CHANGED,
-        EVT_ERROR,
-        EVT_WIDTH_MEASURED,
-        EVT_BOOT,
+        EVTTYPE_MOTION_COMPLETE,
+        EVTTYPE_MOTION_ERROR,
+        EVTTYPE_LIMIT_TRIGGERED,
+        EVTTYPE_ESTOP_CHANGED,
+        EVTTYPE_MODE_CHANGED,
+        EVTTYPE_ERROR,
+        EVTTYPE_WIDTH_MEASURED,
+        EVTTYPE_BOOT,
     } EventType;
     ```
-  - [ ] Define Event struct matching Tech Spec:
+  - [x] Define Event struct matching Tech Spec:
     ```c
     typedef struct {
         EventType type;
@@ -90,34 +90,34 @@ so that **I can programmatically process controller output**.
     } Event;
     ```
 
-- [ ] **Task 6: Implement format_event()** (AC: 3, 7-9, 10, 11, 14)
-  - [ ] Generate event string based on EventType
-  - [ ] Handle EVT_MOTION_COMPLETE: `EVENT DONE <axis> <position>`
-  - [ ] Handle EVT_LIMIT_TRIGGERED: `EVENT LIMIT <axis> MIN|MAX`
-  - [ ] Handle EVT_ESTOP_CHANGED: `EVENT ESTOP ACTIVE|RELEASED`
-  - [ ] Handle EVT_BOOT: `EVENT BOOT V1.0.0 AXES:8 STATE:IDLE`
-  - [ ] Handle EVT_MODE_CHANGED: `EVENT MODE <new_mode>`
-  - [ ] Use RESP_EVENT constant and EVT_* type strings from config_commands.h
-  - [ ] Append `\r\n` terminator
+- [x] **Task 6: Implement format_event()** (AC: 3, 7-9, 10, 11, 14)
+  - [x] Generate event string based on EventType
+  - [x] Handle EVT_MOTION_COMPLETE: `EVENT DONE <axis> <position>`
+  - [x] Handle EVT_LIMIT_TRIGGERED: `EVENT LIMIT <axis> MIN|MAX`
+  - [x] Handle EVT_ESTOP_CHANGED: `EVENT ESTOP ACTIVE|RELEASED`
+  - [x] Handle EVT_BOOT: `EVENT BOOT V1.0.0 AXES:8 STATE:IDLE`
+  - [x] Handle EVT_MODE_CHANGED: `EVENT MODE <new_mode>`
+  - [x] Use RESP_EVENT constant and EVT_* type strings from config_commands.h
+  - [x] Append `\r\n` terminator
 
-- [ ] **Task 7: Ensure Thread Safety** (AC: 12)
-  - [ ] All format functions operate on caller-provided buffer (no shared state)
-  - [ ] No static variables that could cause race conditions
-  - [ ] Document thread-safety in header comments
+- [x] **Task 7: Ensure Thread Safety** (AC: 12)
+  - [x] All format functions operate on caller-provided buffer (no shared state)
+  - [x] No static variables that could cause race conditions
+  - [x] Document thread-safety in header comments
 
-- [ ] **Task 8: Integrate with Build System** (AC: 1)
-  - [ ] Add response_formatter.c to command_parser CMakeLists.txt SRCS
-  - [ ] Verify clean build
+- [x] **Task 8: Integrate with Build System** (AC: 1)
+  - [x] Add response_formatter.c to command_parser CMakeLists.txt SRCS
+  - [x] Verify clean build
 
-- [ ] **Task 9: Test Response Formatter** (AC: 1-14)
-  - [ ] Create test_response_formatter.c in test/ directory
-  - [ ] Test format_ok() output
-  - [ ] Test format_ok_data() with various format strings
-  - [ ] Test format_error() with all ERR_* codes
-  - [ ] Test format_event() for each EventType
-  - [ ] Test buffer overflow protection
-  - [ ] Test \r\n termination on all outputs
-  - [ ] Verify constants from config_commands.h are used
+- [x] **Task 9: Test Response Formatter** (AC: 1-14)
+  - [x] Create test_response_formatter.c in test/ directory
+  - [x] Test format_ok() output
+  - [x] Test format_ok_data() with various format strings
+  - [x] Test format_error() with all ERR_* codes
+  - [x] Test format_event() for each EventType
+  - [x] Test buffer overflow protection
+  - [x] Test \r\n termination on all outputs
+  - [x] Verify constants from config_commands.h are used
 
 ## Dev Notes
 
@@ -255,13 +255,28 @@ All formatting MUST use constants from `config_commands.h`:
 
 ### Agent Model Used
 
-{{agent_model_name_version}}
+Claude Opus 4.5 (claude-opus-4-5-20251101)
 
 ### Debug Log References
 
+N/A
+
 ### Completion Notes List
 
+- All 9 tasks completed successfully
+- EventType enum uses EVTTYPE_ prefix to avoid conflict with config_commands.h EVT_* string constants
+- LimitState enum added for type-safe limit switch state handling
+- All format functions use snprintf/vsnprintf for buffer safety
+- Thread safety ensured via caller-provided buffers (no static state)
+- Build verified successful with `idf.py build`
+- 30+ test cases covering all ACs in test_response_formatter.c
+
 ### File List
+
+- `firmware/components/interface/command_parser/include/response_formatter.h` (NEW)
+- `firmware/components/interface/command_parser/response_formatter.c` (NEW)
+- `firmware/components/interface/command_parser/CMakeLists.txt` (MODIFIED)
+- `firmware/components/interface/command_parser/test/test_response_formatter.c` (NEW)
 
 ---
 
@@ -270,3 +285,4 @@ All formatting MUST use constants from `config_commands.h`:
 | Date | Author | Change |
 |------|--------|--------|
 | 2025-12-04 | SM Agent (Bob) | Initial story draft from Epic 2 Tech Spec |
+| 2025-12-04 | Dev Agent (Amelia) | Implemented response formatter - all tasks complete, ready for review |

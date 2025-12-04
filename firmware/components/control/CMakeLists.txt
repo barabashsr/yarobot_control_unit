@@ -4,10 +4,13 @@
 idf_component_register(
     SRCS
         "tasks/task_stubs.c"
+        "command_executor/command_executor.c"
     INCLUDE_DIRS
         "tasks/include"
+        "command_executor/include"
     REQUIRES
         config
+        command_parser
         freertos
         test_utils
         usb_cdc

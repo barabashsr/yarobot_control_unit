@@ -1,4 +1,6 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/__idf_control.dir/command_executor/command_executor.c.obj"
+  "CMakeFiles/__idf_control.dir/command_executor/command_executor.c.obj.d"
   "CMakeFiles/__idf_control.dir/tasks/task_stubs.c.obj"
   "CMakeFiles/__idf_control.dir/tasks/task_stubs.c.obj.d"
   "libcontrol.a"

@@ -23,15 +23,17 @@ static const char axis_letters[] = {'X', 'Y', 'Z', 'A', 'B', 'C', 'D', 'E'};
 /**
  * @brief Check if command expects a string parameter
  *
- * Some commands (like ALIAS) take a string as their final parameter
- * instead of a numeric value.
+ * Some commands take a string as their parameter instead of numeric values.
+ * Examples: ALIAS (axis alias name), ECHO (echo text), MODE (mode name)
  *
  * @param[in] verb Uppercase command verb
  * @return true if command expects string parameter
  */
 static bool command_expects_string_param(const char* verb)
 {
-    return (strcmp(verb, CMD_ALIAS) == 0);
+    return (strcmp(verb, CMD_ALIAS) == 0 ||
+            strcmp(verb, CMD_ECHO) == 0 ||
+            strcmp(verb, CMD_MODE) == 0);
 }
 
 /**
@@ -115,15 +117,46 @@ esp_err_t parse_command(const char* line, ParsedCommand* cmd)
     bool expects_string = command_expects_string_param(cmd->verb);
 
     while (token != NULL) {
-        if (expects_string && cmd->axis != '\0') {
-            size_t str_len = strlen(token);
-            if (str_len > PARSER_MAX_STR_PARAM) {
-                str_len = PARSER_MAX_STR_PARAM;
+        // For commands expecting string params, capture the rest as str_param
+        if (expects_string) {
+            // For ECHO, capture everything after the verb (including spaces)
+            // For MODE/ALIAS, just capture the first token
+            if (strcmp(cmd->verb, CMD_ECHO) == 0) {
+                // Reconstruct remaining string from saveptr position
+                // token is already the first word, saveptr points to rest
+                size_t str_len = strlen(token);
+                if (str_len > PARSER_MAX_STR_PARAM) {
+                    str_len = PARSER_MAX_STR_PARAM;
+                }
+                strncpy(cmd->str_param, token, str_len);
+                cmd->str_param[str_len] = '\0';
+
+                // Append remaining tokens if any (preserve spaces in echo)
+                if (saveptr != NULL && *saveptr != '\0') {
+                    size_t remaining_space = PARSER_MAX_STR_PARAM - str_len - 1;
+                    if (remaining_space > 0) {
+                        strncat(cmd->str_param, " ", remaining_space);
+                        remaining_space--;
+                        strncat(cmd->str_param, saveptr, remaining_space);
+                        // Strip trailing whitespace
+                        size_t total_len = strlen(cmd->str_param);
+                        while (total_len > 0 && isspace((unsigned char)cmd->str_param[total_len-1])) {
+                            cmd->str_param[--total_len] = '\0';
+                        }
+                    }
+                }
+                cmd->has_str_param = true;
+            } else {
+                // MODE, ALIAS - just capture the token
+                size_t str_len = strlen(token);
+                if (str_len > PARSER_MAX_STR_PARAM) {
+                    str_len = PARSER_MAX_STR_PARAM;
+                }
+                strncpy(cmd->str_param, token, str_len);
+                cmd->str_param[str_len] = '\0';
+                str_to_upper(cmd->str_param);
+                cmd->has_str_param = true;
             }
-            strncpy(cmd->str_param, token, str_len);
-            cmd->str_param[str_len] = '\0';
-            str_to_upper(cmd->str_param);
-            cmd->has_str_param = true;
             break;
         }
 

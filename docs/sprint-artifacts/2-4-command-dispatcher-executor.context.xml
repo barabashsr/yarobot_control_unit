@@ -1,0 +1,282 @@
+<story-context id="2-4-command-dispatcher-executor" v="1.0">
+  <metadata>
+    <epicId>2</epicId>
+    <storyId>4</storyId>
+    <title>Command Dispatcher & Executor</title>
+    <status>ready-for-dev</status>
+    <generatedAt>2025-12-04</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/2-4-command-dispatcher-executor.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>commands routed to appropriate handlers based on verb</iWant>
+    <soThat>command processing is modular and extensible</soThat>
+    <tasks>
+      <task id="1" acs="5,6">Create Command Executor Component Structure
+        - Create directory firmware/components/control/command_executor/
+        - Create include/command_executor.h, command_executor.c, CMakeLists.txt
+        - Add dependencies: config, command_parser, freertos</task>
+      <task id="2" acs="10,11,12">Define SystemState Enum and State Management
+        - SystemState enum: STATE_IDLE(0x01), STATE_READY(0x02), STATE_CONFIG(0x04), STATE_ESTOP(0x08), STATE_ERROR(0x10), STATE_ANY(0xFF)
+        - get_system_state(), set_system_state(), is_state_allowed()
+        - Use static volatile for thread-safe state variable</task>
+      <task id="3" acs="1,2">Define CommandHandler and CommandEntry Types
+        - CommandHandler: esp_err_t (*)(const ParsedCommand*, char*, size_t)
+        - CommandEntry: {verb, handler, allowed_states}</task>
+      <task id="4" acs="5,6">Implement Command Table and Registration
+        - Static command table array (16 entries capacity)
+        - cmd_executor_init() registers CMD_ECHO, CMD_INFO, CMD_STAT, CMD_MODE
+        - cmd_executor_register() for runtime additions</task>
+      <task id="5" acs="1,2,3,4,7,8">Implement dispatch_command()
+        - Lookup verb in table (case-insensitive)
+        - State validation before handler
+        - ERR_INVALID_COMMAND if not found, ERR_MODE_BLOCKED if state blocked</task>
+      <task id="6" acs="7">Implement Stub Command Handlers
+        - handle_echo(), handle_info(), handle_stat(), handle_mode()
+        - Use format_ok_data()/format_error() from response_formatter.h</task>
+      <task id="7" acs="13">Add Thread Safety
+        - Mutex for command table registration
+        - Atomic state variable (single 32-bit word)
+        - Caller-provided response buffers</task>
+      <task id="8" acs="9">Add Command Logging
+        - ESP_LOGD("CMD_EXEC", "verb=%s axis=%c params=%d", ...)
+        - FR26: command history for debugging</task>
+      <task id="9" acs="5">Integrate with Build System
+        - CMakeLists.txt with all sources
+        - Verify with idf.py build</task>
+      <task id="10" acs="1-13">Create Unit Tests
+        - test_command_executor.c with coverage for all ACs</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <criterion id="AC1">Given ParsedCommand ready, dispatcher looks up handler in command table using cmd->verb</criterion>
+    <criterion id="AC2">Given entry found, handler only invoked if current_state &amp; entry.allowed_states is non-zero</criterion>
+    <criterion id="AC3">Given state validation fails, response is ERROR E012 Command blocked in current mode</criterion>
+    <criterion id="AC4">Given verb not in table, response is ERROR E001 Invalid command</criterion>
+    <criterion id="AC5">Given cmd_executor_init() called, all built-in handlers registered</criterion>
+    <criterion id="AC6">Given cmd_executor_register() called, command becomes available for dispatch</criterion>
+    <criterion id="AC7">Given dispatch_command() called with valid command, response buffer contains handler's response</criterion>
+    <criterion id="AC8">Given handler returns error, response buffer contains formatted error</criterion>
+    <criterion id="AC9">Given cmd_executor_task processes command, logs at DEBUG level (FR26)</criterion>
+    <criterion id="AC10">Given get_system_state() called, returns current SystemState enum value</criterion>
+    <criterion id="AC11">Given set_system_state() called, state updated atomically</criterion>
+    <criterion id="AC12">Given is_state_allowed() called with bitmask, returns true if current state matches</criterion>
+    <criterion id="AC13">Given multiple tasks call dispatch_command(), shared state access is mutex-protected</criterion>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-2.md</path>
+        <title>Epic 2 Technical Specification</title>
+        <section>APIs and Interfaces</section>
+        <snippet>Defines command_executor API: cmd_executor_init(), cmd_executor_register(), dispatch_command(), get_system_state(), set_system_state(), is_state_allowed(). SystemState enum and CommandEntry struct defined.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-2.md</path>
+        <title>Epic 2 Technical Specification</title>
+        <section>Mode Transition State Machine</section>
+        <snippet>IDLE->READY->CONFIG transitions via MODE command. ESTOP/ERROR states via safety events. RST returns to IDLE/READY. Mode checked before each command dispatch.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>System Architecture</title>
+        <section>Command Handler Pattern</section>
+        <snippet>Static command_table array with {verb, handler, allowed_states}. Dispatcher validates state bitmask before invoking handler. Linear search acceptable for &lt;30 commands.</snippet>
+      </doc>
+      <doc>
+        <path>docs/epics.md</path>
+        <title>Epics and Stories</title>
+        <section>Story 2.4</section>
+        <snippet>Command Dispatcher routes commands to handlers. State validation occurs before handler invocation. Unknown commands return ERR_INVALID_COMMAND.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/2-3-response-formatter.md</path>
+        <title>Story 2.3: Response Formatter</title>
+        <section>File List</section>
+        <snippet>Created response_formatter.h/c with format_ok(), format_ok_data(), format_error(), format_event(). Thread-safe via caller-provided buffers. All constants from config_commands.h.</snippet>
+      </doc>
+    </docs>
+
+    <code>
+      <file>
+        <path>firmware/components/interface/command_parser/include/command_parser.h</path>
+        <kind>header</kind>
+        <symbol>ParsedCommand</symbol>
+        <reason>ParsedCommand struct is input to dispatch_command(). Contains verb, axis, params[], param_count, str_param.</reason>
+      </file>
+      <file>
+        <path>firmware/components/interface/command_parser/include/response_formatter.h</path>
+        <kind>header</kind>
+        <symbol>format_ok, format_ok_data, format_error, format_event</symbol>
+        <reason>Response formatting API. All handlers must use these functions to generate responses.</reason>
+      </file>
+      <file>
+        <path>firmware/components/interface/command_parser/response_formatter.c</path>
+        <kind>source</kind>
+        <symbol>format_ok, format_ok_data, format_error</symbol>
+        <reason>Implementation of response formatting. Handlers call these to generate OK/ERROR responses.</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_commands.h</path>
+        <kind>header</kind>
+        <symbol>CMD_*, ERR_*, MSG_*, RESP_*</symbol>
+        <reason>Protocol constants. Command verbs (CMD_ECHO, CMD_INFO, etc.), error codes (ERR_INVALID_COMMAND, ERR_MODE_BLOCKED), messages (MSG_*), response prefixes (RESP_OK, RESP_ERROR).</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_limits.h</path>
+        <kind>header</kind>
+        <symbol>LIMIT_RESPONSE_MAX_LENGTH, LIMIT_CMD_MAX_LENGTH</symbol>
+        <reason>Buffer size limits: 256 bytes for commands and responses. Used for response buffer allocation.</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/tasks/task_stubs.c</path>
+        <kind>source</kind>
+        <symbol>cmd_executor_task, process_command</symbol>
+        <lines>167-228</lines>
+        <reason>Current stub implementation of cmd_executor_task. Contains process_command() that will be replaced by dispatch_command() calls. Shows USB CDC queue integration.</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/tasks/include/task_defs.h</path>
+        <kind>header</kind>
+        <symbol>cmd_executor_task</symbol>
+        <reason>Task declaration. cmd_executor_task runs on Core 0 at priority 12, processes parsed commands via dispatch_command().</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/CMakeLists.txt</path>
+        <kind>build</kind>
+        <symbol>idf_component_register</symbol>
+        <reason>Control component build config. New command_executor sub-component follows same pattern. REQUIRES: config, freertos, usb_cdc.</reason>
+      </file>
+      <file>
+        <path>firmware/components/interface/command_parser/CMakeLists.txt</path>
+        <kind>build</kind>
+        <symbol>idf_component_register</symbol>
+        <reason>Example CMakeLists.txt pattern: SRCS list, INCLUDE_DIRS "include", REQUIRES config.</reason>
+      </file>
+      <file>
+        <path>firmware/main/yarobot_control_unit.cpp</path>
+        <kind>source</kind>
+        <symbol>app_main, xTaskCreatePinnedToCore</symbol>
+        <lines>272-273</lines>
+        <reason>Creates cmd_executor_task on Core 0. May need PRIV_REQUIRES update in main/CMakeLists.txt to link command_executor.</reason>
+      </file>
+    </code>
+
+    <dependencies>
+      <esp-idf>
+        <component>freertos</component>
+        <component>log</component>
+        <component>esp_timer</component>
+      </esp-idf>
+      <internal>
+        <component>config</component>
+        <component>command_parser</component>
+        <component>usb_cdc</component>
+      </internal>
+    </dependencies>
+  </artifacts>
+
+  <interfaces>
+    <interface>
+      <name>dispatch_command</name>
+      <kind>function</kind>
+      <signature>esp_err_t dispatch_command(const ParsedCommand* cmd, char* response, size_t resp_len)</signature>
+      <path>firmware/components/control/command_executor/include/command_executor.h</path>
+    </interface>
+    <interface>
+      <name>cmd_executor_init</name>
+      <kind>function</kind>
+      <signature>esp_err_t cmd_executor_init(void)</signature>
+      <path>firmware/components/control/command_executor/include/command_executor.h</path>
+    </interface>
+    <interface>
+      <name>cmd_executor_register</name>
+      <kind>function</kind>
+      <signature>esp_err_t cmd_executor_register(const CommandEntry* entry)</signature>
+      <path>firmware/components/control/command_executor/include/command_executor.h</path>
+    </interface>
+    <interface>
+      <name>get_system_state</name>
+      <kind>function</kind>
+      <signature>SystemState get_system_state(void)</signature>
+      <path>firmware/components/control/command_executor/include/command_executor.h</path>
+    </interface>
+    <interface>
+      <name>set_system_state</name>
+      <kind>function</kind>
+      <signature>esp_err_t set_system_state(SystemState new_state)</signature>
+      <path>firmware/components/control/command_executor/include/command_executor.h</path>
+    </interface>
+    <interface>
+      <name>is_state_allowed</name>
+      <kind>function</kind>
+      <signature>bool is_state_allowed(uint32_t allowed_mask)</signature>
+      <path>firmware/components/control/command_executor/include/command_executor.h</path>
+    </interface>
+    <interface>
+      <name>ParsedCommand</name>
+      <kind>struct</kind>
+      <signature>typedef struct { char verb[16]; char axis; float params[4]; uint8_t param_count; char str_param[32]; bool has_str_param; } ParsedCommand</signature>
+      <path>firmware/components/interface/command_parser/include/command_parser.h</path>
+    </interface>
+    <interface>
+      <name>CommandHandler</name>
+      <kind>typedef</kind>
+      <signature>typedef esp_err_t (*CommandHandler)(const ParsedCommand* cmd, char* response, size_t resp_len)</signature>
+      <path>firmware/components/control/command_executor/include/command_executor.h</path>
+    </interface>
+    <interface>
+      <name>CommandEntry</name>
+      <kind>struct</kind>
+      <signature>typedef struct { const char* verb; CommandHandler handler; uint32_t allowed_states; } CommandEntry</signature>
+      <path>firmware/components/control/command_executor/include/command_executor.h</path>
+    </interface>
+    <interface>
+      <name>format_ok_data</name>
+      <kind>function</kind>
+      <signature>esp_err_t format_ok_data(char* buf, size_t len, const char* fmt, ...)</signature>
+      <path>firmware/components/interface/command_parser/include/response_formatter.h</path>
+    </interface>
+    <interface>
+      <name>format_error</name>
+      <kind>function</kind>
+      <signature>esp_err_t format_error(char* buf, size_t len, const char* code, const char* msg)</signature>
+      <path>firmware/components/interface/command_parser/include/response_formatter.h</path>
+    </interface>
+  </interfaces>
+
+  <constraints>
+    <constraint source="architecture">All responses must terminate with \r\n</constraint>
+    <constraint source="architecture">Use constants from config_commands.h (CMD_*, ERR_*, MSG_*) - no literal strings</constraint>
+    <constraint source="tech-spec">Command response latency must be &lt;10ms (NFR2, FR20)</constraint>
+    <constraint source="tech-spec">STATE_IDLE is initial state after boot - motors disabled</constraint>
+    <constraint source="tech-spec">CONFIG mode blocks all motion commands (FR55)</constraint>
+    <constraint source="tech-spec">ESTOP mode only allows status queries and RST command</constraint>
+    <constraint source="architecture">Handler functions are stateless - receive all context as parameters</constraint>
+    <constraint source="architecture">Use strcasecmp for case-insensitive verb comparison</constraint>
+    <constraint source="architecture">Log commands at DEBUG level for troubleshooting (FR26)</constraint>
+    <constraint source="project">ESP-IDF component structure: include/ for headers, test/ for tests</constraint>
+    <constraint source="project">Thread safety via caller-provided buffers and atomic state variable</constraint>
+  </constraints>
+
+  <tests>
+    <standards>ESP-IDF Unity test framework. Tests in component test/ directories. Run via idf.py build with TEST_COMPONENTS. Each acceptance criterion should have corresponding test case. Follow patterns from test_command_parser.c and test_response_formatter.c.</standards>
+    <locations>
+      <location>firmware/components/control/command_executor/test/</location>
+      <location>firmware/components/interface/command_parser/test/</location>
+    </locations>
+    <ideas>
+      <idea ac="1,2">Test dispatch with known command in table, verify handler invoked only in allowed state</idea>
+      <idea ac="3">Test dispatch in wrong state, verify ERR_MODE_BLOCKED response</idea>
+      <idea ac="4">Test dispatch with unknown verb, verify ERR_INVALID_COMMAND response</idea>
+      <idea ac="5,6">Test cmd_executor_init registers built-ins, cmd_executor_register adds new command</idea>
+      <idea ac="7,8">Test handler success/failure propagation to response buffer</idea>
+      <idea ac="10,11,12">Test get/set state, is_state_allowed with various bitmasks</idea>
+      <idea ac="13">Concurrent dispatch from multiple threads (stress test)</idea>
+    </ideas>
+  </tests>
+</story-context>

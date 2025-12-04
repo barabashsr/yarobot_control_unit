@@ -12,6 +12,8 @@
 #include "task_defs.h"
 #include "usb_cdc.h"
 #include "config_limits.h"
+#include "command_executor.h"
+#include "command_parser.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/queue.h"
@@ -112,8 +114,11 @@ static void send_response(const char* response)
     printf("%s\r\n", response);
 }
 
+/** @brief Flag to track if executor has been initialized */
+static bool s_executor_initialized = false;
+
 /**
- * @brief Process a command string
+ * @brief Process a command string using the command dispatcher
  *
  * @param cmd Command string (null-terminated, may include newline)
  */
@@ -130,38 +135,72 @@ static void process_command(char* cmd)
         return;
     }
 
-    // Convert to uppercase for comparison
+    // Convert to uppercase for comparison (for special TEST commands)
     char cmd_upper[CMD_BUF_SIZE];
     for (size_t i = 0; i <= len && i < CMD_BUF_SIZE - 1; i++) {
         cmd_upper[i] = toupper((unsigned char)cmd[i]);
     }
     cmd_upper[CMD_BUF_SIZE - 1] = '\0';
 
+    // Handle special hardware test commands (not part of protocol)
     test_result_t result;
-
     if (strcmp(cmd_upper, "TEST I2C") == 0) {
         test_i2c(&result);
         send_response(result.message);
+        return;
     } else if (strcmp(cmd_upper, "TEST SR") == 0) {
         test_sr(&result);
         send_response(result.message);
+        return;
     } else if (strcmp(cmd_upper, "TEST GPIO") == 0) {
         test_gpio(&result);
         send_response(result.message);
+        return;
     } else if (strcmp(cmd_upper, "DIAG") == 0 || strcmp(cmd_upper, "TEST ALL") == 0) {
         test_all(&result);
         send_response(result.message);
+        return;
     } else if (strcmp(cmd_upper, "HELP") == 0 || strcmp(cmd_upper, "?") == 0) {
-        send_response("OK Commands: TEST I2C, TEST SR, TEST GPIO, DIAG, HELP");
-    } else if (strncmp(cmd_upper, "ECHO ", 5) == 0) {
-        /* Echo command - return the text after ECHO */
-        char echo_response[LIMIT_CMD_MAX_LENGTH + 4];
-        snprintf(echo_response, sizeof(echo_response), "OK %s", cmd + 5);
-        send_response(echo_response);
-    } else {
-        ESP_LOGD(TAG, "Unknown command: %s", cmd);
-        send_response("ERROR E001 Unknown command");
+        send_response("OK Commands: ECHO, INFO, STAT, MODE, TEST I2C, TEST SR, TEST GPIO, DIAG, HELP");
+        return;
     }
+
+    // Initialize executor on first use
+    if (!s_executor_initialized) {
+        if (cmd_executor_init() == ESP_OK) {
+            s_executor_initialized = true;
+            ESP_LOGI(TAG, "Command executor initialized");
+        } else {
+            ESP_LOGE(TAG, "Failed to initialize command executor");
+            send_response("ERROR E010 Configuration error");
+            return;
+        }
+    }
+
+    // Parse the command
+    ParsedCommand parsed;
+    esp_err_t parse_result = parse_command(cmd, &parsed);
+    if (parse_result != ESP_OK) {
+        ESP_LOGD(TAG, "Parse failed for: %s", cmd);
+        send_response("ERROR E001 Invalid command");
+        return;
+    }
+
+    // Skip empty/comment commands
+    if (parsed.verb[0] == '\0') {
+        return;
+    }
+
+    // Dispatch the command
+    char response[LIMIT_RESPONSE_MAX_LENGTH];
+    dispatch_command(&parsed, response, sizeof(response));
+
+    // Send response (remove trailing \r\n since send_response adds it)
+    size_t resp_len = strlen(response);
+    if (resp_len >= 2 && response[resp_len-2] == '\r' && response[resp_len-1] == '\n') {
+        response[resp_len-2] = '\0';
+    }
+    send_response(response);
 }
 
 void cmd_executor_task(void* arg)

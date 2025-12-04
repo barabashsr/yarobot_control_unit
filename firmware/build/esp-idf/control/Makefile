@@ -175,6 +175,30 @@ __idf_control/fast:
 	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/control/CMakeFiles/__idf_control.dir/build.make esp-idf/control/CMakeFiles/__idf_control.dir/build
 .PHONY : __idf_control/fast
 
+command_executor/command_executor.obj: command_executor/command_executor.c.obj
+.PHONY : command_executor/command_executor.obj
+
+# target to build an object file
+command_executor/command_executor.c.obj:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/control/CMakeFiles/__idf_control.dir/build.make esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/command_executor.c.obj
+.PHONY : command_executor/command_executor.c.obj
+
+command_executor/command_executor.i: command_executor/command_executor.c.i
+.PHONY : command_executor/command_executor.i
+
+# target to preprocess a source file
+command_executor/command_executor.c.i:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/control/CMakeFiles/__idf_control.dir/build.make esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/command_executor.c.i
+.PHONY : command_executor/command_executor.c.i
+
+command_executor/command_executor.s: command_executor/command_executor.c.s
+.PHONY : command_executor/command_executor.s
+
+# target to generate assembly for a file
+command_executor/command_executor.c.s:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/control/CMakeFiles/__idf_control.dir/build.make esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/command_executor.c.s
+.PHONY : command_executor/command_executor.c.s
+
 tasks/task_stubs.obj: tasks/task_stubs.c.obj
 .PHONY : tasks/task_stubs.obj
 
@@ -212,6 +236,9 @@ help:
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... __idf_control"
+	@echo "... command_executor/command_executor.obj"
+	@echo "... command_executor/command_executor.i"
+	@echo "... command_executor/command_executor.s"
 	@echo "... tasks/task_stubs.obj"
 	@echo "... tasks/task_stubs.i"
 	@echo "... tasks/task_stubs.s"

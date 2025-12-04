@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Story Context: 2-5 Basic Query Commands
+  Generated: 2025-12-04
+  Purpose: Provides all necessary context for implementing Story 2-5
+-->
+<story-context>
+  <metadata>
+    <story-id>2-5</story-id>
+    <story-title>Basic Query Commands (CMD_INFO, CMD_STAT, CMD_ECHO)</story-title>
+    <story-status>drafted</story-status>
+    <prerequisite-stories>2-4 (done)</prerequisite-stories>
+    <generated-date>2025-12-04</generated-date>
+  </metadata>
+
+  <story-summary>
+    <description>
+      Implement complete ECHO, INFO, and STAT command handlers. Story 2-4 created stub handlers;
+      this story upgrades them to return proper formatted data with correct response formats.
+    </description>
+    <key-deliverables>
+      <item>ECHO command returns input text verbatim</item>
+      <item>INFO command returns firmware name and version from config.h</item>
+      <item>STAT command returns system status (MODE, ESTOP, AXES, UPTIME)</item>
+      <item>STAT [axis] command returns axis-specific status (POS, EN, MOV, ERR, LIM)</item>
+    </key-deliverables>
+  </story-summary>
+
+  <acceptance-criteria>
+    <criterion id="AC1">Given I send ECHO hello world, when processed, then response is OK hello world\r\n</criterion>
+    <criterion id="AC2">Given I send ECHO (no args), when processed, then response is OK\r\n</criterion>
+    <criterion id="AC3">Given I send INFO, then response is OK YAROBOT_CONTROL_UNIT 1.0.0\r\n</criterion>
+    <criterion id="AC4">Given I send STAT, then response is OK MODE:READY ESTOP:0 AXES:8 UPTIME:12345\r\n</criterion>
+    <criterion id="AC5">Given I send STAT X, then response is OK X POS:0.000 EN:0 MOV:0 ERR:0 LIM:00\r\n</criterion>
+    <criterion id="AC6">Given I send STAT Z, then response includes correct axis letter and status fields</criterion>
+    <criterion id="AC7">Given uptime query via STAT, when running, then UPTIME equals esp_timer_get_time() / 1000</criterion>
+    <criterion id="AC8">Given motor control not yet implemented, then placeholder values: POS=0.000, EN/MOV/ERR=0, LIM=00</criterion>
+    <criterion id="AC9">Given any response, when generated, then it terminates with \r\n</criterion>
+    <criterion id="AC10">Given INFO handler, then uses FIRMWARE_NAME and FIRMWARE_VERSION_STRING from config.h</criterion>
+  </acceptance-criteria>
+
+  <response-format-examples>
+    <example command="ECHO" response="OK\r\n" />
+    <example command="ECHO hello" response="OK hello\r\n" />
+    <example command="ECHO hello world" response="OK hello world\r\n" />
+    <example command="INFO" response="OK YAROBOT_CONTROL_UNIT 1.0.0\r\n" />
+    <example command="STAT" response="OK MODE:READY ESTOP:0 AXES:8 UPTIME:12345\r\n" />
+    <example command="STAT X" response="OK X POS:0.000 EN:0 MOV:0 ERR:0 LIM:00\r\n" />
+    <example command="STAT Y" response="OK Y POS:0.000 EN:0 MOV:0 ERR:0 LIM:00\r\n" />
+    <example command="STAT Q" response="ERROR E002 Invalid axis\r\n" />
+  </response-format-examples>
+
+  <files-to-modify>
+    <file path="firmware/components/control/command_executor/command_executor.c" action="modify">
+      Enhance handle_info() and handle_stat() handlers
+    </file>
+    <file path="firmware/components/config/include/config.h" action="verify">
+      Verify FIRMWARE_NAME and FIRMWARE_VERSION_STRING exist (already present)
+    </file>
+  </files-to-modify>
+
+  <existing-code>
+    <file path="firmware/components/config/include/config.h">
+      <![CDATA[
+/** @brief Firmware product name */
+#define FIRMWARE_NAME               "YAROBOT_CONTROL_UNIT"
+
+/** @brief Major version number */
+#define FIRMWARE_VERSION_MAJOR      1
+
+/** @brief Minor version number */
+#define FIRMWARE_VERSION_MINOR      0
+
+/** @brief Patch version number */
+#define FIRMWARE_VERSION_PATCH      0
+
+/** @brief Version string for display and logging */
+#define FIRMWARE_VERSION_STRING     "1.0.0"
+      ]]>
+    </file>
+
+    <file path="firmware/components/config/include/config_limits.h">
+      <![CDATA[
+/** @brief Total number of axes (X, Y, Z, A, B, C, D, E) */
+#define LIMIT_NUM_AXES              8
+
+/** @brief Number of servo axes (X, Y, Z, A, B) */
+#define LIMIT_NUM_SERVOS            5
+
+/** @brief Number of stepper axes (C, D) */
+#define LIMIT_NUM_STEPPERS          2
+
+/** @brief Number of discrete axes (E) */
+#define LIMIT_NUM_DISCRETE          1
+      ]]>
+    </file>
+
+    <file path="firmware/components/config/include/config_commands.h">
+      <![CDATA[
+/* Error codes */
+#define ERR_INVALID_AXIS            "E002"
+#define MSG_INVALID_AXIS            "Invalid axis"
+
+/* Command strings */
+#define CMD_STAT            "STAT"
+#define CMD_INFO            "INFO"
+#define CMD_ECHO            "ECHO"
+      ]]>
+    </file>
+
+    <file path="firmware/components/control/command_executor/command_executor.c" note="Current stub handlers to enhance">
+      <![CDATA[
+/**
+ * @brief Handle ECHO command
+ *
+ * Returns "OK [input text]" for communication testing.
+ */
+static esp_err_t handle_echo(const ParsedCommand* cmd, char* response, size_t resp_len)
+{
+    if (cmd->has_str_param) {
+        return format_ok_data(response, resp_len, "%s", cmd->str_param);
+    }
+    return format_ok(response, resp_len);
+}
+
+/**
+ * @brief Handle INFO command
+ *
+ * Returns system information: name, version.
+ * Stub implementation - full version info in Story 2-5.
+ */
+static esp_err_t handle_info(const ParsedCommand* cmd, char* response, size_t resp_len)
+{
+    (void)cmd;  // Unused in stub
+    return format_ok_data(response, resp_len, "YAROBOT_CONTROL_UNIT 1.0.0 AXES:8");
+}
+
+/**
+ * @brief Handle STAT command
+ *
+ * Returns system/axis status.
+ * Stub implementation - full status in Story 2-5.
+ */
+static esp_err_t handle_stat(const ParsedCommand* cmd, char* response, size_t resp_len)
+{
+    // If axis specified, return axis status
+    if (cmd->axis != '\0') {
+        return format_ok_data(response, resp_len, "%c IDLE POS:0.000", cmd->axis);
+    }
+
+    // Otherwise return system status
+    const char* state_str = "IDLE";
+    switch (s_current_state) {
+        case STATE_IDLE:   state_str = "IDLE";   break;
+        case STATE_READY:  state_str = "READY";  break;
+        case STATE_CONFIG: state_str = "CONFIG"; break;
+        case STATE_ESTOP:  state_str = "ESTOP";  break;
+        case STATE_ERROR:  state_str = "ERROR";  break;
+        default:           state_str = "UNKNOWN"; break;
+    }
+
+    return format_ok_data(response, resp_len, "STATE:%s", state_str);
+}
+      ]]>
+    </file>
+
+    <file path="firmware/components/control/command_executor/include/command_executor.h" note="API reference">
+      <![CDATA[
+/**
+ * @brief System operating state
+ */
+typedef enum {
+    STATE_IDLE   = 0x01,
+    STATE_READY  = 0x02,
+    STATE_CONFIG = 0x04,
+    STATE_ESTOP  = 0x08,
+    STATE_ERROR  = 0x10,
+    STATE_ANY    = 0xFF
+} SystemState;
+
+/**
+ * @brief Get current system state
+ */
+SystemState get_system_state(void);
+      ]]>
+    </file>
+
+    <file path="firmware/components/interface/command_parser/include/command_parser.h" note="Parser API">
+      <![CDATA[
+/**
+ * @brief Parsed command structure
+ */
+typedef struct {
+    char verb[16];
+    char axis;                        // 'X'-'E' or '\0'
+    float params[PARSER_MAX_PARAMS];
+    uint8_t param_count;
+    char str_param[32];
+    bool has_str_param;
+} ParsedCommand;
+
+bool is_valid_axis(char axis);
+int8_t axis_to_index(char axis);
+char index_to_axis(uint8_t index);
+      ]]>
+    </file>
+
+    <file path="firmware/components/interface/command_parser/include/response_formatter.h" note="Formatting API">
+      <![CDATA[
+esp_err_t format_ok(char* buf, size_t len);
+esp_err_t format_ok_data(char* buf, size_t len, const char* fmt, ...);
+esp_err_t format_error(char* buf, size_t len, const char* code, const char* msg);
+      ]]>
+    </file>
+  </existing-code>
+
+  <implementation-guidance>
+    <section title="handle_info() Enhancement">
+      <![CDATA[
+Replace hardcoded string with config.h constants:
+
+#include "config.h"  // For FIRMWARE_NAME, FIRMWARE_VERSION_STRING
+
+static esp_err_t handle_info(const ParsedCommand* cmd, char* response, size_t resp_len)
+{
+    (void)cmd;
+    return format_ok_data(response, resp_len, "%s %s",
+                          FIRMWARE_NAME, FIRMWARE_VERSION_STRING);
+}
+      ]]>
+    </section>
+
+    <section title="handle_stat() System Status Enhancement">
+      <![CDATA[
+Add ESTOP, AXES, and UPTIME fields:
+
+#include "esp_timer.h"  // For esp_timer_get_time()
+#include "config_limits.h"  // For LIMIT_NUM_AXES
+
+static esp_err_t handle_stat(const ParsedCommand* cmd, char* response, size_t resp_len)
+{
+    // If axis specified, return axis status
+    if (cmd->axis != '\0') {
+        // Validate axis
+        if (!is_valid_axis(cmd->axis)) {
+            return format_error(response, resp_len, ERR_INVALID_AXIS, MSG_INVALID_AXIS);
+        }
+
+        // Placeholder values until motor control implemented
+        float pos = 0.0f;
+        int en = 0;     // not enabled
+        int mov = 0;    // not moving
+        int err = 0;    // no error
+        int lim = 0x00; // no limits active (bit0=min, bit1=max)
+
+        return format_ok_data(response, resp_len,
+                              "%c POS:%.3f EN:%d MOV:%d ERR:%d LIM:%02X",
+                              cmd->axis, pos, en, mov, err, lim);
+    }
+
+    // System status
+    const char* mode_str = "IDLE";
+    switch (get_system_state()) {
+        case STATE_IDLE:   mode_str = "IDLE";   break;
+        case STATE_READY:  mode_str = "READY";  break;
+        case STATE_CONFIG: mode_str = "CONFIG"; break;
+        case STATE_ESTOP:  mode_str = "ESTOP";  break;
+        case STATE_ERROR:  mode_str = "ERROR";  break;
+        default:           mode_str = "UNKNOWN"; break;
+    }
+
+    int estop = 0;  // Placeholder until Epic 4
+    int64_t uptime_ms = esp_timer_get_time() / 1000;
+
+    return format_ok_data(response, resp_len,
+                          "MODE:%s ESTOP:%d AXES:%d UPTIME:%lld",
+                          mode_str, estop, LIMIT_NUM_AXES, uptime_ms);
+}
+      ]]>
+    </section>
+
+    <section title="Axis Status Field Definitions">
+      <![CDATA[
+| Field | Description                          | Placeholder Value |
+|-------|--------------------------------------|-------------------|
+| POS   | Current position (SI units, %.3f)   | 0.000             |
+| EN    | Enabled state (0/1)                 | 0 (disabled)      |
+| MOV   | Moving state (0/1)                  | 0 (idle)          |
+| ERR   | Error state (0/1)                   | 0 (no error)      |
+| LIM   | Limit switches (hex, bit0=min/bit1=max) | 00            |
+      ]]>
+    </section>
+  </implementation-guidance>
+
+  <testing-guidance>
+    <test-cases>
+      <test id="1" description="ECHO with text">
+        Input: ECHO hello world
+        Expected: OK hello world\r\n
+      </test>
+      <test id="2" description="ECHO without args">
+        Input: ECHO
+        Expected: OK\r\n
+      </test>
+      <test id="3" description="INFO format">
+        Input: INFO
+        Expected: OK YAROBOT_CONTROL_UNIT 1.0.0\r\n
+      </test>
+      <test id="4" description="STAT system status">
+        Input: STAT
+        Expected: OK MODE:IDLE ESTOP:0 AXES:8 UPTIME:nnn\r\n (UPTIME varies)
+      </test>
+      <test id="5" description="STAT with valid axis">
+        Input: STAT X
+        Expected: OK X POS:0.000 EN:0 MOV:0 ERR:0 LIM:00\r\n
+      </test>
+      <test id="6" description="STAT with all axes">
+        Input: STAT Y, STAT Z, STAT A, STAT B, STAT C, STAT D, STAT E
+        Expected: Each returns OK [axis] POS:0.000 EN:0 MOV:0 ERR:0 LIM:00\r\n
+      </test>
+      <test id="7" description="STAT with invalid axis">
+        Input: STAT Q
+        Expected: ERROR E002 Invalid axis\r\n
+      </test>
+      <test id="8" description="UPTIME increases">
+        Input: STAT (twice with delay)
+        Expected: Second UPTIME > first UPTIME
+      </test>
+    </test-cases>
+  </testing-guidance>
+
+  <references>
+    <reference type="epic" path="docs/epics.md#Story-2.5">Story definition</reference>
+    <reference type="tech-spec" path="docs/sprint-artifacts/tech-spec-epic-2.md">API specifications</reference>
+    <reference type="previous-story" path="docs/sprint-artifacts/2-4-command-dispatcher-executor.md">Previous story learnings</reference>
+    <reference type="config" path="firmware/components/config/include/config.h">Firmware constants</reference>
+    <reference type="config" path="firmware/components/config/include/config_limits.h">Limit constants</reference>
+    <reference type="config" path="firmware/components/config/include/config_commands.h">Error codes</reference>
+  </references>
+</story-context>

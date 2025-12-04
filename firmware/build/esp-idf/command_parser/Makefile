@@ -199,6 +199,30 @@ command_parser.c.s:
 	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/build.make esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/command_parser.c.s
 .PHONY : command_parser.c.s
 
+response_formatter.obj: response_formatter.c.obj
+.PHONY : response_formatter.obj
+
+# target to build an object file
+response_formatter.c.obj:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/build.make esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/response_formatter.c.obj
+.PHONY : response_formatter.c.obj
+
+response_formatter.i: response_formatter.c.i
+.PHONY : response_formatter.i
+
+# target to preprocess a source file
+response_formatter.c.i:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/build.make esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/response_formatter.c.i
+.PHONY : response_formatter.c.i
+
+response_formatter.s: response_formatter.c.s
+.PHONY : response_formatter.s
+
+# target to generate assembly for a file
+response_formatter.c.s:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/build.make esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/response_formatter.c.s
+.PHONY : response_formatter.c.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -215,6 +239,9 @@ help:
 	@echo "... command_parser.obj"
 	@echo "... command_parser.i"
 	@echo "... command_parser.s"
+	@echo "... response_formatter.obj"
+	@echo "... response_formatter.i"
+	@echo "... response_formatter.s"
 .PHONY : help
 
 

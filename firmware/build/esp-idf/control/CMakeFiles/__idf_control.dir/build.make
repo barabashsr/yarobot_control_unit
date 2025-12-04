@@ -86,17 +86,33 @@ esp-idf/control/CMakeFiles/__idf_control.dir/tasks/task_stubs.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/__idf_control.dir/tasks/task_stubs.c.s"
 	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/control && /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/bin/xtensa-esp32s3-elf-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/tasks/task_stubs.c -o CMakeFiles/__idf_control.dir/tasks/task_stubs.c.s
 
+esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/command_executor.c.obj: esp-idf/control/CMakeFiles/__idf_control.dir/flags.make
+esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/command_executor.c.obj: /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/command_executor.c
+esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/command_executor.c.obj: esp-idf/control/CMakeFiles/__idf_control.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/command_executor.c.obj"
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/control && /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/bin/xtensa-esp32s3-elf-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/command_executor.c.obj -MF CMakeFiles/__idf_control.dir/command_executor/command_executor.c.obj.d -o CMakeFiles/__idf_control.dir/command_executor/command_executor.c.obj -c /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/command_executor.c
+
+esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/command_executor.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/__idf_control.dir/command_executor/command_executor.c.i"
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/control && /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/bin/xtensa-esp32s3-elf-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/command_executor.c > CMakeFiles/__idf_control.dir/command_executor/command_executor.c.i
+
+esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/command_executor.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/__idf_control.dir/command_executor/command_executor.c.s"
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/control && /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/bin/xtensa-esp32s3-elf-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/command_executor.c -o CMakeFiles/__idf_control.dir/command_executor/command_executor.c.s
+
 # Object files for target __idf_control
 __idf_control_OBJECTS = \
-"CMakeFiles/__idf_control.dir/tasks/task_stubs.c.obj"
+"CMakeFiles/__idf_control.dir/tasks/task_stubs.c.obj" \
+"CMakeFiles/__idf_control.dir/command_executor/command_executor.c.obj"
 
 # External object files for target __idf_control
 __idf_control_EXTERNAL_OBJECTS =
 
 esp-idf/control/libcontrol.a: esp-idf/control/CMakeFiles/__idf_control.dir/tasks/task_stubs.c.obj
+esp-idf/control/libcontrol.a: esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/command_executor.c.obj
 esp-idf/control/libcontrol.a: esp-idf/control/CMakeFiles/__idf_control.dir/build.make
 esp-idf/control/libcontrol.a: esp-idf/control/CMakeFiles/__idf_control.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking C static library libcontrol.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking C static library libcontrol.a"
 	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/control && $(CMAKE_COMMAND) -P CMakeFiles/__idf_control.dir/cmake_clean_target.cmake
 	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/control && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/__idf_control.dir/link.txt --verbose=$(VERBOSE)
 
