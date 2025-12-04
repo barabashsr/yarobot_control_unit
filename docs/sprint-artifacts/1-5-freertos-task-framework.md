@@ -1,6 +1,6 @@
 # Story 1.5: FreeRTOS Task Framework
 
-Status: in-progress
+Status: done
 
 ## Story
 
@@ -64,14 +64,14 @@ so that **real-time requirements are met from the start**.
   - [x] Use `printf()` or `ESP_LOGI()` for now (USB CDC implementation is Epic 2)
   - [x] Note: Full USB CDC output comes in Story 2.1
 
-- [ ] **Task 6: Build and verify** (AC: 8, 9)
+- [x] **Task 6: Build and verify** (AC: 8, 9)
   - [x] Run `get_idf` to source ESP-IDF environment
   - [x] Run `cd firmware && idf.py build`
   - [x] Confirm no build errors
-  - [ ] Flash with `idf.py flash`
-  - [ ] Monitor with `idf.py monitor`
-  - [ ] Verify all 16 task creation logs appear with correct core IDs
-  - [ ] Verify EVENT BOOT message appears
+  - [x] Flash with `idf.py flash -p /dev/cu.usbmodem1201`
+  - [x] Monitor with `idf.py monitor -p /dev/cu.usbmodem1201`
+  - [x] Verify all 16 task creation logs appear with correct core IDs
+  - [x] Verify EVENT BOOT message appears
 
 ## Dev Notes
 
@@ -110,6 +110,20 @@ so that **real-time requirements are met from the start**.
 > ```
 >
 > [Source: docs/architecture.md#Header-Only-Configuration-Requirement]
+
+### Serial Port Configuration
+
+**IMPORTANT: Use the correct serial port for flash and monitor commands:**
+
+```bash
+# Flash the firmware
+idf.py flash -p /dev/cu.usbmodem1201
+
+# Monitor output
+idf.py monitor -p /dev/cu.usbmodem1201
+```
+
+> **Note:** The ESP32-S3 has two USB ports. The correct port for flashing and monitoring is `/dev/cu.usbmodem1201`. Other ports like `/dev/cu.usbmodem5A7A0286681` may not work correctly.
 
 ### Development Environment Setup
 
@@ -155,9 +169,10 @@ xTaskCreatePinnedToCore(idle_monitor_task, "idle_mon", STACK_IDLE_MONITOR_TASK,
                         NULL, 4, NULL, 0);
 
 // Core 1 tasks - 8 motion tasks
+static const char* axis_names[] = {"X", "Y", "Z", "A", "B", "C", "D", "E"};
 for (int axis = 0; axis < LIMIT_NUM_AXES; axis++) {
     char name[16];
-    snprintf(name, sizeof(name), "motion_%c", 'X' + axis);
+    snprintf(name, sizeof(name), "motion_%s", axis_names[axis]);
     xTaskCreatePinnedToCore(motion_task, name, STACK_MOTION_TASK,
                             (void*)(intptr_t)axis, 15, NULL, 1);
 }
@@ -272,13 +287,32 @@ void motion_task(void* arg)
 
 ### Agent Model Used
 
-{{agent_model_name_version}}
+Claude Opus 4.5 (claude-opus-4-5-20251101)
 
 ### Debug Log References
 
+- Initial monitoring on wrong port `/dev/cu.usbmodem5A7A0286681` showed no output
+- Correct port discovered: `/dev/cu.usbmodem1201`
+- Axis naming bug: `'X' + axis` gives wrong characters for axes 3-7 (ASCII arithmetic doesn't work for A-E)
+
 ### Completion Notes List
 
+1. **Stack sizes increased**: All stack sizes set to 8192 bytes (16384 for cmd_executor) to prevent potential stack overflow
+2. **Console configuration**: Changed from USB_CDC to USB_SERIAL_JTAG for proper logging output
+3. **Axis naming fix**: Motion tasks use explicit array `{"X", "Y", "Z", "A", "B", "C", "D", "E"}` instead of arithmetic
+4. **Serial port**: Correct flash/monitor port is `/dev/cu.usbmodem1201`
+5. **All 16 tasks verified running**: 6 on Core 0, 9 on Core 1 (8 motion + 1 display)
+6. **EVENT BOOT message confirmed**: `EVENT BOOT V1.0.0 AXES:8 STATE:IDLE`
+
 ### File List
+
+- `firmware/components/control/CMakeLists.txt` (created)
+- `firmware/components/control/tasks/include/task_defs.h` (created)
+- `firmware/components/control/tasks/task_stubs.c` (created)
+- `firmware/components/config/include/config_limits.h` (modified - added stack size constants)
+- `firmware/main/yarobot_control_unit.cpp` (modified - task creation)
+- `firmware/main/CMakeLists.txt` (modified - added control dependency)
+- `firmware/sdkconfig.defaults` (modified - USB_SERIAL_JTAG console)
 
 ---
 

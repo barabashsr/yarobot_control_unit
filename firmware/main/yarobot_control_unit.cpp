@@ -49,9 +49,10 @@ extern "C" void app_main(void)
                             NULL, 4, NULL, 0);
 
     // Core 1 tasks: Motion control (time-critical, 8 axes)
+    static const char* axis_names[] = {"X", "Y", "Z", "A", "B", "C", "D", "E"};
     for (int axis = 0; axis < LIMIT_NUM_AXES; axis++) {
         char name[16];
-        snprintf(name, sizeof(name), "motion_%c", 'X' + axis);
+        snprintf(name, sizeof(name), "motion_%s", axis_names[axis]);
         xTaskCreatePinnedToCore(motion_task, name, STACK_MOTION_TASK,
                                 (void*)(intptr_t)axis, 15, NULL, 1);
     }

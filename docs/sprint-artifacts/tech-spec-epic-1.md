@@ -374,3 +374,26 @@ dependencies:
 - [ ] ESP_LOGI/LOGW/LOGE used for logging (not printf)
 - [ ] xTaskCreatePinnedToCore used with correct core affinity
 - [ ] Stack sizes from STACK_* constants
+
+## Implementation Learnings
+
+**Story 1-5 Learnings (FreeRTOS Task Framework):**
+
+1. **Flash port:** Auto-detect works for flashing (`idf.py flash` without explicit `-p`)
+2. **Monitor port:** Use `/dev/cu.usbmodem1201` for USB CDC console (not the JTAG port)
+3. **Axis naming:** Use explicit array `{"X", "Y", "Z", "A", "B", "C", "D", "E"}` instead of arithmetic `'X' + axis` — ASCII arithmetic fails for axes A-E (indices 3-7)
+
+**Code Pattern for Motion Task Creation:**
+```c
+// CORRECT: Explicit axis name array
+static const char* axis_names[] = {"X", "Y", "Z", "A", "B", "C", "D", "E"};
+for (int axis = 0; axis < LIMIT_NUM_AXES; axis++) {
+    char name[16];
+    snprintf(name, sizeof(name), "motion_%s", axis_names[axis]);
+    xTaskCreatePinnedToCore(motion_task, name, STACK_MOTION_TASK,
+                            (void*)(intptr_t)axis, 15, NULL, 1);
+}
+
+// WRONG: ASCII arithmetic (fails for A-E)
+// char axis_char = 'X' + axis;  // 'X', 'Y', 'Z' work, but axes 3-7 become '[', '\', ']', '^', '_'
+```

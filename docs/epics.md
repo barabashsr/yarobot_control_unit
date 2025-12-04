@@ -353,6 +353,11 @@ esp_err_t spi_hal_transfer(spi_host_device_t host, const uint8_t* tx, uint8_t* r
 - Use task notifications for inter-task communication
 - Create queue handles as globals for later use
 
+**Implementation Learnings (Story 1-5):**
+- **Flash port:** Auto-detect works (`idf.py flash` without `-p`)
+- **Monitor port:** `/dev/cu.usbmodem1201` (USB CDC)
+- **Axis naming:** Use explicit array `{"X", "Y", "Z", "A", "B", "C", "D", "E"}` — arithmetic `'X' + axis` fails for axes A-E
+
 ---
 
 ### Story 1.6: Hardware Peripheral Verification

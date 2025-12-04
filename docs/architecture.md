@@ -4346,11 +4346,11 @@ cd firmware
 # Build
 idf.py build
 
-# Flash via UART port
+# Flash (auto-detect works, no explicit -p needed)
 idf.py flash
 
 # Monitor via USB CDC port
-idf.py monitor -p /dev/cu.usbmodem1101  # macOS example
+idf.py monitor -p /dev/cu.usbmodem1201  # macOS - use USB CDC port
 ```
 
 ### Configuration Deployment
@@ -4394,14 +4394,16 @@ cd yarobot_control_unit/firmware
 # Build (sdkconfig.defaults auto-applies configuration)
 idf.py build
 
-# Flash via UART port and monitor via USB CDC port
+# Flash (auto-detect works, no explicit -p needed)
 idf.py flash
-idf.py monitor -p /dev/cu.usbmodem1101  # USB CDC port (macOS example)
+
+# Monitor via USB CDC port
+idf.py monitor -p /dev/cu.usbmodem1201  # USB CDC port (macOS)
 ```
 
 > **Note:** The ESP32-S3-DevKitC-1 has two USB ports:
-> - **UART port** - for flashing (`idf.py flash`)
-> - **USB-OTG port** - for USB CDC console (`idf.py monitor`)
+> - **Flash port** - auto-detect works (`idf.py flash` without `-p`)
+> - **Monitor port** - `/dev/cu.usbmodem1201` for USB CDC console
 
 ### Debugging
 
