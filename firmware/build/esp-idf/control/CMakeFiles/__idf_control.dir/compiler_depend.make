@@ -293,10 +293,19 @@ esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/test_pulse_cmd.cpp
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_macros.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_gpio/include/driver/gpio.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_gpio/include/driver/gpio_etm.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_ledc/include/driver/ledc.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_mcpwm/include/driver/mcpwm_cmpr.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_mcpwm/include/driver/mcpwm_gen.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_mcpwm/include/driver/mcpwm_oper.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_mcpwm/include/driver/mcpwm_timer.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_mcpwm/include/driver/mcpwm_types.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_pcnt/include/driver/pulse_cnt.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_rmt/include/driver/rmt_common.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_rmt/include/driver/rmt_encoder.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_rmt/include/driver/rmt_tx.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_rmt/include/driver/rmt_types.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_spi/include/driver/spi_common.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_spi/include/driver/spi_master.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_hw_support/include/esp_cpu.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_hw_support/include/esp_etm.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_hw_support/include/esp_intr_alloc.h \
@@ -305,6 +314,7 @@ esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/test_pulse_cmd.cpp
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_hw_support/include/spinlock.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_rom/include/esp_rom_gpio.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_rom/include/esp_rom_sys.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_system/include/esp_ipc.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_system/include/esp_private/crosscore_int.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_system/include/esp_system.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/FreeRTOS.h \
@@ -326,7 +336,11 @@ esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/test_pulse_cmd.cpp
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/config/xtensa/include/freertos/FreeRTOSConfig_arch.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/esp_additions/include/freertos/idf_additions.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/gpio_types.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/ledc_types.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/mcpwm_types.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/pcnt_types.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/rmt_types.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/spi_types.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/heap/include/esp_heap_caps.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/heap/include/multi_heap.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h \
@@ -374,10 +388,12 @@ esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/test_pulse_cmd.cpp
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_commands.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_gpio.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_limits.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_peripherals.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/include/command_executor.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/interface/command_parser/include/command_parser.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/interface/command_parser/include/response_formatter.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/include/i_pulse_generator.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/include/mcpwm_pulse_gen.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/include/rmt_pulse_gen.h
 
 esp-idf/control/CMakeFiles/__idf_control.dir/tasks/task_stubs.c.obj: /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/tasks/task_stubs.c \
@@ -536,6 +552,8 @@ esp-idf/control/CMakeFiles/__idf_control.dir/tasks/task_stubs.c.obj: /Users/serg
 
 /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/tasks/task_stubs.c:
 
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/include/mcpwm_pulse_gen.h:
+
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/sys/unistd.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/sys/select.h:
@@ -544,7 +562,15 @@ esp-idf/control/CMakeFiles/__idf_control.dir/tasks/task_stubs.c.obj: /Users/serg
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/rmt_types.h:
 
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/mcpwm_types.h:
+
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_rmt/include/driver/rmt_common.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_mcpwm/include/driver/mcpwm_types.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_mcpwm/include/driver/mcpwm_oper.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_mcpwm/include/driver/mcpwm_gen.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/time.h:
 
@@ -595,6 +621,8 @@ esp-idf/control/CMakeFiles/__idf_control.dir/tasks/task_stubs.c.obj: /Users/serg
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/xtensa-esp-elf/esp32s3/no-rtti/bits/c++allocator.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/ext/numeric_traits.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_mcpwm/include/driver/mcpwm_timer.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/ext/alloc_traits.h:
 
@@ -762,6 +790,8 @@ config/sdkconfig.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa/xtruntime.h:
 
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/pcnt_types.h:
+
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/invoke.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa/xtensa-versions.h:
@@ -906,6 +936,8 @@ config/sdkconfig.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_system/include/esp_private/crosscore_int.h:
 
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_pcnt/include/driver/pulse_cnt.h:
+
 /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_limits.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_hw_support/include/esp_intr_types.h:
@@ -965,6 +997,8 @@ config/sdkconfig.h:
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/select.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/config.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_mcpwm/include/driver/mcpwm_cmpr.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/_locale.h:
 

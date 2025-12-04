@@ -175,6 +175,30 @@ __idf_pulse_gen/fast:
 	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/build.make esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/build
 .PHONY : __idf_pulse_gen/fast
 
+mcpwm_pulse_gen.obj: mcpwm_pulse_gen.cpp.obj
+.PHONY : mcpwm_pulse_gen.obj
+
+# target to build an object file
+mcpwm_pulse_gen.cpp.obj:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/build.make esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/mcpwm_pulse_gen.cpp.obj
+.PHONY : mcpwm_pulse_gen.cpp.obj
+
+mcpwm_pulse_gen.i: mcpwm_pulse_gen.cpp.i
+.PHONY : mcpwm_pulse_gen.i
+
+# target to preprocess a source file
+mcpwm_pulse_gen.cpp.i:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/build.make esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/mcpwm_pulse_gen.cpp.i
+.PHONY : mcpwm_pulse_gen.cpp.i
+
+mcpwm_pulse_gen.s: mcpwm_pulse_gen.cpp.s
+.PHONY : mcpwm_pulse_gen.s
+
+# target to generate assembly for a file
+mcpwm_pulse_gen.cpp.s:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/build.make esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/mcpwm_pulse_gen.cpp.s
+.PHONY : mcpwm_pulse_gen.cpp.s
+
 rmt_pulse_gen.obj: rmt_pulse_gen.cpp.obj
 .PHONY : rmt_pulse_gen.obj
 
@@ -212,6 +236,9 @@ help:
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... __idf_pulse_gen"
+	@echo "... mcpwm_pulse_gen.obj"
+	@echo "... mcpwm_pulse_gen.i"
+	@echo "... mcpwm_pulse_gen.s"
 	@echo "... rmt_pulse_gen.obj"
 	@echo "... rmt_pulse_gen.i"
 	@echo "... rmt_pulse_gen.s"

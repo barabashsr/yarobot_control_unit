@@ -86,17 +86,33 @@ esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/rmt_pulse_gen.cpp.s: cmake_forc
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/__idf_pulse_gen.dir/rmt_pulse_gen.cpp.s"
 	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/pulse_gen && /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/bin/xtensa-esp32s3-elf-g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/rmt_pulse_gen.cpp -o CMakeFiles/__idf_pulse_gen.dir/rmt_pulse_gen.cpp.s
 
+esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/mcpwm_pulse_gen.cpp.obj: esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/flags.make
+esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/mcpwm_pulse_gen.cpp.obj: /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/mcpwm_pulse_gen.cpp
+esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/mcpwm_pulse_gen.cpp.obj: esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/mcpwm_pulse_gen.cpp.obj"
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/pulse_gen && /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/bin/xtensa-esp32s3-elf-g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/mcpwm_pulse_gen.cpp.obj -MF CMakeFiles/__idf_pulse_gen.dir/mcpwm_pulse_gen.cpp.obj.d -o CMakeFiles/__idf_pulse_gen.dir/mcpwm_pulse_gen.cpp.obj -c /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/mcpwm_pulse_gen.cpp
+
+esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/mcpwm_pulse_gen.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/__idf_pulse_gen.dir/mcpwm_pulse_gen.cpp.i"
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/pulse_gen && /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/bin/xtensa-esp32s3-elf-g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/mcpwm_pulse_gen.cpp > CMakeFiles/__idf_pulse_gen.dir/mcpwm_pulse_gen.cpp.i
+
+esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/mcpwm_pulse_gen.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/__idf_pulse_gen.dir/mcpwm_pulse_gen.cpp.s"
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/pulse_gen && /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/bin/xtensa-esp32s3-elf-g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/mcpwm_pulse_gen.cpp -o CMakeFiles/__idf_pulse_gen.dir/mcpwm_pulse_gen.cpp.s
+
 # Object files for target __idf_pulse_gen
 __idf_pulse_gen_OBJECTS = \
-"CMakeFiles/__idf_pulse_gen.dir/rmt_pulse_gen.cpp.obj"
+"CMakeFiles/__idf_pulse_gen.dir/rmt_pulse_gen.cpp.obj" \
+"CMakeFiles/__idf_pulse_gen.dir/mcpwm_pulse_gen.cpp.obj"
 
 # External object files for target __idf_pulse_gen
 __idf_pulse_gen_EXTERNAL_OBJECTS =
 
 esp-idf/pulse_gen/libpulse_gen.a: esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/rmt_pulse_gen.cpp.obj
+esp-idf/pulse_gen/libpulse_gen.a: esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/mcpwm_pulse_gen.cpp.obj
 esp-idf/pulse_gen/libpulse_gen.a: esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/build.make
 esp-idf/pulse_gen/libpulse_gen.a: esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking C static library libpulse_gen.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking C static library libpulse_gen.a"
 	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/pulse_gen && $(CMAKE_COMMAND) -P CMakeFiles/__idf_pulse_gen.dir/cmake_clean_target.cmake
 	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/pulse_gen && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/__idf_pulse_gen.dir/link.txt --verbose=$(VERBOSE)
 

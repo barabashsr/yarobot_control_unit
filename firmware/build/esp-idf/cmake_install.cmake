@@ -594,6 +594,11 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
+  include("/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/tpic6b595/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
   include("/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/pulse_gen/cmake_install.cmake")
 endif()
 
@@ -625,11 +630,6 @@ endif()
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
   include("/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/oled/cmake_install.cmake")
-endif()
-
-if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  # Include the install script for the subdirectory.
-  include("/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/tpic6b595/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)

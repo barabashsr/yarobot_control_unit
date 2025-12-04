@@ -46,6 +46,10 @@ extern "C" {
 // STORY-3-2-TEST: Include RmtPulseGenerator for MOVE command
 #include "rmt_pulse_gen.h"
 
+// STORY-3-3-TEST: Include McpwmPulseGenerator for Y/C axes
+#include "mcpwm_pulse_gen.h"
+#include "config_peripherals.h"
+
 // STORY-3-2-TEST: Remove this entire section after hardware verification
 static const char* TAG = "PULSE_TEST";
 
@@ -59,14 +63,19 @@ static bool s_running[4] = {false, false, false, false};
 static float s_frequency[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 static rmt_symbol_word_t s_pulse_symbol[4];
 
-// STORY-3-2-TEST: Static RmtPulseGenerator instances for MOVE command
+// STORY-3-2-TEST: Static RmtPulseGenerator instances for MOVE command (X, Z, A, B)
 static RmtPulseGenerator* s_move_gen[4] = {nullptr, nullptr, nullptr, nullptr};
 
+// STORY-3-3-TEST: Static McpwmPulseGenerator instances for Y/C axes
+static McpwmPulseGenerator* s_mcpwm_gen[2] = {nullptr, nullptr};  // Y=0, C=1
+static bool s_mcpwm_running[2] = {false, false};
+static float s_mcpwm_frequency[2] = {0.0f, 0.0f};
+
 /**
- * @brief Get axis index (0-3 for X,Z,A,B)
+ * @brief Get RMT axis index (0-3 for X,Z,A,B)
  * STORY-3-2-TEST: Remove after hardware verification
  */
-static int get_axis_index(char axis)
+static int get_rmt_axis_index(char axis)
 {
     switch (axis) {
         case 'X': case 'x': return 0;
@@ -78,16 +87,40 @@ static int get_axis_index(char axis)
 }
 
 /**
- * @brief Get GPIO for axis
+ * @brief Get MCPWM axis index (0=Y, 1=C)
+ * STORY-3-3-TEST: Remove after hardware verification
+ */
+static int get_mcpwm_axis_index(char axis)
+{
+    switch (axis) {
+        case 'Y': case 'y': return 0;
+        case 'C': case 'c': return 1;
+        default: return -1;
+    }
+}
+
+/**
+ * @brief Check if axis uses MCPWM (Y, C) vs RMT (X, Z, A, B)
+ * STORY-3-3-TEST: Remove after hardware verification
+ */
+static bool is_mcpwm_axis(char axis)
+{
+    return (axis == 'Y' || axis == 'y' || axis == 'C' || axis == 'c');
+}
+
+/**
+ * @brief Get GPIO for axis (all axes including Y/C)
  * STORY-3-2-TEST: Remove after hardware verification
  */
 static int get_gpio_for_axis(char axis)
 {
     switch (axis) {
         case 'X': case 'x': return GPIO_X_STEP;
+        case 'Y': case 'y': return GPIO_Y_STEP;
         case 'Z': case 'z': return GPIO_Z_STEP;
         case 'A': case 'a': return GPIO_A_STEP;
         case 'B': case 'b': return GPIO_B_STEP;
+        case 'C': case 'c': return GPIO_C_STEP;
         default: return -1;
     }
 }
@@ -141,13 +174,47 @@ static void stop_axis(int idx)
 }
 
 /**
- * @brief Stop all pulse generation
+ * @brief Cleanup MCPWM generator for axis
+ * STORY-3-3-TEST: Remove after hardware verification
+ */
+static void cleanup_mcpwm_axis(int idx)
+{
+    if (idx >= 0 && idx < 2 && s_mcpwm_gen[idx]) {
+        s_mcpwm_gen[idx]->stopImmediate();
+        delete s_mcpwm_gen[idx];
+        s_mcpwm_gen[idx] = nullptr;
+        s_mcpwm_running[idx] = false;
+        s_mcpwm_frequency[idx] = 0.0f;
+    }
+}
+
+/**
+ * @brief Stop MCPWM pulse generation on axis
+ * STORY-3-3-TEST: Remove after hardware verification
+ */
+static void stop_mcpwm_axis(int idx)
+{
+    if (idx >= 0 && idx < 2 && s_mcpwm_gen[idx] && s_mcpwm_running[idx]) {
+        s_mcpwm_gen[idx]->stopImmediate();
+        s_mcpwm_running[idx] = false;
+        s_mcpwm_frequency[idx] = 0.0f;
+        ESP_LOGI(TAG, "Stopped MCPWM axis %d", idx);
+    }
+}
+
+/**
+ * @brief Stop all pulse generation (RMT and MCPWM)
  * STORY-3-2-TEST: Remove after hardware verification
  */
 static void stop_all_pulses(void)
 {
+    // Stop RMT axes (X, Z, A, B)
     for (int i = 0; i < 4; i++) {
         stop_axis(i);
+    }
+    // Stop MCPWM axes (Y, C)
+    for (int i = 0; i < 2; i++) {
+        stop_mcpwm_axis(i);
     }
 }
 
@@ -258,36 +325,41 @@ static esp_err_t start_pulses(int idx, float freq_hz)
  *   PULSE <axis> <freq_hz>  - Start continuous pulses at frequency
  *   PULSE STOP              - Stop all pulse generation
  *   PULSE                   - Query status
+ *
+ * Supported axes:
+ *   X, Z, A, B - RMT-based (infinite loop mode)
+ *   Y, C       - MCPWM-based (velocity mode)
  */
 static esp_err_t handle_pulse_test(const ParsedCommand* cmd, char* response, size_t resp_len)
 {
-    // STORY-3-2-TEST: Handle PULSE STOP
+    // Handle PULSE STOP
     if (cmd->has_str_param && strcasecmp(cmd->str_param, "STOP") == 0) {
         stop_all_pulses();
         ESP_LOGI(TAG, "Stopped all pulse generation");
         return format_ok_data(response, resp_len, "STOPPED");
     }
 
-    // STORY-3-2-TEST: Handle PULSE (query status)
+    // Handle PULSE (query status) - show all 6 axes
     if (cmd->axis == '\0' && cmd->param_count == 0 && !cmd->has_str_param) {
         return format_ok_data(response, resp_len,
-            "X:%s(%.0f) Z:%s(%.0f) A:%s(%.0f) B:%s(%.0f)",
+            "X:%s(%.0f) Y:%s(%.0f) Z:%s(%.0f) A:%s(%.0f) B:%s(%.0f) C:%s(%.0f)",
             s_running[0] ? "ON" : "OFF", s_frequency[0],
+            s_mcpwm_running[0] ? "ON" : "OFF", s_mcpwm_frequency[0],
             s_running[1] ? "ON" : "OFF", s_frequency[1],
             s_running[2] ? "ON" : "OFF", s_frequency[2],
-            s_running[3] ? "ON" : "OFF", s_frequency[3]);
+            s_running[3] ? "ON" : "OFF", s_frequency[3],
+            s_mcpwm_running[1] ? "ON" : "OFF", s_mcpwm_frequency[1]);
     }
 
-    // STORY-3-2-TEST: Handle PULSE <axis> <freq>
+    // Handle PULSE <axis> <freq>
     if (cmd->axis == '\0') {
-        return format_error(response, resp_len, ERR_INVALID_AXIS, "Specify axis X/Z/A/B");
+        return format_error(response, resp_len, ERR_INVALID_AXIS, "Specify axis X/Y/Z/A/B/C");
     }
 
-    // Validate axis (only RMT axes: X, Z, A, B)
     char axis = cmd->axis;
-    int idx = get_axis_index(axis);
-    if (idx < 0) {
-        return format_error(response, resp_len, ERR_INVALID_AXIS, "Only X/Z/A/B (RMT axes)");
+    int gpio = get_gpio_for_axis(axis);
+    if (gpio < 0) {
+        return format_error(response, resp_len, ERR_INVALID_AXIS, "Invalid axis");
     }
 
     // Get frequency parameter
@@ -301,6 +373,54 @@ static esp_err_t handle_pulse_test(const ParsedCommand* cmd, char* response, siz
             "Freq must be 1-500000 Hz");
     }
 
+    esp_err_t ret;
+
+    // STORY-3-3-TEST: Handle MCPWM axes (Y, C)
+    if (is_mcpwm_axis(axis)) {
+        int idx = get_mcpwm_axis_index(axis);
+
+        // Stop if already running
+        if (s_mcpwm_running[idx]) {
+            stop_mcpwm_axis(idx);
+        }
+
+        // Create generator if needed
+        if (s_mcpwm_gen[idx] == nullptr) {
+            int timer_id = (idx == 0) ? MCPWM_TIMER_Y : MCPWM_TIMER_C;
+            int pcnt_id = (idx == 0) ? PCNT_UNIT_Y : PCNT_UNIT_C;
+            ESP_LOGI(TAG, "Creating McpwmPulseGenerator for axis %c (timer=%d, pcnt=%d, gpio=%d)",
+                     axis, timer_id, pcnt_id, gpio);
+            s_mcpwm_gen[idx] = new McpwmPulseGenerator(timer_id, gpio, pcnt_id);
+            ret = s_mcpwm_gen[idx]->init();
+            if (ret != ESP_OK) {
+                ESP_LOGE(TAG, "Failed to init McpwmPulseGenerator: %s", esp_err_to_name(ret));
+                delete s_mcpwm_gen[idx];
+                s_mcpwm_gen[idx] = nullptr;
+                return format_error(response, resp_len, ERR_CONFIGURATION, "MCPWM init failed");
+            }
+        }
+
+        // Start velocity mode (continuous pulses)
+        ret = s_mcpwm_gen[idx]->startVelocity(freq_hz, freq_hz * 10.0f);  // Fast accel
+        if (ret != ESP_OK) {
+            ESP_LOGE(TAG, "startVelocity failed: %s", esp_err_to_name(ret));
+            return format_error(response, resp_len, ERR_CONFIGURATION, "Start failed");
+        }
+
+        s_mcpwm_running[idx] = true;
+        s_mcpwm_frequency[idx] = freq_hz;
+        ESP_LOGI(TAG, "Started MCPWM axis %c at %.0f Hz (GPIO %d)", axis, freq_hz, gpio);
+
+        return format_ok_data(response, resp_len, "%c FREQ:%.0f GPIO:%d (MCPWM)",
+            axis, freq_hz, gpio);
+    }
+
+    // Handle RMT axes (X, Z, A, B)
+    int idx = get_rmt_axis_index(axis);
+    if (idx < 0) {
+        return format_error(response, resp_len, ERR_INVALID_AXIS, "Invalid RMT axis");
+    }
+
     // Stop if already running
     if (s_running[idx]) {
         stop_axis(idx);
@@ -310,8 +430,7 @@ static esp_err_t handle_pulse_test(const ParsedCommand* cmd, char* response, siz
     cleanup_move_axis(idx);
 
     // Initialize RMT channel if needed
-    int gpio = get_gpio_for_axis(axis);
-    esp_err_t ret = init_rmt_channel(idx, gpio);
+    ret = init_rmt_channel(idx, gpio);
     if (ret != ESP_OK) {
         return format_error(response, resp_len, ERR_CONFIGURATION, "RMT init failed");
     }
@@ -322,7 +441,7 @@ static esp_err_t handle_pulse_test(const ParsedCommand* cmd, char* response, siz
         return format_error(response, resp_len, ERR_CONFIGURATION, "Start failed");
     }
 
-    return format_ok_data(response, resp_len, "%c FREQ:%.0f GPIO:%d",
+    return format_ok_data(response, resp_len, "%c FREQ:%.0f GPIO:%d (RMT)",
         axis, s_frequency[idx], gpio);
 }
 
@@ -381,7 +500,7 @@ static esp_err_t handle_move_test(const ParsedCommand* cmd, char* response, size
     }
 
     char axis = cmd->axis;
-    int idx = get_axis_index(axis);
+    int idx = get_rmt_axis_index(axis);
     if (idx < 0) {
         return format_error(response, resp_len, ERR_INVALID_AXIS, "Only X/Z/A/B");
     }
@@ -495,6 +614,7 @@ void cleanup_pulse_test_command(void)
     stop_all_pulses();
     stop_all_moves();
 
+    // Cleanup RMT resources (X, Z, A, B)
     for (int i = 0; i < 4; i++) {
         // Cleanup PULSE resources
         if (s_encoder[i]) {
@@ -510,6 +630,14 @@ void cleanup_pulse_test_command(void)
         // Cleanup MOVE resources
         delete s_move_gen[i];
         s_move_gen[i] = nullptr;
+    }
+
+    // STORY-3-3-TEST: Cleanup MCPWM resources (Y, C)
+    for (int i = 0; i < 2; i++) {
+        delete s_mcpwm_gen[i];
+        s_mcpwm_gen[i] = nullptr;
+        s_mcpwm_running[i] = false;
+        s_mcpwm_frequency[i] = 0.0f;
     }
 
     ESP_LOGI(TAG, "Cleaned up PULSE/MOVE test resources");

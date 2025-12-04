@@ -60,6 +60,22 @@
 /** @brief MCPWM timer for C-axis stepper */
 #define MCPWM_TIMER_C       1
 
+/**
+ * @brief MCPWM timer resolution (Hz)
+ *
+ * 10 MHz clock provides 100ns resolution per tick.
+ * At 100kHz: period = 10000000 / 100000 = 100 ticks
+ * At 25kHz: period = 10000000 / 25000 = 400 ticks
+ */
+#define MCPWM_RESOLUTION_HZ     10000000
+
+/**
+ * @brief MCPWM duty cycle percentage (0-100)
+ *
+ * 50% duty cycle for step pulses (symmetric high/low)
+ */
+#define MCPWM_DUTY_CYCLE_PERCENT    50
+
 /** @} */ // end periph_mcpwm
 
 /**

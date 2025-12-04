@@ -1,0 +1,306 @@
+<story-context id="3-3-mcpwm-pulse-generator-with-pcnt" v="1.0">
+  <metadata>
+    <epicId>3</epicId>
+    <storyId>3</storyId>
+    <title>MCPWM Pulse Generator with PCNT (Y, C Axes)</title>
+    <status>drafted</status>
+    <generatedAt>2025-12-05</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/3-3-mcpwm-pulse-generator-with-pcnt.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>MCPWM-based pulse generation for Y and C axes with hardware pulse counting</iWant>
+    <soThat>I can generate STEP pulses and track position via PCNT for these axes</soThat>
+    <tasks>
+      <task id="1" ac="1,2">Create McpwmPulseGenerator class
+        <subtask>Create firmware/components/pulse_gen/include/mcpwm_pulse_gen.h with class declaration</subtask>
+        <subtask>Create firmware/components/pulse_gen/mcpwm_pulse_gen.cpp with implementation</subtask>
+        <subtask>Constructor takes: timer_id (MCPWM_TIMER_Y or MCPWM_TIMER_C), gpio_num, pcnt_unit_id</subtask>
+        <subtask>Store MCPWM group ID (MCPWM_GROUP_ID = 0)</subtask>
+        <subtask>Update firmware/components/pulse_gen/CMakeLists.txt with REQUIRES: esp_driver_mcpwm, esp_driver_pcnt</subtask>
+      </task>
+      <task id="2" ac="1">Implement MCPWM timer and operator initialization
+        <subtask>init() creates MCPWM timer via mcpwm_new_timer(): group_id=MCPWM_GROUP_ID, clk_src=MCPWM_TIMER_CLK_SRC_DEFAULT, resolution_hz=10000000, count_mode=MCPWM_TIMER_COUNT_MODE_UP</subtask>
+        <subtask>Create MCPWM operator via mcpwm_new_operator() and connect to timer</subtask>
+        <subtask>Create MCPWM generator via mcpwm_new_generator() with gen_gpio_num from constructor</subtask>
+        <subtask>Set generator actions for UP counting: HIGH on zero, LOW on compare (50% duty)</subtask>
+      </task>
+      <task id="3" ac="2,4,5,7">Implement PCNT initialization with io_loop_back
+        <subtask>Create PCNT unit via pcnt_new_unit(): high_limit=INT16_MAX, low_limit=INT16_MIN, flags.accum_count=true</subtask>
+        <subtask>Create PCNT channel via pcnt_new_channel(): edge_gpio_num=gpio_num, level_gpio_num=-1</subtask>
+        <subtask>Configure GPIO for internal loopback: gpio_set_direction(gpio_num, GPIO_MODE_INPUT_OUTPUT)</subtask>
+        <subtask>Use io_loop_back flag in PCNT channel config</subtask>
+        <subtask>Set channel edge actions: increment on rising edge</subtask>
+        <subtask>Register PCNT watch points for limit callback</subtask>
+      </task>
+      <task id="4" ac="5,7">Implement PCNT limit callback for motion stop
+        <subtask>Register pcnt_unit_register_event_callbacks() with on_reach callback</subtask>
+        <subtask>In callback: Stop MCPWM timer via mcpwm_timer_start_stop(MCPWM_TIMER_STOP_FULL)</subtask>
+        <subtask>In callback: Read final PCNT count, set state to IDLE, queue task notification for completion callback</subtask>
+        <subtask>Handle PCNT overflow events for extended range tracking</subtask>
+      </task>
+      <task id="5" ac="3,8,9">Implement trapezoidal profile generator
+        <subtask>Reuse profile calculation logic from RmtPulseGenerator</subtask>
+        <subtask>Create internal profile state machine: IDLE, ACCELERATING, CRUISING, DECELERATING</subtask>
+        <subtask>Implement frequency update callback using MCPWM compare value changes</subtask>
+      </task>
+      <task id="6" ac="3,6,7">Implement startMove()
+        <subtask>Validate pulse_count > 0, velocity > 0, acceleration > 0</subtask>
+        <subtask>Validate velocity <= LIMIT_MAX_PULSE_FREQ_HZ</subtask>
+        <subtask>Calculate direction, call sr_set_direction() for DIR signal</subtask>
+        <subtask>Wait TIMING_DIR_SETUP_US (20us) if direction changed</subtask>
+        <subtask>Calculate trapezoidal profile, reset PCNT to 0</subtask>
+        <subtask>Set PCNT watch point to target pulse count (handle 16-bit limit)</subtask>
+        <subtask>Enable PCNT unit, start MCPWM timer, set state to RUNNING</subtask>
+      </task>
+      <task id="7" ac="8">Implement startVelocity()
+        <subtask>Set target velocity and acceleration</subtask>
+        <subtask>Enter continuous mode (no target pulse count, no PCNT limit watch)</subtask>
+        <subtask>Start MCPWM timer, PCNT tracks position throughout</subtask>
+      </task>
+      <task id="8" ac="9,10">Implement stop() and stopImmediate()
+        <subtask>stop(deceleration): Calculate decel profile, transition to DECELERATING, reduce frequency progressively</subtask>
+        <subtask>stopImmediate(): Call mcpwm_timer_start_stop(MCPWM_TIMER_STOP_FULL), read PCNT, set IDLE</subtask>
+        <subtask>Verify stop latency less than 100us per NFR</subtask>
+      </task>
+      <task id="9" ac="4,12,13">Implement status methods
+        <subtask>isRunning(): return state != IDLE</subtask>
+        <subtask>getPulseCount(): read PCNT count + overflow tracking for 64-bit value</subtask>
+        <subtask>getCurrentVelocity(): calculate from current MCPWM period</subtask>
+      </task>
+      <task id="10" ac="7">Implement completion callback
+        <subtask>Store callback via setCompletionCallback()</subtask>
+        <subtask>On motion complete (PCNT limit reached): call callback with total_pulses from PCNT</subtask>
+        <subtask>Use FreeRTOS task notification to defer from ISR to task context</subtask>
+        <subtask>On stopImmediate(): do NOT call callback</subtask>
+      </task>
+      <task id="11" ac="1-14">Create unit tests
+        <subtask>Create firmware/components/pulse_gen/test/test_mcpwm_pulse_gen.cpp</subtask>
+        <subtask>Test init() returns ESP_OK for both Y and C channels</subtask>
+        <subtask>Test startMove() with various pulse counts and frequencies</subtask>
+        <subtask>Test PCNT count matches commanded pulses</subtask>
+        <subtask>Test PCNT limit callback stops MCPWM correctly</subtask>
+        <subtask>Test frequency limits (1 Hz to 500 kHz)</subtask>
+        <subtask>Test stop() decelerates correctly</subtask>
+        <subtask>Test stopImmediate() stops within timing requirement</subtask>
+        <subtask>Test completion callback fires with correct pulse count</subtask>
+        <subtask>Test dual-channel simultaneous operation (Y and C together)</subtask>
+      </task>
+      <task id="12" ac="3,10,11">Hardware verification
+        <subtask>Verify pulse timing at 10kHz, 25kHz, 100kHz with oscilloscope</subtask>
+        <subtask>Verify 50% duty cycle across frequency range</subtask>
+        <subtask>Verify DIR setup timing (20us before first STEP)</subtask>
+        <subtask>Verify PCNT count accuracy vs oscilloscope pulse count</subtask>
+        <subtask>Measure PCNT callback to MCPWM stop latency (must be less than 100us)</subtask>
+      </task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <criterion id="AC1">Given MCPWM timers MCPWM_TIMER_Y (0) and MCPWM_TIMER_C (1) are configured with group MCPWM_GROUP_ID (0), when pulse generation is requested, then STEP pulses are generated on GPIO_Y_STEP (GPIO5) and GPIO_C_STEP (GPIO16) respectively</criterion>
+    <criterion id="AC2">Given ESP-IDF v5.x io_loop_back flag is enabled on GPIO, when MCPWM output and PCNT input are configured on same GPIO, then internal GPIO matrix routes MCPWM output to PCNT input without external loopback wire</criterion>
+    <criterion id="AC3">Given I call startMove(5000, 25000, 500000), when MCPWM generates pulses, then exactly 5000 pulses are output with +-1% timing accuracy and PCNT count matches commanded pulses</criterion>
+    <criterion id="AC4">Given pulse generation is active, when I query getPulseCount(), then PCNT unit returns accurate count matching generated pulses</criterion>
+    <criterion id="AC5">Given PCNT high limit is set to target pulse count, when limit is reached, then MCPWM stops automatically via PCNT limit callback</criterion>
+    <criterion id="AC6">Given direction change is needed before motion, when pulse generation starts, then TIMING_DIR_SETUP_US (20us) delay occurs after DIR signal change before first STEP pulse</criterion>
+    <criterion id="AC7">Given motion completes (PCNT limit reached), when the last pulse is sent, then MotionCompleteCallback fires with total_pulses count from PCNT</criterion>
+    <criterion id="AC8">Given I call startVelocity(50000, 500000), when MCPWM generates pulses, then continuous pulses are generated until stop() is called and PCNT tracks position throughout</criterion>
+    <criterion id="AC9">Given I call stop(1000000) during motion, when deceleration completes, then motion stops gracefully with controlled deceleration profile</criterion>
+    <criterion id="AC10">Given I call stopImmediate() during motion, when executed, then MCPWM stops within 100us (PCNT callback + PWM stop latency per NFR)</criterion>
+    <criterion id="AC11">Given both Y and C axes are active simultaneously, when generating pulses at 25kHz each, then no interference or timing degradation occurs between channels</criterion>
+    <criterion id="AC12">Given isRunning() is called during motion, when motion is active, then true is returned; when idle, false is returned</criterion>
+    <criterion id="AC13">Given getCurrentVelocity() is called during motion, when motion is active, then current pulse frequency (Hz) is returned as float</criterion>
+    <criterion id="AC14">Given C axis is a stepper (not servo), when motion completes, then position is calculated solely from PCNT count (no external feedback)</criterion>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-3.md</path>
+        <title>Epic 3 Technical Specification</title>
+        <section>McpwmPulseGenerator Module</section>
+        <snippet>McpwmPulseGenerator in pulse_gen/mcpwm_pulse_gen.cpp takes pulse count, velocity, accel as inputs and outputs GPIO STEP pulses + PCNT (Y,C). MCPWM stop latency less than 100us requirement.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-3.md</path>
+        <title>Epic 3 Technical Specification</title>
+        <section>IPulseGenerator Interface</section>
+        <snippet>IPulseGenerator interface with startMove(), startVelocity(), stop(), stopImmediate(), isRunning(), getPulseCount(), getCurrentVelocity(), setCompletionCallback() methods. Same interface for RMT, MCPWM, LEDC.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-3.md</path>
+        <title>Epic 3 Technical Specification</title>
+        <section>MANDATORY Architecture Constraints</section>
+        <snippet>Header-Only Configuration - every configurable value MUST be in header file. Streaming Double-Buffer Pulse Generation - all pulse generation uses streaming double-buffer architecture.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Peripheral Usage</section>
+        <snippet>MCPWM: 2 timers (Y,C) for PWM + internal PCNT routing. PCNT: 2 units (Y,C) for hardware pulse counting.</snippet>
+      </doc>
+      <doc>
+        <path>docs/prd.md</path>
+        <title>Product Requirements Document</title>
+        <section>Motor Control</section>
+        <snippet>5 servo axes with RMT/MCPWM for precise pulse generation. Different pulse generation methods (RMT vs MCPWM vs LEDC) hidden from command interface.</snippet>
+      </doc>
+    </docs>
+    <code>
+      <artifact>
+        <path>firmware/components/pulse_gen/include/i_pulse_generator.h</path>
+        <kind>interface</kind>
+        <symbol>IPulseGenerator</symbol>
+        <lines>1-129</lines>
+        <reason>Abstract interface to implement - defines startMove(), startVelocity(), stop(), stopImmediate(), isRunning(), getPulseCount(), getCurrentVelocity(), setCompletionCallback()</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/pulse_gen/include/rmt_pulse_gen.h</path>
+        <kind>header</kind>
+        <symbol>RmtPulseGenerator, ProfileState, MotionMode, TrapezoidalProfile</symbol>
+        <lines>1-176</lines>
+        <reason>Reference implementation showing double-buffer streaming architecture, profile state machine, completion callback pattern. McpwmPulseGenerator should follow same patterns.</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/pulse_gen/rmt_pulse_gen.cpp</path>
+        <kind>implementation</kind>
+        <symbol>RmtPulseGenerator</symbol>
+        <lines>1-200</lines>
+        <reason>Reference implementation for ISR callback to task notification pattern, buffer refill task, profile calculation. Reuse profile algorithm for MCPWM.</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/config/include/config_peripherals.h</path>
+        <kind>config</kind>
+        <symbol>MCPWM_GROUP_ID, MCPWM_TIMER_Y, MCPWM_TIMER_C, PCNT_UNIT_Y, PCNT_UNIT_C</symbol>
+        <lines>46-79</lines>
+        <reason>MCPWM and PCNT peripheral assignments for Y and C axes. Use these constants, never hardcode values.</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/config/include/config_gpio.h</path>
+        <kind>config</kind>
+        <symbol>GPIO_Y_STEP, GPIO_C_STEP</symbol>
+        <lines>35-56</lines>
+        <reason>GPIO pin assignments for STEP outputs. GPIO_Y_STEP=GPIO5, GPIO_C_STEP=GPIO16.</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/config/include/config_timing.h</path>
+        <kind>config</kind>
+        <symbol>TIMING_DIR_SETUP_US, TIMING_ENABLE_DELAY_US</symbol>
+        <lines>20-38</lines>
+        <reason>Direction setup time (20us) before first STEP pulse. Must call sr_set_direction() then wait before motion.</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/config/include/config_limits.h</path>
+        <kind>config</kind>
+        <symbol>LIMIT_MAX_PULSE_FREQ_HZ, LIMIT_MIN_PULSE_FREQ_HZ, DEFAULT_MAX_PULSE_FREQ_HZ</symbol>
+        <lines>106-155</lines>
+        <reason>Pulse frequency limits: 500kHz max, 200kHz default, 1Hz min. Validate velocity parameters against these limits.</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/drivers/tpic6b595/include/tpic6b595.h</path>
+        <kind>api</kind>
+        <symbol>sr_set_direction(), sr_update()</symbol>
+        <lines>67-141</lines>
+        <reason>Shift register API for setting DIR signal before motion. Call sr_set_direction(axis, forward) then sr_update() before starting pulses.</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/pulse_gen/test/test_rmt_pulse_gen.cpp</path>
+        <kind>test</kind>
+        <symbol>TEST_CASE macros, test fixtures</symbol>
+        <lines>1-100</lines>
+        <reason>Unit test patterns for pulse generator. Follow same structure for test_mcpwm_pulse_gen.cpp with Unity framework.</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/pulse_gen/CMakeLists.txt</path>
+        <kind>build</kind>
+        <symbol>idf_component_register</symbol>
+        <lines>1-6</lines>
+        <reason>CMake config for pulse_gen component. Add mcpwm_pulse_gen.cpp to SRCS, add esp_driver_mcpwm and esp_driver_pcnt to REQUIRES.</reason>
+      </artifact>
+    </code>
+    <dependencies>
+      <ecosystem name="esp-idf">
+        <package name="esp_driver_mcpwm" version="esp-idf-5.4">MCPWM driver for PWM pulse generation</package>
+        <package name="esp_driver_pcnt" version="esp-idf-5.4">PCNT driver for hardware pulse counting</package>
+        <package name="esp_driver_rmt" version="esp-idf-5.4">Already in project for RMT pulse gen</package>
+        <package name="freertos" version="esp-idf-5.4">Task notifications, mutexes</package>
+        <package name="esp_timer" version="esp-idf-5.4">Timing utilities</package>
+        <package name="driver" version="esp-idf-5.4">GPIO driver for io_loop_back</package>
+      </ecosystem>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint source="tech-spec-epic-3.md">Header-Only Configuration: Every configurable value MUST be defined in a header file. No magic numbers in source code. MCPWM timer/group IDs from config_peripherals.h, GPIO pins from config_gpio.h, PCNT unit IDs from config_peripherals.h.</constraint>
+    <constraint source="tech-spec-epic-3.md">Streaming Double-Buffer Pulse Generation: All pulse generation uses streaming double-buffer architecture. For MCPWM, this means progressive frequency updates during motion rather than pre-computed buffers.</constraint>
+    <constraint source="architecture.md">SI Units Convention: All external interfaces use SI units. Internal pulse domain uses pulses/pulses-per-second. Conversion happens in motor layer only.</constraint>
+    <constraint source="architecture.md">Dual-Core Separation: Core 0 handles communication and safety, Core 1 handles motion control. Pin refill task to Core 1.</constraint>
+    <constraint source="architecture.md">MCPWM stop latency: Must be less than 100us from PCNT callback to PWM stop.</constraint>
+    <constraint source="tech-spec-epic-3.md">Completion callback from task context: Use FreeRTOS task notification to defer callback from ISR to task context (same as RMT pattern).</constraint>
+    <constraint source="tech-spec-epic-3.md">Atomic state management: Use std::atomic for thread-safe state (same as RMT pattern).</constraint>
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>IPulseGenerator</name>
+      <kind>abstract class interface</kind>
+      <signature>virtual esp_err_t startMove(int32_t pulses, float max_velocity, float acceleration) = 0;
+virtual esp_err_t startVelocity(float velocity, float acceleration) = 0;
+virtual esp_err_t stop(float deceleration) = 0;
+virtual void stopImmediate() = 0;
+virtual bool isRunning() const = 0;
+virtual int64_t getPulseCount() const = 0;
+virtual float getCurrentVelocity() const = 0;
+virtual void setCompletionCallback(MotionCompleteCallback cb) = 0;</signature>
+      <path>firmware/components/pulse_gen/include/i_pulse_generator.h</path>
+    </interface>
+    <interface>
+      <name>ShiftRegisterController</name>
+      <kind>C API</kind>
+      <signature>esp_err_t sr_set_direction(uint8_t axis, bool forward);
+esp_err_t sr_update(void);</signature>
+      <path>firmware/components/drivers/tpic6b595/include/tpic6b595.h</path>
+    </interface>
+    <interface>
+      <name>mcpwm_new_timer</name>
+      <kind>ESP-IDF MCPWM API</kind>
+      <signature>esp_err_t mcpwm_new_timer(const mcpwm_timer_config_t *config, mcpwm_timer_handle_t *ret_timer)</signature>
+      <path>driver/mcpwm_timer.h (ESP-IDF)</path>
+    </interface>
+    <interface>
+      <name>pcnt_new_unit</name>
+      <kind>ESP-IDF PCNT API</kind>
+      <signature>esp_err_t pcnt_new_unit(const pcnt_unit_config_t *config, pcnt_unit_handle_t *ret_unit)</signature>
+      <path>driver/pulse_cnt.h (ESP-IDF)</path>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>Unity test framework (ESP-IDF bundled). Tests run on-target using idf.py build flash monitor with Unity component. Test files in component/test/ directory following test_*.cpp pattern. Use TEST_CASE macro with tags like [pulse_gen][AC1] for filtering.</standards>
+    <locations>
+      <location>firmware/components/pulse_gen/test/test_mcpwm_pulse_gen.cpp</location>
+      <location>firmware/components/pulse_gen/test/</location>
+    </locations>
+    <ideas>
+      <idea ac="AC1">Test init() returns ESP_OK for both Y and C channels with correct GPIO/timer assignments</idea>
+      <idea ac="AC2">Test PCNT counts pulses when MCPWM generates them on same GPIO (io_loop_back verification)</idea>
+      <idea ac="AC3">Test startMove generates exact pulse count (1000, 5000, 10000 pulses at various frequencies)</idea>
+      <idea ac="AC4">Test getPulseCount returns accurate running count during motion</idea>
+      <idea ac="AC5">Test PCNT limit callback stops MCPWM automatically at target count</idea>
+      <idea ac="AC6">Test direction setup delay of 20us before first STEP pulse when direction changes</idea>
+      <idea ac="AC7">Test MotionCompleteCallback fires with correct pulse count on motion completion</idea>
+      <idea ac="AC8">Test startVelocity generates continuous pulses until stop() called</idea>
+      <idea ac="AC9">Test stop() performs controlled deceleration to zero velocity</idea>
+      <idea ac="AC10">Test stopImmediate() halts within 100us and does NOT fire completion callback</idea>
+      <idea ac="AC11">Test dual-channel simultaneous operation (Y and C at 25kHz each) without interference</idea>
+      <idea ac="AC12">Test isRunning() returns true during motion, false when idle</idea>
+      <idea ac="AC13">Test getCurrentVelocity() returns correct frequency during motion</idea>
+      <idea ac="AC14">Test PCNT is sole position source for C axis (stepper) without external feedback</idea>
+      <idea ac="boundary">Test invalid parameters return ESP_ERR_INVALID_ARG (velocity=0, accel=0, velocity > LIMIT_MAX)</idea>
+      <idea ac="boundary">Test frequency limits at 1Hz, 200kHz, 500kHz boundaries</idea>
+      <idea ac="overflow">Test PCNT overflow handling for moves greater than 32767 pulses</idea>
+    </ideas>
+  </tests>
+</story-context>

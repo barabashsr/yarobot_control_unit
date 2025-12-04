@@ -1,6 +1,6 @@
 # Story 3.3: MCPWM Pulse Generator with PCNT (Y, C Axes)
 
-Status: drafted
+Status: review
 
 ## Story
 
@@ -24,126 +24,138 @@ so that **I can generate STEP pulses and track position via PCNT for these axes*
 12. **AC12:** Given `isRunning()` is called during motion, when motion is active, then true is returned; when idle, false is returned
 13. **AC13:** Given `getCurrentVelocity()` is called during motion, when motion is active, then current pulse frequency (Hz) is returned as float
 14. **AC14:** Given C axis is a stepper (not servo), when motion completes, then position is calculated solely from PCNT count (no external feedback)
+15. **AC15 (MANDATORY):** Given any implementation code, when reviewed, then NO hardcoded values, magic numbers, or inline constants exist; ALL configuration values (GPIO pins, timer IDs, PCNT unit IDs, timing values, frequency limits, buffer sizes) MUST be defined in dedicated header files (`config_gpio.h`, `config_peripherals.h`, `config_timing.h`, `config_limits.h`) and referenced via named constants
 
 ## Tasks / Subtasks
 
-- [ ] **Task 1: Create McpwmPulseGenerator class** (AC: 1, 2)
-  - [ ] Create `firmware/components/pulse_gen/include/mcpwm_pulse_gen.h` with class declaration
-  - [ ] Create `firmware/components/pulse_gen/mcpwm_pulse_gen.cpp` with implementation
-  - [ ] Constructor takes: timer_id (MCPWM_TIMER_Y or MCPWM_TIMER_C), gpio_num, pcnt_unit_id
-  - [ ] Store MCPWM group ID (MCPWM_GROUP_ID = 0)
-  - [ ] Update `firmware/components/pulse_gen/CMakeLists.txt` with REQUIRES: esp_driver_mcpwm, esp_driver_pcnt
+- [x] **Task 1: Create McpwmPulseGenerator class** (AC: 1, 2, 15)
+  - [x] Create `firmware/components/pulse_gen/include/mcpwm_pulse_gen.h` with class declaration
+  - [x] Create `firmware/components/pulse_gen/mcpwm_pulse_gen.cpp` with implementation
+  - [x] Constructor takes: timer_id (MCPWM_TIMER_Y or MCPWM_TIMER_C), gpio_num, pcnt_unit_id
+  - [x] Store MCPWM group ID (use `MCPWM_GROUP_ID` constant from `config_peripherals.h`, NOT literal `0`)
+  - [x] Update `firmware/components/pulse_gen/CMakeLists.txt` with REQUIRES: esp_driver_mcpwm, esp_driver_pcnt
+  - [x] **CRITICAL**: All values from config headers - NO inline numbers (e.g., use `MCPWM_RESOLUTION_HZ` not `10000000`)
 
-- [ ] **Task 2: Implement MCPWM timer and operator initialization** (AC: 1)
-  - [ ] `init()` creates MCPWM timer via `mcpwm_new_timer()`:
-    - `group_id = MCPWM_GROUP_ID`
+- [x] **Task 2: Implement MCPWM timer and operator initialization** (AC: 1, 15)
+  - [x] `init()` creates MCPWM timer via `mcpwm_new_timer()`:
+    - `group_id = MCPWM_GROUP_ID` (from `config_peripherals.h`)
     - `clk_src = MCPWM_TIMER_CLK_SRC_DEFAULT`
-    - `resolution_hz = 10000000` (10MHz = 100ns resolution)
+    - `resolution_hz = MCPWM_RESOLUTION_HZ` (define as 10MHz in `config_peripherals.h`)
     - `count_mode = MCPWM_TIMER_COUNT_MODE_UP`
-    - `period_ticks` = initial period (variable based on frequency)
-  - [ ] Create MCPWM operator via `mcpwm_new_operator()` and connect to timer
-  - [ ] Create MCPWM generator via `mcpwm_new_generator()`:
-    - `gen_gpio_num` from constructor
-    - Configure for 50% duty cycle
-  - [ ] Set generator actions for UP counting: HIGH on zero, LOW on compare
+    - `period_ticks` = calculated from `MCPWM_RESOLUTION_HZ / target_frequency`
+  - [x] Create MCPWM operator via `mcpwm_new_operator()` and connect to timer
+  - [x] Create MCPWM generator via `mcpwm_new_generator()`:
+    - `gen_gpio_num` from constructor (passed from `config_gpio.h` constants)
+    - Configure for 50% duty cycle using `MCPWM_DUTY_CYCLE_PERCENT` constant
+  - [x] Set generator actions for UP counting: HIGH on zero, LOW on compare
 
-- [ ] **Task 3: Implement PCNT initialization with io_loop_back** (AC: 2, 4, 5, 7)
-  - [ ] Create PCNT unit via `pcnt_new_unit()`:
+- [x] **Task 3: Implement PCNT initialization with io_loop_back** (AC: 2, 4, 5, 7)
+  - [x] Create PCNT unit via `pcnt_new_unit()`:
     - `high_limit = INT16_MAX` (initial, updated per move)
     - `low_limit = INT16_MIN`
     - `flags.accum_count = true` (accumulate across overflows for 64-bit range)
-  - [ ] Create PCNT channel via `pcnt_new_channel()`:
+  - [x] Create PCNT channel via `pcnt_new_channel()`:
     - `edge_gpio_num = gpio_num` (same as MCPWM output)
     - `level_gpio_num = -1` (no level signal)
-  - [ ] Configure GPIO for internal loopback:
+  - [x] Configure GPIO for internal loopback:
     - `gpio_set_direction(gpio_num, GPIO_MODE_INPUT_OUTPUT)`
     - Use `io_loop_back` flag in PCNT channel config
-  - [ ] Set channel edge actions: increment on rising edge
-  - [ ] Register PCNT watch points for limit callback
+  - [x] Set channel edge actions: increment on rising edge
+  - [x] Register PCNT watch points for limit callback
 
-- [ ] **Task 4: Implement PCNT limit callback for motion stop** (AC: 5, 7)
-  - [ ] Register `pcnt_unit_register_event_callbacks()` with on_reach callback
-  - [ ] In callback:
+- [x] **Task 4: Implement PCNT limit callback for motion stop** (AC: 5, 7)
+  - [x] Register `pcnt_unit_register_event_callbacks()` with on_reach callback
+  - [x] In callback:
     - Stop MCPWM timer immediately via `mcpwm_timer_start_stop(MCPWM_TIMER_STOP_FULL)`
     - Read final PCNT count
     - Set state to IDLE
     - Queue task notification for completion callback
-  - [ ] Handle PCNT overflow events for extended range tracking
+  - [x] Handle PCNT overflow events for extended range tracking
 
-- [ ] **Task 5: Implement trapezoidal profile generator** (AC: 3, 8, 9)
-  - [ ] Reuse profile calculation logic from RmtPulseGenerator (same algorithm)
-  - [ ] Create internal profile state machine: IDLE, ACCELERATING, CRUISING, DECELERATING
-  - [ ] Implement frequency update callback using MCPWM compare value changes
-  - [ ] Profile generates batches of pulses at varying frequencies
+- [x] **Task 5: Implement trapezoidal profile generator** (AC: 3, 8, 9)
+  - [x] Reuse profile calculation logic from RmtPulseGenerator (same algorithm)
+  - [x] Create internal profile state machine: IDLE, ACCELERATING, CRUISING, DECELERATING
+  - [x] Implement frequency update callback using MCPWM compare value changes
+  - [x] Profile generates batches of pulses at varying frequencies
 
-- [ ] **Task 6: Implement startMove()** (AC: 3, 6, 7)
-  - [ ] Validate pulse_count > 0, velocity > 0, acceleration > 0
-  - [ ] Validate velocity <= LIMIT_MAX_PULSE_FREQ_HZ
-  - [ ] Calculate direction from pulse_count sign
-  - [ ] Call shift register `sr_set_direction()` for DIR signal
-  - [ ] Wait TIMING_DIR_SETUP_US (20µs) if direction changed
-  - [ ] Calculate trapezoidal profile
-  - [ ] Reset PCNT count to 0
-  - [ ] Set PCNT watch point to target pulse count (handle 16-bit limit)
-  - [ ] Enable PCNT unit
-  - [ ] Start MCPWM timer via `mcpwm_timer_start_stop(MCPWM_TIMER_START_NO_STOP)`
-  - [ ] Set state to RUNNING
-  - [ ] Return ESP_OK
+- [x] **Task 6: Implement startMove()** (AC: 3, 6, 7)
+  - [x] Validate pulse_count > 0, velocity > 0, acceleration > 0
+  - [x] Validate velocity <= LIMIT_MAX_PULSE_FREQ_HZ
+  - [x] Calculate direction from pulse_count sign
+  - [x] Call shift register `sr_set_direction()` for DIR signal
+  - [x] Wait TIMING_DIR_SETUP_US (20µs) if direction changed
+  - [x] Calculate trapezoidal profile
+  - [x] Reset PCNT count to 0
+  - [x] Set PCNT watch point to target pulse count (handle 16-bit limit)
+  - [x] Enable PCNT unit
+  - [x] Start MCPWM timer via `mcpwm_timer_start_stop(MCPWM_TIMER_START_NO_STOP)`
+  - [x] Set state to RUNNING
+  - [x] Return ESP_OK
 
-- [ ] **Task 7: Implement startVelocity()** (AC: 8)
-  - [ ] Validate velocity range (can be negative for reverse)
-  - [ ] Set target velocity and acceleration
-  - [ ] Enter continuous mode (no target pulse count, no PCNT limit watch)
-  - [ ] Start MCPWM timer
-  - [ ] Continue generating pulses until stop() called
-  - [ ] PCNT tracks position throughout for reporting
+- [x] **Task 7: Implement startVelocity()** (AC: 8)
+  - [x] Validate velocity range (can be negative for reverse)
+  - [x] Set target velocity and acceleration
+  - [x] Enter continuous mode (no target pulse count, no PCNT limit watch)
+  - [x] Start MCPWM timer
+  - [x] Continue generating pulses until stop() called
+  - [x] PCNT tracks position throughout for reporting
 
-- [ ] **Task 8: Implement stop() and stopImmediate()** (AC: 9, 10)
-  - [ ] `stop(deceleration)`:
+- [x] **Task 8: Implement stop() and stopImmediate()** (AC: 9, 10)
+  - [x] `stop(deceleration)`:
     - Calculate decel profile from current velocity
     - Transition to DECELERATING state
     - Reduce frequency progressively
     - Stop timer when velocity reaches zero
     - Fire callback on completion
-  - [ ] `stopImmediate()`:
+  - [x] `stopImmediate()`:
     - Call `mcpwm_timer_start_stop(MCPWM_TIMER_STOP_FULL)` immediately
     - Read final PCNT count
     - Set state to IDLE
     - Do NOT fire completion callback (aborted)
-  - [ ] Verify stop latency <100µs per NFR
+  - [x] Verify stop latency <100µs per NFR
 
-- [ ] **Task 9: Implement status methods** (AC: 4, 12, 13)
-  - [ ] `isRunning()`: return state != IDLE
-  - [ ] `getPulseCount()`: read PCNT count + overflow tracking for 64-bit value
-  - [ ] `getCurrentVelocity()`: calculate from current MCPWM period
+- [x] **Task 9: Implement status methods** (AC: 4, 12, 13)
+  - [x] `isRunning()`: return state != IDLE
+  - [x] `getPulseCount()`: read PCNT count + overflow tracking for 64-bit value
+  - [x] `getCurrentVelocity()`: calculate from current MCPWM period
 
-- [ ] **Task 10: Implement completion callback** (AC: 7)
-  - [ ] Store callback via `setCompletionCallback()`
-  - [ ] On motion complete (PCNT limit reached):
+- [x] **Task 10: Implement completion callback** (AC: 7)
+  - [x] Store callback via `setCompletionCallback()`
+  - [x] On motion complete (PCNT limit reached):
     - Call callback with total_pulses from PCNT
     - Use FreeRTOS task notification to defer from ISR to task context
-  - [ ] On stopImmediate(): do NOT call callback
+  - [x] On stopImmediate(): do NOT call callback
 
-- [ ] **Task 11: Create unit tests** (AC: 1-14)
-  - [ ] Create `firmware/components/pulse_gen/test/test_mcpwm_pulse_gen.cpp`
-  - [ ] Test init() returns ESP_OK for both Y and C channels
-  - [ ] Test startMove() with various pulse counts and frequencies
-  - [ ] Test PCNT count matches commanded pulses
-  - [ ] Test PCNT limit callback stops MCPWM correctly
-  - [ ] Test frequency limits (1 Hz to 500 kHz)
-  - [ ] Test invalid parameters return ESP_ERR_INVALID_ARG
-  - [ ] Test stop() decelerates correctly
-  - [ ] Test stopImmediate() stops within timing requirement
-  - [ ] Test completion callback fires with correct pulse count
-  - [ ] Test dual-channel simultaneous operation (Y and C together)
+- [x] **Task 11: Create unit tests** (AC: 1-15)
+  - [x] Create `firmware/components/pulse_gen/test/test_mcpwm_pulse_gen.cpp`
+  - [x] Test init() returns ESP_OK for both Y and C channels
+  - [x] Test startMove() with various pulse counts and frequencies
+  - [x] Test PCNT count matches commanded pulses
+  - [x] Test PCNT limit callback stops MCPWM correctly
+  - [x] Test frequency limits (1 Hz to `LIMIT_MAX_PULSE_FREQ_HZ`)
+  - [x] Test invalid parameters return ESP_ERR_INVALID_ARG
+  - [x] Test stop() decelerates correctly
+  - [x] Test stopImmediate() stops within timing requirement
+  - [x] Test completion callback fires with correct pulse count
+  - [x] Test dual-channel simultaneous operation (Y and C together)
+  - [x] **VERIFY**: All test values use named constants from config headers (no magic numbers)
 
 - [ ] **Task 12: Hardware verification** (AC: 3, 10, 11)
   - [ ] Verify pulse timing at 10kHz, 25kHz, 100kHz with oscilloscope
   - [ ] Verify 50% duty cycle across frequency range
-  - [ ] Verify DIR setup timing (20µs before first STEP)
+  - [ ] Verify DIR setup timing (`TIMING_DIR_SETUP_US` before first STEP)
   - [ ] Verify PCNT count accuracy vs oscilloscope pulse count
   - [ ] Verify dual-channel simultaneous operation without interference
-  - [ ] Measure PCNT callback to MCPWM stop latency (<100µs)
+  - [ ] Measure PCNT callback to MCPWM stop latency (<`LIMIT_STOP_LATENCY_US`)
+
+- [x] **Task 13: Code Review - No Magic Numbers** (AC: 15)
+  - [x] Review `mcpwm_pulse_gen.cpp` for any hardcoded numeric values
+  - [x] Verify all GPIO pins referenced via `config_gpio.h` constants
+  - [x] Verify all timer/PCNT IDs referenced via `config_peripherals.h` constants
+  - [x] Verify all timing values referenced via `config_timing.h` constants
+  - [x] Verify all limits referenced via `config_limits.h` constants
+  - [x] Ensure `config_peripherals.h` contains: `MCPWM_GROUP_ID`, `MCPWM_RESOLUTION_HZ`, `MCPWM_DUTY_CYCLE_PERCENT`, `PCNT_UNIT_Y`, `PCNT_UNIT_C`, `MCPWM_TIMER_Y`, `MCPWM_TIMER_C`
+  - [x] Run grep check: `grep -E "[^A-Z_][0-9]{2,}" mcpwm_pulse_gen.cpp` should return minimal results (only loop indices, etc.)
 
 ## Dev Notes
 
@@ -236,17 +248,37 @@ so that **I can generate STEP pulses and track position via PCNT for these axes*
 
 ### Context Reference
 
-<!-- Path(s) to story context XML will be added here by context workflow -->
+- `docs/sprint-artifacts/stories/3-3-mcpwm-pulse-generator-with-pcnt.context.xml`
 
 ### Agent Model Used
 
-{{agent_model_name_version}}
+Claude Opus 4.5 (claude-opus-4-5-20251101)
 
 ### Debug Log References
 
+- Build error: Missing `#include "driver/mcpwm_cmpr.h"` for ESP-IDF v5.4 comparator API - fixed by adding include to header
+
 ### Completion Notes List
 
+1. **McpwmPulseGenerator class implemented** - Full implementation of IPulseGenerator interface using MCPWM peripheral with PCNT feedback
+2. **PCNT io_loop_back routing** - Internal GPIO matrix routing eliminates external loopback wire requirement
+3. **Trapezoidal profile algorithm** - Reused same algorithm from RmtPulseGenerator (IDLE → ACCELERATING → CRUISING → DECELERATING)
+4. **64-bit pulse counting** - PCNT overflow tracking extends 16-bit PCNT to full 64-bit range
+5. **ISR-safe completion callback** - FreeRTOS task notification defers callback from PCNT ISR to task context
+6. **No magic numbers (AC15)** - All config values use named constants from config headers; verified via grep
+7. **Comprehensive unit tests** - Tests cover all 15 ACs including dual-channel operation, boundary conditions, error handling
+8. **Task 12 pending** - Hardware verification requires oscilloscope/physical testing
+
 ### File List
+
+**Created:**
+- `firmware/components/pulse_gen/include/mcpwm_pulse_gen.h` - Class declaration
+- `firmware/components/pulse_gen/mcpwm_pulse_gen.cpp` - Implementation (~860 lines)
+- `firmware/components/pulse_gen/test/test_mcpwm_pulse_gen.cpp` - Unit tests
+
+**Modified:**
+- `firmware/components/pulse_gen/CMakeLists.txt` - Added mcpwm_pulse_gen.cpp, esp_driver_mcpwm, esp_driver_pcnt
+- `firmware/components/config/include/config_peripherals.h` - Added MCPWM_RESOLUTION_HZ, MCPWM_DUTY_CYCLE_PERCENT
 
 ---
 
@@ -255,3 +287,5 @@ so that **I can generate STEP pulses and track position via PCNT for these axes*
 | Date | Author | Change |
 |------|--------|--------|
 | 2025-12-04 | SM Agent (Bob) | Initial story draft for MCPWM pulse generator with PCNT |
+| 2025-12-05 | SM Agent (Bob) | Added AC15 (MANDATORY): No hardcoded values/magic numbers requirement; Added Task 13 for code review; Updated Tasks 1, 2, 11, 12 with AC15 references |
+| 2025-12-05 | Dev Agent (Amelia) | Implementation complete: Tasks 1-11, 13 done; Task 12 pending hardware verification; Status → review |
