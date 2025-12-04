@@ -1930,6 +1930,32 @@ __idf_wifi_provisioning/fast:
 .PHONY : __idf_wifi_provisioning/fast
 
 #=============================================================================
+# Target rules for targets named __idf_yarobot_hal
+
+# Build rule for target.
+__idf_yarobot_hal: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 __idf_yarobot_hal
+.PHONY : __idf_yarobot_hal
+
+# fast build rule for target.
+__idf_yarobot_hal/fast:
+	$(MAKE) $(MAKESILENT) -f esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/build.make esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/build
+.PHONY : __idf_yarobot_hal/fast
+
+#=============================================================================
+# Target rules for targets named __idf_test_utils
+
+# Build rule for target.
+__idf_test_utils: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 __idf_test_utils
+.PHONY : __idf_test_utils
+
+# fast build rule for target.
+__idf_test_utils/fast:
+	$(MAKE) $(MAKESILENT) -f esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/build.make esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/build
+.PHONY : __idf_test_utils/fast
+
+#=============================================================================
 # Target rules for targets named __idf_control
 
 # Build rule for target.
@@ -1980,19 +2006,6 @@ __idf_main: cmake_check_build_system
 __idf_main/fast:
 	$(MAKE) $(MAKESILENT) -f esp-idf/main/CMakeFiles/__idf_main.dir/build.make esp-idf/main/CMakeFiles/__idf_main.dir/build
 .PHONY : __idf_main/fast
-
-#=============================================================================
-# Target rules for targets named __idf_yarobot_hal
-
-# Build rule for target.
-__idf_yarobot_hal: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 __idf_yarobot_hal
-.PHONY : __idf_yarobot_hal
-
-# fast build rule for target.
-__idf_yarobot_hal/fast:
-	$(MAKE) $(MAKESILENT) -f esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/build.make esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/build
-.PHONY : __idf_yarobot_hal/fast
 
 project_elf_src_esp32s3.obj: project_elf_src_esp32s3.c.obj
 .PHONY : project_elf_src_esp32s3.obj
@@ -2156,6 +2169,7 @@ help:
 	@echo "... __idf_spi_flash"
 	@echo "... __idf_spiffs"
 	@echo "... __idf_tcp_transport"
+	@echo "... __idf_test_utils"
 	@echo "... __idf_touch_element"
 	@echo "... __idf_unity"
 	@echo "... __idf_usb"

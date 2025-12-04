@@ -214,15 +214,19 @@ esp-idf/all: esp-idf/ulp/all
 esp-idf/all: esp-idf/usb/all
 esp-idf/all: esp-idf/wifi_provisioning/all
 esp-idf/all: esp-idf/config/all
+esp-idf/all: esp-idf/yarobot_hal/all
+esp-idf/all: esp-idf/test_utils/all
 esp-idf/all: esp-idf/control/all
 esp-idf/all: esp-idf/espressif__cmake_utilities/all
 esp-idf/all: esp-idf/espressif__i2c_bus/all
 esp-idf/all: esp-idf/espressif__mcp23017/all
 esp-idf/all: esp-idf/main/all
+esp-idf/all: esp-idf/oled/all
+esp-idf/all: esp-idf/tpic6b595/all
+esp-idf/all: esp-idf/drivers/all
 esp-idf/all: esp-idf/motor/all
 esp-idf/all: esp-idf/position/all
 esp-idf/all: esp-idf/pulse_gen/all
-esp-idf/all: esp-idf/yarobot_hal/all
 .PHONY : esp-idf/all
 
 # Recursive "codegen" directory target.
@@ -330,15 +334,19 @@ esp-idf/codegen: esp-idf/ulp/codegen
 esp-idf/codegen: esp-idf/usb/codegen
 esp-idf/codegen: esp-idf/wifi_provisioning/codegen
 esp-idf/codegen: esp-idf/config/codegen
+esp-idf/codegen: esp-idf/yarobot_hal/codegen
+esp-idf/codegen: esp-idf/test_utils/codegen
 esp-idf/codegen: esp-idf/control/codegen
 esp-idf/codegen: esp-idf/espressif__cmake_utilities/codegen
 esp-idf/codegen: esp-idf/espressif__i2c_bus/codegen
 esp-idf/codegen: esp-idf/espressif__mcp23017/codegen
 esp-idf/codegen: esp-idf/main/codegen
+esp-idf/codegen: esp-idf/oled/codegen
+esp-idf/codegen: esp-idf/tpic6b595/codegen
+esp-idf/codegen: esp-idf/drivers/codegen
 esp-idf/codegen: esp-idf/motor/codegen
 esp-idf/codegen: esp-idf/position/codegen
 esp-idf/codegen: esp-idf/pulse_gen/codegen
-esp-idf/codegen: esp-idf/yarobot_hal/codegen
 .PHONY : esp-idf/codegen
 
 # Recursive "preinstall" directory target.
@@ -446,15 +454,19 @@ esp-idf/preinstall: esp-idf/ulp/preinstall
 esp-idf/preinstall: esp-idf/usb/preinstall
 esp-idf/preinstall: esp-idf/wifi_provisioning/preinstall
 esp-idf/preinstall: esp-idf/config/preinstall
+esp-idf/preinstall: esp-idf/yarobot_hal/preinstall
+esp-idf/preinstall: esp-idf/test_utils/preinstall
 esp-idf/preinstall: esp-idf/control/preinstall
 esp-idf/preinstall: esp-idf/espressif__cmake_utilities/preinstall
 esp-idf/preinstall: esp-idf/espressif__i2c_bus/preinstall
 esp-idf/preinstall: esp-idf/espressif__mcp23017/preinstall
 esp-idf/preinstall: esp-idf/main/preinstall
+esp-idf/preinstall: esp-idf/oled/preinstall
+esp-idf/preinstall: esp-idf/tpic6b595/preinstall
+esp-idf/preinstall: esp-idf/drivers/preinstall
 esp-idf/preinstall: esp-idf/motor/preinstall
 esp-idf/preinstall: esp-idf/position/preinstall
 esp-idf/preinstall: esp-idf/pulse_gen/preinstall
-esp-idf/preinstall: esp-idf/yarobot_hal/preinstall
 .PHONY : esp-idf/preinstall
 
 # Recursive "clean" directory target.
@@ -562,15 +574,19 @@ esp-idf/clean: esp-idf/ulp/clean
 esp-idf/clean: esp-idf/usb/clean
 esp-idf/clean: esp-idf/wifi_provisioning/clean
 esp-idf/clean: esp-idf/config/clean
+esp-idf/clean: esp-idf/yarobot_hal/clean
+esp-idf/clean: esp-idf/test_utils/clean
 esp-idf/clean: esp-idf/control/clean
 esp-idf/clean: esp-idf/espressif__cmake_utilities/clean
 esp-idf/clean: esp-idf/espressif__i2c_bus/clean
 esp-idf/clean: esp-idf/espressif__mcp23017/clean
 esp-idf/clean: esp-idf/main/clean
+esp-idf/clean: esp-idf/oled/clean
+esp-idf/clean: esp-idf/tpic6b595/clean
+esp-idf/clean: esp-idf/drivers/clean
 esp-idf/clean: esp-idf/motor/clean
 esp-idf/clean: esp-idf/position/clean
 esp-idf/clean: esp-idf/pulse_gen/clean
-esp-idf/clean: esp-idf/yarobot_hal/clean
 .PHONY : esp-idf/clean
 
 #=============================================================================
@@ -783,6 +799,25 @@ esp-idf/driver/preinstall:
 # Recursive "clean" directory target.
 esp-idf/driver/clean: esp-idf/driver/CMakeFiles/__idf_driver.dir/clean
 .PHONY : esp-idf/driver/clean
+
+#=============================================================================
+# Directory level rules for directory esp-idf/drivers
+
+# Recursive "all" directory target.
+esp-idf/drivers/all:
+.PHONY : esp-idf/drivers/all
+
+# Recursive "codegen" directory target.
+esp-idf/drivers/codegen:
+.PHONY : esp-idf/drivers/codegen
+
+# Recursive "preinstall" directory target.
+esp-idf/drivers/preinstall:
+.PHONY : esp-idf/drivers/preinstall
+
+# Recursive "clean" directory target.
+esp-idf/drivers/clean:
+.PHONY : esp-idf/drivers/clean
 
 #=============================================================================
 # Directory level rules for directory esp-idf/efuse
@@ -2551,6 +2586,25 @@ esp-idf/nvs_sec_provider/clean: esp-idf/nvs_sec_provider/CMakeFiles/__idf_nvs_se
 .PHONY : esp-idf/nvs_sec_provider/clean
 
 #=============================================================================
+# Directory level rules for directory esp-idf/oled
+
+# Recursive "all" directory target.
+esp-idf/oled/all:
+.PHONY : esp-idf/oled/all
+
+# Recursive "codegen" directory target.
+esp-idf/oled/codegen:
+.PHONY : esp-idf/oled/codegen
+
+# Recursive "preinstall" directory target.
+esp-idf/oled/preinstall:
+.PHONY : esp-idf/oled/preinstall
+
+# Recursive "clean" directory target.
+esp-idf/oled/clean:
+.PHONY : esp-idf/oled/clean
+
+#=============================================================================
 # Directory level rules for directory esp-idf/openthread
 
 # Recursive "all" directory target.
@@ -2822,6 +2876,25 @@ esp-idf/tcp_transport/clean: esp-idf/tcp_transport/CMakeFiles/__idf_tcp_transpor
 .PHONY : esp-idf/tcp_transport/clean
 
 #=============================================================================
+# Directory level rules for directory esp-idf/test_utils
+
+# Recursive "all" directory target.
+esp-idf/test_utils/all: esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/all
+.PHONY : esp-idf/test_utils/all
+
+# Recursive "codegen" directory target.
+esp-idf/test_utils/codegen: esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/codegen
+.PHONY : esp-idf/test_utils/codegen
+
+# Recursive "preinstall" directory target.
+esp-idf/test_utils/preinstall:
+.PHONY : esp-idf/test_utils/preinstall
+
+# Recursive "clean" directory target.
+esp-idf/test_utils/clean: esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/clean
+.PHONY : esp-idf/test_utils/clean
+
+#=============================================================================
 # Directory level rules for directory esp-idf/touch_element
 
 # Recursive "all" directory target.
@@ -2839,6 +2912,25 @@ esp-idf/touch_element/preinstall:
 # Recursive "clean" directory target.
 esp-idf/touch_element/clean: esp-idf/touch_element/CMakeFiles/__idf_touch_element.dir/clean
 .PHONY : esp-idf/touch_element/clean
+
+#=============================================================================
+# Directory level rules for directory esp-idf/tpic6b595
+
+# Recursive "all" directory target.
+esp-idf/tpic6b595/all:
+.PHONY : esp-idf/tpic6b595/all
+
+# Recursive "codegen" directory target.
+esp-idf/tpic6b595/codegen:
+.PHONY : esp-idf/tpic6b595/codegen
+
+# Recursive "preinstall" directory target.
+esp-idf/tpic6b595/preinstall:
+.PHONY : esp-idf/tpic6b595/preinstall
+
+# Recursive "clean" directory target.
+esp-idf/tpic6b595/clean:
+.PHONY : esp-idf/tpic6b595/clean
 
 #=============================================================================
 # Directory level rules for directory esp-idf/ulp
@@ -3434,11 +3526,12 @@ CMakeFiles/yarobot_control_unit.elf.dir/all: esp-idf/spiffs/CMakeFiles/__idf_spi
 CMakeFiles/yarobot_control_unit.elf.dir/all: esp-idf/touch_element/CMakeFiles/__idf_touch_element.dir/all
 CMakeFiles/yarobot_control_unit.elf.dir/all: esp-idf/usb/CMakeFiles/__idf_usb.dir/all
 CMakeFiles/yarobot_control_unit.elf.dir/all: esp-idf/wifi_provisioning/CMakeFiles/__idf_wifi_provisioning.dir/all
+CMakeFiles/yarobot_control_unit.elf.dir/all: esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/all
+CMakeFiles/yarobot_control_unit.elf.dir/all: esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/all
 CMakeFiles/yarobot_control_unit.elf.dir/all: esp-idf/control/CMakeFiles/__idf_control.dir/all
 CMakeFiles/yarobot_control_unit.elf.dir/all: esp-idf/espressif__i2c_bus/CMakeFiles/__idf_espressif__i2c_bus.dir/all
 CMakeFiles/yarobot_control_unit.elf.dir/all: esp-idf/espressif__mcp23017/CMakeFiles/__idf_espressif__mcp23017.dir/all
 CMakeFiles/yarobot_control_unit.elf.dir/all: esp-idf/main/CMakeFiles/__idf_main.dir/all
-CMakeFiles/yarobot_control_unit.elf.dir/all: esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/yarobot_control_unit.elf.dir/build.make CMakeFiles/yarobot_control_unit.elf.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/yarobot_control_unit.elf.dir/build.make CMakeFiles/yarobot_control_unit.elf.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=100 "Built target yarobot_control_unit.elf"
@@ -5067,11 +5160,12 @@ esp-idf/esp_system/CMakeFiles/__ldgen_output_sections.ld.dir/all: esp-idf/spiffs
 esp-idf/esp_system/CMakeFiles/__ldgen_output_sections.ld.dir/all: esp-idf/touch_element/CMakeFiles/__idf_touch_element.dir/all
 esp-idf/esp_system/CMakeFiles/__ldgen_output_sections.ld.dir/all: esp-idf/usb/CMakeFiles/__idf_usb.dir/all
 esp-idf/esp_system/CMakeFiles/__ldgen_output_sections.ld.dir/all: esp-idf/wifi_provisioning/CMakeFiles/__idf_wifi_provisioning.dir/all
+esp-idf/esp_system/CMakeFiles/__ldgen_output_sections.ld.dir/all: esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/all
+esp-idf/esp_system/CMakeFiles/__ldgen_output_sections.ld.dir/all: esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/all
 esp-idf/esp_system/CMakeFiles/__ldgen_output_sections.ld.dir/all: esp-idf/control/CMakeFiles/__idf_control.dir/all
 esp-idf/esp_system/CMakeFiles/__ldgen_output_sections.ld.dir/all: esp-idf/espressif__i2c_bus/CMakeFiles/__idf_espressif__i2c_bus.dir/all
 esp-idf/esp_system/CMakeFiles/__ldgen_output_sections.ld.dir/all: esp-idf/espressif__mcp23017/CMakeFiles/__idf_espressif__mcp23017.dir/all
 esp-idf/esp_system/CMakeFiles/__ldgen_output_sections.ld.dir/all: esp-idf/main/CMakeFiles/__idf_main.dir/all
-esp-idf/esp_system/CMakeFiles/__ldgen_output_sections.ld.dir/all: esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/all
 	$(MAKE) $(MAKESILENT) -f esp-idf/esp_system/CMakeFiles/__ldgen_output_sections.ld.dir/build.make esp-idf/esp_system/CMakeFiles/__ldgen_output_sections.ld.dir/depend
 	$(MAKE) $(MAKESILENT) -f esp-idf/esp_system/CMakeFiles/__ldgen_output_sections.ld.dir/build.make esp-idf/esp_system/CMakeFiles/__ldgen_output_sections.ld.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num= "Built target __ldgen_output_sections.ld"
@@ -5114,11 +5208,12 @@ esp-idf/esp_system/CMakeFiles/__ldgen_output_sections.ld.dir/codegen: esp-idf/sp
 esp-idf/esp_system/CMakeFiles/__ldgen_output_sections.ld.dir/codegen: esp-idf/touch_element/CMakeFiles/__idf_touch_element.dir/all
 esp-idf/esp_system/CMakeFiles/__ldgen_output_sections.ld.dir/codegen: esp-idf/usb/CMakeFiles/__idf_usb.dir/all
 esp-idf/esp_system/CMakeFiles/__ldgen_output_sections.ld.dir/codegen: esp-idf/wifi_provisioning/CMakeFiles/__idf_wifi_provisioning.dir/all
+esp-idf/esp_system/CMakeFiles/__ldgen_output_sections.ld.dir/codegen: esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/all
+esp-idf/esp_system/CMakeFiles/__ldgen_output_sections.ld.dir/codegen: esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/all
 esp-idf/esp_system/CMakeFiles/__ldgen_output_sections.ld.dir/codegen: esp-idf/control/CMakeFiles/__idf_control.dir/all
 esp-idf/esp_system/CMakeFiles/__ldgen_output_sections.ld.dir/codegen: esp-idf/espressif__i2c_bus/CMakeFiles/__idf_espressif__i2c_bus.dir/all
 esp-idf/esp_system/CMakeFiles/__ldgen_output_sections.ld.dir/codegen: esp-idf/espressif__mcp23017/CMakeFiles/__idf_espressif__mcp23017.dir/all
 esp-idf/esp_system/CMakeFiles/__ldgen_output_sections.ld.dir/codegen: esp-idf/main/CMakeFiles/__idf_main.dir/all
-esp-idf/esp_system/CMakeFiles/__ldgen_output_sections.ld.dir/codegen: esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/all
 	$(MAKE) $(MAKESILENT) -f esp-idf/esp_system/CMakeFiles/__ldgen_output_sections.ld.dir/build.make esp-idf/esp_system/CMakeFiles/__ldgen_output_sections.ld.dir/codegen
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num= "Finished codegen for target __ldgen_output_sections.ld"
 .PHONY : esp-idf/esp_system/CMakeFiles/__ldgen_output_sections.ld.dir/codegen
@@ -5295,7 +5390,7 @@ esp-idf/heap/CMakeFiles/__idf_heap.dir/clean:
 esp-idf/soc/CMakeFiles/__idf_soc.dir/all: esp-idf/esp_security/CMakeFiles/__idf_esp_security.dir/all
 	$(MAKE) $(MAKESILENT) -f esp-idf/soc/CMakeFiles/__idf_soc.dir/build.make esp-idf/soc/CMakeFiles/__idf_soc.dir/depend
 	$(MAKE) $(MAKESILENT) -f esp-idf/soc/CMakeFiles/__idf_soc.dir/build.make esp-idf/soc/CMakeFiles/__idf_soc.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=66,67 "Built target __idf_soc"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=65,66,67 "Built target __idf_soc"
 .PHONY : esp-idf/soc/CMakeFiles/__idf_soc.dir/all
 
 # Build rule for subdir invocation for target.
@@ -5312,7 +5407,7 @@ __idf_soc: esp-idf/soc/CMakeFiles/__idf_soc.dir/rule
 # codegen rule for target.
 esp-idf/soc/CMakeFiles/__idf_soc.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f esp-idf/soc/CMakeFiles/__idf_soc.dir/build.make esp-idf/soc/CMakeFiles/__idf_soc.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=66,67 "Finished codegen for target __idf_soc"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=65,66,67 "Finished codegen for target __idf_soc"
 .PHONY : esp-idf/soc/CMakeFiles/__idf_soc.dir/codegen
 
 # clean rule for target.
@@ -5332,7 +5427,7 @@ esp-idf/esp_security/CMakeFiles/__idf_esp_security.dir/all: esp-idf/esp_hw_suppo
 
 # Build rule for subdir invocation for target.
 esp-idf/esp_security/CMakeFiles/__idf_esp_security.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 47
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 46
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 esp-idf/esp_security/CMakeFiles/__idf_esp_security.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 0
 .PHONY : esp-idf/esp_security/CMakeFiles/__idf_esp_security.dir/rule
@@ -5364,7 +5459,7 @@ esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/all: esp-idf/freertos
 
 # Build rule for subdir invocation for target.
 esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 47
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 46
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 0
 .PHONY : esp-idf/esp_hw_support/CMakeFiles/__idf_esp_hw_support.dir/rule
@@ -5396,7 +5491,7 @@ esp-idf/freertos/CMakeFiles/__idf_freertos.dir/all: esp-idf/newlib/CMakeFiles/__
 
 # Build rule for subdir invocation for target.
 esp-idf/freertos/CMakeFiles/__idf_freertos.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 42
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 41
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 esp-idf/freertos/CMakeFiles/__idf_freertos.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 0
 .PHONY : esp-idf/freertos/CMakeFiles/__idf_freertos.dir/rule
@@ -5428,7 +5523,7 @@ esp-idf/newlib/CMakeFiles/__idf_newlib.dir/all: esp-idf/pthread/CMakeFiles/__idf
 
 # Build rule for subdir invocation for target.
 esp-idf/newlib/CMakeFiles/__idf_newlib.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 40
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 39
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 esp-idf/newlib/CMakeFiles/__idf_newlib.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 0
 .PHONY : esp-idf/newlib/CMakeFiles/__idf_newlib.dir/rule
@@ -5460,7 +5555,7 @@ esp-idf/pthread/CMakeFiles/__idf_pthread.dir/all: esp-idf/cxx/CMakeFiles/__idf_c
 
 # Build rule for subdir invocation for target.
 esp-idf/pthread/CMakeFiles/__idf_pthread.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 38
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 37
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 esp-idf/pthread/CMakeFiles/__idf_pthread.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 0
 .PHONY : esp-idf/pthread/CMakeFiles/__idf_pthread.dir/rule
@@ -5492,7 +5587,7 @@ esp-idf/cxx/CMakeFiles/__idf_cxx.dir/all: esp-idf/esp_timer/CMakeFiles/__idf_esp
 
 # Build rule for subdir invocation for target.
 esp-idf/cxx/CMakeFiles/__idf_cxx.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 38
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 37
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 esp-idf/cxx/CMakeFiles/__idf_cxx.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 0
 .PHONY : esp-idf/cxx/CMakeFiles/__idf_cxx.dir/rule
@@ -5524,7 +5619,7 @@ esp-idf/esp_timer/CMakeFiles/__idf_esp_timer.dir/all: esp-idf/esp_driver_gptimer
 
 # Build rule for subdir invocation for target.
 esp-idf/esp_timer/CMakeFiles/__idf_esp_timer.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 37
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 36
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 esp-idf/esp_timer/CMakeFiles/__idf_esp_timer.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 0
 .PHONY : esp-idf/esp_timer/CMakeFiles/__idf_esp_timer.dir/rule
@@ -5556,7 +5651,7 @@ esp-idf/esp_driver_gptimer/CMakeFiles/__idf_esp_driver_gptimer.dir/all: esp-idf/
 
 # Build rule for subdir invocation for target.
 esp-idf/esp_driver_gptimer/CMakeFiles/__idf_esp_driver_gptimer.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 36
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 35
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 esp-idf/esp_driver_gptimer/CMakeFiles/__idf_esp_driver_gptimer.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 0
 .PHONY : esp-idf/esp_driver_gptimer/CMakeFiles/__idf_esp_driver_gptimer.dir/rule
@@ -5588,7 +5683,7 @@ esp-idf/esp_ringbuf/CMakeFiles/__idf_esp_ringbuf.dir/all: esp-idf/esp_driver_uar
 
 # Build rule for subdir invocation for target.
 esp-idf/esp_ringbuf/CMakeFiles/__idf_esp_ringbuf.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 35
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 34
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 esp-idf/esp_ringbuf/CMakeFiles/__idf_esp_ringbuf.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 0
 .PHONY : esp-idf/esp_ringbuf/CMakeFiles/__idf_esp_ringbuf.dir/rule
@@ -5620,7 +5715,7 @@ esp-idf/esp_driver_uart/CMakeFiles/__idf_esp_driver_uart.dir/all: esp-idf/esp_ev
 
 # Build rule for subdir invocation for target.
 esp-idf/esp_driver_uart/CMakeFiles/__idf_esp_driver_uart.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 34
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 33
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 esp-idf/esp_driver_uart/CMakeFiles/__idf_esp_driver_uart.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 0
 .PHONY : esp-idf/esp_driver_uart/CMakeFiles/__idf_esp_driver_uart.dir/rule
@@ -5684,7 +5779,7 @@ esp-idf/esp_event/CMakeFiles/__idf_esp_event.dir/all: esp-idf/nvs_flash/CMakeFil
 
 # Build rule for subdir invocation for target.
 esp-idf/esp_event/CMakeFiles/__idf_esp_event.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 34
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 33
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 esp-idf/esp_event/CMakeFiles/__idf_esp_event.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 0
 .PHONY : esp-idf/esp_event/CMakeFiles/__idf_esp_event.dir/rule
@@ -5716,7 +5811,7 @@ esp-idf/nvs_flash/CMakeFiles/__idf_nvs_flash.dir/all: esp-idf/esp_driver_pcnt/CM
 
 # Build rule for subdir invocation for target.
 esp-idf/nvs_flash/CMakeFiles/__idf_nvs_flash.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 34
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 33
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 esp-idf/nvs_flash/CMakeFiles/__idf_nvs_flash.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 0
 .PHONY : esp-idf/nvs_flash/CMakeFiles/__idf_nvs_flash.dir/rule
@@ -5748,7 +5843,7 @@ esp-idf/esp_driver_pcnt/CMakeFiles/__idf_esp_driver_pcnt.dir/all: esp-idf/esp_dr
 
 # Build rule for subdir invocation for target.
 esp-idf/esp_driver_pcnt/CMakeFiles/__idf_esp_driver_pcnt.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 32
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 31
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 esp-idf/esp_driver_pcnt/CMakeFiles/__idf_esp_driver_pcnt.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 0
 .PHONY : esp-idf/esp_driver_pcnt/CMakeFiles/__idf_esp_driver_pcnt.dir/rule
@@ -5780,7 +5875,7 @@ esp-idf/esp_driver_spi/CMakeFiles/__idf_esp_driver_spi.dir/all: esp-idf/esp_driv
 
 # Build rule for subdir invocation for target.
 esp-idf/esp_driver_spi/CMakeFiles/__idf_esp_driver_spi.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 32
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 31
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 esp-idf/esp_driver_spi/CMakeFiles/__idf_esp_driver_spi.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 0
 .PHONY : esp-idf/esp_driver_spi/CMakeFiles/__idf_esp_driver_spi.dir/rule
@@ -5812,7 +5907,7 @@ esp-idf/esp_driver_mcpwm/CMakeFiles/__idf_esp_driver_mcpwm.dir/all: esp-idf/esp_
 
 # Build rule for subdir invocation for target.
 esp-idf/esp_driver_mcpwm/CMakeFiles/__idf_esp_driver_mcpwm.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 31
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 30
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 esp-idf/esp_driver_mcpwm/CMakeFiles/__idf_esp_driver_mcpwm.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 0
 .PHONY : esp-idf/esp_driver_mcpwm/CMakeFiles/__idf_esp_driver_mcpwm.dir/rule
@@ -5844,7 +5939,7 @@ esp-idf/esp_driver_i2s/CMakeFiles/__idf_esp_driver_i2s.dir/all: esp-idf/sdmmc/CM
 
 # Build rule for subdir invocation for target.
 esp-idf/esp_driver_i2s/CMakeFiles/__idf_esp_driver_i2s.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 30
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 29
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 esp-idf/esp_driver_i2s/CMakeFiles/__idf_esp_driver_i2s.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 0
 .PHONY : esp-idf/esp_driver_i2s/CMakeFiles/__idf_esp_driver_i2s.dir/rule
@@ -5871,12 +5966,12 @@ esp-idf/esp_driver_i2s/CMakeFiles/__idf_esp_driver_i2s.dir/clean:
 esp-idf/sdmmc/CMakeFiles/__idf_sdmmc.dir/all: esp-idf/esp_driver_sdmmc/CMakeFiles/__idf_esp_driver_sdmmc.dir/all
 	$(MAKE) $(MAKESILENT) -f esp-idf/sdmmc/CMakeFiles/__idf_sdmmc.dir/build.make esp-idf/sdmmc/CMakeFiles/__idf_sdmmc.dir/depend
 	$(MAKE) $(MAKESILENT) -f esp-idf/sdmmc/CMakeFiles/__idf_sdmmc.dir/build.make esp-idf/sdmmc/CMakeFiles/__idf_sdmmc.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=65 "Built target __idf_sdmmc"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num= "Built target __idf_sdmmc"
 .PHONY : esp-idf/sdmmc/CMakeFiles/__idf_sdmmc.dir/all
 
 # Build rule for subdir invocation for target.
 esp-idf/sdmmc/CMakeFiles/__idf_sdmmc.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 29
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 28
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 esp-idf/sdmmc/CMakeFiles/__idf_sdmmc.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 0
 .PHONY : esp-idf/sdmmc/CMakeFiles/__idf_sdmmc.dir/rule
@@ -5888,7 +5983,7 @@ __idf_sdmmc: esp-idf/sdmmc/CMakeFiles/__idf_sdmmc.dir/rule
 # codegen rule for target.
 esp-idf/sdmmc/CMakeFiles/__idf_sdmmc.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f esp-idf/sdmmc/CMakeFiles/__idf_sdmmc.dir/build.make esp-idf/sdmmc/CMakeFiles/__idf_sdmmc.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=65 "Finished codegen for target __idf_sdmmc"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num= "Finished codegen for target __idf_sdmmc"
 .PHONY : esp-idf/sdmmc/CMakeFiles/__idf_sdmmc.dir/codegen
 
 # clean rule for target.
@@ -6994,12 +7089,12 @@ esp-idf/esp_lcd/CMakeFiles/__idf_esp_lcd.dir/clean:
 esp-idf/protobuf-c/CMakeFiles/__idf_protobuf-c.dir/all: esp-idf/xtensa/CMakeFiles/__idf_xtensa.dir/all
 	$(MAKE) $(MAKESILENT) -f esp-idf/protobuf-c/CMakeFiles/__idf_protobuf-c.dir/build.make esp-idf/protobuf-c/CMakeFiles/__idf_protobuf-c.dir/depend
 	$(MAKE) $(MAKESILENT) -f esp-idf/protobuf-c/CMakeFiles/__idf_protobuf-c.dir/build.make esp-idf/protobuf-c/CMakeFiles/__idf_protobuf-c.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=62 "Built target __idf_protobuf-c"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num= "Built target __idf_protobuf-c"
 .PHONY : esp-idf/protobuf-c/CMakeFiles/__idf_protobuf-c.dir/all
 
 # Build rule for subdir invocation for target.
 esp-idf/protobuf-c/CMakeFiles/__idf_protobuf-c.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 85
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 84
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 esp-idf/protobuf-c/CMakeFiles/__idf_protobuf-c.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 0
 .PHONY : esp-idf/protobuf-c/CMakeFiles/__idf_protobuf-c.dir/rule
@@ -7011,7 +7106,7 @@ __idf_protobuf-c: esp-idf/protobuf-c/CMakeFiles/__idf_protobuf-c.dir/rule
 # codegen rule for target.
 esp-idf/protobuf-c/CMakeFiles/__idf_protobuf-c.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f esp-idf/protobuf-c/CMakeFiles/__idf_protobuf-c.dir/build.make esp-idf/protobuf-c/CMakeFiles/__idf_protobuf-c.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=62 "Finished codegen for target __idf_protobuf-c"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num= "Finished codegen for target __idf_protobuf-c"
 .PHONY : esp-idf/protobuf-c/CMakeFiles/__idf_protobuf-c.dir/codegen
 
 # clean rule for target.
@@ -7028,7 +7123,7 @@ esp-idf/protocomm/CMakeFiles/__idf_protocomm.dir/all: esp-idf/console/CMakeFiles
 esp-idf/protocomm/CMakeFiles/__idf_protocomm.dir/all: esp-idf/protobuf-c/CMakeFiles/__idf_protobuf-c.dir/all
 	$(MAKE) $(MAKESILENT) -f esp-idf/protocomm/CMakeFiles/__idf_protocomm.dir/build.make esp-idf/protocomm/CMakeFiles/__idf_protocomm.dir/depend
 	$(MAKE) $(MAKESILENT) -f esp-idf/protocomm/CMakeFiles/__idf_protocomm.dir/build.make esp-idf/protocomm/CMakeFiles/__idf_protocomm.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=63 "Built target __idf_protocomm"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=62,63 "Built target __idf_protocomm"
 .PHONY : esp-idf/protocomm/CMakeFiles/__idf_protocomm.dir/all
 
 # Build rule for subdir invocation for target.
@@ -7045,7 +7140,7 @@ __idf_protocomm: esp-idf/protocomm/CMakeFiles/__idf_protocomm.dir/rule
 # codegen rule for target.
 esp-idf/protocomm/CMakeFiles/__idf_protocomm.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f esp-idf/protocomm/CMakeFiles/__idf_protocomm.dir/build.make esp-idf/protocomm/CMakeFiles/__idf_protocomm.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=63 "Finished codegen for target __idf_protocomm"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=62,63 "Finished codegen for target __idf_protocomm"
 .PHONY : esp-idf/protocomm/CMakeFiles/__idf_protocomm.dir/codegen
 
 # clean rule for target.
@@ -7385,12 +7480,12 @@ esp-idf/spiffs/CMakeFiles/__idf_spiffs.dir/clean:
 esp-idf/touch_element/CMakeFiles/__idf_touch_element.dir/all: esp-idf/xtensa/CMakeFiles/__idf_xtensa.dir/all
 	$(MAKE) $(MAKESILENT) -f esp-idf/touch_element/CMakeFiles/__idf_touch_element.dir/build.make esp-idf/touch_element/CMakeFiles/__idf_touch_element.dir/depend
 	$(MAKE) $(MAKESILENT) -f esp-idf/touch_element/CMakeFiles/__idf_touch_element.dir/build.make esp-idf/touch_element/CMakeFiles/__idf_touch_element.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=71 "Built target __idf_touch_element"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num= "Built target __idf_touch_element"
 .PHONY : esp-idf/touch_element/CMakeFiles/__idf_touch_element.dir/all
 
 # Build rule for subdir invocation for target.
 esp-idf/touch_element/CMakeFiles/__idf_touch_element.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 85
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 84
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 esp-idf/touch_element/CMakeFiles/__idf_touch_element.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 0
 .PHONY : esp-idf/touch_element/CMakeFiles/__idf_touch_element.dir/rule
@@ -7402,7 +7497,7 @@ __idf_touch_element: esp-idf/touch_element/CMakeFiles/__idf_touch_element.dir/ru
 # codegen rule for target.
 esp-idf/touch_element/CMakeFiles/__idf_touch_element.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f esp-idf/touch_element/CMakeFiles/__idf_touch_element.dir/build.make esp-idf/touch_element/CMakeFiles/__idf_touch_element.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=71 "Finished codegen for target __idf_touch_element"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num= "Finished codegen for target __idf_touch_element"
 .PHONY : esp-idf/touch_element/CMakeFiles/__idf_touch_element.dir/codegen
 
 # clean rule for target.
@@ -7479,10 +7574,77 @@ esp-idf/wifi_provisioning/CMakeFiles/__idf_wifi_provisioning.dir/clean:
 .PHONY : esp-idf/wifi_provisioning/CMakeFiles/__idf_wifi_provisioning.dir/clean
 
 #=============================================================================
+# Target rules for target esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir
+
+# All Build rule for target.
+esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/all: esp-idf/xtensa/CMakeFiles/__idf_xtensa.dir/all
+	$(MAKE) $(MAKESILENT) -f esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/build.make esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/depend
+	$(MAKE) $(MAKESILENT) -f esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/build.make esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num= "Built target __idf_yarobot_hal"
+.PHONY : esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/all
+
+# Build rule for subdir invocation for target.
+esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 84
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 0
+.PHONY : esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/rule
+
+# Convenience name for target.
+__idf_yarobot_hal: esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/rule
+.PHONY : __idf_yarobot_hal
+
+# codegen rule for target.
+esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/build.make esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/codegen
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num= "Finished codegen for target __idf_yarobot_hal"
+.PHONY : esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/codegen
+
+# clean rule for target.
+esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/clean:
+	$(MAKE) $(MAKESILENT) -f esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/build.make esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/clean
+.PHONY : esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/clean
+
+#=============================================================================
+# Target rules for target esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir
+
+# All Build rule for target.
+esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/all: esp-idf/xtensa/CMakeFiles/__idf_xtensa.dir/all
+esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/all: esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/all
+	$(MAKE) $(MAKESILENT) -f esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/build.make esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/depend
+	$(MAKE) $(MAKESILENT) -f esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/build.make esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=71 "Built target __idf_test_utils"
+.PHONY : esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/all
+
+# Build rule for subdir invocation for target.
+esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 85
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 0
+.PHONY : esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/rule
+
+# Convenience name for target.
+__idf_test_utils: esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/rule
+.PHONY : __idf_test_utils
+
+# codegen rule for target.
+esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/build.make esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/codegen
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=71 "Finished codegen for target __idf_test_utils"
+.PHONY : esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/codegen
+
+# clean rule for target.
+esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/clean:
+	$(MAKE) $(MAKESILENT) -f esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/build.make esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/clean
+.PHONY : esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/clean
+
+#=============================================================================
 # Target rules for target esp-idf/control/CMakeFiles/__idf_control.dir
 
 # All Build rule for target.
 esp-idf/control/CMakeFiles/__idf_control.dir/all: esp-idf/xtensa/CMakeFiles/__idf_xtensa.dir/all
+esp-idf/control/CMakeFiles/__idf_control.dir/all: esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/all
+esp-idf/control/CMakeFiles/__idf_control.dir/all: esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/all
 	$(MAKE) $(MAKESILENT) -f esp-idf/control/CMakeFiles/__idf_control.dir/build.make esp-idf/control/CMakeFiles/__idf_control.dir/depend
 	$(MAKE) $(MAKESILENT) -f esp-idf/control/CMakeFiles/__idf_control.dir/build.make esp-idf/control/CMakeFiles/__idf_control.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num= "Built target __idf_control"
@@ -7490,7 +7652,7 @@ esp-idf/control/CMakeFiles/__idf_control.dir/all: esp-idf/xtensa/CMakeFiles/__id
 
 # Build rule for subdir invocation for target.
 esp-idf/control/CMakeFiles/__idf_control.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 84
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 85
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 esp-idf/control/CMakeFiles/__idf_control.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 0
 .PHONY : esp-idf/control/CMakeFiles/__idf_control.dir/rule
@@ -7580,6 +7742,8 @@ esp-idf/espressif__mcp23017/CMakeFiles/__idf_espressif__mcp23017.dir/clean:
 
 # All Build rule for target.
 esp-idf/main/CMakeFiles/__idf_main.dir/all: esp-idf/xtensa/CMakeFiles/__idf_xtensa.dir/all
+esp-idf/main/CMakeFiles/__idf_main.dir/all: esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/all
+esp-idf/main/CMakeFiles/__idf_main.dir/all: esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/all
 esp-idf/main/CMakeFiles/__idf_main.dir/all: esp-idf/control/CMakeFiles/__idf_control.dir/all
 esp-idf/main/CMakeFiles/__idf_main.dir/all: esp-idf/espressif__i2c_bus/CMakeFiles/__idf_espressif__i2c_bus.dir/all
 esp-idf/main/CMakeFiles/__idf_main.dir/all: esp-idf/espressif__mcp23017/CMakeFiles/__idf_espressif__mcp23017.dir/all
@@ -7590,7 +7754,7 @@ esp-idf/main/CMakeFiles/__idf_main.dir/all: esp-idf/espressif__mcp23017/CMakeFil
 
 # Build rule for subdir invocation for target.
 esp-idf/main/CMakeFiles/__idf_main.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 84
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 85
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 esp-idf/main/CMakeFiles/__idf_main.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 0
 .PHONY : esp-idf/main/CMakeFiles/__idf_main.dir/rule
@@ -7609,38 +7773,6 @@ esp-idf/main/CMakeFiles/__idf_main.dir/codegen:
 esp-idf/main/CMakeFiles/__idf_main.dir/clean:
 	$(MAKE) $(MAKESILENT) -f esp-idf/main/CMakeFiles/__idf_main.dir/build.make esp-idf/main/CMakeFiles/__idf_main.dir/clean
 .PHONY : esp-idf/main/CMakeFiles/__idf_main.dir/clean
-
-#=============================================================================
-# Target rules for target esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir
-
-# All Build rule for target.
-esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/all: esp-idf/xtensa/CMakeFiles/__idf_xtensa.dir/all
-	$(MAKE) $(MAKESILENT) -f esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/build.make esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/depend
-	$(MAKE) $(MAKESILENT) -f esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/build.make esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num= "Built target __idf_yarobot_hal"
-.PHONY : esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/all
-
-# Build rule for subdir invocation for target.
-esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 84
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles 0
-.PHONY : esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/rule
-
-# Convenience name for target.
-__idf_yarobot_hal: esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/rule
-.PHONY : __idf_yarobot_hal
-
-# codegen rule for target.
-esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/codegen:
-	$(MAKE) $(MAKESILENT) -f esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/build.make esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num= "Finished codegen for target __idf_yarobot_hal"
-.PHONY : esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/codegen
-
-# clean rule for target.
-esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/clean:
-	$(MAKE) $(MAKESILENT) -f esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/build.make esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/clean
-.PHONY : esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

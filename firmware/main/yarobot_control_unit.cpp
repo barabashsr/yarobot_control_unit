@@ -4,9 +4,219 @@
 #include "freertos/task.h"
 #include "config.h"
 #include "task_defs.h"
+#include "i2c_hal.h"
+#include "spi_hal.h"
+#include "gpio_hal.h"
+#include "config_gpio.h"
+#include "config_i2c.h"
+#include "config_oled.h"
 #include <stdio.h>
+#include <string.h>
 
 static const char* TAG = "main";
+
+/**
+ * @brief Initialize OLED display with SSD1306 commands
+ *
+ * Sends initialization sequence and displays "BOOT OK" message.
+ *
+ * @return esp_err_t ESP_OK on success
+ */
+static esp_err_t oled_init_and_display(void)
+{
+    // SSD1306 initialization sequence
+    static const uint8_t init_cmds[] = {
+        0x00,       // Command stream
+        0xAE,       // Display OFF
+        0xD5, 0x80, // Set display clock divide ratio
+        0xA8, 0x3F, // Set multiplex ratio (64-1)
+        0xD3, 0x00, // Set display offset
+        0x40,       // Set start line to 0
+        0x8D, 0x14, // Enable charge pump
+        0x20, 0x00, // Set memory addressing mode (horizontal)
+        0xA1,       // Set segment re-map (column 127 = SEG0)
+        0xC8,       // Set COM output scan direction (remapped)
+        0xDA, 0x12, // Set COM pins hardware configuration
+        0x81, 0xCF, // Set contrast
+        0xD9, 0xF1, // Set pre-charge period
+        0xDB, 0x40, // Set VCOMH deselect level
+        0xA4,       // Display from RAM
+        0xA6,       // Normal display (not inverted)
+        0xAF,       // Display ON
+    };
+
+    esp_err_t ret = i2c_hal_write(I2C_OLED_PORT, OLED_ADDRESS,
+                                   init_cmds, sizeof(init_cmds));
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "OLED init sequence failed: %s", esp_err_to_name(ret));
+        return ret;
+    }
+
+    // Set column and page address range for entire display
+    static const uint8_t addr_cmd[] = {0x00, 0x21, 0x00, 0x7F, 0x22, 0x00, 0x07};
+    ret = i2c_hal_write(I2C_OLED_PORT, OLED_ADDRESS, addr_cmd, sizeof(addr_cmd));
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "OLED address set failed");
+        return ret;
+    }
+
+    // Clear entire display RAM (128x64 / 8 = 1024 bytes)
+    // Send in chunks to avoid I2C buffer limits
+    uint8_t clear_buf[65];  // 1 control byte + 64 data bytes
+    clear_buf[0] = 0x40;    // Data stream
+    memset(&clear_buf[1], 0x00, 64);
+
+    for (int chunk = 0; chunk < 16; chunk++) {  // 16 chunks x 64 bytes = 1024 bytes
+        ret = i2c_hal_write(I2C_OLED_PORT, OLED_ADDRESS, clear_buf, sizeof(clear_buf));
+        if (ret != ESP_OK) {
+            ESP_LOGE(TAG, "OLED clear chunk %d failed", chunk);
+            return ret;
+        }
+    }
+
+    // Reset to top-left corner for text
+    ret = i2c_hal_write(I2C_OLED_PORT, OLED_ADDRESS, addr_cmd, sizeof(addr_cmd));
+    if (ret != ESP_OK) {
+        return ret;
+    }
+
+    // Display "BOOT OK" at top of screen using 6x8 font bitmap
+    static const uint8_t boot_ok_pattern[] = {
+        0x40,  // Data stream
+        0xFF, 0x89, 0x89, 0x76, 0x00,  // B
+        0x7E, 0x81, 0x81, 0x7E, 0x00,  // O
+        0x7E, 0x81, 0x81, 0x7E, 0x00,  // O
+        0x01, 0x01, 0xFF, 0x01, 0x01, 0x00,  // T
+        0x00, 0x00, 0x00,  // space
+        0x7E, 0x81, 0x81, 0x7E, 0x00,  // O
+        0xFF, 0x10, 0x28, 0xC6, 0x00,  // K
+    };
+
+    ret = i2c_hal_write(I2C_OLED_PORT, OLED_ADDRESS, boot_ok_pattern, sizeof(boot_ok_pattern));
+    if (ret != ESP_OK) {
+        ESP_LOGW(TAG, "OLED text write failed");
+        return ret;
+    }
+
+    ESP_LOGI(TAG, "OLED initialized with test pattern");
+    return ESP_OK;
+}
+
+/**
+ * @brief Verify MCP23017 devices on I2C0
+ *
+ * @return esp_err_t ESP_OK if both devices respond
+ */
+static esp_err_t verify_mcp23017(void)
+{
+    // Read IODIR register (0x00) from both MCP23017 devices
+    uint8_t reg = 0x00;
+    uint8_t data;
+
+    // Test MCP23017 #0 (0x20)
+    esp_err_t ret = i2c_hal_write_read(I2C_PORT, I2C_ADDR_MCP23017_0,
+                                        &reg, 1, &data, 1);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "MCP23017 #0 (0x%02X) read failed", I2C_ADDR_MCP23017_0);
+        return ret;
+    }
+    ESP_LOGI(TAG, "MCP23017 #0 (0x%02X) IODIR_A=0x%02X", I2C_ADDR_MCP23017_0, data);
+
+    // Test MCP23017 #1 (0x21)
+    ret = i2c_hal_write_read(I2C_PORT, I2C_ADDR_MCP23017_1,
+                              &reg, 1, &data, 1);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "MCP23017 #1 (0x%02X) read failed", I2C_ADDR_MCP23017_1);
+        return ret;
+    }
+    ESP_LOGI(TAG, "MCP23017 #1 (0x%02X) IODIR_A=0x%02X", I2C_ADDR_MCP23017_1, data);
+
+    return ESP_OK;
+}
+
+/**
+ * @brief Initialize all hardware and run verification
+ *
+ * @return true if all hardware initialized successfully
+ */
+static bool hardware_init_and_verify(void)
+{
+    bool all_ok = true;
+    esp_err_t ret;
+
+    ESP_LOGI(TAG, "========================================");
+    ESP_LOGI(TAG, "Hardware Initialization Starting");
+    ESP_LOGI(TAG, "========================================");
+
+    // Initialize GPIO first (needed for other peripherals)
+    ret = gpio_hal_init();
+    if (ret != ESP_OK) {
+        ESP_LOGW(TAG, "GPIO HAL init failed - continuing in degraded mode");
+        all_ok = false;
+    }
+
+    // Initialize I2C0 for MCP23017 expanders
+    ret = i2c_hal_init(I2C_PORT, GPIO_I2C_SDA, GPIO_I2C_SCL, I2C_FREQ_HZ);
+    if (ret != ESP_OK) {
+        ESP_LOGW(TAG, "I2C0 init failed - continuing in degraded mode");
+        all_ok = false;
+    } else {
+        // Verify MCP23017 devices
+        ret = verify_mcp23017();
+        if (ret != ESP_OK) {
+            ESP_LOGW(TAG, "MCP23017 verification failed");
+            all_ok = false;
+        }
+    }
+
+    // Initialize I2C1 for OLED display
+    ret = i2c_hal_init(I2C_OLED_PORT, GPIO_OLED_SDA, GPIO_OLED_SCL, I2C_OLED_FREQ_HZ);
+    if (ret != ESP_OK) {
+        ESP_LOGW(TAG, "I2C1 init failed - continuing in degraded mode");
+        all_ok = false;
+    } else {
+        // Initialize OLED and display boot message
+        ret = oled_init_and_display();
+        if (ret != ESP_OK) {
+            ESP_LOGW(TAG, "OLED init failed");
+            all_ok = false;
+        }
+    }
+
+    // Verify I2C bus isolation by re-checking I2C0 after I2C1 init
+    if (i2c_hal_is_initialized(I2C_PORT)) {
+        uint8_t found_addrs[8];
+        size_t count;
+        ret = i2c_hal_scan_bus(I2C_PORT, found_addrs, 8, &count);
+        if (ret == ESP_OK && count >= 2) {
+            ESP_LOGI(TAG, "I2C bus isolation verified: I2C0 still operational");
+        } else {
+            ESP_LOGW(TAG, "I2C bus isolation test failed");
+            all_ok = false;
+        }
+    }
+
+    // Initialize SPI for shift registers
+    ret = yarobot_spi_init(SPI2_HOST, GPIO_SR_MOSI, GPIO_SR_SCLK, GPIO_SR_CS);
+    if (ret != ESP_OK) {
+        ESP_LOGW(TAG, "SPI init failed - continuing in degraded mode");
+        all_ok = false;
+    } else {
+        // Write safe state to shift registers
+        spi_hal_sr_write(0x000000, 24);  // All zeros = safe state
+        ESP_LOGI(TAG, "Shift registers initialized with safe state");
+    }
+
+    ESP_LOGI(TAG, "========================================");
+    if (all_ok) {
+        ESP_LOGI(TAG, "Hardware Initialization: ALL PASSED");
+    } else {
+        ESP_LOGW(TAG, "Hardware Initialization: DEGRADED MODE");
+    }
+    ESP_LOGI(TAG, "========================================");
+
+    return all_ok;
+}
 
 extern "C" void app_main(void)
 {
@@ -28,6 +238,11 @@ extern "C" void app_main(void)
     ESP_LOGI(TAG, "Axes: %d (Servos:%d, Steppers:%d, Discrete:%d)",
              LIMIT_NUM_AXES, LIMIT_NUM_SERVOS, LIMIT_NUM_STEPPERS, LIMIT_NUM_DISCRETE);
     ESP_LOGI(TAG, "GPIO X_STEP: %d, I2C MCP0: 0x%02X", GPIO_X_STEP, I2C_ADDR_MCP23017_0);
+
+    // =========================================================================
+    // Hardware Initialization and Verification (Story 1.6)
+    // =========================================================================
+    bool hw_ok = hardware_init_and_verify();
 
     // =========================================================================
     // FreeRTOS Task Creation (Story 1.5)
@@ -59,8 +274,11 @@ extern "C" void app_main(void)
     xTaskCreatePinnedToCore(display_task, "display", STACK_DISPLAY_TASK,
                             NULL, 5, NULL, 1);
 
-    // Send boot notification (AC7)
-    printf("EVENT BOOT V1.0.0 AXES:8 STATE:IDLE\n");
+    // Send boot notification (AC7, AC14)
+    printf("EVENT BOOT V%s AXES:%d STATE:%s\n",
+           FIRMWARE_VERSION_STRING,
+           LIMIT_NUM_AXES,
+           hw_ok ? "IDLE" : "DEGRADED");
 
     ESP_LOGI(TAG, "YaRobot Control Unit - All tasks started");
 }

@@ -1,0 +1,273 @@
+<story-context id=".bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1</epicId>
+    <storyId>7</storyId>
+    <title>Build Verification &amp; Documentation</title>
+    <status>drafted</status>
+    <generatedAt>2025-12-04</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/1-7-build-verification-documentation.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>the build system verified with CI-ready scripts and comprehensive documentation</iWant>
+    <soThat>the foundation is solid before building on it and new developers can onboard quickly</soThat>
+    <tasks>
+      <task id="1" ac="1">
+        <title>Verify -Werror is enabled in build</title>
+        <subtasks>
+          <subtask>Check firmware/CMakeLists.txt for -Werror flag</subtask>
+          <subtask>If not present, add target_compile_options or project-wide setting</subtask>
+          <subtask>Run idf.py build and confirm zero warnings/errors</subtask>
+          <subtask>Document any warnings fixed during this process</subtask>
+        </subtasks>
+      </task>
+      <task id="2" ac="2">
+        <title>Analyze memory usage</title>
+        <subtasks>
+          <subtask>Run idf.py size and capture output</subtask>
+          <subtask>Verify Flash usage &lt; 50% of 16MB (&lt; 8MB)</subtask>
+          <subtask>Verify DRAM usage &lt; 50% of available (excluding PSRAM)</subtask>
+          <subtask>Document memory breakdown in README.md</subtask>
+          <subtask>If over budget, identify optimization opportunities</subtask>
+        </subtasks>
+      </task>
+      <task id="3" ac="3,4,5,6,7">
+        <title>Verify flash and boot sequence</title>
+        <subtasks>
+          <subtask>Run idf.py flash</subtask>
+          <subtask>Run idf.py monitor -p /dev/cu.usbmodem1201</subtask>
+          <subtask>Verify all 16 tasks show in boot log</subtask>
+          <subtask>Verify PSRAM detection: Found 8MB PSRAM device</subtask>
+          <subtask>Verify USB CDC works: send HELP command, receive response</subtask>
+          <subtask>Verify EVENT BOOT is output</subtask>
+        </subtasks>
+      </task>
+      <task id="4" ac="8,9,10,11">
+        <title>Create firmware/README.md</title>
+        <subtasks>
+          <subtask>Document prerequisites: ESP-IDF v5.4, Python 3.x, CMake 3.16+, get_idf alias</subtask>
+          <subtask>Document build commands: get_idf, idf.py set-target, build, flash, monitor</subtask>
+          <subtask>Document troubleshooting: serial port detection, common build errors, USB CDC issues</subtask>
+        </subtasks>
+      </task>
+      <task id="5" ac="11">
+        <title>Validate clean checkout scenario</title>
+        <subtasks>
+          <subtask>List exact steps for new developer</subtask>
+          <subtask>Verify idf.py build works on fresh checkout</subtask>
+          <subtask>Verify managed_components are fetched automatically</subtask>
+          <subtask>Document any first-time setup steps</subtask>
+        </subtasks>
+      </task>
+      <task id="6" ac="1-11">
+        <title>Final verification and documentation</title>
+        <subtasks>
+          <subtask>Run complete build-flash-test cycle</subtask>
+          <subtask>Capture idf.py size output for reference</subtask>
+          <subtask>Update README.md with any final findings</subtask>
+          <subtask>Mark story complete</subtask>
+        </subtasks>
+      </task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1">Given all previous Epic 1 stories are complete, when idf.py build runs, then it completes without errors or warnings (with -Werror enabled)</ac>
+    <ac id="2">Given the build completes, when idf.py size runs, then memory usage is within budget (&lt; 50% Flash, &lt; 50% RAM excluding PSRAM)</ac>
+    <ac id="3">Given the firmware is built, when idf.py flash runs, then the device is programmed successfully</ac>
+    <ac id="4">Given the device is programmed, when it boots, then all 16 tasks are created and visible in idf.py monitor output</ac>
+    <ac id="5">Given the device boots, when the serial output is examined, then PSRAM detection is confirmed in boot log</ac>
+    <ac id="6">Given the device boots, when USB CDC is checked, then it enumerates correctly and responds to commands</ac>
+    <ac id="7">Given the device boots, when EVENT BOOT is examined, then it is sent on startup (format: EVENT BOOT V1.0.0 AXES:8 STATE:IDLE)</ac>
+    <ac id="8">Given the firmware/README.md exists, when examined, then it documents prerequisites (ESP-IDF 5.4, Python, CMake)</ac>
+    <ac id="9">Given the firmware/README.md exists, when examined, then it documents build and flash commands</ac>
+    <ac id="10">Given the firmware/README.md exists, when examined, then it documents basic troubleshooting</ac>
+    <ac id="11">Given a clean checkout, when a new developer follows README.md instructions, then they can build and flash successfully</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-1.md</path>
+        <title>Epic 1 Technical Specification</title>
+        <section>Non-Functional Requirements</section>
+        <snippet>NFR-E1-1: Build time &lt; 60 seconds for incremental builds. NFR-E1-2: Boot to EVENT BOOT notification &lt; 1 second. AC1: idf.py build completes without errors or warnings (with -Werror). AC14: README.md documents build prerequisites and commands.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-1.md</path>
+        <title>Epic 1 Technical Specification</title>
+        <section>Acceptance Criteria</section>
+        <snippet>AC1-AC15 define authoritative acceptance criteria including build verification, flash/boot sequence, task creation, and documentation requirements.</snippet>
+      </doc>
+      <doc>
+        <path>docs/prd.md</path>
+        <title>Product Requirements Document</title>
+        <section>Non-Functional Requirements - Maintainability</section>
+        <snippet>NFR19: Firmware must be updatable via standard ESP32 tools. NFR24: Code must follow ESP-IDF coding standards for team consistency.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/1-6-hardware-peripheral-verification.md</path>
+        <title>Story 1-6 Dev Record</title>
+        <section>Completion Notes</section>
+        <snippet>ESP-IDF 5.4 I2C API, symbol collision fix (yarobot_spi_init), nested component discovery (EXTRA_COMPONENT_DIRS), format truncation fix, OLED boot display.</snippet>
+      </doc>
+    </docs>
+    <code>
+      <artifact>
+        <path>firmware/CMakeLists.txt</path>
+        <kind>build-config</kind>
+        <symbol>project(yarobot_control_unit)</symbol>
+        <lines>1-14</lines>
+        <reason>Main CMake config - verify -Werror flag configuration, EXTRA_COMPONENT_DIRS for nested components</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/main/yarobot_control_unit.cpp</path>
+        <kind>entry-point</kind>
+        <symbol>app_main()</symbol>
+        <lines>221-284</lines>
+        <reason>Boot sequence with task creation and EVENT BOOT output - verify 16 tasks and boot notification</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/sdkconfig.defaults</path>
+        <kind>build-config</kind>
+        <symbol>CONFIG_ESPTOOLPY_FLASHSIZE_16MB</symbol>
+        <lines>1-29</lines>
+        <reason>ESP32-S3 N16R8 configuration - verify flash size, PSRAM, FreeRTOS tick, USB console</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/config/include/config.h</path>
+        <kind>header</kind>
+        <symbol>FIRMWARE_VERSION_STRING</symbol>
+        <lines>1-116</lines>
+        <reason>Master config header with version info for EVENT BOOT message</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/control/tasks/task_stubs.c</path>
+        <kind>implementation</kind>
+        <symbol>cmd_executor_task</symbol>
+        <reason>Command executor with TEST/DIAG/HELP handlers for USB CDC verification</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/yarobot_hal/i2c_hal/i2c_hal.c</path>
+        <kind>driver</kind>
+        <symbol>i2c_hal_init</symbol>
+        <reason>I2C HAL for boot verification and MCP23017 detection</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/yarobot_hal/spi_hal/spi_hal.c</path>
+        <kind>driver</kind>
+        <symbol>yarobot_spi_init</symbol>
+        <reason>SPI HAL for shift register verification (renamed to avoid collision)</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/drivers/test_utils/test_utils.c</path>
+        <kind>test-utility</kind>
+        <symbol>test_all</symbol>
+        <reason>Hardware test functions for CMD_TEST verification</reason>
+      </artifact>
+    </code>
+    <dependencies>
+      <esp-idf>
+        <package>esp-idf v5.4</package>
+        <components>freertos, driver, esp_system, nvs_flash, console</components>
+      </esp-idf>
+      <managed-components>
+        <package version="^0.1.1">espressif/mcp23017</package>
+      </managed-components>
+      <tools>
+        <tool>CMake 3.16+</tool>
+        <tool>Python 3.x</tool>
+        <tool>esptool.py (bundled with ESP-IDF)</tool>
+      </tools>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint source="tech-spec-epic-1.md" type="MANDATORY">
+      -Werror Enforcement: All code must compile without warnings. Add idf_build_set_property(COMPILE_OPTIONS "-Werror" APPEND) to CMakeLists.txt.
+    </constraint>
+    <constraint source="tech-spec-epic-1.md" type="performance">
+      Build time &lt; 60 seconds for incremental builds.
+    </constraint>
+    <constraint source="tech-spec-epic-1.md" type="performance">
+      Boot to EVENT BOOT notification &lt; 1 second.
+    </constraint>
+    <constraint source="prd.md" type="maintainability">
+      Firmware must be updatable via standard ESP32 tools (no custom programmer).
+    </constraint>
+    <constraint source="tech-spec-epic-1.md" type="behavioral">
+      EVENT BOOT format: "EVENT BOOT V{version} AXES:8 STATE:IDLE" (or STATE:DEGRADED if hw_ok=false).
+    </constraint>
+    <constraint source="story-1-6" type="learned">
+      Symbol collision: Use yarobot_spi_init() instead of spi_hal_init() to avoid ESP-IDF internal collision.
+    </constraint>
+    <constraint source="story-1-6" type="learned">
+      Nested components require EXTRA_COMPONENT_DIRS in project CMakeLists.txt.
+    </constraint>
+    <constraint source="story-1-5" type="learned">
+      Serial port: /dev/cu.usbmodem1201 for USB_SERIAL_JTAG console output.
+    </constraint>
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>idf.py build</name>
+      <kind>CLI command</kind>
+      <signature>cd firmware &amp;&amp; idf.py build</signature>
+      <path>ESP-IDF build system</path>
+    </interface>
+    <interface>
+      <name>idf.py flash</name>
+      <kind>CLI command</kind>
+      <signature>idf.py flash [-p PORT]</signature>
+      <path>ESP-IDF flash tool</path>
+    </interface>
+    <interface>
+      <name>idf.py monitor</name>
+      <kind>CLI command</kind>
+      <signature>idf.py monitor -p /dev/cu.usbmodem1201</signature>
+      <path>ESP-IDF serial monitor</path>
+    </interface>
+    <interface>
+      <name>idf.py size</name>
+      <kind>CLI command</kind>
+      <signature>idf.py size</signature>
+      <path>ESP-IDF memory analyzer</path>
+    </interface>
+    <interface>
+      <name>EVENT BOOT</name>
+      <kind>event notification</kind>
+      <signature>EVENT BOOT V{version} AXES:{count} STATE:{state}</signature>
+      <path>firmware/main/yarobot_control_unit.cpp:278</path>
+    </interface>
+    <interface>
+      <name>CMD_TEST</name>
+      <kind>USB CDC command</kind>
+      <signature>TEST I2C | TEST SR | TEST GPIO | DIAG | HELP</signature>
+      <path>firmware/components/control/tasks/task_stubs.c</path>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+      Epic 1 uses hardware verification approach rather than unit tests. Build verification via idf.py build with -Werror. Flash verification via idf.py flash success. Boot verification via idf.py monitor output inspection for 16 tasks and EVENT BOOT notification. USB CDC verification via HELP/TEST command responses.
+    </standards>
+    <locations>
+      <location>firmware/components/drivers/test_utils/ - hardware test functions</location>
+      <location>firmware/main/yarobot_control_unit.cpp - boot verification logic</location>
+    </locations>
+    <ideas>
+      <idea ac="1">Run idf.py build with -Werror, verify zero warnings/errors in output</idea>
+      <idea ac="2">Run idf.py size, parse output for Flash &lt; 8MB (50% of 16MB) and DRAM &lt; 160KB (50% of 320KB)</idea>
+      <idea ac="3">Run idf.py flash, verify "Hard resetting via RTS pin" success message</idea>
+      <idea ac="4">Grep monitor output for all 16 task names: safety, usb_rx, usb_tx, cmd_exec, i2c_mon, idle_mon, motion_X-E, display</idea>
+      <idea ac="5">Grep boot log for "PSRAM detected:" or "esp_psram: Found 8MB"</idea>
+      <idea ac="6">Send "HELP" command via terminal, verify structured response with command list</idea>
+      <idea ac="7">Grep monitor output for "EVENT BOOT V1.0.0 AXES:8 STATE:IDLE"</idea>
+      <idea ac="8,9,10">Manually review README.md sections for prerequisites, commands, troubleshooting</idea>
+      <idea ac="11">Clone to fresh directory, follow README.md steps, verify build success</idea>
+    </ideas>
+  </tests>
+</story-context>

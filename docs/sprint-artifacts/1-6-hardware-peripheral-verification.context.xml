@@ -1,0 +1,345 @@
+<story-context id="bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1</epicId>
+    <storyId>6</storyId>
+    <title>Hardware Peripheral Verification</title>
+    <status>drafted</status>
+    <generatedAt>2025-12-04</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/1-6-hardware-peripheral-verification.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>to verify all hardware peripherals are communicating correctly</iWant>
+    <soThat>I can confidently build drivers knowing the hardware foundation works</soThat>
+    <tasks>
+      <task id="1" ac="1,2">Implement I2C0 HAL initialization and MCP23017 verification
+        <subtask>Update firmware/components/yarobot_hal/i2c_hal/i2c_hal.c to actually initialize I2C0</subtask>
+        <subtask>Use GPIO_I2C_SDA, GPIO_I2C_SCL, I2C_FREQ_HZ from config_i2c.h</subtask>
+        <subtask>Implement i2c_hal_scan_bus() function to detect devices</subtask>
+        <subtask>Verify devices respond at 0x20 and 0x21</subtask>
+        <subtask>Test read/write to MCP23017 IODIR registers (address 0x00, 0x01)</subtask>
+        <subtask>Log results with ESP_LOGI: I2C0: Found devices at 0x20, 0x21</subtask>
+      </task>
+      <task id="2" ac="3,4,5">Implement I2C1 HAL initialization and OLED verification
+        <subtask>Initialize I2C1 bus on GPIO_OLED_SDA, GPIO_OLED_SCL at I2C_OLED_FREQ_HZ</subtask>
+        <subtask>Scan I2C1 to verify device at OLED_ADDRESS (0x3C)</subtask>
+        <subtask>Send OLED initialization sequence (SSD1306 display on commands)</subtask>
+        <subtask>Display BOOT OK or test pattern on OLED</subtask>
+        <subtask>Verify I2C0 operations still work after I2C1 init (bus isolation test)</subtask>
+        <subtask>Log: I2C1: OLED at 0x3C, display initialized</subtask>
+      </task>
+      <task id="3" ac="6,7">Implement SPI HAL initialization and shift register test
+        <subtask>Update firmware/components/yarobot_hal/spi_hal/spi_hal.c to initialize SPI2</subtask>
+        <subtask>Configure GPIO_SR_MOSI, GPIO_SR_SCLK, GPIO_SR_CS as SPI pins</subtask>
+        <subtask>Configure GPIO_SR_OE as output (active LOW to enable outputs)</subtask>
+        <subtask>Implement spi_hal_sr_write() to shift 24 bits into register chain</subtask>
+        <subtask>Create test function that writes patterns: 0xAAAAAA, 0x555555, 0x000000, 0xFFFFFF</subtask>
+        <subtask>Toggle GPIO_SR_OE to verify output enable/disable</subtask>
+        <subtask>Log: SR: Pattern test PASS or SR: Pattern test FAIL</subtask>
+      </task>
+      <task id="4" ac="8,9">Implement GPIO direct pin verification
+        <subtask>Create test_gpio_pins() function in test_utils component</subtask>
+        <subtask>Toggle each STEP pin (GPIO_X_STEP through GPIO_D_STEP) briefly</subtask>
+        <subtask>Read GPIO_E_STOP and log state</subtask>
+        <subtask>Log: GPIO: ESTOP=1, X_STEP=0, Y_STEP=0, ...</subtask>
+      </task>
+      <task id="5" ac="10,11,12">Create test_utils driver component
+        <subtask>Create firmware/components/drivers/test_utils/CMakeLists.txt</subtask>
+        <subtask>Create firmware/components/drivers/test_utils/include/test_utils.h</subtask>
+        <subtask>Create firmware/components/drivers/test_utils/test_utils.c</subtask>
+        <subtask>Implement test_i2c() - scans both I2C buses, returns results string</subtask>
+        <subtask>Implement test_sr() - runs shift register pattern test, returns PASS/FAIL</subtask>
+        <subtask>Implement test_gpio() - reads all GPIO states, returns formatted string</subtask>
+      </task>
+      <task id="6" ac="10,11,12">Implement CMD_TEST command handler
+        <subtask>Update firmware/components/control/tasks/task_stubs.c cmd_executor_task</subtask>
+        <subtask>Parse input for TEST I2C, TEST SR, TEST GPIO, DIAG commands</subtask>
+        <subtask>Call corresponding test_utils functions</subtask>
+        <subtask>Send results via printf() (USB CDC output)</subtask>
+        <subtask>Response format: OK I2C0:0x20,0x21 I2C1:0x3C or ERROR I2C0:TIMEOUT</subtask>
+      </task>
+      <task id="7" ac="14">Integrate hardware verification into boot sequence
+        <subtask>In app_main(), call all HAL init functions before task creation</subtask>
+        <subtask>Log hardware verification results during boot</subtask>
+        <subtask>If any verification fails, log warning but continue boot (degraded mode)</subtask>
+        <subtask>Ensure EVENT BOOT message is sent after all verification completes</subtask>
+      </task>
+      <task id="8" ac="13,14">Build and verify
+        <subtask>Run get_idf to source ESP-IDF environment</subtask>
+        <subtask>Run cd firmware and idf.py build</subtask>
+        <subtask>Confirm no build errors</subtask>
+        <subtask>Flash with idf.py flash</subtask>
+        <subtask>Monitor with idf.py monitor -p /dev/cu.usbmodem1201</subtask>
+        <subtask>Send TEST I2C, TEST SR, TEST GPIO commands via terminal</subtask>
+        <subtask>Verify all tests pass and results are correct</subtask>
+      </task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1">Given I2C0 is initialized at I2C_FREQ_HZ on GPIO_I2C_SDA/GPIO_I2C_SCL, when I scan the bus, then devices respond at I2C_ADDR_MCP23017_0 (0x20) and I2C_ADDR_MCP23017_1 (0x21)</ac>
+    <ac id="2">Given I2C0 is initialized, when I read/write to MCP23017 registers, then operations succeed without timeout</ac>
+    <ac id="3">Given I2C1 is initialized at I2C_OLED_FREQ_HZ on GPIO_OLED_SDA/GPIO_OLED_SCL, when I scan the bus, then device responds at OLED_ADDRESS (0x3C)</ac>
+    <ac id="4">Given I2C1 is operational, when OLED displays test pattern or BOOT OK message, then display is visible</ac>
+    <ac id="5">Given I2C0 and I2C1 are both initialized, when I perform operations on I2C1, then I2C0 operations remain unaffected (bus isolation verified)</ac>
+    <ac id="6">Given SPI2 is initialized with GPIO_SR_MOSI, GPIO_SR_SCLK, GPIO_SR_CS, GPIO_SR_OE, when I write test patterns (0xAAAAAA, 0x555555, 0x000000, 0xFFFFFF), then patterns shift through all 24 bits correctly</ac>
+    <ac id="7">Given shift register OE pin is configured, when GPIO_SR_OE is HIGH, then outputs are disabled; when LOW, then outputs are enabled</ac>
+    <ac id="8">Given STEP output pins are configured (GPIO_X_STEP through GPIO_D_STEP), when I toggle each pin, then logic analyzer confirms signal at correct GPIO</ac>
+    <ac id="9">Given E-stop input (GPIO_E_STOP) is connected, when I read the pin, then correct logic level is returned</ac>
+    <ac id="10">Given USB CDC is functional, when user sends TEST I2C command, then system responds with I2C scan results</ac>
+    <ac id="11">Given USB CDC is functional, when user sends TEST SR command, then system responds with shift register test results (PASS/FAIL)</ac>
+    <ac id="12">Given USB CDC is functional, when user sends TEST GPIO command, then system responds with GPIO pin states</ac>
+    <ac id="13">Project builds successfully with cd firmware and idf.py build</ac>
+    <ac id="14">idf.py monitor shows all test results logged via ESP_LOGI</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/prd.md</path>
+        <title>Product Requirements Document</title>
+        <section>IoT/Embedded Specific Requirements</section>
+        <snippet>Hardware Architecture section defines ESP32-S3-DevKitC-1 N16R8, I2C expanders, shift registers, and SPI configuration.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>System Architecture</title>
+        <section>ADR-003, ADR-004</section>
+        <snippet>ADR-003: TPIC6B595N for 24V shift registers. ADR-004: Separate I2C Bus for OLED (I2C1) isolated from MCP23017 (I2C0).</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>System Architecture</title>
+        <section>MANDATORY: Header-Only Configuration Requirement</section>
+        <snippet>Every configurable value MUST be defined in a header file. No magic numbers in source code.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-1.md</path>
+        <title>Epic 1 Technical Specification</title>
+        <section>Detailed Design - HAL Interfaces</section>
+        <snippet>Defines i2c_hal, spi_hal, gpio_hal interfaces with stub implementations. Boot sequence and hardware verification workflow.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-1.md</path>
+        <title>Epic 1 Technical Specification</title>
+        <section>Implementation Learnings</section>
+        <snippet>From Story 1-5: Flash port auto-detect, monitor port /dev/cu.usbmodem1201, axis naming uses explicit array.</snippet>
+      </doc>
+      <doc>
+        <path>docs/epics.md</path>
+        <title>Epics and Stories</title>
+        <section>Story 1.6: Hardware Peripheral Verification</section>
+        <snippet>Story definition with acceptance criteria. Prerequisite for Stories 3.1, 4.1, 5.9 which depend on verified I2C and SPI.</snippet>
+      </doc>
+      <doc>
+        <path>docs/bmm-workflow-status.yaml</path>
+        <title>Workflow Status</title>
+        <section>mandatory_constraints</section>
+        <snippet>header_only_configuration: Every configurable value MUST be defined in header file. Applies to ALL epics and stories.</snippet>
+      </doc>
+    </docs>
+    <code>
+      <file>
+        <path>firmware/components/yarobot_hal/i2c_hal/include/i2c_hal.h</path>
+        <kind>header</kind>
+        <symbol>i2c_hal_init, i2c_hal_write, i2c_hal_read, i2c_hal_write_read</symbol>
+        <reason>HAL interface to implement - currently stubs returning ESP_OK</reason>
+      </file>
+      <file>
+        <path>firmware/components/yarobot_hal/i2c_hal/i2c_hal.c</path>
+        <kind>source</kind>
+        <symbol>i2c_hal_init, i2c_hal_write, i2c_hal_read, i2c_hal_write_read</symbol>
+        <reason>Primary implementation target - replace stubs with real I2C master driver code</reason>
+      </file>
+      <file>
+        <path>firmware/components/yarobot_hal/spi_hal/include/spi_hal.h</path>
+        <kind>header</kind>
+        <symbol>spi_hal_init, spi_hal_transfer</symbol>
+        <reason>HAL interface to implement - currently stubs</reason>
+      </file>
+      <file>
+        <path>firmware/components/yarobot_hal/spi_hal/spi_hal.c</path>
+        <kind>source</kind>
+        <symbol>spi_hal_init, spi_hal_transfer</symbol>
+        <reason>Primary implementation target - replace stubs with real SPI driver code</reason>
+      </file>
+      <file>
+        <path>firmware/components/yarobot_hal/gpio_hal/include/gpio_hal.h</path>
+        <kind>header</kind>
+        <symbol>gpio_hal_init, gpio_hal_set_direction, gpio_hal_set_level, gpio_hal_get_level</symbol>
+        <reason>HAL interface to implement - currently stubs</reason>
+      </file>
+      <file>
+        <path>firmware/components/yarobot_hal/gpio_hal/gpio_hal.c</path>
+        <kind>source</kind>
+        <symbol>gpio_hal_init, gpio_hal_set_direction, gpio_hal_set_level, gpio_hal_get_level</symbol>
+        <reason>Primary implementation target - replace stubs with real GPIO driver code</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/tasks/task_stubs.c</path>
+        <kind>source</kind>
+        <symbol>cmd_executor_task</symbol>
+        <lines>53-62</lines>
+        <reason>Modify to add TEST command parsing and handling</reason>
+      </file>
+      <file>
+        <path>firmware/main/yarobot_control_unit.cpp</path>
+        <kind>source</kind>
+        <symbol>app_main</symbol>
+        <reason>Boot sequence location - add HAL init calls and hardware verification</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/tasks/include/task_defs.h</path>
+        <kind>header</kind>
+        <symbol>cmd_executor_task</symbol>
+        <reason>Task declarations reference</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_gpio.h</path>
+        <kind>header</kind>
+        <symbol>GPIO_X_STEP, GPIO_SR_OE, GPIO_SR_CS, GPIO_SR_MOSI, GPIO_SR_SCLK, GPIO_I2C_SDA, GPIO_I2C_SCL, GPIO_OLED_SDA, GPIO_OLED_SCL, GPIO_E_STOP</symbol>
+        <reason>GPIO pin constants - MANDATORY to use instead of raw numbers</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_i2c.h</path>
+        <kind>header</kind>
+        <symbol>I2C_PORT, I2C_FREQ_HZ, I2C_ADDR_MCP23017_0, I2C_ADDR_MCP23017_1, MCP0_*, MCP1_*</symbol>
+        <reason>I2C configuration constants - MANDATORY to use</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_oled.h</path>
+        <kind>header</kind>
+        <symbol>I2C_OLED_PORT, I2C_OLED_FREQ_HZ, OLED_ADDRESS, OLED_WIDTH, OLED_HEIGHT</symbol>
+        <reason>OLED configuration constants for I2C1 bus</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_sr.h</path>
+        <kind>header</kind>
+        <symbol>SR_X_DIR, SR_X_EN, SR_X_BRAKE, SR_SET_BIT, SR_CLR_BIT, SR_SAFE_STATE</symbol>
+        <reason>Shift register bit positions and macros</reason>
+      </file>
+      <file>
+        <path>firmware/managed_components/espressif__mcp23017/include/mcp23017.h</path>
+        <kind>header</kind>
+        <symbol>mcp23017 API</symbol>
+        <reason>ESP Component Registry MCP23017 driver - reference for I2C expander operations</reason>
+      </file>
+    </code>
+    <dependencies>
+      <esp-idf version="5.4 LTS">
+        <component>driver/i2c_master.h</component>
+        <component>driver/spi_master.h</component>
+        <component>driver/gpio.h</component>
+        <component>esp_log.h</component>
+        <component>freertos/FreeRTOS.h</component>
+      </esp-idf>
+      <esp-component-registry>
+        <component name="espressif/mcp23017" version="^0.1.1">I2C GPIO expander driver</component>
+      </esp-component-registry>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint type="mandatory" source="docs/architecture.md">
+      MANDATORY: Header-Only Configuration Requirement - Every configurable value MUST be defined in a header file. No magic numbers. Use GPIO_X_STEP not GPIO_NUM_4, use I2C_FREQ_HZ not 400000, use I2C_ADDR_MCP23017_0 not 0x20.
+    </constraint>
+    <constraint type="architectural" source="docs/architecture.md">
+      ADR-004: I2C Bus Isolation - OLED on I2C_NUM_1 (GPIO_OLED_SDA/GPIO_OLED_SCL), MCP23017s on I2C_NUM_0 (GPIO_I2C_SDA/GPIO_I2C_SCL). Prevents display issues from affecting safety-critical I/O.
+    </constraint>
+    <constraint type="architectural" source="docs/architecture.md">
+      ADR-003: TPIC6B595N Shift Registers - 5x 8-bit chain (40 bits total), 24V open-drain outputs. Power loss = all outputs LOW = brakes engaged (fail-safe).
+    </constraint>
+    <constraint type="behavioral" source="docs/sprint-artifacts/tech-spec-epic-1.md">
+      Motors disabled by default at power-on. EVENT BOOT notification sent at startup.
+    </constraint>
+    <constraint type="pattern" source="docs/sprint-artifacts/tech-spec-epic-1.md">
+      Use ESP_LOGI/LOGW/LOGE for logging (not printf for diagnostics). Use xTaskCreatePinnedToCore with correct core affinity.
+    </constraint>
+    <constraint type="development" source="docs/sprint-artifacts/tech-spec-epic-1.md">
+      Development environment: Source ESP-IDF with get_idf before running idf.py commands. Monitor port: /dev/cu.usbmodem1201.
+    </constraint>
+    <constraint type="code-review" source="docs/sprint-artifacts/tech-spec-epic-1.md">
+      Code review must reject any hardcoded values (magic numbers). All values from config headers.
+    </constraint>
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>i2c_hal_init</name>
+      <kind>function</kind>
+      <signature>esp_err_t i2c_hal_init(i2c_port_t port, gpio_num_t sda, gpio_num_t scl, uint32_t freq_hz)</signature>
+      <path>firmware/components/yarobot_hal/i2c_hal/include/i2c_hal.h</path>
+    </interface>
+    <interface>
+      <name>i2c_hal_write_read</name>
+      <kind>function</kind>
+      <signature>esp_err_t i2c_hal_write_read(i2c_port_t port, uint8_t addr, const uint8_t* wr, size_t wr_len, uint8_t* rd, size_t rd_len)</signature>
+      <path>firmware/components/yarobot_hal/i2c_hal/include/i2c_hal.h</path>
+    </interface>
+    <interface>
+      <name>spi_hal_init</name>
+      <kind>function</kind>
+      <signature>esp_err_t spi_hal_init(spi_host_device_t host, gpio_num_t mosi, gpio_num_t sclk, gpio_num_t cs)</signature>
+      <path>firmware/components/yarobot_hal/spi_hal/include/spi_hal.h</path>
+    </interface>
+    <interface>
+      <name>spi_hal_transfer</name>
+      <kind>function</kind>
+      <signature>esp_err_t spi_hal_transfer(spi_host_device_t host, const uint8_t* tx, uint8_t* rx, size_t len)</signature>
+      <path>firmware/components/yarobot_hal/spi_hal/include/spi_hal.h</path>
+    </interface>
+    <interface>
+      <name>gpio_hal_init</name>
+      <kind>function</kind>
+      <signature>esp_err_t gpio_hal_init(void)</signature>
+      <path>firmware/components/yarobot_hal/gpio_hal/include/gpio_hal.h</path>
+    </interface>
+    <interface>
+      <name>gpio_hal_get_level</name>
+      <kind>function</kind>
+      <signature>int gpio_hal_get_level(gpio_num_t pin)</signature>
+      <path>firmware/components/yarobot_hal/gpio_hal/include/gpio_hal.h</path>
+    </interface>
+    <interface>
+      <name>CMD_TEST Response Format</name>
+      <kind>protocol</kind>
+      <signature>TEST I2C -> OK I2C0:0x20,0x21 I2C1:0x3C | ERROR I2C0:NO_DEVICES</signature>
+      <path>docs/sprint-artifacts/tech-spec-epic-1.md</path>
+    </interface>
+    <interface>
+      <name>CMD_TEST Response Format</name>
+      <kind>protocol</kind>
+      <signature>TEST SR -> OK SR:PASS | ERROR SR:FAIL</signature>
+      <path>docs/sprint-artifacts/tech-spec-epic-1.md</path>
+    </interface>
+    <interface>
+      <name>CMD_TEST Response Format</name>
+      <kind>protocol</kind>
+      <signature>TEST GPIO -> OK GPIO:ESTOP=1 STEPS=0 | ERROR GPIO:READ_FAIL</signature>
+      <path>docs/sprint-artifacts/tech-spec-epic-1.md</path>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+      Testing follows ESP-IDF conventions. Integration tests verify hardware communication. No complex unit tests needed for Epic 1 as HAL stubs are simple. Hardware verification via actual device probing: I2C scan detects MCP23017 at 0x20, 0x21 and OLED at 0x3C. Shift register patterns tested by writing 0xAAAAAA, 0x555555, etc. USB CDC loopback verifies command responses. Code review checklist includes: no magic numbers, header guards, ESP_LOGI for logging, correct core affinity.
+    </standards>
+    <locations>
+      <location>firmware/components/drivers/test_utils/ (new component)</location>
+      <location>Integration tests via idf.py monitor with TEST commands</location>
+    </locations>
+    <ideas>
+      <idea ac="1,2">I2C0 scan test: verify 0x20 and 0x21 respond, then read/write MCP23017 IODIR register</idea>
+      <idea ac="3,4">I2C1 scan test: verify 0x3C responds, send SSD1306 init commands, display BOOT OK</idea>
+      <idea ac="5">Bus isolation test: after I2C1 init, verify I2C0 scan still finds both MCP23017 devices</idea>
+      <idea ac="6,7">Shift register pattern test: write 0xAAAAAA, 0x555555, 0x000000, 0xFFFFFF in sequence; toggle OE pin</idea>
+      <idea ac="8">GPIO toggle test: pulse each STEP pin briefly, verify with logic analyzer or LED</idea>
+      <idea ac="9">E-stop read test: read GPIO_E_STOP pin state, verify expected level based on switch position</idea>
+      <idea ac="10,11,12">USB command test: send TEST I2C, TEST SR, TEST GPIO commands, verify response format</idea>
+      <idea ac="13">Build verification: idf.py build completes without errors with -Werror</idea>
+      <idea ac="14">Monitor verification: boot log shows all HAL init results and test outputs</idea>
+    </ideas>
+  </tests>
+</story-context>

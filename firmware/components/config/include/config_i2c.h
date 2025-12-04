@@ -13,7 +13,7 @@
 #ifndef CONFIG_I2C_H
 #define CONFIG_I2C_H
 
-#include "driver/i2c.h"
+#include "driver/i2c_types.h"
 
 /**
  * @defgroup config_i2c I2C Configuration

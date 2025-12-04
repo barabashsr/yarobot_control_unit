@@ -11,6 +11,7 @@
 #ifndef I2C_HAL_H
 #define I2C_HAL_H
 
+#include <stdbool.h>
 #include "esp_err.h"
 #include "driver/i2c_types.h"
 #include "driver/gpio.h"
@@ -81,12 +82,32 @@ esp_err_t i2c_hal_read(i2c_port_t port, uint8_t addr,
  * @param[in] rd_len Number of bytes to read
  *
  * @return esp_err_t ESP_OK on success
- *
- * @note This is a stub implementation - returns ESP_OK without side effects
  */
 esp_err_t i2c_hal_write_read(i2c_port_t port, uint8_t addr,
                              const uint8_t *wr, size_t wr_len,
                              uint8_t *rd, size_t rd_len);
+
+/**
+ * @brief Scan I2C bus for responding devices
+ *
+ * @param[in] port I2C port number
+ * @param[out] found_addrs Array to store found device addresses
+ * @param[in] max_addrs Maximum number of addresses to store
+ * @param[out] count Number of devices found
+ *
+ * @return esp_err_t ESP_OK on success
+ */
+esp_err_t i2c_hal_scan_bus(i2c_port_t port, uint8_t *found_addrs,
+                           size_t max_addrs, size_t *count);
+
+/**
+ * @brief Check if I2C bus is initialized
+ *
+ * @param[in] port I2C port number
+ *
+ * @return true if initialized, false otherwise
+ */
+bool i2c_hal_is_initialized(i2c_port_t port);
 
 /** @} */ // end i2c_hal
 

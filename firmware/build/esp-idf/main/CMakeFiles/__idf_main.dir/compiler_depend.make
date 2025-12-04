@@ -44,7 +44,6 @@ esp-idf/main/CMakeFiles/__idf_main.dir/yarobot_control_unit.cpp.obj: /Users/serg
   /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/stdio.h \
   /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/string.h \
   /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/syslimits.h \
-  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/driver/i2c/include/driver/i2c.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_assert.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_attr.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_bit_defs.h \
@@ -52,9 +51,9 @@ esp-idf/main/CMakeFiles/__idf_main.dir/yarobot_control_unit.cpp.obj: /Users/serg
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_err.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_idf_version.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_macros.h \
-  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_types.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_gpio/include/driver/gpio.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_gpio/include/driver/gpio_etm.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_i2c/include/driver/i2c_types.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_ledc/include/driver/ledc.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_spi/include/driver/spi_common.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_spi/include/driver/spi_master.h \
@@ -141,8 +140,13 @@ esp-idf/main/CMakeFiles/__idf_main.dir/yarobot_control_unit.cpp.obj: /Users/serg
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_sr.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_timing.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_yaml_schema.h \
-  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/tasks/include/task_defs.h
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/tasks/include/task_defs.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/yarobot_hal/gpio_hal/include/gpio_hal.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/yarobot_hal/i2c_hal/include/i2c_hal.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/yarobot_hal/spi_hal/include/spi_hal.h
 
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/yarobot_hal/gpio_hal/include/gpio_hal.h:
 
 /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/tasks/include/task_defs.h:
 
@@ -167,6 +171,10 @@ esp-idf/main/CMakeFiles/__idf_main.dir/yarobot_control_unit.cpp.obj: /Users/serg
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa/xtruntime.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa/xtensa-versions.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa/hal.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa/corebits.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xt_utils.h:
 
@@ -194,8 +202,6 @@ config/sdkconfig.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/esp_newlib.h:
 
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log_timestamp.h:
-
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log_buffer.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/spi_types.h:
@@ -215,6 +221,8 @@ config/sdkconfig.h:
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/gpio_types.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/config/include/freertos/FreeRTOSConfig.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/yarobot_hal/i2c_hal/include/i2c_hal.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/include/freertos/portmacro.h:
 
@@ -266,27 +274,21 @@ config/sdkconfig.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_gpio/include/driver/gpio.h:
 
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa/hal.h:
-
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_types.h:
-
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_idf_version.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_hw_support/include/spinlock.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/config.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/_locale.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_compiler.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/machine/_types.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/FreeRTOS.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_bit_defs.h:
-
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/event_groups.h:
-
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/reset_reasons.h:
-
-/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/reent.h:
-
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa/corebits.h:
-
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/driver/i2c/include/driver/i2c.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa_api.h:
 
@@ -297,6 +299,8 @@ config/sdkconfig.h:
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/lock.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/message_buffer.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_i2c/include/driver/i2c_types.h:
 
 /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_peripherals.h:
 
@@ -322,14 +326,6 @@ config/sdkconfig.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/string.h:
 
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_hw_support/include/spinlock.h:
-
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_compiler.h:
-
-/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/config.h:
-
-/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/_locale.h:
-
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/_types.h:
 
 /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_timing.h:
@@ -353,6 +349,14 @@ config/sdkconfig.h:
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/lib/gcc/xtensa-esp-elf/14.2.0/include/stddef.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/stdio.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/event_groups.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/reset_reasons.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/reent.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log_timestamp.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_assert.h:
 
@@ -419,6 +423,8 @@ config/sdkconfig.h:
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/lib/gcc/xtensa-esp-elf/14.2.0/include/stdarg.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log_level.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/yarobot_hal/spi_hal/include/spi_hal.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/task.h:
 

@@ -13,7 +13,7 @@
 #ifndef CONFIG_OLED_H
 #define CONFIG_OLED_H
 
-#include "driver/i2c.h"
+#include "driver/i2c_types.h"
 
 /**
  * @defgroup config_oled OLED Display Configuration

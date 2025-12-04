@@ -54,6 +54,7 @@ esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/gpio_hal/gpio_hal.c.obj: /U
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/reset_reasons.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/soc_caps.h \
   config/sdkconfig.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_gpio.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/yarobot_hal/gpio_hal/include/gpio_hal.h
 
 esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/i2c_hal/i2c_hal.c.obj: /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/yarobot_hal/i2c_hal/i2c_hal.c \
@@ -89,6 +90,7 @@ esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/i2c_hal/i2c_hal.c.obj: /Use
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_err.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_gpio/include/driver/gpio.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_gpio/include/driver/gpio_etm.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_i2c/include/driver/i2c_master.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_i2c/include/driver/i2c_types.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_hw_support/include/esp_etm.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_hw_support/include/esp_intr_alloc.h \
@@ -228,6 +230,7 @@ esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/spi_hal/spi_hal.c.obj: /Use
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa_config.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa_context.h \
   config/sdkconfig.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_gpio.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/yarobot_hal/spi_hal/include/spi_hal.h
 
 
@@ -299,8 +302,6 @@ esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/spi_hal/spi_hal.c.obj: /Use
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_hw_support/include/esp_cpu.h:
 
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_idf_version.h:
-
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/config/xtensa/include/freertos/FreeRTOSConfig_arch.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_attr.h:
@@ -324,6 +325,10 @@ esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/spi_hal/spi_hal.c.obj: /Use
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/i2c_types.h:
 
 /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/yarobot_hal/i2c_hal/i2c_hal.c:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_idf_version.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_gpio.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/gpio_pins.h:
 
@@ -466,6 +471,8 @@ config/sdkconfig.h:
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/inttypes.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/lib/gcc/xtensa-esp-elf/14.2.0/include/stdint.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_i2c/include/driver/i2c_master.h:
 
 /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/yarobot_hal/gpio_hal/include/gpio_hal.h:
 
