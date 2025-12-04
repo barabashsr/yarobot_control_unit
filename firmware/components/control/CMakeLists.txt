@@ -16,5 +16,6 @@ idf_component_register(
         usb_cdc
     PRIV_REQUIRES
         esp_tinyusb
+        esp_timer
         log
 )

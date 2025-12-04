@@ -145,14 +145,13 @@ esp_err_t format_event(char* buf, size_t len, const Event* event)
             break;
 
         case EVTTYPE_MODE_CHANGED:
-            // Format: EVENT MODE <mode>
-            // Mode is stored in error_code field as a simple identifier
-            written = snprintf(buf, len, "%s MODE %s" RESP_TERMINATOR,
-                               RESP_EVENT,
-                               event->data.error_code == 0 ? "IDLE" :
-                               event->data.error_code == 1 ? "READY" :
-                               event->data.error_code == 2 ? "RUNNING" :
-                               event->data.error_code == 3 ? "FAULT" : "UNKNOWN");
+            // Format: EVENT MODE <mode_name>
+            // Mode name is stored as string pointer in data.mode_name
+            if (event->data.mode_name == NULL) {
+                return ESP_ERR_INVALID_ARG;
+            }
+            written = snprintf(buf, len, "%s %s %s" RESP_TERMINATOR,
+                               RESP_EVENT, EVT_MODE, event->data.mode_name);
             break;
 
         case EVTTYPE_MOTION_ERROR:

@@ -99,6 +99,8 @@ typedef struct {
         uint8_t limit_state;
         /** @brief E-stop active state */
         bool estop_active;
+        /** @brief Mode name string for mode changed events */
+        const char* mode_name;
     } data;
 
     /** @brief Event timestamp (microseconds since boot) */

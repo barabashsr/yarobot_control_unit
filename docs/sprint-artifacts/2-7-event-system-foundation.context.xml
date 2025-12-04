@@ -1,0 +1,237 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>2</epicId>
+    <storyId>7</storyId>
+    <title>Event System Foundation</title>
+    <status>ready-for-dev</status>
+    <generatedAt>2025-12-04</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/2-7-event-system-foundation.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>an event publish/subscribe system</iWant>
+    <soThat>subsystems can communicate asynchronously without tight coupling</soThat>
+    <tasks>
+      <task id="1">Create event_manager component structure (AC: 1)</task>
+      <task id="2">Define Event types and structures (AC: 2, 3)</task>
+      <task id="3">Implement event_manager_init() (AC: 1, 10)</task>
+      <task id="4">Implement event_subscribe() and event_unsubscribe() (AC: 3, 4)</task>
+      <task id="5">Implement event_publish() (AC: 2, 5, 7)</task>
+      <task id="6">Implement event_publish_from_isr() (AC: 6)</task>
+      <task id="7">Implement event_processor_task (AC: 2, 7, 8)</task>
+      <task id="8">Register USB event subscriber (AC: 9)</task>
+      <task id="9">Update response_formatter for new event types (AC: 9, 10)</task>
+      <task id="10">Wire event_manager into command_executor (AC: 10)</task>
+      <task id="11">Create unit tests (AC: 1-10)</task>
+      <task id="12">Build verification (AC: 1-10)</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <criterion id="AC1">Given the event manager is initialized, when event_manager_init() is called, then it returns ESP_OK and the system is ready for subscriptions</criterion>
+    <criterion id="AC2">Given the event manager is initialized, when a publisher calls event_publish(), then all registered subscribers for that event type receive the event</criterion>
+    <criterion id="AC3">Given a callback is registered via event_subscribe(), when an event of that type is published, then the callback is invoked with the event and context pointer</criterion>
+    <criterion id="AC4">Given a callback is registered, when event_unsubscribe() is called with the same callback, then subsequent events do not invoke that callback</criterion>
+    <criterion id="AC5">Given the event queue is full (LIMIT_EVENT_QUEUE_DEPTH = 32), when another event is published, then ERR_EVENT_OVERFLOW is logged and the oldest event is dropped</criterion>
+    <criterion id="AC6">Given an event is published from ISR context, when event_publish_from_isr() is used, then the event is queued without blocking and *woken is set if higher priority task is woken</criterion>
+    <criterion id="AC7">Given events are published, when the event processor runs, then events are delivered in FIFO order (no reordering)</criterion>
+    <criterion id="AC8">Given events are published, when subscribers are notified, then delivery occurs within 5ms of publish</criterion>
+    <criterion id="AC9">Given a USB event subscriber is registered at init, when any event is published, then it is formatted using format_event() and sent to host as EVENT type [axis] [data]</criterion>
+    <criterion id="AC10">Given system boot completes, when event_manager_init() is called, then EVT_BOOT event is published with firmware version and axis count</criterion>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-2.md</path>
+        <title>Epic 2 Technical Specification</title>
+        <section>APIs and Interfaces - Event Manager API</section>
+        <snippet>Defines event_manager_init(), event_subscribe(), event_unsubscribe(), event_publish(), event_publish_from_isr() signatures and Event/EventType structures.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-2.md</path>
+        <title>Epic 2 Technical Specification</title>
+        <section>Data Models and Contracts</section>
+        <snippet>Event struct with type, axis (0-7 or 0xFF), data union (position, width, error_code, limit_state, estop_active), timestamp from esp_timer_get_time().</snippet>
+      </doc>
+      <doc>
+        <path>docs/epics.md</path>
+        <title>Epic Definitions</title>
+        <section>Story 2.7: Event System Foundation</section>
+        <snippet>Complete story definition with API specification, event types enum, and USB event subscriber format examples.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>System Architecture</title>
+        <section>Architectural Decisions</section>
+        <snippet>Decision #2: Send EVENT BOOT notification on startup. Decision #29: Fully event-driven safety task (no polling).</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/2-6-mode-management.md</path>
+        <title>Story 2-6 Mode Management</title>
+        <section>Completion Notes</section>
+        <snippet>Event publication via publish_mode_event() logs to ESP_LOGI; full event_publish() integration deferred to Story 2-7. Event struct has mode_name field.</snippet>
+      </doc>
+    </docs>
+
+    <code>
+      <file>
+        <path>firmware/components/interface/command_parser/include/response_formatter.h</path>
+        <kind>header</kind>
+        <symbol>EventType, Event, format_event</symbol>
+        <lines>40-210</lines>
+        <reason>EXISTING Event struct and EventType enum already defined here. format_event() handles all event types. REUSE - do not recreate.</reason>
+      </file>
+      <file>
+        <path>firmware/components/interface/command_parser/response_formatter.c</path>
+        <kind>implementation</kind>
+        <symbol>format_event</symbol>
+        <lines>104-189</lines>
+        <reason>format_event() implementation with switch for all EventType values. Verify all types handled.</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/command_executor/command_executor.c</path>
+        <kind>implementation</kind>
+        <symbol>publish_mode_event, cmd_executor_init</symbol>
+        <lines>full</lines>
+        <reason>Contains publish_mode_event() placeholder for event_publish() integration. cmd_executor_init() is where event_manager_init() should be called.</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/command_executor/include/command_executor.h</path>
+        <kind>header</kind>
+        <symbol>SystemState, get_system_state</symbol>
+        <lines>43-61</lines>
+        <reason>SystemState enum for STATE_IDLE used in EVT_BOOT event formatting.</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_limits.h</path>
+        <kind>header</kind>
+        <symbol>LIMIT_EVENT_QUEUE_DEPTH</symbol>
+        <lines>57-58</lines>
+        <reason>LIMIT_EVENT_QUEUE_DEPTH (32) already defined. Need to add LIMIT_EVENT_SUBSCRIBERS if not present.</reason>
+      </file>
+      <file>
+        <path>firmware/components/interface/usb_cdc/include/usb_cdc.h</path>
+        <kind>header</kind>
+        <symbol>usb_tx_queue, usb_cdc_send_line</symbol>
+        <lines>43-100</lines>
+        <reason>USB TX queue and send_line function for USB event subscriber to use.</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/command_executor/test/test_command_executor.c</path>
+        <kind>test</kind>
+        <symbol>test framework patterns</symbol>
+        <lines>full</lines>
+        <reason>Example of Unity test patterns used in this codebase. Follow same structure for event_manager tests.</reason>
+      </file>
+    </code>
+
+    <dependencies>
+      <esp-idf>
+        <component>freertos</component>
+        <component>esp_timer</component>
+        <component>esp_log</component>
+      </esp-idf>
+      <internal>
+        <component>config</component>
+        <component>command_parser</component>
+        <component>usb_cdc</component>
+      </internal>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint source="architecture.md" priority="high">Event-driven: Mode changes and errors published as events, not polled</constraint>
+    <constraint source="tech-spec-epic-2.md" priority="high">Events delivered to subscribers within 5ms of publish (AC2.14)</constraint>
+    <constraint source="tech-spec-epic-2.md" priority="high">Event format: EVENT type axis [data]\r\n</constraint>
+    <constraint source="architecture.md" priority="high">Send EVENT BOOT notification on startup: EVENT BOOT V1.0.0 AXES:8 STATE:IDLE</constraint>
+    <constraint source="tech-spec-epic-2.md" priority="high">Queue depth: LIMIT_EVENT_QUEUE_DEPTH (32). Overflow logs ERR_EVENT_OVERFLOW, drops oldest</constraint>
+    <constraint source="tech-spec-epic-2.md" priority="medium">Max 8 subscribers per event type (LIMIT_EVENT_SUBSCRIBERS)</constraint>
+    <constraint source="architecture.md" priority="high">ISR-safe: event_publish_from_isr uses xQueueSendFromISR</constraint>
+    <constraint source="architecture.md" priority="high">Fully event-driven safety task - no polling</constraint>
+    <constraint source="codebase" priority="high">REUSE existing EventType enum and Event struct from response_formatter.h - do not recreate</constraint>
+    <constraint source="story-2-6" priority="high">Replace publish_mode_event() placeholder with real event_publish() call</constraint>
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>event_manager_init</name>
+      <kind>function</kind>
+      <signature>esp_err_t event_manager_init(void)</signature>
+      <path>firmware/components/events/event_manager/include/event_manager.h</path>
+    </interface>
+    <interface>
+      <name>event_subscribe</name>
+      <kind>function</kind>
+      <signature>esp_err_t event_subscribe(EventType type, EventCallback callback, void* ctx)</signature>
+      <path>firmware/components/events/event_manager/include/event_manager.h</path>
+    </interface>
+    <interface>
+      <name>event_unsubscribe</name>
+      <kind>function</kind>
+      <signature>esp_err_t event_unsubscribe(EventType type, EventCallback callback)</signature>
+      <path>firmware/components/events/event_manager/include/event_manager.h</path>
+    </interface>
+    <interface>
+      <name>event_publish</name>
+      <kind>function</kind>
+      <signature>esp_err_t event_publish(const Event* event)</signature>
+      <path>firmware/components/events/event_manager/include/event_manager.h</path>
+    </interface>
+    <interface>
+      <name>event_publish_from_isr</name>
+      <kind>function</kind>
+      <signature>esp_err_t event_publish_from_isr(const Event* event, BaseType_t* woken)</signature>
+      <path>firmware/components/events/event_manager/include/event_manager.h</path>
+    </interface>
+    <interface>
+      <name>EventCallback</name>
+      <kind>typedef</kind>
+      <signature>typedef void (*EventCallback)(const Event* event, void* ctx)</signature>
+      <path>firmware/components/events/event_manager/include/event_manager.h</path>
+    </interface>
+    <interface>
+      <name>format_event</name>
+      <kind>function</kind>
+      <signature>esp_err_t format_event(char* buf, size_t len, const Event* event)</signature>
+      <path>firmware/components/interface/command_parser/include/response_formatter.h</path>
+      <note>EXISTING - reuse for USB subscriber formatting</note>
+    </interface>
+    <interface>
+      <name>usb_cdc_send_line</name>
+      <kind>function</kind>
+      <signature>esp_err_t usb_cdc_send_line(const char* line)</signature>
+      <path>firmware/components/interface/usb_cdc/include/usb_cdc.h</path>
+      <note>EXISTING - use for USB event subscriber output</note>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+      Unity test framework for embedded C. Tests located in component test/ subdirectories.
+      Test functions prefixed with test_. Use TEST_ASSERT_* macros.
+      Mock external dependencies where needed. Build with idf.py build.
+    </standards>
+    <locations>
+      <location>firmware/components/events/event_manager/test/test_event_manager.c</location>
+      <location>firmware/components/control/command_executor/test/test_command_executor.c</location>
+    </locations>
+    <ideas>
+      <idea ac="1">Test event_manager_init() returns ESP_OK and can be called once</idea>
+      <idea ac="2">Test event_publish() delivers to all registered subscribers</idea>
+      <idea ac="3">Test callback receives correct event and context pointer</idea>
+      <idea ac="4">Test unsubscribe prevents further callback invocations</idea>
+      <idea ac="5">Test queue overflow logs error and drops oldest event</idea>
+      <idea ac="6">Test ISR variant uses xQueueSendFromISR (mock ISR context)</idea>
+      <idea ac="7">Test FIFO ordering - publish A, B, C receives in same order</idea>
+      <idea ac="8">Test delivery latency under 5ms (timing test)</idea>
+      <idea ac="9">Test USB subscriber formats all event types correctly</idea>
+      <idea ac="10">Test EVT_BOOT published on init with version and axis count</idea>
+      <idea>Test multiple subscribers to same event type</idea>
+      <idea>Test subscribe/unsubscribe with NULL callback returns error</idea>
+      <idea>Test max subscribers limit (LIMIT_EVENT_SUBSCRIBERS)</idea>
+    </ideas>
+  </tests>
+</story-context>

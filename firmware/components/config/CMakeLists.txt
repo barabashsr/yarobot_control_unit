@@ -3,4 +3,9 @@
 
 idf_component_register(
     INCLUDE_DIRS "include"
+    REQUIRES
+        esp_driver_ledc
+        esp_driver_mcpwm
+        esp_driver_pcnt
+        driver
 )

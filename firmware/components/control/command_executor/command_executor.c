@@ -6,7 +6,9 @@
  */
 
 #include "command_executor.h"
+#include "command_parser.h"      // For is_valid_axis()
 #include "response_formatter.h"
+#include "config.h"              // For FIRMWARE_NAME, FIRMWARE_VERSION_STRING
 #include "config_commands.h"
 #include "config_limits.h"
 
@@ -15,6 +17,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
 #include "esp_log.h"
+#include "esp_timer.h"  // For esp_timer_get_time()
 
 static const char* TAG = "CMD_EXEC";
 
@@ -279,86 +282,204 @@ static esp_err_t handle_echo(const ParsedCommand* cmd, char* response, size_t re
 /**
  * @brief Handle INFO command
  *
- * Returns system information: name, version.
- * Stub implementation - full version info in Story 2-5.
+ * Returns system information: firmware name and version.
+ * Response format: "OK YAROBOT_CONTROL_UNIT 1.0.0"
+ *
+ * @note Uses FIRMWARE_NAME and FIRMWARE_VERSION_STRING from config.h
+ *       per AC3, AC10.
  */
 static esp_err_t handle_info(const ParsedCommand* cmd, char* response, size_t resp_len)
 {
-    (void)cmd;  // Unused in stub
-    return format_ok_data(response, resp_len, "YAROBOT_CONTROL_UNIT 1.0.0 AXES:8");
+    (void)cmd;  // No parameters used
+    return format_ok_data(response, resp_len, "%s %s",
+                          FIRMWARE_NAME, FIRMWARE_VERSION_STRING);
 }
 
 /**
  * @brief Handle STAT command
  *
- * Returns system/axis status.
- * Stub implementation - full status in Story 2-5.
+ * Returns system status or axis-specific status.
+ *
+ * System status format (AC4, AC7):
+ *   "OK MODE:<mode> ESTOP:<0|1> AXES:<n> UPTIME:<ms>"
+ *
+ * Axis status format (AC5, AC6, AC8):
+ *   "OK <axis> POS:<pos> EN:<0|1> MOV:<0|1> ERR:<0|1> LIM:<hex>"
+ *
+ * @note ESTOP and axis status return placeholder values until
+ *       Epic 3 (motor control) and Epic 4 (safety systems).
  */
 static esp_err_t handle_stat(const ParsedCommand* cmd, char* response, size_t resp_len)
 {
     // If axis specified, return axis status
     if (cmd->axis != '\0') {
-        return format_ok_data(response, resp_len, "%c IDLE POS:0.000", cmd->axis);
+        // Validate axis is valid (X-E)
+        if (!is_valid_axis(cmd->axis)) {
+            return format_error(response, resp_len, ERR_INVALID_AXIS, MSG_INVALID_AXIS);
+        }
+
+        // Placeholder values until motor control implemented (AC8)
+        float pos = 0.0f;
+        int en = 0;      // not enabled
+        int mov = 0;     // not moving
+        int err = 0;     // no error
+        int lim = 0x00;  // no limits active (bit0=min, bit1=max)
+
+        return format_ok_data(response, resp_len,
+                              "%c POS:%.3f EN:%d MOV:%d ERR:%d LIM:%02X",
+                              cmd->axis, pos, en, mov, err, lim);
     }
 
-    // Otherwise return system status
-    const char* state_str = "IDLE";
+    // System status
+    const char* mode_str = "IDLE";
     switch (s_current_state) {
-        case STATE_IDLE:   state_str = "IDLE";   break;
-        case STATE_READY:  state_str = "READY";  break;
-        case STATE_CONFIG: state_str = "CONFIG"; break;
-        case STATE_ESTOP:  state_str = "ESTOP";  break;
-        case STATE_ERROR:  state_str = "ERROR";  break;
-        default:           state_str = "UNKNOWN"; break;
+        case STATE_IDLE:   mode_str = "IDLE";    break;
+        case STATE_READY:  mode_str = "READY";   break;
+        case STATE_CONFIG: mode_str = "CONFIG";  break;
+        case STATE_ESTOP:  mode_str = "ESTOP";   break;
+        case STATE_ERROR:  mode_str = "ERROR";   break;
+        default:           mode_str = "UNKNOWN"; break;
     }
 
-    return format_ok_data(response, resp_len, "STATE:%s", state_str);
+    // E-stop placeholder until Epic 4
+    int estop = 0;
+
+    // Uptime in milliseconds from boot (AC7)
+    int64_t uptime_ms = esp_timer_get_time() / 1000;
+
+    return format_ok_data(response, resp_len,
+                          "MODE:%s ESTOP:%d AXES:%d UPTIME:%lld",
+                          mode_str, estop, LIMIT_NUM_AXES, uptime_ms);
+}
+
+/**
+ * @brief Convert SystemState to mode name string
+ *
+ * @param[in] state System state to convert
+ * @return Mode name string (MODE_NAME_* constant)
+ */
+static const char* state_to_mode_string(SystemState state)
+{
+    switch (state) {
+        case STATE_IDLE:   return MODE_NAME_IDLE;
+        case STATE_READY:  return MODE_NAME_READY;
+        case STATE_CONFIG: return MODE_NAME_CONFIG;
+        case STATE_ESTOP:  return MODE_NAME_ESTOP;
+        case STATE_ERROR:  return MODE_NAME_ERROR;
+        default:           return "UNKNOWN";
+    }
+}
+
+/**
+ * @brief Publish mode change event
+ *
+ * Formats and logs a mode change event. Full event system (story 2-7) will
+ * provide event_publish() for actual USB transmission.
+ *
+ * @param[in] new_state The new system state
+ */
+static void publish_mode_event(SystemState new_state)
+{
+    ESP_LOGI(TAG, "EVENT MODE %s", state_to_mode_string(new_state));
+    // TODO (Story 2-7): Call event_publish() to send EVENT MODE <mode> to USB
 }
 
 /**
  * @brief Handle MODE command
  *
  * Query or set operating mode.
- * Stub implementation - full mode transitions in Story 2-6.
+ *
+ * Query (no args):
+ *   Returns "OK <current_mode>" (AC1)
+ *
+ * Set (with mode name):
+ *   - MODE READY from IDLE: OK READY (AC2)
+ *   - MODE CONFIG from READY: OK CONFIG (AC3)
+ *   - MODE READY from CONFIG: OK READY (AC4)
+ *   - MODE READY from ESTOP: ERROR E006 (AC6)
+ *   - MODE READY from ERROR: ERROR E031 (AC10)
+ *   - Invalid mode name: ERROR E001 (AC9)
+ *
+ * Events:
+ *   - Successful mode change publishes EVENT MODE <new_mode> (AC7)
  */
 static esp_err_t handle_mode(const ParsedCommand* cmd, char* response, size_t resp_len)
 {
-    // Query mode if no parameter
+    // Query mode if no parameter (AC1)
     if (!cmd->has_str_param && cmd->param_count == 0) {
-        const char* mode_str = "IDLE";
-        switch (s_current_state) {
-            case STATE_IDLE:   mode_str = "IDLE";   break;
-            case STATE_READY:  mode_str = "READY";  break;
-            case STATE_CONFIG: mode_str = "CONFIG"; break;
-            case STATE_ESTOP:  mode_str = "ESTOP";  break;
-            case STATE_ERROR:  mode_str = "ERROR";  break;
-            default:           mode_str = "UNKNOWN"; break;
-        }
-        return format_ok_data(response, resp_len, "%s", mode_str);
+        return format_ok_data(response, resp_len, "%s", state_to_mode_string(s_current_state));
     }
 
     // Set mode based on string parameter
     if (cmd->has_str_param) {
         SystemState new_state = STATE_IDLE;
+        SystemState current = s_current_state;
 
-        if (strcasecmp(cmd->str_param, "IDLE") == 0) {
+        // Parse target mode (AC9: invalid mode returns E001 Unknown command)
+        if (strcasecmp(cmd->str_param, MODE_NAME_IDLE) == 0) {
             new_state = STATE_IDLE;
-        } else if (strcasecmp(cmd->str_param, "READY") == 0) {
+        } else if (strcasecmp(cmd->str_param, MODE_NAME_READY) == 0) {
             new_state = STATE_READY;
-        } else if (strcasecmp(cmd->str_param, "CONFIG") == 0) {
+        } else if (strcasecmp(cmd->str_param, MODE_NAME_CONFIG) == 0) {
             new_state = STATE_CONFIG;
         } else {
+            // AC9: Unknown mode name returns E001 (treated as unknown command)
+            format_error(response, resp_len, ERR_INVALID_COMMAND, MSG_INVALID_COMMAND);
+            return ESP_ERR_NOT_FOUND;
+        }
+
+        // AC6: ESTOP mode blocks all mode transitions
+        if (current == STATE_ESTOP) {
+            format_error(response, resp_len, ERR_EMERGENCY_STOP, MSG_EMERGENCY_STOP);
+            return ESP_ERR_INVALID_STATE;
+        }
+
+        // AC10: ERROR mode blocks all mode transitions (requires RST)
+        if (current == STATE_ERROR) {
+            format_error(response, resp_len, ERR_SYSTEM_ERROR, MSG_SYSTEM_ERROR);
+            return ESP_ERR_INVALID_STATE;
+        }
+
+        // Validate transition is allowed
+        // Valid transitions:
+        // - IDLE -> READY (AC2)
+        // - READY -> CONFIG (AC3)
+        // - CONFIG -> READY (AC4)
+        // - Any state -> same state (no-op, still OK)
+        bool valid_transition = false;
+        if (current == new_state) {
+            // Same state - always valid (no actual change)
+            valid_transition = true;
+        } else if (current == STATE_IDLE && new_state == STATE_READY) {
+            valid_transition = true;  // AC2
+        } else if (current == STATE_READY && new_state == STATE_CONFIG) {
+            valid_transition = true;  // AC3
+        } else if (current == STATE_CONFIG && new_state == STATE_READY) {
+            valid_transition = true;  // AC4
+        } else if (current == STATE_READY && new_state == STATE_IDLE) {
+            valid_transition = true;  // Allow READY -> IDLE
+        } else if (current == STATE_CONFIG && new_state == STATE_IDLE) {
+            valid_transition = true;  // Allow CONFIG -> IDLE
+        }
+
+        if (!valid_transition) {
             format_error(response, resp_len, ERR_INVALID_PARAMETER, MSG_INVALID_PARAMETER);
             return ESP_ERR_INVALID_ARG;
         }
 
+        // Execute state transition (AC8: atomic via set_system_state)
         esp_err_t ret = set_system_state(new_state);
         if (ret != ESP_OK) {
             format_error(response, resp_len, ERR_CONFIGURATION, MSG_CONFIGURATION);
             return ret;
         }
 
-        return format_ok_data(response, resp_len, "%s", cmd->str_param);
+        // AC7: Publish event if state actually changed
+        if (current != new_state) {
+            publish_mode_event(new_state);
+        }
+
+        return format_ok_data(response, resp_len, "%s", state_to_mode_string(new_state));
     }
 
     // No valid parameter

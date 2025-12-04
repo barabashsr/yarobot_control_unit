@@ -216,6 +216,9 @@
 /** @brief YAML buffer exceeded 8KB limit */
 #define ERR_CONFIG_BUFFER_OVERFLOW  "E030"
 
+/** @brief System error state - requires reset */
+#define ERR_SYSTEM_ERROR            "E031"
+
 /** @} */ // end err_codes
 
 /**
@@ -284,6 +287,9 @@
 /** @brief Message for ERR_CONFIG_BUFFER_OVERFLOW */
 #define MSG_CONFIG_BUFFER_OVERFLOW  "Config exceeds 8KB buffer limit"
 
+/** @brief Message for ERR_SYSTEM_ERROR */
+#define MSG_SYSTEM_ERROR            "System in error state"
+
 /** @} */ // end err_messages
 
 /**
@@ -346,7 +352,33 @@
 /** @brief Switch fault: "EVENT SWITCH_FAULT <axis> BOTH_ACTIVE" */
 #define EVT_SWITCH_FAULT            "SWFAULT"
 
+/** @brief Mode changed: "EVENT MODE <mode_name>" */
+#define EVT_MODE                    "MODE"
+
 /** @} */ // end evt_types
+
+/**
+ * @defgroup mode_names Mode Name Strings
+ * @brief System operating mode names for MODE command
+ * @{
+ */
+
+/** @brief IDLE mode name */
+#define MODE_NAME_IDLE              "IDLE"
+
+/** @brief READY mode name */
+#define MODE_NAME_READY             "READY"
+
+/** @brief CONFIG mode name */
+#define MODE_NAME_CONFIG            "CONFIG"
+
+/** @brief ESTOP mode name */
+#define MODE_NAME_ESTOP             "ESTOP"
+
+/** @brief ERROR mode name */
+#define MODE_NAME_ERROR             "ERROR"
+
+/** @} */ // end mode_names
 
 /**
  * @defgroup homing_states Homing State Values

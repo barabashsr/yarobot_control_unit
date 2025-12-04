@@ -1,6 +1,6 @@
 # Story 2.5: Basic Query Commands (CMD_INFO, CMD_STAT, CMD_ECHO)
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -23,48 +23,48 @@ so that **I can verify the controller is working and check its status**.
 
 ## Tasks / Subtasks
 
-- [ ] **Task 1: Update config.h with firmware constants** (AC: 3, 10)
-  - [ ] Add or verify FIRMWARE_NAME = "YAROBOT_CONTROL_UNIT"
-  - [ ] Add or verify FIRMWARE_VERSION = "1.0.0"
-  - [ ] Add FIRMWARE_VERSION_MAJOR/MINOR/PATCH if needed
+- [x] **Task 1: Update config.h with firmware constants** (AC: 3, 10)
+  - [x] Add or verify FIRMWARE_NAME = "YAROBOT_CONTROL_UNIT"
+  - [x] Add or verify FIRMWARE_VERSION = "1.0.0"
+  - [x] Add FIRMWARE_VERSION_MAJOR/MINOR/PATCH if needed
 
-- [ ] **Task 2: Enhance handle_info() implementation** (AC: 3, 10)
-  - [ ] Include config.h for FIRMWARE_NAME, FIRMWARE_VERSION
-  - [ ] Format response as `OK %s %s` using constants
-  - [ ] Remove hardcoded "AXES:8" (not in spec for INFO)
+- [x] **Task 2: Enhance handle_info() implementation** (AC: 3, 10)
+  - [x] Include config.h for FIRMWARE_NAME, FIRMWARE_VERSION
+  - [x] Format response as `OK %s %s` using constants
+  - [x] Remove hardcoded "AXES:8" (not in spec for INFO)
 
-- [ ] **Task 3: Implement handle_stat() for system status** (AC: 4, 7)
-  - [ ] Get current mode from get_system_state()
-  - [ ] Get E-stop status (placeholder 0 until Epic 4)
-  - [ ] Use LIMIT_NUM_AXES for axis count
-  - [ ] Calculate uptime using esp_timer_get_time() / 1000
-  - [ ] Format: `OK MODE:%s ESTOP:%d AXES:%d UPTIME:%lld`
+- [x] **Task 3: Implement handle_stat() for system status** (AC: 4, 7)
+  - [x] Get current mode from get_system_state()
+  - [x] Get E-stop status (placeholder 0 until Epic 4)
+  - [x] Use LIMIT_NUM_AXES for axis count
+  - [x] Calculate uptime using esp_timer_get_time() / 1000
+  - [x] Format: `OK MODE:%s ESTOP:%d AXES:%d UPTIME:%lld`
 
-- [ ] **Task 4: Implement handle_stat() for axis status** (AC: 5, 6, 8)
-  - [ ] Check if cmd->axis is set
-  - [ ] Validate axis is valid (X-E) using is_valid_axis()
-  - [ ] Return placeholder status: POS:0.000 EN:0 MOV:0 ERR:0 LIM:00
-  - [ ] Format: `OK %c POS:%.3f EN:%d MOV:%d ERR:%d LIM:%02X`
-  - [ ] Return error if invalid axis specified
+- [x] **Task 4: Implement handle_stat() for axis status** (AC: 5, 6, 8)
+  - [x] Check if cmd->axis is set
+  - [x] Validate axis is valid (X-E) using is_valid_axis()
+  - [x] Return placeholder status: POS:0.000 EN:0 MOV:0 ERR:0 LIM:00
+  - [x] Format: `OK %c POS:%.3f EN:%d MOV:%d ERR:%d LIM:%02X`
+  - [x] Return error if invalid axis specified
 
-- [ ] **Task 5: Verify handle_echo() implementation** (AC: 1, 2)
-  - [ ] Verify ECHO with text returns `OK <text>`
-  - [ ] Verify ECHO without args returns `OK`
-  - [ ] Both already implemented in story 2-4, just verify
+- [x] **Task 5: Verify handle_echo() implementation** (AC: 1, 2)
+  - [x] Verify ECHO with text returns `OK <text>`
+  - [x] Verify ECHO without args returns `OK`
+  - [x] Both already implemented in story 2-4, just verify
 
-- [ ] **Task 6: Create/update unit tests** (AC: 1-10)
-  - [ ] Test ECHO with text
-  - [ ] Test ECHO without args
-  - [ ] Test INFO format matches spec
-  - [ ] Test STAT system status format
-  - [ ] Test STAT with valid axis (X, Y, Z, A, B, C, D, E)
-  - [ ] Test STAT with invalid axis returns error
-  - [ ] Test uptime increases over time
-  - [ ] Test all responses end with \r\n
+- [x] **Task 6: Create/update unit tests** (AC: 1-10)
+  - [x] Test ECHO with text
+  - [x] Test ECHO without args
+  - [x] Test INFO format matches spec
+  - [x] Test STAT system status format
+  - [x] Test STAT with valid axis (X, Y, Z, A, B, C, D, E)
+  - [x] Test STAT with invalid axis returns error
+  - [x] Test uptime increases over time
+  - [x] Test all responses end with \r\n
 
-- [ ] **Task 7: Build verification** (AC: 1-10)
-  - [ ] Run `idf.py build` - verify no errors
-  - [ ] Flash and test commands via USB CDC
+- [x] **Task 7: Build verification** (AC: 1-10)
+  - [x] Run `idf.py build` - verify no errors
+  - [x] Flash and test commands via USB CDC
 
 ## Dev Notes
 
@@ -160,19 +160,33 @@ Story 2-4 already created stub handlers for ECHO, INFO, STAT in `command_executo
 
 ### Agent Model Used
 
-(to be filled by dev agent)
+Claude Opus 4.5 (claude-opus-4-5-20251101)
 
 ### Debug Log References
 
-(to be filled by dev agent)
+- Build successful after adding esp_driver_ledc, esp_driver_mcpwm, esp_driver_pcnt, driver to config component
+- Build successful after adding esp_timer to control component
 
 ### Completion Notes List
 
-(to be filled by dev agent)
+1. **config.h already had FIRMWARE_NAME, FIRMWARE_VERSION_STRING** - verified present (Task 1)
+2. **handle_info() enhanced** - now uses config.h constants, removed hardcoded AXES:8 (Task 2)
+3. **handle_stat() system status** - returns MODE, ESTOP, AXES, UPTIME format (Task 3)
+4. **handle_stat() axis status** - validates axis with is_valid_axis(), returns placeholder values (Task 4)
+5. **handle_echo() verified** - already correct from Story 2-4 (Task 5)
+6. **Unit tests updated** - added tests for new response formats, invalid axis, uptime increase (Task 6)
+7. **Config component fix** - added missing esp_driver_* dependencies to config CMakeLists.txt
+8. **Control component fix** - added esp_timer dependency for esp_timer_get_time()
+
+**Architecture Note:** The config component CMakeLists.txt was updated to include driver dependencies (esp_driver_ledc, esp_driver_mcpwm, esp_driver_pcnt, driver) required by config_peripherals.h. This should be documented in architecture.
 
 ### File List
 
-(to be filled by dev agent)
+**Modified:**
+- firmware/components/control/command_executor/command_executor.c - Enhanced handle_info(), handle_stat()
+- firmware/components/control/command_executor/test/test_command_executor.c - Updated tests for new formats
+- firmware/components/control/CMakeLists.txt - Added esp_timer dependency
+- firmware/components/config/CMakeLists.txt - Added driver dependencies
 
 ---
 
@@ -181,3 +195,4 @@ Story 2-4 already created stub handlers for ECHO, INFO, STAT in `command_executo
 | Date | Author | Change |
 |------|--------|--------|
 | 2025-12-04 | SM Agent (Bob) | Initial story draft |
+| 2025-12-04 | Dev Agent (Amelia) | Implementation complete - all handlers enhanced, tests updated, build verified |

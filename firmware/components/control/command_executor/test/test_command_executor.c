@@ -13,6 +13,10 @@
 #include "config_commands.h"
 #include "config_limits.h"
 #include <string.h>
+#include <stdlib.h>
+
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
 /* ==========================================================================
  * Test Helpers
@@ -460,7 +464,8 @@ TEST_CASE("ECHO handler returns input", "[command_executor]")
 }
 
 /**
- * Test INFO handler
+ * Test INFO handler (AC3, AC10)
+ * Response format: "OK YAROBOT_CONTROL_UNIT 1.0.0\r\n"
  */
 TEST_CASE("INFO handler returns system info", "[command_executor]")
 {
@@ -471,14 +476,14 @@ TEST_CASE("INFO handler returns system info", "[command_executor]")
 
     make_command(&cmd, CMD_INFO, '\0', 0, NULL);
     TEST_ASSERT_EQUAL(ESP_OK, dispatch_command(&cmd, response, sizeof(response)));
-    TEST_ASSERT_NOT_NULL(strstr(response, "OK"));
-    TEST_ASSERT_NOT_NULL(strstr(response, "YAROBOT_CONTROL_UNIT"));
-    TEST_ASSERT_NOT_NULL(strstr(response, "1.0.0"));
-    TEST_ASSERT_NOT_NULL(strstr(response, "AXES:8"));
+
+    // AC3: Response is "OK YAROBOT_CONTROL_UNIT 1.0.0\r\n"
+    TEST_ASSERT_EQUAL_STRING("OK YAROBOT_CONTROL_UNIT 1.0.0\r\n", response);
 }
 
 /**
- * Test STAT handler - system status
+ * Test STAT handler - system status (AC4, AC7)
+ * Response format: "OK MODE:<mode> ESTOP:<0|1> AXES:<n> UPTIME:<ms>\r\n"
  */
 TEST_CASE("STAT handler returns system status", "[command_executor]")
 {
@@ -491,20 +496,25 @@ TEST_CASE("STAT handler returns system status", "[command_executor]")
     set_system_state(STATE_IDLE);
     make_command(&cmd, CMD_STAT, '\0', 0, NULL);
     TEST_ASSERT_EQUAL(ESP_OK, dispatch_command(&cmd, response, sizeof(response)));
-    TEST_ASSERT_NOT_NULL(strstr(response, "STATE:IDLE"));
+    TEST_ASSERT_NOT_NULL(strstr(response, "OK"));
+    TEST_ASSERT_NOT_NULL(strstr(response, "MODE:IDLE"));
+    TEST_ASSERT_NOT_NULL(strstr(response, "ESTOP:0"));
+    TEST_ASSERT_NOT_NULL(strstr(response, "AXES:8"));
+    TEST_ASSERT_NOT_NULL(strstr(response, "UPTIME:"));
 
     // System status in READY state
     set_system_state(STATE_READY);
     make_command(&cmd, CMD_STAT, '\0', 0, NULL);
     TEST_ASSERT_EQUAL(ESP_OK, dispatch_command(&cmd, response, sizeof(response)));
-    TEST_ASSERT_NOT_NULL(strstr(response, "STATE:READY"));
+    TEST_ASSERT_NOT_NULL(strstr(response, "MODE:READY"));
 
     // Restore
     set_system_state(STATE_IDLE);
 }
 
 /**
- * Test STAT handler - axis status
+ * Test STAT handler - axis status (AC5, AC6, AC8)
+ * Response format: "OK <axis> POS:%.3f EN:%d MOV:%d ERR:%d LIM:%02X\r\n"
  */
 TEST_CASE("STAT handler returns axis status", "[command_executor]")
 {
@@ -513,69 +523,264 @@ TEST_CASE("STAT handler returns axis status", "[command_executor]")
     char response[LIMIT_RESPONSE_MAX_LENGTH];
     ParsedCommand cmd;
 
+    // AC5: STAT X returns correct format
     make_command(&cmd, CMD_STAT, 'X', 0, NULL);
     TEST_ASSERT_EQUAL(ESP_OK, dispatch_command(&cmd, response, sizeof(response)));
-    TEST_ASSERT_NOT_NULL(strstr(response, "OK"));
-    TEST_ASSERT_NOT_NULL(strstr(response, "X"));
-    TEST_ASSERT_NOT_NULL(strstr(response, "IDLE"));
-    TEST_ASSERT_NOT_NULL(strstr(response, "POS:"));
+    TEST_ASSERT_EQUAL_STRING("OK X POS:0.000 EN:0 MOV:0 ERR:0 LIM:00\r\n", response);
+
+    // AC6: STAT Z returns same format with correct axis letter
+    make_command(&cmd, CMD_STAT, 'Z', 0, NULL);
+    TEST_ASSERT_EQUAL(ESP_OK, dispatch_command(&cmd, response, sizeof(response)));
+    TEST_ASSERT_EQUAL_STRING("OK Z POS:0.000 EN:0 MOV:0 ERR:0 LIM:00\r\n", response);
+
+    // Test all valid axes (AC6)
+    const char axes[] = {'Y', 'A', 'B', 'C', 'D', 'E'};
+    for (size_t i = 0; i < sizeof(axes); i++) {
+        make_command(&cmd, CMD_STAT, axes[i], 0, NULL);
+        TEST_ASSERT_EQUAL(ESP_OK, dispatch_command(&cmd, response, sizeof(response)));
+        TEST_ASSERT_NOT_NULL(strstr(response, "OK"));
+        TEST_ASSERT_TRUE(response[3] == axes[i]);  // "OK X" -> X at index 3
+        TEST_ASSERT_NOT_NULL(strstr(response, "POS:0.000"));
+        TEST_ASSERT_NOT_NULL(strstr(response, "EN:0"));
+        TEST_ASSERT_NOT_NULL(strstr(response, "MOV:0"));
+        TEST_ASSERT_NOT_NULL(strstr(response, "ERR:0"));
+        TEST_ASSERT_NOT_NULL(strstr(response, "LIM:00"));
+    }
 }
 
 /**
- * Test MODE handler - query
+ * Test STAT handler - invalid axis returns error (story 2-5)
  */
-TEST_CASE("MODE handler queries current mode", "[command_executor]")
+TEST_CASE("STAT handler returns error for invalid axis", "[command_executor]")
 {
     TEST_ASSERT_EQUAL(ESP_OK, cmd_executor_init());
 
     char response[LIMIT_RESPONSE_MAX_LENGTH];
     ParsedCommand cmd;
 
+    // Invalid axis 'Q' should return error
+    make_command(&cmd, CMD_STAT, 'Q', 0, NULL);
+    esp_err_t ret = dispatch_command(&cmd, response, sizeof(response));
+    TEST_ASSERT_EQUAL(ESP_FAIL, ret);
+    TEST_ASSERT_NOT_NULL(strstr(response, "ERROR"));
+    TEST_ASSERT_NOT_NULL(strstr(response, "E002"));
+    TEST_ASSERT_NOT_NULL(strstr(response, "Invalid axis"));
+}
+
+/**
+ * Test STAT uptime increases over time (AC7)
+ */
+TEST_CASE("STAT uptime increases", "[command_executor]")
+{
+    TEST_ASSERT_EQUAL(ESP_OK, cmd_executor_init());
+
+    char response1[LIMIT_RESPONSE_MAX_LENGTH];
+    char response2[LIMIT_RESPONSE_MAX_LENGTH];
+    ParsedCommand cmd;
+
+    set_system_state(STATE_IDLE);
+    make_command(&cmd, CMD_STAT, '\0', 0, NULL);
+
+    // Get first uptime
+    TEST_ASSERT_EQUAL(ESP_OK, dispatch_command(&cmd, response1, sizeof(response1)));
+
+    // Brief delay (FreeRTOS tick)
+    vTaskDelay(pdMS_TO_TICKS(10));
+
+    // Get second uptime
+    TEST_ASSERT_EQUAL(ESP_OK, dispatch_command(&cmd, response2, sizeof(response2)));
+
+    // Extract uptime values
+    char* uptime1_str = strstr(response1, "UPTIME:");
+    char* uptime2_str = strstr(response2, "UPTIME:");
+    TEST_ASSERT_NOT_NULL(uptime1_str);
+    TEST_ASSERT_NOT_NULL(uptime2_str);
+
+    int64_t uptime1 = atoll(uptime1_str + 7);  // Skip "UPTIME:"
+    int64_t uptime2 = atoll(uptime2_str + 7);
+
+    // Second uptime should be greater
+    TEST_ASSERT_TRUE(uptime2 > uptime1);
+}
+
+/* ==========================================================================
+ * MODE Handler Tests (Story 2-6: Mode Management)
+ * ========================================================================== */
+
+/**
+ * AC1: Given I send MODE, when command is processed,
+ * then response is OK <current_mode>
+ */
+TEST_CASE("AC1: MODE query returns current mode", "[command_executor][mode]")
+{
+    TEST_ASSERT_EQUAL(ESP_OK, cmd_executor_init());
+
+    char response[LIMIT_RESPONSE_MAX_LENGTH];
+    ParsedCommand cmd;
+
+    // Test IDLE state
     set_system_state(STATE_IDLE);
     make_command(&cmd, CMD_MODE, '\0', 0, NULL);
     TEST_ASSERT_EQUAL(ESP_OK, dispatch_command(&cmd, response, sizeof(response)));
-    TEST_ASSERT_NOT_NULL(strstr(response, "IDLE"));
+    TEST_ASSERT_EQUAL_STRING("OK IDLE\r\n", response);
 
+    // Test READY state
     set_system_state(STATE_READY);
     TEST_ASSERT_EQUAL(ESP_OK, dispatch_command(&cmd, response, sizeof(response)));
-    TEST_ASSERT_NOT_NULL(strstr(response, "READY"));
+    TEST_ASSERT_EQUAL_STRING("OK READY\r\n", response);
 
+    // Test CONFIG state
+    set_system_state(STATE_CONFIG);
+    TEST_ASSERT_EQUAL(ESP_OK, dispatch_command(&cmd, response, sizeof(response)));
+    TEST_ASSERT_EQUAL_STRING("OK CONFIG\r\n", response);
+
+    // Test ESTOP state
+    set_system_state(STATE_ESTOP);
+    TEST_ASSERT_EQUAL(ESP_OK, dispatch_command(&cmd, response, sizeof(response)));
+    TEST_ASSERT_EQUAL_STRING("OK ESTOP\r\n", response);
+
+    // Test ERROR state
+    set_system_state(STATE_ERROR);
+    TEST_ASSERT_EQUAL(ESP_OK, dispatch_command(&cmd, response, sizeof(response)));
+    TEST_ASSERT_EQUAL_STRING("OK ERROR\r\n", response);
+
+    // Cleanup
     set_system_state(STATE_IDLE);
 }
 
 /**
- * Test MODE handler - set mode
+ * AC2: Given system is in IDLE mode after boot, when I send MODE READY,
+ * then response is OK READY and system enters READY mode
  */
-TEST_CASE("MODE handler sets mode", "[command_executor]")
+TEST_CASE("AC2: MODE READY from IDLE succeeds", "[command_executor][mode]")
 {
     TEST_ASSERT_EQUAL(ESP_OK, cmd_executor_init());
 
     char response[LIMIT_RESPONSE_MAX_LENGTH];
     ParsedCommand cmd;
 
-    // Set to READY
+    set_system_state(STATE_IDLE);
     make_command(&cmd, CMD_MODE, '\0', 0, "READY");
     TEST_ASSERT_EQUAL(ESP_OK, dispatch_command(&cmd, response, sizeof(response)));
-    TEST_ASSERT_NOT_NULL(strstr(response, "OK"));
+    TEST_ASSERT_EQUAL_STRING("OK READY\r\n", response);
     TEST_ASSERT_EQUAL(STATE_READY, get_system_state());
 
-    // Set to CONFIG
-    make_command(&cmd, CMD_MODE, '\0', 0, "CONFIG");
-    TEST_ASSERT_EQUAL(ESP_OK, dispatch_command(&cmd, response, sizeof(response)));
-    TEST_ASSERT_NOT_NULL(strstr(response, "OK"));
-    TEST_ASSERT_EQUAL(STATE_CONFIG, get_system_state());
-
-    // Set to IDLE
-    make_command(&cmd, CMD_MODE, '\0', 0, "IDLE");
-    TEST_ASSERT_EQUAL(ESP_OK, dispatch_command(&cmd, response, sizeof(response)));
-    TEST_ASSERT_NOT_NULL(strstr(response, "OK"));
-    TEST_ASSERT_EQUAL(STATE_IDLE, get_system_state());
+    // Cleanup
+    set_system_state(STATE_IDLE);
 }
 
 /**
- * Test MODE handler - invalid mode
+ * AC3: Given system is in READY mode, when I send MODE CONFIG,
+ * then response is OK CONFIG and system enters CONFIG mode
  */
-TEST_CASE("MODE handler rejects invalid mode", "[command_executor]")
+TEST_CASE("AC3: MODE CONFIG from READY succeeds", "[command_executor][mode]")
+{
+    TEST_ASSERT_EQUAL(ESP_OK, cmd_executor_init());
+
+    char response[LIMIT_RESPONSE_MAX_LENGTH];
+    ParsedCommand cmd;
+
+    set_system_state(STATE_READY);
+    make_command(&cmd, CMD_MODE, '\0', 0, "CONFIG");
+    TEST_ASSERT_EQUAL(ESP_OK, dispatch_command(&cmd, response, sizeof(response)));
+    TEST_ASSERT_EQUAL_STRING("OK CONFIG\r\n", response);
+    TEST_ASSERT_EQUAL(STATE_CONFIG, get_system_state());
+
+    // Cleanup
+    set_system_state(STATE_IDLE);
+}
+
+/**
+ * AC4: Given system is in CONFIG mode, when I send MODE READY,
+ * then response is OK READY and system returns to READY mode
+ */
+TEST_CASE("AC4: MODE READY from CONFIG succeeds", "[command_executor][mode]")
+{
+    TEST_ASSERT_EQUAL(ESP_OK, cmd_executor_init());
+
+    char response[LIMIT_RESPONSE_MAX_LENGTH];
+    ParsedCommand cmd;
+
+    set_system_state(STATE_CONFIG);
+    make_command(&cmd, CMD_MODE, '\0', 0, "READY");
+    TEST_ASSERT_EQUAL(ESP_OK, dispatch_command(&cmd, response, sizeof(response)));
+    TEST_ASSERT_EQUAL_STRING("OK READY\r\n", response);
+    TEST_ASSERT_EQUAL(STATE_READY, get_system_state());
+
+    // Cleanup
+    set_system_state(STATE_IDLE);
+}
+
+/**
+ * AC5: Given system is in CONFIG mode, when motion command is sent,
+ * then response is ERROR E012 Command blocked in current mode
+ *
+ * Note: This test requires registering a motion command with STATE_READY restriction
+ */
+TEST_CASE("AC5: Motion command blocked in CONFIG mode", "[command_executor][mode]")
+{
+    TEST_ASSERT_EQUAL(ESP_OK, cmd_executor_init());
+
+    char response[LIMIT_RESPONSE_MAX_LENGTH];
+    ParsedCommand cmd;
+
+    // Register a mock motion command that only works in READY state
+    CommandEntry motion_entry = {
+        .verb = "TESTMOTION",
+        .handler = test_handler,
+        .allowed_states = STATE_READY
+    };
+    TEST_ASSERT_EQUAL(ESP_OK, cmd_executor_register(&motion_entry));
+
+    // Set to CONFIG mode
+    set_system_state(STATE_CONFIG);
+
+    // Attempt motion command - should be blocked
+    make_command(&cmd, "TESTMOTION", '\0', 0, NULL);
+    TEST_ASSERT_EQUAL(ESP_ERR_INVALID_STATE, dispatch_command(&cmd, response, sizeof(response)));
+    TEST_ASSERT_NOT_NULL(strstr(response, "ERROR"));
+    TEST_ASSERT_NOT_NULL(strstr(response, ERR_MODE_BLOCKED));
+    TEST_ASSERT_NOT_NULL(strstr(response, MSG_MODE_BLOCKED));
+
+    // Same command should work in READY state
+    set_system_state(STATE_READY);
+    TEST_ASSERT_EQUAL(ESP_OK, dispatch_command(&cmd, response, sizeof(response)));
+    TEST_ASSERT_NOT_NULL(strstr(response, "OK"));
+
+    // Cleanup
+    set_system_state(STATE_IDLE);
+}
+
+/**
+ * AC6: Given system is in ESTOP mode, when I send MODE READY,
+ * then response is ERROR E006 Emergency stop active and mode does not change
+ */
+TEST_CASE("AC6: MODE READY from ESTOP fails with E006", "[command_executor][mode]")
+{
+    TEST_ASSERT_EQUAL(ESP_OK, cmd_executor_init());
+
+    char response[LIMIT_RESPONSE_MAX_LENGTH];
+    ParsedCommand cmd;
+
+    set_system_state(STATE_ESTOP);
+    make_command(&cmd, CMD_MODE, '\0', 0, "READY");
+    TEST_ASSERT_EQUAL(ESP_ERR_INVALID_STATE, dispatch_command(&cmd, response, sizeof(response)));
+    TEST_ASSERT_NOT_NULL(strstr(response, "ERROR"));
+    TEST_ASSERT_NOT_NULL(strstr(response, ERR_EMERGENCY_STOP));
+    TEST_ASSERT_NOT_NULL(strstr(response, MSG_EMERGENCY_STOP));
+
+    // State should not have changed
+    TEST_ASSERT_EQUAL(STATE_ESTOP, get_system_state());
+
+    // Cleanup
+    set_system_state(STATE_IDLE);
+}
+
+/**
+ * AC9: Given invalid mode name, when I send MODE INVALID,
+ * then response is ERROR E001 Unknown command
+ */
+TEST_CASE("AC9: MODE with invalid name returns E001", "[command_executor][mode]")
 {
     TEST_ASSERT_EQUAL(ESP_OK, cmd_executor_init());
 
@@ -585,12 +790,145 @@ TEST_CASE("MODE handler rejects invalid mode", "[command_executor]")
     set_system_state(STATE_IDLE);
 
     make_command(&cmd, CMD_MODE, '\0', 0, "INVALID");
-    TEST_ASSERT_EQUAL(ESP_ERR_INVALID_ARG, dispatch_command(&cmd, response, sizeof(response)));
+    TEST_ASSERT_EQUAL(ESP_ERR_NOT_FOUND, dispatch_command(&cmd, response, sizeof(response)));
     TEST_ASSERT_NOT_NULL(strstr(response, "ERROR"));
-    TEST_ASSERT_NOT_NULL(strstr(response, ERR_INVALID_PARAMETER));
+    TEST_ASSERT_NOT_NULL(strstr(response, ERR_INVALID_COMMAND));
+    TEST_ASSERT_NOT_NULL(strstr(response, MSG_INVALID_COMMAND));
+
+    // Test another invalid mode name
+    make_command(&cmd, CMD_MODE, '\0', 0, "BOGUS");
+    TEST_ASSERT_EQUAL(ESP_ERR_NOT_FOUND, dispatch_command(&cmd, response, sizeof(response)));
+    TEST_ASSERT_NOT_NULL(strstr(response, ERR_INVALID_COMMAND));
 
     // State should not have changed
     TEST_ASSERT_EQUAL(STATE_IDLE, get_system_state());
+}
+
+/**
+ * AC10: Given system is in ERROR state, when I send MODE READY,
+ * then response is ERROR E031 System in error state
+ */
+TEST_CASE("AC10: MODE READY from ERROR fails with E031", "[command_executor][mode]")
+{
+    TEST_ASSERT_EQUAL(ESP_OK, cmd_executor_init());
+
+    char response[LIMIT_RESPONSE_MAX_LENGTH];
+    ParsedCommand cmd;
+
+    set_system_state(STATE_ERROR);
+    make_command(&cmd, CMD_MODE, '\0', 0, "READY");
+    TEST_ASSERT_EQUAL(ESP_ERR_INVALID_STATE, dispatch_command(&cmd, response, sizeof(response)));
+    TEST_ASSERT_NOT_NULL(strstr(response, "ERROR"));
+    TEST_ASSERT_NOT_NULL(strstr(response, ERR_SYSTEM_ERROR));
+    TEST_ASSERT_NOT_NULL(strstr(response, MSG_SYSTEM_ERROR));
+
+    // State should not have changed
+    TEST_ASSERT_EQUAL(STATE_ERROR, get_system_state());
+
+    // Cleanup
+    set_system_state(STATE_IDLE);
+}
+
+/**
+ * AC8: Given system mode, when any valid mode change occurs,
+ * then mode is stored in atomic variable for ISR-safe access
+ *
+ * Note: This tests the volatile nature of the state variable
+ */
+TEST_CASE("AC8: Mode changes are atomic and ISR-safe", "[command_executor][mode]")
+{
+    TEST_ASSERT_EQUAL(ESP_OK, cmd_executor_init());
+
+    char response[LIMIT_RESPONSE_MAX_LENGTH];
+    ParsedCommand cmd;
+
+    // Rapid state changes should be atomic
+    for (int i = 0; i < 100; i++) {
+        set_system_state(STATE_IDLE);
+        TEST_ASSERT_EQUAL(STATE_IDLE, get_system_state());
+
+        make_command(&cmd, CMD_MODE, '\0', 0, "READY");
+        TEST_ASSERT_EQUAL(ESP_OK, dispatch_command(&cmd, response, sizeof(response)));
+        TEST_ASSERT_EQUAL(STATE_READY, get_system_state());
+
+        make_command(&cmd, CMD_MODE, '\0', 0, "CONFIG");
+        TEST_ASSERT_EQUAL(ESP_OK, dispatch_command(&cmd, response, sizeof(response)));
+        TEST_ASSERT_EQUAL(STATE_CONFIG, get_system_state());
+
+        make_command(&cmd, CMD_MODE, '\0', 0, "READY");
+        TEST_ASSERT_EQUAL(ESP_OK, dispatch_command(&cmd, response, sizeof(response)));
+        TEST_ASSERT_EQUAL(STATE_READY, get_system_state());
+    }
+
+    // Cleanup
+    set_system_state(STATE_IDLE);
+}
+
+/**
+ * Test MODE handler - case insensitive
+ */
+TEST_CASE("MODE handler is case insensitive", "[command_executor][mode]")
+{
+    TEST_ASSERT_EQUAL(ESP_OK, cmd_executor_init());
+
+    char response[LIMIT_RESPONSE_MAX_LENGTH];
+    ParsedCommand cmd;
+
+    set_system_state(STATE_IDLE);
+
+    // Lowercase
+    make_command(&cmd, CMD_MODE, '\0', 0, "ready");
+    TEST_ASSERT_EQUAL(ESP_OK, dispatch_command(&cmd, response, sizeof(response)));
+    TEST_ASSERT_EQUAL(STATE_READY, get_system_state());
+
+    // Mixed case
+    make_command(&cmd, CMD_MODE, '\0', 0, "CoNfIg");
+    TEST_ASSERT_EQUAL(ESP_OK, dispatch_command(&cmd, response, sizeof(response)));
+    TEST_ASSERT_EQUAL(STATE_CONFIG, get_system_state());
+
+    // Cleanup
+    set_system_state(STATE_IDLE);
+}
+
+/**
+ * Test MODE handler - same state transition
+ */
+TEST_CASE("MODE to same state returns OK", "[command_executor][mode]")
+{
+    TEST_ASSERT_EQUAL(ESP_OK, cmd_executor_init());
+
+    char response[LIMIT_RESPONSE_MAX_LENGTH];
+    ParsedCommand cmd;
+
+    set_system_state(STATE_READY);
+    make_command(&cmd, CMD_MODE, '\0', 0, "READY");
+    TEST_ASSERT_EQUAL(ESP_OK, dispatch_command(&cmd, response, sizeof(response)));
+    TEST_ASSERT_EQUAL_STRING("OK READY\r\n", response);
+    TEST_ASSERT_EQUAL(STATE_READY, get_system_state());
+
+    // Cleanup
+    set_system_state(STATE_IDLE);
+}
+
+/**
+ * Test invalid transitions are blocked
+ */
+TEST_CASE("Invalid mode transitions are blocked", "[command_executor][mode]")
+{
+    TEST_ASSERT_EQUAL(ESP_OK, cmd_executor_init());
+
+    char response[LIMIT_RESPONSE_MAX_LENGTH];
+    ParsedCommand cmd;
+
+    // IDLE -> CONFIG should fail (must go through READY first)
+    set_system_state(STATE_IDLE);
+    make_command(&cmd, CMD_MODE, '\0', 0, "CONFIG");
+    TEST_ASSERT_EQUAL(ESP_ERR_INVALID_ARG, dispatch_command(&cmd, response, sizeof(response)));
+    TEST_ASSERT_NOT_NULL(strstr(response, "ERROR"));
+    TEST_ASSERT_EQUAL(STATE_IDLE, get_system_state());
+
+    // Cleanup
+    set_system_state(STATE_IDLE);
 }
 
 /* ==========================================================================

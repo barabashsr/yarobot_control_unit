@@ -1,0 +1,196 @@
+<story-context id="2-6-mode-management" v="1.0">
+  <metadata>
+    <epicId>2</epicId>
+    <storyId>6</storyId>
+    <title>Mode Management (CMD_MODE Command)</title>
+    <status>ready-for-dev</status>
+    <generatedAt>2025-12-04</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/2-6-mode-management.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>user</asA>
+    <iWant>to switch between operational modes</iWant>
+    <soThat>I can safely configure the system or perform normal operations</soThat>
+    <tasks>
+      <task id="1">Define MODE command constants - verify CMD_MODE exists, add mode name strings, add error codes E006/E007</task>
+      <task id="2">Implement state validation in command_executor - use SystemState enum and allowed_states bitmask</task>
+      <task id="3">Implement handle_mode() handler - query and set mode with transition validation</task>
+      <task id="4">Implement ESTOP/ERROR blocking - return E006 for ESTOP, E007 for ERROR state</task>
+      <task id="5">Publish MODE events - call event_publish() with EVT_MODE_CHANGED after successful transition</task>
+      <task id="6">Ensure atomic state storage - verify ISR-safe access via volatile or critical sections</task>
+      <task id="7">Update command table with state restrictions - mark motion/config commands appropriately</task>
+      <task id="8">Create/update unit tests - test all mode transitions and error cases</task>
+      <task id="9">Build verification - idf.py build, flash and test</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1">Given I send MODE, when command is processed, then response is OK &lt;current_mode&gt;</ac>
+    <ac id="2">Given system is in IDLE mode after boot, when I send MODE READY, then response is OK READY and system enters READY mode</ac>
+    <ac id="3">Given system is in READY mode, when I send MODE CONFIG, then response is OK CONFIG and system enters CONFIG mode</ac>
+    <ac id="4">Given system is in CONFIG mode, when I send MODE READY, then response is OK READY and system returns to READY mode</ac>
+    <ac id="5">Given system is in CONFIG mode, when motion command is sent, then response is ERROR E003 Command not allowed in current mode</ac>
+    <ac id="6">Given system is in ESTOP mode, when I send MODE READY, then response is ERROR E006 Emergency stop active</ac>
+    <ac id="7">Given mode transition occurs, when any MODE command succeeds, then EVENT notification is published: EVENT MODE &lt;new_mode&gt;</ac>
+    <ac id="8">Given system mode, when any valid mode change occurs, then mode is stored in atomic variable for ISR-safe access</ac>
+    <ac id="9">Given invalid mode name, when I send MODE INVALID, then response is ERROR E001 Unknown command</ac>
+    <ac id="10">Given system is in ERROR state, when I send MODE READY, then response is ERROR E007 System in error state</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/epics.md</path>
+        <title>Epic Definitions</title>
+        <section>Story 2.6: Mode Management</section>
+        <snippet>Defines system modes (IDLE, READY, CONFIG, ESTOP, ERROR), allowed commands per mode, and CMD_MODE transitions. E-stop ISR can force mode to ESTOP.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-2.md</path>
+        <title>Epic 2 Technical Specification</title>
+        <section>Data Models - SystemState Enum</section>
+        <snippet>SystemState enum with STATE_IDLE=0x01, STATE_READY=0x02, STATE_CONFIG=0x04, STATE_ESTOP=0x08, STATE_ERROR=0x10, STATE_ANY=0xFF. Mode transition state machine diagram included.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>System Architecture</title>
+        <section>Safety Architecture</section>
+        <snippet>Mode stored in atomic variable for ISR-safe access. CONFIG mode blocks motion commands (FR55). ESTOP/ERROR require RST to exit.</snippet>
+      </doc>
+    </docs>
+
+    <code>
+      <file>
+        <path>firmware/components/control/command_executor/command_executor.c</path>
+        <kind>implementation</kind>
+        <symbol>handle_mode()</symbol>
+        <lines>361-404</lines>
+        <reason>Current MODE handler implementation - stub that needs enhancement for ESTOP/ERROR blocking and event publication</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/command_executor/command_executor.c</path>
+        <kind>implementation</kind>
+        <symbol>get_system_state(), set_system_state(), is_state_allowed()</symbol>
+        <lines>77-104</lines>
+        <reason>State management functions - already implemented, verify atomic access for ISR safety</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/command_executor/command_executor.c</path>
+        <kind>implementation</kind>
+        <symbol>s_current_state, s_builtin_commands[]</symbol>
+        <lines>36, 64-69</lines>
+        <reason>Volatile state variable and command table - need to update allowed_states for motion/config commands</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/command_executor/include/command_executor.h</path>
+        <kind>header</kind>
+        <symbol>SystemState, CommandEntry, CommandHandler</symbol>
+        <lines>43-100</lines>
+        <reason>Public API and type definitions - SystemState enum already defined with correct values</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_commands.h</path>
+        <kind>header</kind>
+        <symbol>CMD_MODE, ERR_*, MSG_*</symbol>
+        <lines>87, 159-286</lines>
+        <reason>Command and error constants - ERR_EMERGENCY_STOP (E006) already exists, may need E007 for system error</reason>
+      </file>
+      <file>
+        <path>firmware/components/interface/command_parser/include/response_formatter.h</path>
+        <kind>header</kind>
+        <symbol>EventType, Event, format_event()</symbol>
+        <lines>40-208</lines>
+        <reason>Event types and formatter - EVTTYPE_MODE_CHANGED already defined, use for publishing mode events</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/command_executor/test/test_command_executor.c</path>
+        <kind>test</kind>
+        <symbol>MODE handler tests</symbol>
+        <lines>609-676</lines>
+        <reason>Existing MODE tests - need to add ESTOP/ERROR blocking tests, event publication tests</reason>
+      </file>
+    </code>
+
+    <dependencies>
+      <esp-idf>
+        <component>freertos</component>
+        <component>esp_timer</component>
+      </esp-idf>
+      <internal>
+        <component>command_parser</component>
+        <component>response_formatter</component>
+        <component>config</component>
+      </internal>
+    </dependencies>
+  </artifacts>
+
+  <interfaces>
+    <interface>
+      <name>get_system_state()</name>
+      <kind>function</kind>
+      <signature>SystemState get_system_state(void)</signature>
+      <path>firmware/components/control/command_executor/include/command_executor.h:167</path>
+    </interface>
+    <interface>
+      <name>set_system_state()</name>
+      <kind>function</kind>
+      <signature>esp_err_t set_system_state(SystemState new_state)</signature>
+      <path>firmware/components/control/command_executor/include/command_executor.h:179</path>
+    </interface>
+    <interface>
+      <name>is_state_allowed()</name>
+      <kind>function</kind>
+      <signature>bool is_state_allowed(uint32_t allowed_mask)</signature>
+      <path>firmware/components/control/command_executor/include/command_executor.h:189</path>
+    </interface>
+    <interface>
+      <name>format_event()</name>
+      <kind>function</kind>
+      <signature>esp_err_t format_event(char* buf, size_t len, const Event* event)</signature>
+      <path>firmware/components/interface/command_parser/include/response_formatter.h:208</path>
+    </interface>
+    <interface>
+      <name>format_error()</name>
+      <kind>function</kind>
+      <signature>esp_err_t format_error(char* buf, size_t len, const char* code, const char* msg)</signature>
+      <path>firmware/components/interface/command_parser/include/response_formatter.h:175</path>
+    </interface>
+  </interfaces>
+
+  <constraints>
+    <constraint type="architecture">All responses must terminate with \r\n (CR+LF)</constraint>
+    <constraint type="architecture">Error codes must use ERR_* constants from config_commands.h</constraint>
+    <constraint type="architecture">CONFIG mode blocks all motion commands (FR55)</constraint>
+    <constraint type="architecture">ESTOP mode only allows status queries and RST command</constraint>
+    <constraint type="architecture">Mode must be stored in atomic variable for ISR-safe access (E-stop ISR reads/writes mode)</constraint>
+    <constraint type="architecture">Event format: EVENT MODE &lt;mode_name&gt;</constraint>
+    <constraint type="safety">ESTOP and ERROR states are sticky - cannot exit via MODE command, require RST (Epic 4)</constraint>
+    <constraint type="testing">Use Unity test framework, test files in component/test/ directories</constraint>
+  </constraints>
+
+  <tests>
+    <standards>
+      Use Unity test framework. Tests in firmware/components/{component}/test/test_{component}.c.
+      Each acceptance criterion should have at least one test case.
+      Use TEST_CASE macro with [command_executor] tag.
+      Helper function make_command() exists for creating ParsedCommand structs.
+    </standards>
+    <locations>
+      <location>firmware/components/control/command_executor/test/test_command_executor.c</location>
+    </locations>
+    <ideas>
+      <idea ac="1">Test MODE query returns current mode string for each state (IDLE, READY, CONFIG, ESTOP, ERROR)</idea>
+      <idea ac="2">Test MODE READY from IDLE succeeds and changes state</idea>
+      <idea ac="3">Test MODE CONFIG from READY succeeds and changes state</idea>
+      <idea ac="4">Test MODE READY from CONFIG succeeds and changes state</idea>
+      <idea ac="5">Register a motion command (MOVE/VEL) with allowed_states=STATE_READY, verify blocked in CONFIG with E012</idea>
+      <idea ac="6">Set state to ESTOP, send MODE READY, verify error E006 and state unchanged</idea>
+      <idea ac="7">Mock or verify event_publish() is called after successful mode change (may need event manager integration)</idea>
+      <idea ac="8">Verify s_current_state is volatile, rapid get/set cycles maintain consistency</idea>
+      <idea ac="9">Test MODE with invalid string like BOGUS returns E003 invalid parameter</idea>
+      <idea ac="10">Set state to ERROR, send MODE READY, verify error E007 (need to add this error code)</idea>
+    </ideas>
+  </tests>
+</story-context>
