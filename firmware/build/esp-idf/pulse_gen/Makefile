@@ -161,6 +161,44 @@ depend:
 	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
+# Convenience name for target.
+esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/rule:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/rule
+.PHONY : esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/rule
+
+# Convenience name for target.
+__idf_pulse_gen: esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/rule
+.PHONY : __idf_pulse_gen
+
+# fast build rule for target.
+__idf_pulse_gen/fast:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/build.make esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/build
+.PHONY : __idf_pulse_gen/fast
+
+rmt_pulse_gen.obj: rmt_pulse_gen.cpp.obj
+.PHONY : rmt_pulse_gen.obj
+
+# target to build an object file
+rmt_pulse_gen.cpp.obj:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/build.make esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/rmt_pulse_gen.cpp.obj
+.PHONY : rmt_pulse_gen.cpp.obj
+
+rmt_pulse_gen.i: rmt_pulse_gen.cpp.i
+.PHONY : rmt_pulse_gen.i
+
+# target to preprocess a source file
+rmt_pulse_gen.cpp.i:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/build.make esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/rmt_pulse_gen.cpp.i
+.PHONY : rmt_pulse_gen.cpp.i
+
+rmt_pulse_gen.s: rmt_pulse_gen.cpp.s
+.PHONY : rmt_pulse_gen.s
+
+# target to generate assembly for a file
+rmt_pulse_gen.cpp.s:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/build.make esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/rmt_pulse_gen.cpp.s
+.PHONY : rmt_pulse_gen.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -173,6 +211,10 @@ help:
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
+	@echo "... __idf_pulse_gen"
+	@echo "... rmt_pulse_gen.obj"
+	@echo "... rmt_pulse_gen.i"
+	@echo "... rmt_pulse_gen.s"
 .PHONY : help
 
 

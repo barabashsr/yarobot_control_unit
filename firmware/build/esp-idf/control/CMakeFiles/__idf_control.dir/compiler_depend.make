@@ -139,6 +139,247 @@ esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/command_executor.c
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/interface/command_parser/include/command_parser.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/interface/command_parser/include/response_formatter.h
 
+esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/test_pulse_cmd.cpp.obj: /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/test_pulse_cmd.cpp \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/lib/gcc/xtensa-esp-elf/14.2.0/include/limits.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/lib/gcc/xtensa-esp-elf/14.2.0/include/stdarg.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/lib/gcc/xtensa-esp-elf/14.2.0/include/stdbool.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/lib/gcc/xtensa-esp-elf/14.2.0/include/stddef.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/lib/gcc/xtensa-esp-elf/14.2.0/include/stdint.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/lib/gcc/xtensa-esp-elf/14.2.0/include/syslimits.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/_ansi.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/_newlib_version.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/alloca.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/assert.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/array \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/atomic \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/backward/binders.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bit \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/alloc_traits.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/allocator.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/atomic_base.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/atomic_lockfree_defines.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/atomic_wait.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/concept_check.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/cpp_type_traits.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/enable_special_members.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/erase_if.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/exception.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/exception_defines.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/functexcept.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/functional_hash.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/hash_bytes.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/hashtable.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/hashtable_policy.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/invoke.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/iterator_concepts.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/max_size_type.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/memory_resource.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/memoryfwd.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/mofunc_impl.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/move.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/move_only_function.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/new_allocator.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/node_handle.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/predefined_ops.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/ptr_traits.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/range_access.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/ranges_base.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/ranges_cmp.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/ranges_util.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/refwrap.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/requires_hosted.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/std_abs.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/std_function.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/std_mutex.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_algobase.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_bvector.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_construct.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_function.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_iterator.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_iterator_base_funcs.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_iterator_base_types.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_pair.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_uninitialized.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_vector.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/unordered_map.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/uses_allocator.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/uses_allocator_args.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/utility.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/vector.tcc \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/version.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/compare \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/concepts \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/cstddef \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/cstdint \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/cstdlib \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/cstring \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/debug/assertions.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/debug/debug.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/ext/aligned_buffer.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/ext/alloc_traits.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/ext/numeric_traits.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/ext/type_traits.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/functional \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/initializer_list \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/new \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/numbers \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/pstl/pstl_config.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/stdlib.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/tuple \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/type_traits \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/typeinfo \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/unordered_map \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/vector \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/xtensa-esp-elf/esp32s3/no-rtti/bits/c++allocator.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/xtensa-esp-elf/esp32s3/no-rtti/bits/c++config.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/xtensa-esp-elf/esp32s3/no-rtti/bits/cpu_defines.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/xtensa-esp-elf/esp32s3/no-rtti/bits/gthr-default.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/xtensa-esp-elf/esp32s3/no-rtti/bits/gthr.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/xtensa-esp-elf/esp32s3/no-rtti/bits/os_defines.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/errno.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/inttypes.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/limits.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/machine/_default_types.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/machine/_endian.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/machine/_time.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/machine/_types.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/machine/endian.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/machine/ieeefp.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/machine/stdlib.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/machine/time.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/machine/types.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/newlib.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/pthread.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/reent.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sched.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/signal.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/stdint.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/stdio.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/stdlib.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/string.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/strings.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/_intsup.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/_locale.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/_pthreadtypes.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/_sigset.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/_stdint.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/_timespec.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/_timeval.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/_types.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/cdefs.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/config.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/errno.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/features.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/lock.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/reent.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/sched.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/select.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/signal.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/stdio.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/string.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/syslimits.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/time.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/timespec.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/types.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/unistd.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/time.h \
+  /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/unistd.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_assert.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_attr.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_bit_defs.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_compiler.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_err.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_idf_version.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_macros.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_gpio/include/driver/gpio.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_gpio/include/driver/gpio_etm.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_rmt/include/driver/rmt_common.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_rmt/include/driver/rmt_encoder.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_rmt/include/driver/rmt_tx.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_rmt/include/driver/rmt_types.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_hw_support/include/esp_cpu.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_hw_support/include/esp_etm.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_hw_support/include/esp_intr_alloc.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_hw_support/include/esp_intr_types.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_hw_support/include/esp_memory_utils.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_hw_support/include/spinlock.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_rom/include/esp_rom_gpio.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_rom/include/esp_rom_sys.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_system/include/esp_private/crosscore_int.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_system/include/esp_system.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/FreeRTOS.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/deprecated_definitions.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/event_groups.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/list.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/message_buffer.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/mpu_wrappers.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/portable.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/projdefs.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/queue.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/semphr.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/stream_buffer.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/task.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/timers.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/include/freertos/portbenchmark.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/include/freertos/portmacro.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/config/include/freertos/FreeRTOSConfig.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/config/xtensa/include/freertos/FreeRTOSConfig_arch.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/esp_additions/include/freertos/idf_additions.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/gpio_types.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/rmt_types.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/heap/include/esp_heap_caps.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/heap/include/multi_heap.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log_buffer.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log_color.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log_level.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log_timestamp.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/assert.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/errno.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/esp_newlib.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/pthread.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/sys/lock.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/sys/reent.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/sys/select.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/sys/time.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/sys/unistd.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/time.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/clk_tree_defs.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/gpio_num.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/gpio_pins.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/mpu_caps.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/reset_reasons.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/soc.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/soc_caps.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/reg_base.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/esp32s3/include/xtensa/config/core-isa.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/esp32s3/include/xtensa/config/core-matmap.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/esp32s3/include/xtensa/config/core.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/esp32s3/include/xtensa/config/extreg.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/esp32s3/include/xtensa/config/specreg.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/esp32s3/include/xtensa/config/system.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/esp32s3/include/xtensa/config/tie.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xt_instr_macros.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xt_utils.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa/corebits.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa/hal.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa/xtensa-versions.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa/xtruntime-core-state.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa/xtruntime-frames.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa/xtruntime.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa_api.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa_config.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa_context.h \
+  config/sdkconfig.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_commands.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_gpio.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_limits.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/include/command_executor.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/interface/command_parser/include/command_parser.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/interface/command_parser/include/response_formatter.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/include/i_pulse_generator.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/include/rmt_pulse_gen.h
+
 esp-idf/control/CMakeFiles/__idf_control.dir/tasks/task_stubs.c.obj: /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/tasks/task_stubs.c \
   /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/lib/gcc/xtensa-esp-elf/14.2.0/include/limits.h \
   /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/lib/gcc/xtensa-esp-elf/14.2.0/include/stdarg.h \
@@ -246,6 +487,7 @@ esp-idf/control/CMakeFiles/__idf_control.dir/tasks/task_stubs.c.obj: /Users/serg
   config/sdkconfig.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_limits.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/include/command_executor.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/include/test_pulse_cmd.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/tasks/include/task_defs.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/drivers/test_utils/include/test_utils.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/interface/command_parser/include/command_parser.h \
@@ -270,31 +512,233 @@ esp-idf/control/CMakeFiles/__idf_control.dir/tasks/task_stubs.c.obj: /Users/serg
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/tusb_option.h
 
 
-/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/osal/osal_freertos.h:
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/tusb_option.h:
 
-/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/osal/osal.h:
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/device/usbd.h:
 
-/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/common/tusb_verify.h:
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/common/tusb_types.h:
 
-/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/common/tusb_mcu.h:
-
-/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/common/tusb_debug.h:
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/tusb.h:
 
 /Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/common/tusb_common.h:
 
-/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__esp_tinyusb/include/tusb_config.h:
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/class/cdc/cdc_device.h:
 
-/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__esp_tinyusb/include/tusb_cdc_acm.h:
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/class/cdc/cdc.h:
 
-/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/drivers/test_utils/include/test_utils.h:
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__esp_tinyusb/include/tinyusb.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/interface/usb_cdc/include/usb_cdc.h:
 
 /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/tasks/include/task_defs.h:
 
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/include/test_pulse_cmd.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/tasks/task_stubs.c:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/sys/unistd.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/sys/select.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/errno.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/rmt_types.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_rmt/include/driver/rmt_common.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/time.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/types.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/timespec.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_rmt/include/driver/rmt_tx.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/sched.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/_timeval.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/_sigset.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/_pthreadtypes.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/signal.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/pthread.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/machine/types.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/machine/endian.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/machine/_endian.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/xtensa-esp-elf/esp32s3/no-rtti/bits/os_defines.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/xtensa-esp-elf/esp32s3/no-rtti/bits/gthr.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/xtensa-esp-elf/esp32s3/no-rtti/bits/cpu_defines.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/xtensa-esp-elf/esp32s3/no-rtti/bits/c++config.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/xtensa-esp-elf/esp32s3/no-rtti/bits/gthr-default.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/vector:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/typeinfo:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/tuple:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/machine/time.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/pstl/pstl_config.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/xtensa-esp-elf/esp32s3/no-rtti/bits/c++allocator.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/ext/numeric_traits.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/ext/alloc_traits.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/ext/aligned_buffer.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/cstring:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/cstdlib:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__esp_tinyusb/include/tusb_cdc_acm.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/unistd.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/version.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/utility.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/uses_allocator_args.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/message_buffer.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/unordered_map.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/time.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_spi/include/driver/spi_common.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_vector.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_uninitialized.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/osal/osal.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_pair.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/new:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_iterator_base_funcs.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_iterator.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa_config.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_bvector.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_algobase.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/common/tusb_debug.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/debug/debug.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/std_function.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/std_abs.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/concepts:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/std_mutex.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/ranges_util.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/ctype.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/interface/command_parser/include/response_formatter.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_construct.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/predefined_ops.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/move.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_timing.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/esp32s3/include/xtensa/config/tie.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/memoryfwd.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log_level.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/memory_resource.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/hashtable_policy.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/include/freertos/portmacro.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/hashtable.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/_timespec.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/atomic_base.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/hash_bytes.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/drivers/test_utils/include/test_utils.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/numbers:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/erase_if.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/common/tusb_verify.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/esp32s3/include/xtensa/config/specreg.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/enable_special_members.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/assert.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/atomic_wait.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/mofunc_impl.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/allocator.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/ext/type_traits.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/atomic_lockfree_defines.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/alloc_traits.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/portable.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/cpp_type_traits.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_yaml_schema.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bit:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/queue.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/backward/binders.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/test_pulse_cmd.cpp:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_rmt/include/driver/rmt_types.h:
+
 /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/interface/command_parser/include/command_parser.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/stdlib.h:
 
 /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/events/event_manager/include/event_manager.h:
 
-/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_yaml_schema.h:
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/sys/time.h:
 
 /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_sr.h:
 
@@ -302,59 +746,87 @@ esp-idf/control/CMakeFiles/__idf_control.dir/tasks/task_stubs.c.obj: /Users/serg
 
 /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_i2c.h:
 
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/pthread.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/concept_check.h:
+
 /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_gpio.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/debug/assertions.h:
 
 /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_defaults.h:
 
-/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config.h:
+config/sdkconfig.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa_context.h:
 
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa_config.h:
-
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa/xtruntime.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/invoke.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa/xtensa-versions.h:
 
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__esp_tinyusb/include/tinyusb_types.h:
+
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa/hal.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/event_groups.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa/corebits.h:
 
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xt_utils.h:
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/uses_allocator.h:
 
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/esp32s3/include/xtensa/config/tie.h:
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_hw_support/include/esp_etm.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xt_utils.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/esp32s3/include/xtensa/config/system.h:
 
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/esp32s3/include/xtensa/config/specreg.h:
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log_timestamp.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/range_access.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/move_only_function.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_system/include/esp_system.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/esp32s3/include/xtensa/config/extreg.h:
 
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/node_handle.h:
+
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/esp32s3/include/xtensa/config/core.h:
 
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/esp32s3/include/xtensa/config/core-matmap.h:
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/exception.h:
 
-config/sdkconfig.h:
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/esp32s3/include/xtensa/config/core-matmap.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/esp32s3/include/xtensa/config/core-isa.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/gpio_pins.h:
 
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/functexcept.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/requires_hosted.h:
+
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_rom/include/esp_rom_gpio.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/functional:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/gpio_num.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/sys/reent.h:
 
-/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/common/tusb_fifo.h:
-
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/esp_newlib.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/common/tusb_fifo.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/string.h:
 
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/assert.h:
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/lib/gcc/xtensa-esp-elf/14.2.0/include/stdint.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log_buffer.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/cstddef:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/spi_types.h:
 
@@ -362,9 +834,15 @@ config/sdkconfig.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/hal_utils.h:
 
-/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/tusb_option.h:
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/array:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_function.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/heap/include/multi_heap.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/include/rmt_pulse_gen.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/strings.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/_stdint.h:
 
@@ -372,87 +850,109 @@ config/sdkconfig.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/ledc_types.h:
 
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/machine/_time.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_iterator_base_types.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/newlib.h:
+
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/gpio_types.h:
 
-/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__esp_tinyusb/include/tinyusb_types.h:
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/type_traits:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/task.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/config/include/freertos/FreeRTOSConfig.h:
 
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/include/freertos/portmacro.h:
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/reent.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/include/freertos/portbenchmark.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/mpu_caps.h:
 
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/iterator_concepts.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_gpio/include/driver/gpio.h:
+
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/timers.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/syslimits.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/features.h:
 
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/stream_buffer.h:
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_rmt/include/driver/rmt_encoder.h:
 
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/queue.h:
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/errno.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/stream_buffer.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_spi/include/driver/spi_master.h:
 
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/initializer_list:
+
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/mpu_wrappers.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_peripherals.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_rom/include/esp_rom_sys.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/list.h:
 
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_system/include/esp_system.h:
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/new_allocator.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/soc.h:
 
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/refwrap.h:
+
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_system/include/esp_private/crosscore_int.h:
-
-/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/tusb.h:
-
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_rom/include/esp_rom_sys.h:
 
 /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_limits.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_hw_support/include/esp_intr_types.h:
 
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_hw_support/include/esp_etm.h:
-
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/deprecated_definitions.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_hw_support/include/esp_cpu.h:
 
-/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/class/cdc/cdc.h:
-
-/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/interface/usb_cdc/include/usb_cdc.h:
-
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/sys/lock.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/unistd.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/ranges_cmp.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log_color.h:
 
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_spi/include/driver/spi_common.h:
-
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/message_buffer.h:
-
-/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/class/cdc/cdc_device.h:
-
-/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_peripherals.h:
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/functional_hash.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/soc_caps.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/cdefs.h:
 
-/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/tasks/task_stubs.c:
-
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_i2c/include/driver/i2c_types.h:
 
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/stdint.h:
+
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/machine/stdlib.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/common/tusb_compiler.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/atomic:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/time.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa/xtruntime-frames.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_gpio/include/driver/gpio_etm.h:
 
-/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/interface/command_parser/include/response_formatter.h:
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/compare:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/lock.h:
 
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/ptr_traits.h:
+
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa_api.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/errno.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa/xtruntime-core-state.h:
 
@@ -460,11 +960,17 @@ config/sdkconfig.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_hw_support/include/spinlock.h:
 
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/common/tusb_mcu.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/select.h:
+
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/config.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/_locale.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_compiler.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/vector.tcc:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/machine/_types.h:
 
@@ -472,13 +978,11 @@ config/sdkconfig.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_bit_defs.h:
 
-/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/syslimits.h:
-
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_system/include/esp_ipc.h:
 
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/portable.h:
-
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_hw_support/include/esp_intr_alloc.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/include/i_pulse_generator.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_hw_support/include/esp_memory_utils.h:
 
@@ -486,21 +990,25 @@ config/sdkconfig.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_ledc/include/driver/ledc.h:
 
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/ranges_base.h:
+
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/lib/gcc/xtensa-esp-elf/14.2.0/include/stdarg.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_timer/include/esp_timer.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/_types.h:
 
-/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_timing.h:
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/reset_reasons.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/exception_defines.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/heap/include/esp_heap_caps.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/lib/gcc/xtensa-esp-elf/14.2.0/include/stdbool.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/projdefs.h:
 
-/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/strings.h:
-
-/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/common/tusb_types.h:
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/reent.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/stdlib.h:
 
@@ -520,11 +1028,9 @@ config/sdkconfig.h:
 
 /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_commands.h:
 
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/heap/include/esp_heap_caps.h:
-
-/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/common/tusb_compiler.h:
-
 /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/include/command_executor.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/signal.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xt_instr_macros.h:
 
@@ -532,27 +1038,19 @@ config/sdkconfig.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/_ansi.h:
 
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_gpio/include/driver/gpio.h:
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/max_size_type.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/lib/gcc/xtensa-esp-elf/14.2.0/include/stddef.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/stdio.h:
 
-/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__esp_tinyusb/include/tinyusb.h:
-
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/event_groups.h:
-
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/reset_reasons.h:
-
-/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/reent.h:
-
-/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/ctype.h:
-
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log_level.h:
-
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/task.h:
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__esp_tinyusb/include/tusb_config.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/reg_base.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/unordered_map:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/cstdint:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/_newlib_version.h:
 
@@ -562,30 +1060,22 @@ config/sdkconfig.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/lib/gcc/xtensa-esp-elf/14.2.0/include/syslimits.h:
 
-/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/lib/gcc/xtensa-esp-elf/14.2.0/include/stdint.h:
-
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/config/xtensa/include/freertos/FreeRTOSConfig_arch.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_attr.h:
 
 /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/command_executor.c:
 
-/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/reent.h:
-
-/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/stdint.h:
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sched.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/lib/gcc/xtensa-esp-elf/14.2.0/include/limits.h:
 
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log_timestamp.h:
-
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_assert.h:
 
-/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/newlib.h:
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/osal/osal_freertos.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/assert.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_idf_version.h:
-
-/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/device/usbd.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/semphr.h:

@@ -1,0 +1,20 @@
+CMake Deprecation Warning at /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/mbedtls/mbedtls/CMakeLists.txt:21 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+
+
+In file included from /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/test_pulse_cmd.cpp:41:
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/test_pulse_cmd.cpp: In function 'esp_err_t register_pulse_test_command()':
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_commands.h:27:29: error: expected unqualified-id before string constant
+   27 | #define CMD_MOVE            "MOVE"
+      |                             ^~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/test_pulse_cmd.cpp:435:24: note: in expansion of macro 'CMD_MOVE'
+  435 |     static const char* CMD_MOVE = "MOVE";
+      |                        ^~~~~~~~
+make[2]: *** [esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/test_pulse_cmd.cpp.obj] Error 1
+make[1]: *** [esp-idf/control/CMakeFiles/__idf_control.dir/all] Error 2
+make: *** [all] Error 2

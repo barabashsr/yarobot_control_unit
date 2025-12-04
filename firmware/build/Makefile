@@ -2021,6 +2021,19 @@ __idf_test_utils/fast:
 .PHONY : __idf_test_utils/fast
 
 #=============================================================================
+# Target rules for targets named __idf_pulse_gen
+
+# Build rule for target.
+__idf_pulse_gen: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 __idf_pulse_gen
+.PHONY : __idf_pulse_gen
+
+# fast build rule for target.
+__idf_pulse_gen/fast:
+	$(MAKE) $(MAKESILENT) -f esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/build.make esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/build
+.PHONY : __idf_pulse_gen/fast
+
+#=============================================================================
 # Target rules for targets named __idf_control
 
 # Build rule for target.
@@ -2245,6 +2258,7 @@ help:
 	@echo "... __idf_protobuf-c"
 	@echo "... __idf_protocomm"
 	@echo "... __idf_pthread"
+	@echo "... __idf_pulse_gen"
 	@echo "... __idf_rt"
 	@echo "... __idf_sdmmc"
 	@echo "... __idf_soc"

@@ -199,6 +199,30 @@ command_executor/command_executor.c.s:
 	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/control/CMakeFiles/__idf_control.dir/build.make esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/command_executor.c.s
 .PHONY : command_executor/command_executor.c.s
 
+command_executor/test_pulse_cmd.obj: command_executor/test_pulse_cmd.cpp.obj
+.PHONY : command_executor/test_pulse_cmd.obj
+
+# target to build an object file
+command_executor/test_pulse_cmd.cpp.obj:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/control/CMakeFiles/__idf_control.dir/build.make esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/test_pulse_cmd.cpp.obj
+.PHONY : command_executor/test_pulse_cmd.cpp.obj
+
+command_executor/test_pulse_cmd.i: command_executor/test_pulse_cmd.cpp.i
+.PHONY : command_executor/test_pulse_cmd.i
+
+# target to preprocess a source file
+command_executor/test_pulse_cmd.cpp.i:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/control/CMakeFiles/__idf_control.dir/build.make esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/test_pulse_cmd.cpp.i
+.PHONY : command_executor/test_pulse_cmd.cpp.i
+
+command_executor/test_pulse_cmd.s: command_executor/test_pulse_cmd.cpp.s
+.PHONY : command_executor/test_pulse_cmd.s
+
+# target to generate assembly for a file
+command_executor/test_pulse_cmd.cpp.s:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/control/CMakeFiles/__idf_control.dir/build.make esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/test_pulse_cmd.cpp.s
+.PHONY : command_executor/test_pulse_cmd.cpp.s
+
 tasks/task_stubs.obj: tasks/task_stubs.c.obj
 .PHONY : tasks/task_stubs.obj
 
@@ -239,6 +263,9 @@ help:
 	@echo "... command_executor/command_executor.obj"
 	@echo "... command_executor/command_executor.i"
 	@echo "... command_executor/command_executor.s"
+	@echo "... command_executor/test_pulse_cmd.obj"
+	@echo "... command_executor/test_pulse_cmd.i"
+	@echo "... command_executor/test_pulse_cmd.s"
 	@echo "... tasks/task_stubs.obj"
 	@echo "... tasks/task_stubs.i"
 	@echo "... tasks/task_stubs.s"

@@ -26,6 +26,9 @@
 #include <string.h>
 #include <ctype.h>
 
+// STORY-3-2-TEST: Remove this include and registration call after hardware verification
+#include "test_pulse_cmd.h"
+
 static const char* TAG = "tasks";
 
 /** @brief Command input buffer size */
@@ -170,6 +173,9 @@ static void process_command(char* cmd)
         if (cmd_executor_init() == ESP_OK) {
             s_executor_initialized = true;
             ESP_LOGI(TAG, "Command executor initialized");
+
+            // STORY-3-2-TEST: Register PULSE test command - remove after hardware verification
+            register_pulse_test_command();
         } else {
             ESP_LOGE(TAG, "Failed to initialize command executor");
             send_response("ERROR E010 Configuration error");

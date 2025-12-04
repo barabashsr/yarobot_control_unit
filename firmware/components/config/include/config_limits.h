@@ -102,14 +102,41 @@
 /**
  * @defgroup limits_motion Motion Limits
  * @brief Pulse frequency limits for motor drivers
+ *
+ * @note LIMIT_MAX_PULSE_FREQ_HZ is the absolute hardware capability (500 kHz).
+ *       DEFAULT_MAX_PULSE_FREQ_HZ is the safe per-axis default (200 kHz).
+ *       Per-axis max velocity can be configured between MIN and MAX.
  * @{
  */
 
-/** @brief Maximum pulse frequency (Hz) - limited by driver timing */
-#define LIMIT_MAX_PULSE_FREQ_HZ     100000
+/**
+ * @brief Absolute maximum pulse frequency (Hz) - hardware capability
+ *
+ * This is the maximum frequency the RMT peripheral can generate with 50% duty
+ * cycle at 80 MHz resolution (160 ticks/period = 2µs period = 500 kHz).
+ * Do not exceed this value.
+ */
+#define LIMIT_MAX_PULSE_FREQ_HZ     500000
+
+/**
+ * @brief Default per-axis maximum pulse frequency (Hz)
+ *
+ * This is the recommended safe default for servo axes. Individual axes can
+ * be configured up to LIMIT_MAX_PULSE_FREQ_HZ if the mechanical system allows.
+ */
+#define DEFAULT_MAX_PULSE_FREQ_HZ   200000
 
 /** @brief Minimum pulse frequency (Hz) */
 #define LIMIT_MIN_PULSE_FREQ_HZ     1
+
+/**
+ * @brief RMT peripheral resolution (Hz)
+ *
+ * 80 MHz clock provides 12.5ns resolution per tick.
+ * At 500 kHz: period = 2µs = 160 ticks (80 high + 80 low for 50% duty)
+ * At 200 kHz: period = 5µs = 400 ticks (200 high + 200 low for 50% duty)
+ */
+#define LIMIT_RMT_RESOLUTION_HZ     80000000
 
 /** @} */ // end limits_motion
 
@@ -167,6 +194,21 @@
  */
 static_assert(LIMIT_NUM_SERVOS + LIMIT_NUM_STEPPERS + LIMIT_NUM_DISCRETE == LIMIT_NUM_AXES,
               "Axis count mismatch: servo + stepper + discrete must equal total axes");
+
+/**
+ * @brief Validate pulse frequency limits
+ *
+ * Ensures that default max frequency does not exceed absolute hardware limit.
+ * Build will fail if DEFAULT_MAX > LIMIT_MAX.
+ */
+static_assert(DEFAULT_MAX_PULSE_FREQ_HZ <= LIMIT_MAX_PULSE_FREQ_HZ,
+              "DEFAULT_MAX_PULSE_FREQ_HZ must not exceed LIMIT_MAX_PULSE_FREQ_HZ");
+
+/**
+ * @brief Validate minimum frequency is positive
+ */
+static_assert(LIMIT_MIN_PULSE_FREQ_HZ >= 1,
+              "LIMIT_MIN_PULSE_FREQ_HZ must be at least 1 Hz");
 
 /** @} */ // end limits_validation
 
