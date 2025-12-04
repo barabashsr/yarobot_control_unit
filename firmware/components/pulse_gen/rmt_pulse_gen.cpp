@@ -103,7 +103,7 @@ esp_err_t RmtPulseGenerator::init()
     tx_config.gpio_num = static_cast<gpio_num_t>(gpio_num_);
     tx_config.clk_src = RMT_CLK_SRC_DEFAULT;
     tx_config.resolution_hz = resolution_hz_;
-    tx_config.mem_block_symbols = 64;  // Minimum for DMA
+    tx_config.mem_block_symbols = LIMIT_RMT_BUFFER_SYMBOLS;
     tx_config.trans_queue_depth = 4;   // Queue depth for streaming
     tx_config.flags.with_dma = true;   // Enable DMA for streaming
     tx_config.flags.invert_out = false;
@@ -218,7 +218,7 @@ void RmtPulseGenerator::handleRefillRequest()
     rmt_symbol_word_t* next_buffer = current_is_a ? buffer_b_ : buffer_a_;
 
     // Fill the next buffer
-    size_t new_symbols = fillBuffer(next_buffer, BUFFER_SYMBOLS);
+    size_t new_symbols = fillBuffer(next_buffer, LIMIT_RMT_BUFFER_SYMBOLS);
     symbols_in_next_buffer_.store(new_symbols, std::memory_order_release);
 
     if (new_symbols == 0) {
@@ -626,11 +626,11 @@ void RmtPulseGenerator::primeBuffers()
     use_buffer_a_.store(true, std::memory_order_release);
 
     // Fill buffer A
-    size_t symbols_a = fillBuffer(buffer_a_, BUFFER_SYMBOLS);
+    size_t symbols_a = fillBuffer(buffer_a_, LIMIT_RMT_BUFFER_SYMBOLS);
     symbols_in_current_buffer_.store(symbols_a, std::memory_order_release);
 
     // Fill buffer B (next buffer)
-    size_t symbols_b = fillBuffer(buffer_b_, BUFFER_SYMBOLS);
+    size_t symbols_b = fillBuffer(buffer_b_, LIMIT_RMT_BUFFER_SYMBOLS);
     symbols_in_next_buffer_.store(symbols_b, std::memory_order_release);
 
     ESP_LOGD(TAG, "Primed buffers: A=%zu, B=%zu symbols", symbols_a, symbols_b);

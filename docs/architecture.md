@@ -141,12 +141,15 @@ yarobot_control_unit/
     │   │   ├── tpic6b595/         # Shift register chain (custom SPI driver)
     │   │   └── oled/              # OLED display (esp_lcd_panel_ssd1306)
     │   │
-    │   ├── pulse_gen/             # Pulse generation interfaces
+    │   ├── pulse_gen/             # Pulse generation interfaces [IMPLEMENTED: Story 3.2]
     │   │   ├── include/
-    │   │   │   └── pulse_generator.h  # IPulseGenerator interface
-    │   │   ├── rmt_pulse_gen.cpp  # RMT+DMA implementation
-    │   │   ├── mcpwm_pulse_gen.cpp    # MCPWM implementation
-    │   │   └── ledc_pulse_gen.cpp     # LEDC implementation
+    │   │   │   ├── i_pulse_generator.h   # IPulseGenerator interface
+    │   │   │   └── rmt_pulse_gen.h       # RMT implementation header
+    │   │   ├── rmt_pulse_gen.cpp     # RMT+DMA implementation (X,Z,A,B)
+    │   │   ├── mcpwm_pulse_gen.cpp   # MCPWM implementation (Y,C) [PLANNED]
+    │   │   ├── ledc_pulse_gen.cpp    # LEDC implementation (D) [PLANNED]
+    │   │   └── test/
+    │   │       └── test_rmt_pulse_gen.cpp  # Unit tests
     │   │
     │   ├── position/              # Position tracking
     │   │   ├── include/
@@ -295,7 +298,7 @@ These patterns ensure consistent implementation across all components:
 │                                                                     │
 │   ┌──────────────┐         ┌──────────────┐                        │
 │   │  Buffer A    │         │  Buffer B    │                        │
-│   │  (512 sym)   │         │  (512 sym)   │                        │
+│   │  (512 sym)   │         │  (512 sym)   │  [IMPLEMENTED: 3.2]    │
 │   └──────┬───────┘         └──────┬───────┘                        │
 │          │                        │                                 │
 │          ▼                        ▼                                 │

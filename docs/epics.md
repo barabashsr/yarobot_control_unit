@@ -928,19 +928,25 @@ uint64_t sr_get_state(void);                              // Read current 40-bit
 **When** I request pulse generation
 **Then** STEP pulses are generated on GPIO_X_STEP, GPIO_Z_STEP, GPIO_A_STEP, GPIO_B_STEP
 
-**IPulseGenerator Interface:**
-```c
+**IPulseGenerator Interface (Implemented):**
+```cpp
 class IPulseGenerator {
 public:
-    virtual esp_err_t init() = 0;
-    virtual esp_err_t start(uint32_t frequency_hz, uint32_t pulse_count) = 0;
-    virtual esp_err_t stop() = 0;
-    virtual esp_err_t setFrequency(uint32_t frequency_hz) = 0;
-    virtual bool isRunning() const = 0;
-    virtual uint32_t getPulseCount() const = 0;
     virtual ~IPulseGenerator() = default;
+    virtual esp_err_t init() = 0;
+    virtual esp_err_t startMove(int32_t pulses, float max_velocity, float acceleration) = 0;
+    virtual esp_err_t startVelocity(float velocity, float acceleration) = 0;
+    virtual esp_err_t stop(float deceleration) = 0;
+    virtual void stopImmediate() = 0;
+    virtual bool isRunning() const = 0;
+    virtual int64_t getPulseCount() const = 0;
+    virtual float getCurrentVelocity() const = 0;
+    using MotionCompleteCallback = std::function<void(int64_t total_pulses)>;
+    virtual void setCompletionCallback(MotionCompleteCallback cb) = 0;
 };
 ```
+
+**Status: DONE** - Implemented in Story 3-2 with streaming double-buffer RMT architecture.
 
 **RMT Implementation:**
 **Given** I call `startMove(10000, 200000, 1000000)` (10000 pulses, 200kHz max velocity, 1M accel)

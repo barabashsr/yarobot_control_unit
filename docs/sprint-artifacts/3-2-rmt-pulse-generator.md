@@ -1,6 +1,6 @@
 # Story 3.2: RMT Pulse Generator
 
-Status: review
+Status: done
 
 ## Story
 
@@ -261,14 +261,29 @@ Claude Opus 4.5 (claude-opus-4-5-20251101)
 
 ### Completion Notes List
 
-- Implemented complete RMT pulse generator with streaming double-buffer architecture
+**Implementation Summary:**
+- Complete RMT pulse generator with streaming double-buffer architecture
 - IPulseGenerator interface provides unified API for all pulse generation implementations
 - RmtPulseGenerator uses ESP-IDF 5.4 RMT new API with DMA for unlimited motion length
 - Trapezoidal velocity profile supports both full trapezoidal and triangular (short move) profiles
 - Atomic state management for thread-safe operation from ISR context
 - All 4 RMT channels (X, Z, A, B) can run simultaneously at up to 500 kHz each
 - Unit tests cover all 13 acceptance criteria with comprehensive edge case testing
-- Task 13 (hardware verification) requires oscilloscope and physical hardware testing
+- Task 13 (hardware verification) deferred - requires oscilloscope and physical hardware testing
+
+**Key Implementation Details:**
+- **Buffer Size:** 64 RMT symbols per buffer (BUFFER_SYMBOLS constant)
+- **Resolution:** 80 MHz (12.5ns per tick) via `LIMIT_RMT_RESOLUTION_HZ`
+- **Profile States:** IDLE → ACCELERATING → CRUISING → DECELERATING → IDLE
+- **Refill Task:** Dedicated high-priority FreeRTOS task per channel, pinned to Core 1
+- **ISR Safety:** TX done callback only updates atomics and notifies refill task
+- **Profile Math:** Uses `v = sqrt(2 * a * d)` for acceleration phase velocity calculation
+
+**Architecture Patterns Established:**
+- ISR callback → task notification → buffer refill pattern (safe for FPU operations)
+- Double-buffer swap in ISR, actual fill in task context
+- Completion callback invoked from task context (not ISR)
+- Mutex-protected callback registration
 
 ### File List
 

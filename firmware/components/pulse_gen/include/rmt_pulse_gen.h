@@ -19,6 +19,7 @@
 #define RMT_PULSE_GEN_H
 
 #include "i_pulse_generator.h"
+#include "config_limits.h"
 #include "driver/rmt_tx.h"
 #include "driver/rmt_encoder.h"
 #include "freertos/FreeRTOS.h"
@@ -130,10 +131,9 @@ private:
     std::atomic<int64_t> pulse_count_;
     std::atomic<float> current_velocity_;
 
-    // DMA buffer management
-    static constexpr size_t BUFFER_SYMBOLS = 64;  // RMT symbols per buffer
-    rmt_symbol_word_t buffer_a_[BUFFER_SYMBOLS];
-    rmt_symbol_word_t buffer_b_[BUFFER_SYMBOLS];
+    // DMA buffer management - size from config_limits.h
+    rmt_symbol_word_t buffer_a_[LIMIT_RMT_BUFFER_SYMBOLS];
+    rmt_symbol_word_t buffer_b_[LIMIT_RMT_BUFFER_SYMBOLS];
     std::atomic<bool> use_buffer_a_;
     std::atomic<size_t> symbols_in_current_buffer_;
     std::atomic<size_t> symbols_in_next_buffer_;

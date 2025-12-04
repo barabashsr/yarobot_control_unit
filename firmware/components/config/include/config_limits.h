@@ -138,6 +138,20 @@
  */
 #define LIMIT_RMT_RESOLUTION_HZ     80000000
 
+/**
+ * @brief RMT DMA buffer size (symbols per buffer)
+ *
+ * Each RMT channel uses double-buffering (2 buffers).
+ * Larger buffers reduce CPU overhead but increase stop latency.
+ * Memory usage per channel: 2 × LIMIT_RMT_BUFFER_SYMBOLS × 4 bytes
+ *
+ * At 512 symbols with 4 channels: 512 × 4 × 8 = 16 KB total
+ * At 500 kHz: 512 pulses = 1.024ms buffer duration
+ *
+ * Valid range: 64 (minimum for DMA) to 1024 (recommended max by Espressif)
+ */
+#define LIMIT_RMT_BUFFER_SYMBOLS    512
+
 /** @} */ // end limits_motion
 
 /**

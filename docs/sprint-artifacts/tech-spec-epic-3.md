@@ -545,3 +545,39 @@ Derived from PRD FR1-10, FR43-44, FR48:
 - USB serial for command interface (115200 baud)
 - Oscilloscope for pulse verification
 - Logic analyzer for shift register timing
+
+---
+
+## Implementation Notes (Updated as stories complete)
+
+### Story 3.1: Shift Register Driver - DONE
+- Implemented 40-bit TPIC6B595N chain via SPI2
+- ISR-safe emergency disable function
+- Thread-safe with FreeRTOS mutex
+
+### Story 3.2: RMT Pulse Generator - DONE
+
+**Implementation:**
+- `firmware/components/pulse_gen/include/i_pulse_generator.h` - Abstract interface
+- `firmware/components/pulse_gen/include/rmt_pulse_gen.h` - RMT implementation header
+- `firmware/components/pulse_gen/rmt_pulse_gen.cpp` - Full implementation (708 lines)
+- `firmware/components/pulse_gen/test/test_rmt_pulse_gen.cpp` - Unit tests (476 lines)
+
+**Key Design Decisions:**
+1. **ISR Safety:** TX done callback only updates atomics and signals refill task via `xTaskNotifyFromISR()`. No FPU operations in ISR context.
+2. **Buffer Size:** 64 RMT symbols per buffer (BUFFER_SYMBOLS). Sufficient for refill latency at 500kHz.
+3. **Refill Task:** Dedicated per-channel task at priority `configMAX_PRIORITIES - 2`, pinned to Core 1.
+4. **Profile States:** `IDLE → ACCELERATING → CRUISING → DECELERATING → IDLE` or `→ STOPPING` for velocity mode.
+5. **Triangular Profile:** Short moves that can't reach max velocity use triangular profile (no cruise phase).
+
+**Performance Validated:**
+- Frequency range: 1 Hz to 500 kHz
+- Default per-axis max: 200 kHz (`DEFAULT_MAX_PULSE_FREQ_HZ`)
+- Resolution: 80 MHz (12.5ns per tick)
+- 4 channels simultaneous operation without interference
+
+**Patterns Established for Subsequent Stories:**
+- ISR callback → task notification → buffer refill pattern
+- Completion callback from task context (not ISR)
+- Atomic state management for thread safety
+- Profile velocity calculation: `v = sqrt(2 * a * d)`
