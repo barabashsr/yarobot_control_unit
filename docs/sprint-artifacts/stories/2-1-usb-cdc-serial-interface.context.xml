@@ -1,0 +1,308 @@
+<story-context id="2-1-usb-cdc-serial-interface" v="1.0">
+  <metadata>
+    <epicId>2</epicId>
+    <storyId>1</storyId>
+    <title>USB CDC Serial Interface</title>
+    <status>drafted</status>
+    <generatedAt>2025-12-04</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/2-1-usb-cdc-serial-interface.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>user</asA>
+    <iWant>to connect to the controller via USB serial</iWant>
+    <soThat>I can send commands and receive responses from any terminal program</soThat>
+    <tasks>
+      <task id="1" ac="1">
+        <title>Create USB CDC Component Structure</title>
+        <subtasks>
+          <subtask>Create firmware/components/interface/usb_cdc/ directory</subtask>
+          <subtask>Create CMakeLists.txt with component dependencies (esp_tinyusb)</subtask>
+          <subtask>Create usb_cdc.h header with public API</subtask>
+          <subtask>Create usb_cdc.c implementation file</subtask>
+          <subtask>Create usb_cdc_private.h for internal types if needed</subtask>
+        </subtasks>
+      </task>
+      <task id="2" ac="1,2">
+        <title>Implement USB CDC Initialization</title>
+        <subtasks>
+          <subtask>Implement usb_cdc_init() function</subtask>
+          <subtask>Configure TinyUSB CDC descriptor (VID/PID can use ESP defaults)</subtask>
+          <subtask>Set up CDC ACM configuration (115200 baud, 8N1)</subtask>
+          <subtask>Create RX queue (LIMIT_COMMAND_QUEUE_DEPTH from config_limits.h)</subtask>
+          <subtask>Create TX queue (LIMIT_RESPONSE_QUEUE_DEPTH from config_limits.h)</subtask>
+          <subtask>Export queue handles as extern for task communication</subtask>
+          <subtask>Register USB event callbacks for connect/disconnect</subtask>
+        </subtasks>
+      </task>
+      <task id="3" ac="3,8">
+        <title>Implement usb_rx_task</title>
+        <subtasks>
+          <subtask>Read characters from USB CDC into line buffer</subtask>
+          <subtask>Accumulate until \n or \r\n detected</subtask>
+          <subtask>Strip trailing CR/LF characters</subtask>
+          <subtask>Push complete line to usb_rx_queue</subtask>
+          <subtask>Handle buffer overflow (discard partial line, log warning)</subtask>
+          <subtask>Use LIMIT_CMD_MAX_LENGTH (256) for line buffer size</subtask>
+          <subtask>Task priority: 10 on Core 0 (per architecture)</subtask>
+        </subtasks>
+      </task>
+      <task id="4" ac="4,9">
+        <title>Implement usb_tx_task</title>
+        <subtasks>
+          <subtask>Wait on usb_tx_queue with portMAX_DELAY</subtask>
+          <subtask>When item received, send via tud_cdc_write()</subtask>
+          <subtask>Append \r\n if not already present</subtask>
+          <subtask>Flush with tud_cdc_write_flush()</subtask>
+          <subtask>Task priority: 10 on Core 0 (per architecture)</subtask>
+        </subtasks>
+      </task>
+      <task id="5" ac="5,6">
+        <title>Implement Connection State Management</title>
+        <subtasks>
+          <subtask>Track DTR/RTS line state changes</subtask>
+          <subtask>Handle USB suspend/resume events</subtask>
+          <subtask>Clear RX buffer on disconnect</subtask>
+          <subtask>Implement usb_cdc_is_connected() function</subtask>
+          <subtask>Log connect/disconnect events at INFO level</subtask>
+        </subtasks>
+      </task>
+      <task id="6" ac="3,4,7">
+        <title>Create Public API Functions</title>
+        <subtasks>
+          <subtask>usb_cdc_send(const char* data, size_t len) - raw send</subtask>
+          <subtask>usb_cdc_send_line(const char* line) - send with \r\n</subtask>
+          <subtask>Both return ESP_OK/ESP_FAIL</subtask>
+          <subtask>Both push to TX queue (non-blocking with timeout)</subtask>
+        </subtasks>
+      </task>
+      <task id="7" ac="1-9">
+        <title>Integrate with Main Application</title>
+        <subtasks>
+          <subtask>Call usb_cdc_init() from app_main() before task creation</subtask>
+          <subtask>Verify tasks are created on Core 0</subtask>
+          <subtask>Ensure USB enumeration happens in boot sequence</subtask>
+          <subtask>Update task list in boot log if needed</subtask>
+        </subtasks>
+      </task>
+      <task id="8" ac="7">
+        <title>Test with Terminal Programs</title>
+        <subtasks>
+          <subtask>Test with idf.py monitor (uses pyserial internally)</subtask>
+          <subtask>Test with screen /dev/cu.usbmodem* 115200</subtask>
+          <subtask>Document device path on macOS (/dev/cu.usbmodem*)</subtask>
+          <subtask>Verify bidirectional echo works</subtask>
+        </subtasks>
+      </task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <criterion id="AC1">Given the device is powered via USB-C, when I connect from a host computer, then the device enumerates as a USB CDC ACM device</criterion>
+    <criterion id="AC2">Given USB CDC is enumerated, when I open a serial connection, then I can connect at 115200 baud (default)</criterion>
+    <criterion id="AC3">Given a serial connection is open, when I type characters in the terminal, then characters are received by the firmware within 10ms</criterion>
+    <criterion id="AC4">Given a serial connection is open, when firmware sends characters, then they appear in my terminal within 10ms</criterion>
+    <criterion id="AC5">Given USB cable is disconnected during operation, when cable is reconnected, then device re-enumerates without requiring power cycle</criterion>
+    <criterion id="AC6">Given USB re-enumeration occurs, when serial connection is reopened, then communication resumes normally</criterion>
+    <criterion id="AC7">Given the USB CDC interface is operational, when tested with common terminal programs (minicom, screen, PuTTY, pyserial), then all work correctly</criterion>
+    <criterion id="AC8">Given text is typed in terminal, when line is terminated with \n or \r\n, then the complete line is pushed to the command RX queue</criterion>
+    <criterion id="AC9">Given text is added to TX queue, when usb_tx_task processes it, then text is sent to host with \r\n termination</criterion>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-2.md</path>
+        <title>Epic Technical Specification: Communication &amp; Command Interface</title>
+        <section>USB CDC API</section>
+        <snippet>USB CDC API contract defines usb_cdc_init(), usb_cdc_send(), usb_cdc_send_line(), usb_cdc_is_connected() functions with extern queue handles usb_rx_queue and usb_tx_queue.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-2.md</path>
+        <title>Epic Technical Specification: Communication &amp; Command Interface</title>
+        <section>Workflows and Sequencing</section>
+        <snippet>Boot sequence: usb_cdc_init() called for USB enumeration, followed by event/cmd initialization. Command processing flow shows usb_rx_task reading until \n, pushing to rx_queue.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-2.md</path>
+        <title>Epic Technical Specification: Communication &amp; Command Interface</title>
+        <section>Performance</section>
+        <snippet>Command response latency &lt;10ms, USB throughput 115200 baud effective, no character loss under normal load.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>YaRobot Architecture</title>
+        <section>Component Structure - interface/usb_cdc</section>
+        <snippet>USB serial interface component at firmware/components/interface/usb_cdc/. Uses TinyUSB (IDF component) for USB CDC serial interface.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>YaRobot Architecture</title>
+        <section>ADR-005: Text Command Protocol</section>
+        <snippet>Human-readable text commands over USB CDC. Works with any serial terminal, easy debugging, no special tooling needed.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>YaRobot Architecture</title>
+        <section>Peripheral Usage - USB</section>
+        <snippet>GPIO_USB_DN (GPIO19), GPIO_USB_DP (GPIO20) - Fixed by hardware, do not change. CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y configured.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>YaRobot Architecture</title>
+        <section>Timing Configuration</section>
+        <snippet>TIMING_CMD_RESPONSE_MS=10 (max command response time), TIMING_USB_RX_TIMEOUT_MS=100 (USB receive timeout).</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>YaRobot Architecture</title>
+        <section>Stack Sizes</section>
+        <snippet>STACK_USB_RX_TASK=2048 (8192 bytes in config_limits.h), STACK_USB_TX_TASK=2048 (8192 bytes in config_limits.h).</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/1-7-build-verification-documentation.md</path>
+        <title>Story 1.7 Build Verification</title>
+        <section>Dev Agent Record - Previous Learnings</section>
+        <snippet>USB CDC basic functionality exists using ESP-IDF console. Current implementation minimal. This story formalizes API and queue structure as dedicated usb_cdc component.</snippet>
+      </doc>
+    </docs>
+
+    <code>
+      <artifact>
+        <path>firmware/components/interface/usb_cdc/CMakeLists.txt</path>
+        <kind>component-definition</kind>
+        <symbol>usb_cdc component</symbol>
+        <lines>1-3</lines>
+        <reason>Stub component exists - only has INCLUDE_DIRS, no SRCS. Needs usb_cdc.c and esp_tinyusb dependency added.</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/control/tasks/task_stubs.c</path>
+        <kind>task-implementation</kind>
+        <symbol>usb_rx_task, usb_tx_task, cmd_executor_task</symbol>
+        <lines>38-150</lines>
+        <reason>Contains stub implementations for USB tasks. cmd_executor_task has basic getchar/printf loop using ESP-IDF console. This story will refactor USB handling into dedicated component.</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/control/tasks/include/task_defs.h</path>
+        <kind>header</kind>
+        <symbol>usb_rx_task, usb_tx_task</symbol>
+        <lines>38-51</lines>
+        <reason>Task function declarations. usb_rx_task Priority 10 Core 0, usb_tx_task Priority 10 Core 0.</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/config/include/config_limits.h</path>
+        <kind>configuration</kind>
+        <symbol>LIMIT_CMD_MAX_LENGTH, LIMIT_COMMAND_QUEUE_DEPTH, LIMIT_RESPONSE_QUEUE_DEPTH, STACK_USB_RX_TASK, STACK_USB_TX_TASK</symbol>
+        <lines>29-128</lines>
+        <reason>Defines buffer sizes (CMD_MAX=256, RESPONSE_MAX=256), queue depths (COMMAND=32, RESPONSE=32), and stack sizes (USB_RX=8192, USB_TX=8192 bytes).</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/sdkconfig.defaults</path>
+        <kind>configuration</kind>
+        <symbol>CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG</symbol>
+        <lines>14-15</lines>
+        <reason>Currently uses USB_SERIAL_JTAG for console. Story 2-1 may need to change to CONFIG_ESP_CONSOLE_USB_CDC or add TinyUSB CDC alongside.</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/main/idf_component.yml</path>
+        <kind>dependency-manifest</kind>
+        <symbol>dependencies</symbol>
+        <lines>1-2</lines>
+        <reason>Component dependencies. Need to add espressif/esp_tinyusb dependency for USB CDC ACM support.</reason>
+      </artifact>
+    </code>
+
+    <dependencies>
+      <ecosystem name="esp-idf">
+        <package name="freertos" version="IDF-bundled">Task, queue, mutex primitives</package>
+        <package name="esp_timer" version="IDF-bundled">Timestamps for events</package>
+        <package name="tinyusb" version="IDF-bundled">USB CDC ACM implementation (via esp_tinyusb component)</package>
+      </ecosystem>
+      <ecosystem name="component-registry">
+        <package name="espressif/mcp23017" version="^0.1.1">I2C GPIO expander (existing dependency)</package>
+        <package name="espressif/esp_tinyusb" version="required">USB CDC class implementation - MUST ADD</package>
+      </ecosystem>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint source="architecture">All responses must terminate with \r\n</constraint>
+    <constraint source="architecture">USB RX/TX and cmd_executor run on Core 0 (communication core)</constraint>
+    <constraint source="architecture">Command response latency must be &lt;10ms (TIMING_CMD_RESPONSE_MS)</constraint>
+    <constraint source="tech-spec">Line-based input - commands terminated by \n or \r\n</constraint>
+    <constraint source="tech-spec">RX queue: LIMIT_COMMAND_QUEUE_DEPTH (32) items</constraint>
+    <constraint source="tech-spec">TX queue: LIMIT_RESPONSE_QUEUE_DEPTH (32) items</constraint>
+    <constraint source="tech-spec">usb_rx_task and usb_tx_task run on Core 0 with priority 10</constraint>
+    <constraint source="tech-spec">115200 baud effective throughput required</constraint>
+    <constraint source="tech-spec">USB disconnect/reconnect must resume without device reset</constraint>
+    <constraint source="config">LIMIT_CMD_MAX_LENGTH=256 for line buffer size</constraint>
+    <constraint source="config">Stack sizes: STACK_USB_RX_TASK=8192, STACK_USB_TX_TASK=8192 bytes</constraint>
+    <constraint source="story-dev-notes">Use ESP-IDF TinyUSB component with CDC class</constraint>
+    <constraint source="story-dev-notes">TinyUSB initialization pattern with tinyusb_config_t and tinyusb_config_cdcacm_t</constraint>
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>usb_cdc_init</name>
+      <kind>function</kind>
+      <signature>esp_err_t usb_cdc_init(void)</signature>
+      <path>firmware/components/interface/usb_cdc/include/usb_cdc.h</path>
+    </interface>
+    <interface>
+      <name>usb_cdc_send</name>
+      <kind>function</kind>
+      <signature>esp_err_t usb_cdc_send(const char* data, size_t len)</signature>
+      <path>firmware/components/interface/usb_cdc/include/usb_cdc.h</path>
+    </interface>
+    <interface>
+      <name>usb_cdc_send_line</name>
+      <kind>function</kind>
+      <signature>esp_err_t usb_cdc_send_line(const char* line)</signature>
+      <path>firmware/components/interface/usb_cdc/include/usb_cdc.h</path>
+    </interface>
+    <interface>
+      <name>usb_cdc_is_connected</name>
+      <kind>function</kind>
+      <signature>bool usb_cdc_is_connected(void)</signature>
+      <path>firmware/components/interface/usb_cdc/include/usb_cdc.h</path>
+    </interface>
+    <interface>
+      <name>usb_rx_queue</name>
+      <kind>extern-variable</kind>
+      <signature>extern QueueHandle_t usb_rx_queue</signature>
+      <path>firmware/components/interface/usb_cdc/include/usb_cdc.h</path>
+    </interface>
+    <interface>
+      <name>usb_tx_queue</name>
+      <kind>extern-variable</kind>
+      <signature>extern QueueHandle_t usb_tx_queue</signature>
+      <path>firmware/components/interface/usb_cdc/include/usb_cdc.h</path>
+    </interface>
+    <interface>
+      <name>TinyUSB CDC Configuration</name>
+      <kind>esp-idf-pattern</kind>
+      <signature>tinyusb_config_t, tinyusb_config_cdcacm_t structures with callbacks cdc_rx_callback, cdc_line_state_callback</signature>
+      <path>ESP-IDF esp_tinyusb component</path>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+      Testing follows ESP-IDF patterns. Unit tests use Unity framework. Integration tests run on-device via USB CDC serial connection. Manual system tests verify terminal program compatibility (minicom, screen, PuTTY, pyserial). Target is all 9 acceptance criteria covered with automated and manual tests. Error paths must have corresponding tests. Performance tests measure response latency (&lt;10ms requirement).
+    </standards>
+    <locations>
+      <location>firmware/components/interface/usb_cdc/test/</location>
+      <location>Integration tests via pyserial from host</location>
+    </locations>
+    <ideas>
+      <idea ac="AC1">Verify USB CDC ACM enumeration on connection - check /dev/cu.usbmodem* appears on macOS</idea>
+      <idea ac="AC2">Test serial connection at 115200 baud using pyserial - verify connection successful</idea>
+      <idea ac="AC3,AC4">Timing test: measure round-trip latency with echo command, verify &lt;20ms total (&lt;10ms each direction)</idea>
+      <idea ac="AC5,AC6">Disconnect/reconnect test: unplug USB, replug, verify device re-enumerates and communication resumes</idea>
+      <idea ac="AC7">Test compatibility with minicom, screen, PuTTY, pyserial - document working configurations</idea>
+      <idea ac="AC8">Send lines with \n and \r\n termination, verify complete lines received in RX queue</idea>
+      <idea ac="AC9">Queue test data to TX queue, verify output includes \r\n termination</idea>
+    </ideas>
+  </tests>
+</story-context>

@@ -141,6 +141,7 @@ esp-idf/main/CMakeFiles/__idf_main.dir/yarobot_control_unit.cpp.obj: /Users/serg
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_timing.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_yaml_schema.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/tasks/include/task_defs.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/interface/usb_cdc/include/usb_cdc.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/yarobot_hal/gpio_hal/include/gpio_hal.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/yarobot_hal/i2c_hal/include/i2c_hal.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/yarobot_hal/spi_hal/include/spi_hal.h
@@ -197,6 +198,8 @@ config/sdkconfig.h:
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/gpio_pins.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/sys/reent.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/interface/usb_cdc/include/usb_cdc.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/sys/lock.h:
 

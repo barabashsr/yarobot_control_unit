@@ -187,6 +187,9 @@ yarobot_control_unit.elf: esp-idf/usb/libusb.a
 yarobot_control_unit.elf: esp-idf/wifi_provisioning/libwifi_provisioning.a
 yarobot_control_unit.elf: esp-idf/yarobot_hal/libyarobot_hal.a
 yarobot_control_unit.elf: esp-idf/test_utils/libtest_utils.a
+yarobot_control_unit.elf: esp-idf/espressif__tinyusb/libespressif__tinyusb.a
+yarobot_control_unit.elf: esp-idf/espressif__esp_tinyusb/libespressif__esp_tinyusb.a
+yarobot_control_unit.elf: esp-idf/usb_cdc/libusb_cdc.a
 yarobot_control_unit.elf: esp-idf/control/libcontrol.a
 yarobot_control_unit.elf: esp-idf/espressif__i2c_bus/libespressif__i2c_bus.a
 yarobot_control_unit.elf: esp-idf/espressif__mcp23017/libespressif__mcp23017.a
@@ -194,7 +197,6 @@ yarobot_control_unit.elf: esp-idf/main/libmain.a
 yarobot_control_unit.elf: esp-idf/app_trace/libapp_trace.a
 yarobot_control_unit.elf: esp-idf/unity/libunity.a
 yarobot_control_unit.elf: esp-idf/esp_https_server/libesp_https_server.a
-yarobot_control_unit.elf: esp-idf/wear_levelling/libwear_levelling.a
 yarobot_control_unit.elf: esp-idf/protocomm/libprotocomm.a
 yarobot_control_unit.elf: esp-idf/console/libconsole.a
 yarobot_control_unit.elf: esp-idf/protobuf-c/libprotobuf-c.a
@@ -202,6 +204,12 @@ yarobot_control_unit.elf: esp-idf/json/libjson.a
 yarobot_control_unit.elf: esp-idf/control/libcontrol.a
 yarobot_control_unit.elf: esp-idf/test_utils/libtest_utils.a
 yarobot_control_unit.elf: esp-idf/yarobot_hal/libyarobot_hal.a
+yarobot_control_unit.elf: esp-idf/usb_cdc/libusb_cdc.a
+yarobot_control_unit.elf: esp-idf/espressif__esp_tinyusb/libespressif__esp_tinyusb.a
+yarobot_control_unit.elf: esp-idf/fatfs/libfatfs.a
+yarobot_control_unit.elf: esp-idf/wear_levelling/libwear_levelling.a
+yarobot_control_unit.elf: esp-idf/usb/libusb.a
+yarobot_control_unit.elf: esp-idf/espressif__tinyusb/libespressif__tinyusb.a
 yarobot_control_unit.elf: esp-idf/espressif__mcp23017/libespressif__mcp23017.a
 yarobot_control_unit.elf: esp-idf/espressif__i2c_bus/libespressif__i2c_bus.a
 yarobot_control_unit.elf: esp-idf/xtensa/libxtensa.a

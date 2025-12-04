@@ -569,6 +569,21 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
+  include("/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/espressif__tinyusb/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/espressif__esp_tinyusb/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/usb_cdc/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
   include("/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/control/cmake_install.cmake")
 endif()
 
@@ -604,7 +619,37 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
+  include("/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/command_parser/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/event_manager/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/nvs_manager/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/yaml_parser/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
   include("/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/drivers/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/events/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/interface/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)

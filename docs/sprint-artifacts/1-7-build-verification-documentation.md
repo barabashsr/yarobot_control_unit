@@ -1,6 +1,6 @@
 # Story 1.7: Build Verification & Documentation
 
-Status: review
+Status: done
 
 ## Story
 

@@ -106,9 +106,45 @@ esp-idf/control/CMakeFiles/__idf_control.dir/tasks/task_stubs.c.obj: /Users/serg
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa_config.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa_context.h \
   config/sdkconfig.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_limits.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/tasks/include/task_defs.h \
-  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/drivers/test_utils/include/test_utils.h
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/drivers/test_utils/include/test_utils.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/interface/usb_cdc/include/usb_cdc.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__esp_tinyusb/include/tinyusb.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__esp_tinyusb/include/tinyusb_types.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__esp_tinyusb/include/tusb_cdc_acm.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__esp_tinyusb/include/tusb_config.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/class/cdc/cdc.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/class/cdc/cdc_device.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/common/tusb_common.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/common/tusb_compiler.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/common/tusb_debug.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/common/tusb_fifo.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/common/tusb_mcu.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/common/tusb_types.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/common/tusb_verify.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/device/usbd.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/osal/osal.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/osal/osal_freertos.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/tusb.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/tusb_option.h
 
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/osal/osal_freertos.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/osal/osal.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/common/tusb_verify.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/common/tusb_mcu.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/common/tusb_debug.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/common/tusb_common.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__esp_tinyusb/include/tusb_config.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__esp_tinyusb/include/tusb_cdc_acm.h:
 
 /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/drivers/test_utils/include/test_utils.h:
 
@@ -138,6 +174,8 @@ esp-idf/control/CMakeFiles/__idf_control.dir/tasks/task_stubs.c.obj: /Users/serg
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/sys/reent.h:
 
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/common/tusb_fifo.h:
+
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/esp_newlib.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa/corebits.h:
@@ -145,6 +183,10 @@ esp-idf/control/CMakeFiles/__idf_control.dir/tasks/task_stubs.c.obj: /Users/serg
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/string.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/assert.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/class/cdc/cdc.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/interface/usb_cdc/include/usb_cdc.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/sys/lock.h:
 
@@ -158,11 +200,17 @@ esp-idf/control/CMakeFiles/__idf_control.dir/tasks/task_stubs.c.obj: /Users/serg
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:
 
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/class/cdc/cdc_device.h:
+
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/cdefs.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/soc_caps.h:
 
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/tusb_option.h:
+
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/heap/include/multi_heap.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__esp_tinyusb/include/tinyusb_types.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/config/include/freertos/FreeRTOSConfig.h:
 
@@ -182,6 +230,8 @@ esp-idf/control/CMakeFiles/__idf_control.dir/tasks/task_stubs.c.obj: /Users/serg
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/stream_buffer.h:
 
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/device/usbd.h:
+
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/semphr.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/queue.h:
@@ -192,7 +242,11 @@ esp-idf/control/CMakeFiles/__idf_control.dir/tasks/task_stubs.c.obj: /Users/serg
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_system/include/esp_system.h:
 
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/tusb.h:
+
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_rom/include/esp_rom_sys.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_limits.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_hw_support/include/esp_intr_types.h:
 
@@ -250,6 +304,8 @@ esp-idf/control/CMakeFiles/__idf_control.dir/tasks/task_stubs.c.obj: /Users/serg
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/strings.h:
 
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/common/tusb_types.h:
+
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/stdlib.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/machine/_default_types.h:
@@ -261,6 +317,8 @@ esp-idf/control/CMakeFiles/__idf_control.dir/tasks/task_stubs.c.obj: /Users/serg
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/esp_additions/include/freertos/idf_additions.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/heap/include/esp_heap_caps.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__tinyusb/src/common/tusb_compiler.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xt_instr_macros.h:
 
@@ -279,6 +337,8 @@ esp-idf/control/CMakeFiles/__idf_control.dir/tasks/task_stubs.c.obj: /Users/serg
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/lib/gcc/xtensa-esp-elf/14.2.0/include/stddef.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/stdio.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__esp_tinyusb/include/tinyusb.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/event_groups.h:
 

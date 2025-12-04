@@ -7,6 +7,11 @@ set(EXTRA_COMPONENT_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/components/drivers/test_utils
     ${CMAKE_CURRENT_SOURCE_DIR}/components/drivers/oled
     ${CMAKE_CURRENT_SOURCE_DIR}/components/drivers/tpic6b595
+    ${CMAKE_CURRENT_SOURCE_DIR}/components/interface/usb_cdc
+    ${CMAKE_CURRENT_SOURCE_DIR}/components/interface/command_parser
+    ${CMAKE_CURRENT_SOURCE_DIR}/components/events/event_manager
+    ${CMAKE_CURRENT_SOURCE_DIR}/components/config/nvs_manager
+    ${CMAKE_CURRENT_SOURCE_DIR}/components/config/yaml_parser
 )
 
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)

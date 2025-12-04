@@ -1956,6 +1956,45 @@ __idf_test_utils/fast:
 .PHONY : __idf_test_utils/fast
 
 #=============================================================================
+# Target rules for targets named __idf_espressif__tinyusb
+
+# Build rule for target.
+__idf_espressif__tinyusb: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 __idf_espressif__tinyusb
+.PHONY : __idf_espressif__tinyusb
+
+# fast build rule for target.
+__idf_espressif__tinyusb/fast:
+	$(MAKE) $(MAKESILENT) -f esp-idf/espressif__tinyusb/CMakeFiles/__idf_espressif__tinyusb.dir/build.make esp-idf/espressif__tinyusb/CMakeFiles/__idf_espressif__tinyusb.dir/build
+.PHONY : __idf_espressif__tinyusb/fast
+
+#=============================================================================
+# Target rules for targets named __idf_espressif__esp_tinyusb
+
+# Build rule for target.
+__idf_espressif__esp_tinyusb: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 __idf_espressif__esp_tinyusb
+.PHONY : __idf_espressif__esp_tinyusb
+
+# fast build rule for target.
+__idf_espressif__esp_tinyusb/fast:
+	$(MAKE) $(MAKESILENT) -f esp-idf/espressif__esp_tinyusb/CMakeFiles/__idf_espressif__esp_tinyusb.dir/build.make esp-idf/espressif__esp_tinyusb/CMakeFiles/__idf_espressif__esp_tinyusb.dir/build
+.PHONY : __idf_espressif__esp_tinyusb/fast
+
+#=============================================================================
+# Target rules for targets named __idf_usb_cdc
+
+# Build rule for target.
+__idf_usb_cdc: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 __idf_usb_cdc
+.PHONY : __idf_usb_cdc
+
+# fast build rule for target.
+__idf_usb_cdc/fast:
+	$(MAKE) $(MAKESILENT) -f esp-idf/usb_cdc/CMakeFiles/__idf_usb_cdc.dir/build.make esp-idf/usb_cdc/CMakeFiles/__idf_usb_cdc.dir/build
+.PHONY : __idf_usb_cdc/fast
+
+#=============================================================================
 # Target rules for targets named __idf_control
 
 # Build rule for target.
@@ -2143,8 +2182,10 @@ help:
 	@echo "... __idf_esp_vfs_console"
 	@echo "... __idf_esp_wifi"
 	@echo "... __idf_espcoredump"
+	@echo "... __idf_espressif__esp_tinyusb"
 	@echo "... __idf_espressif__i2c_bus"
 	@echo "... __idf_espressif__mcp23017"
+	@echo "... __idf_espressif__tinyusb"
 	@echo "... __idf_fatfs"
 	@echo "... __idf_freertos"
 	@echo "... __idf_hal"
@@ -2173,6 +2214,7 @@ help:
 	@echo "... __idf_touch_element"
 	@echo "... __idf_unity"
 	@echo "... __idf_usb"
+	@echo "... __idf_usb_cdc"
 	@echo "... __idf_vfs"
 	@echo "... __idf_wear_levelling"
 	@echo "... __idf_wifi_provisioning"

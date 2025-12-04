@@ -4,6 +4,7 @@
 #include "freertos/task.h"
 #include "config.h"
 #include "task_defs.h"
+#include "usb_cdc.h"
 #include "i2c_hal.h"
 #include "spi_hal.h"
 #include "gpio_hal.h"
@@ -238,6 +239,18 @@ extern "C" void app_main(void)
     ESP_LOGI(TAG, "Axes: %d (Servos:%d, Steppers:%d, Discrete:%d)",
              LIMIT_NUM_AXES, LIMIT_NUM_SERVOS, LIMIT_NUM_STEPPERS, LIMIT_NUM_DISCRETE);
     ESP_LOGI(TAG, "GPIO X_STEP: %d, I2C MCP0: 0x%02X", GPIO_X_STEP, I2C_ADDR_MCP23017_0);
+
+    // =========================================================================
+    // USB CDC Initialization (Story 2.1)
+    // =========================================================================
+    ESP_LOGI(TAG, "Initializing USB CDC interface...");
+    esp_err_t usb_ret = usb_cdc_init();
+    if (usb_ret != ESP_OK) {
+        ESP_LOGW(TAG, "USB CDC init failed: %s - falling back to USB Serial JTAG",
+                 esp_err_to_name(usb_ret));
+    } else {
+        ESP_LOGI(TAG, "USB CDC initialized successfully");
+    }
 
     // =========================================================================
     // Hardware Initialization and Verification (Story 1.6)

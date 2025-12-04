@@ -10,4 +10,8 @@ idf_component_register(
         config
         freertos
         test_utils
+        usb_cdc
+    PRIV_REQUIRES
+        esp_tinyusb
+        log
 )

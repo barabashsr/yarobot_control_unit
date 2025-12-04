@@ -210,6 +210,9 @@ esp-idf/esp_system/ld/sections.ld: esp-idf/usb/libusb.a
 esp-idf/esp_system/ld/sections.ld: esp-idf/wifi_provisioning/libwifi_provisioning.a
 esp-idf/esp_system/ld/sections.ld: esp-idf/yarobot_hal/libyarobot_hal.a
 esp-idf/esp_system/ld/sections.ld: esp-idf/test_utils/libtest_utils.a
+esp-idf/esp_system/ld/sections.ld: esp-idf/espressif__tinyusb/libespressif__tinyusb.a
+esp-idf/esp_system/ld/sections.ld: esp-idf/espressif__esp_tinyusb/libespressif__esp_tinyusb.a
+esp-idf/esp_system/ld/sections.ld: esp-idf/usb_cdc/libusb_cdc.a
 esp-idf/esp_system/ld/sections.ld: esp-idf/control/libcontrol.a
 esp-idf/esp_system/ld/sections.ld: esp-idf/espressif__i2c_bus/libespressif__i2c_bus.a
 esp-idf/esp_system/ld/sections.ld: esp-idf/espressif__mcp23017/libespressif__mcp23017.a
