@@ -1930,6 +1930,19 @@ __idf_wifi_provisioning/fast:
 .PHONY : __idf_wifi_provisioning/fast
 
 #=============================================================================
+# Target rules for targets named __idf_control
+
+# Build rule for target.
+__idf_control: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 __idf_control
+.PHONY : __idf_control
+
+# fast build rule for target.
+__idf_control/fast:
+	$(MAKE) $(MAKESILENT) -f esp-idf/control/CMakeFiles/__idf_control.dir/build.make esp-idf/control/CMakeFiles/__idf_control.dir/build
+.PHONY : __idf_control/fast
+
+#=============================================================================
 # Target rules for targets named __idf_espressif__i2c_bus
 
 # Build rule for target.
@@ -2066,6 +2079,7 @@ help:
 	@echo "... __idf_bootloader_support"
 	@echo "... __idf_cmock"
 	@echo "... __idf_console"
+	@echo "... __idf_control"
 	@echo "... __idf_cxx"
 	@echo "... __idf_driver"
 	@echo "... __idf_efuse"

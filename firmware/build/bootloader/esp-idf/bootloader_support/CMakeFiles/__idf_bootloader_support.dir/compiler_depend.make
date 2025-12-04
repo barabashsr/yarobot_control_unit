@@ -680,10 +680,8 @@ esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/bootloade
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_rom/include/esp_rom_uart.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/esp32s3/include/hal/gpio_ll.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/esp32s3/include/hal/uart_ll.h \
-  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/esp32s3/include/hal/usb_wrap_ll.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/gpio_types.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/uart_types.h \
-  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/usb_wrap_types.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/platform_port/include/hal/misc.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/assert.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/sys/lock.h \
@@ -705,14 +703,12 @@ esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/bootloade
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/io_mux_reg.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/reg_base.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/rtc_cntl_reg.h \
-  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/rtc_cntl_struct.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/rtc_io_reg.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/system_reg.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/system_struct.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/uart_reg.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/uart_struct.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/usb_serial_jtag_reg.h \
-  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/usb_wrap_struct.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/include/soc/gpio_periph.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/include/soc/uart_periph.h \
   config/sdkconfig.h
@@ -2010,6 +2006,8 @@ esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/secure_bo
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_hw_support/include/esp_fault.h:
 
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_app_format/include/esp_app_desc.h:
+
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/efuse/esp32s3/include/esp_efuse_chip.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/lib/gcc/xtensa-esp-elf/14.2.0/include/limits.h:
@@ -2023,6 +2021,14 @@ esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/secure_bo
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/wdev_reg.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/bootloader_support/src/bootloader_random.c:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/bootloader_support/private_include/bootloader_soc.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/newlib.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/gpio_types.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/bootloader_support/src/bootloader_panic.c:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/mpu_hal.h:
 
@@ -2084,10 +2090,6 @@ esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/secure_bo
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_rom/esp32s3/include/esp32s3/rom/usb/cdc_acm.h:
 
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_app_format/include/esp_app_desc.h:
-
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/usb_wrap_struct.h:
-
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/uart_pins.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xt_instr_macros.h:
@@ -2098,15 +2100,13 @@ esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/secure_bo
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/uart_channel.h:
 
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/esp32s3/include/hal/usb_wrap_ll.h:
-
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/bootloader_support/private_include/bootloader_console.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/usb_serial_jtag_reg.h:
 
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/mpu_types.h:
-
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/cdefs.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/mpu_types.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/gpio_struct.h:
 
@@ -2159,14 +2159,6 @@ esp-idf/bootloader_support/CMakeFiles/__idf_bootloader_support.dir/src/secure_bo
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/esp32s3/include/hal/efuse_hal.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/bootloader_support/private_include/bootloader_init.h:
-
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/bootloader_support/private_include/bootloader_soc.h:
-
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/bootloader_support/src/bootloader_panic.c:
-
-/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/newlib.h:
-
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/gpio_types.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/bootloader_support/src/bootloader_common_loader.c:
 
@@ -2299,8 +2291,6 @@ config/sdkconfig.h:
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/reset_reasons.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/bootloader_support/src/bootloader_common.c:
-
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/usb_wrap_types.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/esp_flash_err.h:
 

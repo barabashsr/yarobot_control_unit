@@ -11,8 +11,8 @@ CONFIG_SPIRAM_MODE_OCT=y
 # FreeRTOS Configuration (1ms tick)
 CONFIG_FREERTOS_HZ=1000
 
-# Console via USB CDC
-CONFIG_ESP_CONSOLE_USB_CDC=y
+# Console via USB Serial JTAG (built-in, doesn't need TinyUSB enumeration)
+CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y
 
 # CPU Frequency (240 MHz)
 CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
@@ -20,3 +20,9 @@ CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
 # Custom Partition Table
 CONFIG_PARTITION_TABLE_CUSTOM=y
 CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+
+# Stack overflow checking - enable watchpoint at end of stack
+CONFIG_FREERTOS_WATCHPOINT_END_OF_STACK=y
+
+# Increase panic handler delay to see crash info
+CONFIG_ESP_SYSTEM_PANIC_REBOOT_DELAY_SECONDS=5

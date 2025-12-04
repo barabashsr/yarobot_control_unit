@@ -112,7 +112,7 @@ esp-idf/esp_gdbstub/CMakeFiles/__idf_esp_gdbstub.dir/src/gdbstub.c.obj: /Users/s
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/timer_group_reg.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/timer_group_struct.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/uart_reg.h \
-  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/uart_struct.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/usb_serial_jtag_struct.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/include/soc/regdma.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/include/soc/rtc_cntl_periph.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/include/soc/wdt_periph.h \
@@ -209,8 +209,8 @@ esp-idf/esp_gdbstub/CMakeFiles/__idf_esp_gdbstub.dir/src/gdbstub_transport.c.obj
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/config/xtensa/include/freertos/FreeRTOSConfig_arch.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/esp_additions/include/esp_private/freertos_debug.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/esp_additions/include/freertos/idf_additions.h \
-  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/esp32s3/include/hal/uart_ll.h \
-  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/uart_types.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/esp32s3/include/hal/usb_serial_jtag_ll.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/usb_serial_jtag_types.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/platform_port/include/hal/misc.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/heap/include/esp_heap_caps.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/heap/include/multi_heap.h \
@@ -218,17 +218,15 @@ esp-idf/esp_gdbstub/CMakeFiles/__idf_esp_gdbstub.dir/src/gdbstub_transport.c.obj
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/esp_newlib.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/sys/lock.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/sys/reent.h \
-  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/clk_tree_defs.h \
-  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/dport_access.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/mpu_caps.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/reset_reasons.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/soc.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/soc_caps.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/reg_base.h \
-  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/system_reg.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/rtc_cntl_struct.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/system_struct.h \
-  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/uart_reg.h \
-  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/uart_struct.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/usb_serial_jtag_reg.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/usb_serial_jtag_struct.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/esp32s3/include/xtensa/config/core-isa.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/esp32s3/include/xtensa/config/core-matmap.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/esp32s3/include/xtensa/config/core.h \
@@ -464,11 +462,15 @@ esp-idf/esp_gdbstub/CMakeFiles/__idf_esp_gdbstub.dir/src/port/xtensa/gdbstub_xte
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_gdbstub/src/packet.c:
 
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/uart_types.h:
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/usb_serial_jtag_reg.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/esp32s3/include/hal/usb_serial_jtag_ll.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_gdbstub/src/gdbstub_transport.c:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa_context.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/usb_serial_jtag_types.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa_config.h:
 
@@ -512,8 +514,6 @@ esp-idf/esp_gdbstub/CMakeFiles/__idf_esp_gdbstub.dir/src/port/xtensa/gdbstub_xte
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/periph_defs.h:
 
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/dport_access.h:
-
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/efuse_defs.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/sys/reent.h:
@@ -541,8 +541,6 @@ esp-idf/esp_gdbstub/CMakeFiles/__idf_esp_gdbstub.dir/src/port/xtensa/gdbstub_xte
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/wdt_types.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/heap/include/soc/soc_memory_layout.h:
-
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/system_reg.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/wdt_hal.h:
 
@@ -608,9 +606,9 @@ esp-idf/esp_gdbstub/CMakeFiles/__idf_esp_gdbstub.dir/src/port/xtensa/gdbstub_xte
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_macros.h:
 
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_idf_version.h:
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/usb_serial_jtag_struct.h:
 
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/uart_struct.h:
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_idf_version.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_hw_support/include/spinlock.h:
 
@@ -683,8 +681,6 @@ config/sdkconfig.h:
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/esp_additions/include/freertos/idf_additions.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/heap/include/esp_heap_caps.h:
-
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/esp32s3/include/hal/uart_ll.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xt_instr_macros.h:
 

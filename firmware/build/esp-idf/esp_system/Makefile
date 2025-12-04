@@ -841,30 +841,6 @@ port/soc/esp32s3/system_internal.c.s:
 	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/build.make esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/port/soc/esp32s3/system_internal.c.s
 .PHONY : port/soc/esp32s3/system_internal.c.s
 
-port/usb_console.obj: port/usb_console.c.obj
-.PHONY : port/usb_console.obj
-
-# target to build an object file
-port/usb_console.c.obj:
-	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/build.make esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/port/usb_console.c.obj
-.PHONY : port/usb_console.c.obj
-
-port/usb_console.i: port/usb_console.c.i
-.PHONY : port/usb_console.i
-
-# target to preprocess a source file
-port/usb_console.c.i:
-	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/build.make esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/port/usb_console.c.i
-.PHONY : port/usb_console.c.i
-
-port/usb_console.s: port/usb_console.c.s
-.PHONY : port/usb_console.s
-
-# target to generate assembly for a file
-port/usb_console.c.s:
-	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/build.make esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/port/usb_console.c.s
-.PHONY : port/usb_console.c.s
-
 stack_check.obj: stack_check.c.obj
 .PHONY : stack_check.obj
 
@@ -1151,9 +1127,6 @@ help:
 	@echo "... port/soc/esp32s3/system_internal.obj"
 	@echo "... port/soc/esp32s3/system_internal.i"
 	@echo "... port/soc/esp32s3/system_internal.s"
-	@echo "... port/usb_console.obj"
-	@echo "... port/usb_console.i"
-	@echo "... port/usb_console.s"
 	@echo "... stack_check.obj"
 	@echo "... stack_check.i"
 	@echo "... stack_check.s"

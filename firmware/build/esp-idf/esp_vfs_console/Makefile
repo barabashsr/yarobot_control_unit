@@ -175,30 +175,6 @@ __idf_esp_vfs_console/fast:
 	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/esp_vfs_console/CMakeFiles/__idf_esp_vfs_console.dir/build.make esp-idf/esp_vfs_console/CMakeFiles/__idf_esp_vfs_console.dir/build
 .PHONY : __idf_esp_vfs_console/fast
 
-vfs_cdcacm.obj: vfs_cdcacm.c.obj
-.PHONY : vfs_cdcacm.obj
-
-# target to build an object file
-vfs_cdcacm.c.obj:
-	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/esp_vfs_console/CMakeFiles/__idf_esp_vfs_console.dir/build.make esp-idf/esp_vfs_console/CMakeFiles/__idf_esp_vfs_console.dir/vfs_cdcacm.c.obj
-.PHONY : vfs_cdcacm.c.obj
-
-vfs_cdcacm.i: vfs_cdcacm.c.i
-.PHONY : vfs_cdcacm.i
-
-# target to preprocess a source file
-vfs_cdcacm.c.i:
-	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/esp_vfs_console/CMakeFiles/__idf_esp_vfs_console.dir/build.make esp-idf/esp_vfs_console/CMakeFiles/__idf_esp_vfs_console.dir/vfs_cdcacm.c.i
-.PHONY : vfs_cdcacm.c.i
-
-vfs_cdcacm.s: vfs_cdcacm.c.s
-.PHONY : vfs_cdcacm.s
-
-# target to generate assembly for a file
-vfs_cdcacm.c.s:
-	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/esp_vfs_console/CMakeFiles/__idf_esp_vfs_console.dir/build.make esp-idf/esp_vfs_console/CMakeFiles/__idf_esp_vfs_console.dir/vfs_cdcacm.c.s
-.PHONY : vfs_cdcacm.c.s
-
 vfs_console.obj: vfs_console.c.obj
 .PHONY : vfs_console.obj
 
@@ -236,9 +212,6 @@ help:
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... __idf_esp_vfs_console"
-	@echo "... vfs_cdcacm.obj"
-	@echo "... vfs_cdcacm.i"
-	@echo "... vfs_cdcacm.s"
 	@echo "... vfs_console.obj"
 	@echo "... vfs_console.i"
 	@echo "... vfs_console.s"

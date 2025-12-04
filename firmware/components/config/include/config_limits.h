@@ -119,31 +119,31 @@
  */
 
 /** @brief Safety monitor task stack size (bytes) */
-#define STACK_SAFETY_TASK           4096
+#define STACK_SAFETY_TASK           8192
 
 /** @brief USB receive task stack size (bytes) */
-#define STACK_USB_RX_TASK           2048
+#define STACK_USB_RX_TASK           8192
 
 /** @brief USB transmit task stack size (bytes) */
-#define STACK_USB_TX_TASK           2048
+#define STACK_USB_TX_TASK           8192
 
 /** @brief Command executor task stack size (bytes) */
-#define STACK_CMD_EXECUTOR_TASK     8192
+#define STACK_CMD_EXECUTOR_TASK     16384
 
 /** @brief I2C monitor task stack size (bytes) */
-#define STACK_I2C_MONITOR_TASK      2048
+#define STACK_I2C_MONITOR_TASK      8192
 
 /** @brief Motion control task stack size (bytes) */
-#define STACK_MOTION_TASK           2048
+#define STACK_MOTION_TASK           8192
 
 /** @brief OLED display task stack size (bytes) */
-#define STACK_DISPLAY_TASK          4096
+#define STACK_DISPLAY_TASK          8192
 
 /** @brief Idle monitor task stack size (bytes) */
-#define STACK_IDLE_MONITOR_TASK     2048
+#define STACK_IDLE_MONITOR_TASK     8192
 
 /** @brief Background worker task stack size (bytes) */
-#define STACK_BACKGROUND_TASK       4096
+#define STACK_BACKGROUND_TASK       8192
 
 /** @} */ // end limits_stack
 

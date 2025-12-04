@@ -86,33 +86,17 @@ esp-idf/esp_vfs_console/CMakeFiles/__idf_esp_vfs_console.dir/vfs_console.c.s: cm
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/__idf_esp_vfs_console.dir/vfs_console.c.s"
 	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/esp_vfs_console && /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/bin/xtensa-esp32s3-elf-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_vfs_console/vfs_console.c -o CMakeFiles/__idf_esp_vfs_console.dir/vfs_console.c.s
 
-esp-idf/esp_vfs_console/CMakeFiles/__idf_esp_vfs_console.dir/vfs_cdcacm.c.obj: esp-idf/esp_vfs_console/CMakeFiles/__idf_esp_vfs_console.dir/flags.make
-esp-idf/esp_vfs_console/CMakeFiles/__idf_esp_vfs_console.dir/vfs_cdcacm.c.obj: /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_vfs_console/vfs_cdcacm.c
-esp-idf/esp_vfs_console/CMakeFiles/__idf_esp_vfs_console.dir/vfs_cdcacm.c.obj: esp-idf/esp_vfs_console/CMakeFiles/__idf_esp_vfs_console.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object esp-idf/esp_vfs_console/CMakeFiles/__idf_esp_vfs_console.dir/vfs_cdcacm.c.obj"
-	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/esp_vfs_console && /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/bin/xtensa-esp32s3-elf-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT esp-idf/esp_vfs_console/CMakeFiles/__idf_esp_vfs_console.dir/vfs_cdcacm.c.obj -MF CMakeFiles/__idf_esp_vfs_console.dir/vfs_cdcacm.c.obj.d -o CMakeFiles/__idf_esp_vfs_console.dir/vfs_cdcacm.c.obj -c /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_vfs_console/vfs_cdcacm.c
-
-esp-idf/esp_vfs_console/CMakeFiles/__idf_esp_vfs_console.dir/vfs_cdcacm.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/__idf_esp_vfs_console.dir/vfs_cdcacm.c.i"
-	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/esp_vfs_console && /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/bin/xtensa-esp32s3-elf-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_vfs_console/vfs_cdcacm.c > CMakeFiles/__idf_esp_vfs_console.dir/vfs_cdcacm.c.i
-
-esp-idf/esp_vfs_console/CMakeFiles/__idf_esp_vfs_console.dir/vfs_cdcacm.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/__idf_esp_vfs_console.dir/vfs_cdcacm.c.s"
-	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/esp_vfs_console && /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/bin/xtensa-esp32s3-elf-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_vfs_console/vfs_cdcacm.c -o CMakeFiles/__idf_esp_vfs_console.dir/vfs_cdcacm.c.s
-
 # Object files for target __idf_esp_vfs_console
 __idf_esp_vfs_console_OBJECTS = \
-"CMakeFiles/__idf_esp_vfs_console.dir/vfs_console.c.obj" \
-"CMakeFiles/__idf_esp_vfs_console.dir/vfs_cdcacm.c.obj"
+"CMakeFiles/__idf_esp_vfs_console.dir/vfs_console.c.obj"
 
 # External object files for target __idf_esp_vfs_console
 __idf_esp_vfs_console_EXTERNAL_OBJECTS =
 
 esp-idf/esp_vfs_console/libesp_vfs_console.a: esp-idf/esp_vfs_console/CMakeFiles/__idf_esp_vfs_console.dir/vfs_console.c.obj
-esp-idf/esp_vfs_console/libesp_vfs_console.a: esp-idf/esp_vfs_console/CMakeFiles/__idf_esp_vfs_console.dir/vfs_cdcacm.c.obj
 esp-idf/esp_vfs_console/libesp_vfs_console.a: esp-idf/esp_vfs_console/CMakeFiles/__idf_esp_vfs_console.dir/build.make
 esp-idf/esp_vfs_console/libesp_vfs_console.a: esp-idf/esp_vfs_console/CMakeFiles/__idf_esp_vfs_console.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking C static library libesp_vfs_console.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking C static library libesp_vfs_console.a"
 	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/esp_vfs_console && $(CMAKE_COMMAND) -P CMakeFiles/__idf_esp_vfs_console.dir/cmake_clean_target.cmake
 	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/esp_vfs_console && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/__idf_esp_vfs_console.dir/link.txt --verbose=$(VERBOSE)
 

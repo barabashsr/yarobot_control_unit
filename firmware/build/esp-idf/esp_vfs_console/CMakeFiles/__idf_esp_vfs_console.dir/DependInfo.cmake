@@ -8,7 +8,6 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_vfs_console/vfs_cdcacm.c" "esp-idf/esp_vfs_console/CMakeFiles/__idf_esp_vfs_console.dir/vfs_cdcacm.c.obj" "gcc" "esp-idf/esp_vfs_console/CMakeFiles/__idf_esp_vfs_console.dir/vfs_cdcacm.c.obj.d"
   "/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_vfs_console/vfs_console.c" "esp-idf/esp_vfs_console/CMakeFiles/__idf_esp_vfs_console.dir/vfs_console.c.obj" "gcc" "esp-idf/esp_vfs_console/CMakeFiles/__idf_esp_vfs_console.dir/vfs_console.c.obj.d"
   )
 

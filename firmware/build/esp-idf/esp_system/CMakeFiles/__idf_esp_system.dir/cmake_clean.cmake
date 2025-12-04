@@ -53,8 +53,6 @@ file(REMOVE_RECURSE
   "CMakeFiles/__idf_esp_system.dir/port/soc/esp32s3/reset_reason.c.obj.d"
   "CMakeFiles/__idf_esp_system.dir/port/soc/esp32s3/system_internal.c.obj"
   "CMakeFiles/__idf_esp_system.dir/port/soc/esp32s3/system_internal.c.obj.d"
-  "CMakeFiles/__idf_esp_system.dir/port/usb_console.c.obj"
-  "CMakeFiles/__idf_esp_system.dir/port/usb_console.c.obj.d"
   "CMakeFiles/__idf_esp_system.dir/stack_check.c.obj"
   "CMakeFiles/__idf_esp_system.dir/stack_check.c.obj.d"
   "CMakeFiles/__idf_esp_system.dir/startup.c.obj"

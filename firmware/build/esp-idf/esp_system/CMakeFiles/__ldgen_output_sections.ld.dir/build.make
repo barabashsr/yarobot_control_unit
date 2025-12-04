@@ -208,6 +208,7 @@ esp-idf/esp_system/ld/sections.ld: esp-idf/spiffs/libspiffs.a
 esp-idf/esp_system/ld/sections.ld: esp-idf/touch_element/libtouch_element.a
 esp-idf/esp_system/ld/sections.ld: esp-idf/usb/libusb.a
 esp-idf/esp_system/ld/sections.ld: esp-idf/wifi_provisioning/libwifi_provisioning.a
+esp-idf/esp_system/ld/sections.ld: esp-idf/control/libcontrol.a
 esp-idf/esp_system/ld/sections.ld: esp-idf/espressif__i2c_bus/libespressif__i2c_bus.a
 esp-idf/esp_system/ld/sections.ld: esp-idf/espressif__mcp23017/libespressif__mcp23017.a
 esp-idf/esp_system/ld/sections.ld: esp-idf/main/libmain.a

@@ -185,6 +185,7 @@ yarobot_control_unit.elf: esp-idf/spiffs/libspiffs.a
 yarobot_control_unit.elf: esp-idf/touch_element/libtouch_element.a
 yarobot_control_unit.elf: esp-idf/usb/libusb.a
 yarobot_control_unit.elf: esp-idf/wifi_provisioning/libwifi_provisioning.a
+yarobot_control_unit.elf: esp-idf/control/libcontrol.a
 yarobot_control_unit.elf: esp-idf/espressif__i2c_bus/libespressif__i2c_bus.a
 yarobot_control_unit.elf: esp-idf/espressif__mcp23017/libespressif__mcp23017.a
 yarobot_control_unit.elf: esp-idf/main/libmain.a
@@ -197,6 +198,7 @@ yarobot_control_unit.elf: esp-idf/protocomm/libprotocomm.a
 yarobot_control_unit.elf: esp-idf/console/libconsole.a
 yarobot_control_unit.elf: esp-idf/protobuf-c/libprotobuf-c.a
 yarobot_control_unit.elf: esp-idf/json/libjson.a
+yarobot_control_unit.elf: esp-idf/control/libcontrol.a
 yarobot_control_unit.elf: esp-idf/espressif__mcp23017/libespressif__mcp23017.a
 yarobot_control_unit.elf: esp-idf/espressif__i2c_bus/libespressif__i2c_bus.a
 yarobot_control_unit.elf: esp-idf/xtensa/libxtensa.a

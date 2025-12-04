@@ -1,6 +1,6 @@
 # Story 1.5: FreeRTOS Task Framework
 
-Status: ready-for-dev
+Status: in-progress
 
 ## Story
 
@@ -22,52 +22,52 @@ so that **real-time requirements are met from the start**.
 
 ## Tasks / Subtasks
 
-- [ ] **Task 1: Add task stack size constants to config_limits.h** (AC: 5)
-  - [ ] Define `STACK_MOTION_TASK` (recommended: 4096)
-  - [ ] Define `STACK_SAFETY_TASK` (recommended: 4096)
-  - [ ] Define `STACK_USB_RX_TASK` (recommended: 4096)
-  - [ ] Define `STACK_USB_TX_TASK` (recommended: 4096)
-  - [ ] Define `STACK_CMD_EXECUTOR_TASK` (recommended: 4096)
-  - [ ] Define `STACK_I2C_MONITOR_TASK` (recommended: 2048)
-  - [ ] Define `STACK_DISPLAY_TASK` (recommended: 2048)
-  - [ ] Define `STACK_IDLE_MONITOR_TASK` (recommended: 2048)
-  - [ ] Add Doxygen documentation for all constants
+- [x] **Task 1: Add task stack size constants to config_limits.h** (AC: 5)
+  - [x] Define `STACK_MOTION_TASK` (recommended: 4096)
+  - [x] Define `STACK_SAFETY_TASK` (recommended: 4096)
+  - [x] Define `STACK_USB_RX_TASK` (recommended: 4096)
+  - [x] Define `STACK_USB_TX_TASK` (recommended: 4096)
+  - [x] Define `STACK_CMD_EXECUTOR_TASK` (recommended: 4096)
+  - [x] Define `STACK_I2C_MONITOR_TASK` (recommended: 2048)
+  - [x] Define `STACK_DISPLAY_TASK` (recommended: 2048)
+  - [x] Define `STACK_IDLE_MONITOR_TASK` (recommended: 2048)
+  - [x] Add Doxygen documentation for all constants
 
-- [ ] **Task 2: Create task stub functions** (AC: 1, 6)
-  - [ ] Create `firmware/components/control/tasks/include/task_defs.h` with task function declarations
-  - [ ] Create `firmware/components/control/tasks/task_stubs.c` with stub implementations
-  - [ ] Each stub logs entry: `ESP_LOGI(TAG, "Task %s started on core %d", pcTaskGetName(NULL), xPortGetCoreID())`
-  - [ ] Each stub enters infinite loop: `for(;;) { vTaskDelay(pdMS_TO_TICKS(1000)); }`
-  - [ ] Stubs for: `safety_monitor_task`, `usb_rx_task`, `usb_tx_task`, `cmd_executor_task`, `i2c_monitor_task`, `motion_task`, `display_task`, `idle_monitor_task`
+- [x] **Task 2: Create task stub functions** (AC: 1, 6)
+  - [x] Create `firmware/components/control/tasks/include/task_defs.h` with task function declarations
+  - [x] Create `firmware/components/control/tasks/task_stubs.c` with stub implementations
+  - [x] Each stub logs entry: `ESP_LOGI(TAG, "Task %s started on core %d", pcTaskGetName(NULL), xPortGetCoreID())`
+  - [x] Each stub enters infinite loop: `for(;;) { vTaskDelay(pdMS_TO_TICKS(1000)); }`
+  - [x] Stubs for: `safety_monitor_task`, `usb_rx_task`, `usb_tx_task`, `cmd_executor_task`, `i2c_monitor_task`, `motion_task`, `display_task`, `idle_monitor_task`
 
-- [ ] **Task 3: Create tasks component CMakeLists.txt** (AC: 8)
-  - [ ] Register component with SRCS and INCLUDE_DIRS
-  - [ ] Add REQUIRES: config, freertos
+- [x] **Task 3: Create tasks component CMakeLists.txt** (AC: 8)
+  - [x] Register component with SRCS and INCLUDE_DIRS
+  - [x] Add REQUIRES: config, freertos
 
-- [ ] **Task 4: Implement task creation in app_main()** (AC: 1, 2, 3, 4)
-  - [ ] Edit `firmware/main/yarobot_control_unit.cpp`
-  - [ ] Include `task_defs.h` and `freertos/FreeRTOS.h`, `freertos/task.h`
-  - [ ] After HAL init, create Core 0 tasks with `xTaskCreatePinnedToCore`:
+- [x] **Task 4: Implement task creation in app_main()** (AC: 1, 2, 3, 4)
+  - [x] Edit `firmware/main/yarobot_control_unit.cpp`
+  - [x] Include `task_defs.h` and `freertos/FreeRTOS.h`, `freertos/task.h`
+  - [x] After HAL init, create Core 0 tasks with `xTaskCreatePinnedToCore`:
     - safety_monitor_task (priority 24)
     - usb_rx_task (priority 10)
     - usb_tx_task (priority 10)
     - cmd_executor_task (priority 12)
     - i2c_monitor_task (priority 8)
     - idle_monitor_task (priority 4)
-  - [ ] Create Core 1 tasks:
+  - [x] Create Core 1 tasks:
     - motion_task × 8 (priority 15) — pass axis index as task arg
     - display_task (priority 5)
-  - [ ] Use stack constants from config_limits.h
+  - [x] Use stack constants from config_limits.h
 
-- [ ] **Task 5: Implement EVENT BOOT notification** (AC: 7)
-  - [ ] After all tasks created, send `EVENT BOOT V1.0.0 AXES:8 STATE:IDLE\n` to stdout
-  - [ ] Use `printf()` or `ESP_LOGI()` for now (USB CDC implementation is Epic 2)
-  - [ ] Note: Full USB CDC output comes in Story 2.1
+- [x] **Task 5: Implement EVENT BOOT notification** (AC: 7)
+  - [x] After all tasks created, send `EVENT BOOT V1.0.0 AXES:8 STATE:IDLE\n` to stdout
+  - [x] Use `printf()` or `ESP_LOGI()` for now (USB CDC implementation is Epic 2)
+  - [x] Note: Full USB CDC output comes in Story 2.1
 
 - [ ] **Task 6: Build and verify** (AC: 8, 9)
-  - [ ] Run `get_idf` to source ESP-IDF environment
-  - [ ] Run `cd firmware && idf.py build`
-  - [ ] Confirm no build errors
+  - [x] Run `get_idf` to source ESP-IDF environment
+  - [x] Run `cd firmware && idf.py build`
+  - [x] Confirm no build errors
   - [ ] Flash with `idf.py flash`
   - [ ] Monitor with `idf.py monitor`
   - [ ] Verify all 16 task creation logs appear with correct core IDs
