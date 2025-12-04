@@ -2072,6 +2072,19 @@ __idf_main/fast:
 	$(MAKE) $(MAKESILENT) -f esp-idf/main/CMakeFiles/__idf_main.dir/build.make esp-idf/main/CMakeFiles/__idf_main.dir/build
 .PHONY : __idf_main/fast
 
+#=============================================================================
+# Target rules for targets named __idf_tpic6b595
+
+# Build rule for target.
+__idf_tpic6b595: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 __idf_tpic6b595
+.PHONY : __idf_tpic6b595
+
+# fast build rule for target.
+__idf_tpic6b595/fast:
+	$(MAKE) $(MAKESILENT) -f esp-idf/tpic6b595/CMakeFiles/__idf_tpic6b595.dir/build.make esp-idf/tpic6b595/CMakeFiles/__idf_tpic6b595.dir/build
+.PHONY : __idf_tpic6b595/fast
+
 project_elf_src_esp32s3.obj: project_elf_src_esp32s3.c.obj
 .PHONY : project_elf_src_esp32s3.obj
 
@@ -2240,6 +2253,7 @@ help:
 	@echo "... __idf_tcp_transport"
 	@echo "... __idf_test_utils"
 	@echo "... __idf_touch_element"
+	@echo "... __idf_tpic6b595"
 	@echo "... __idf_unity"
 	@echo "... __idf_usb"
 	@echo "... __idf_usb_cdc"

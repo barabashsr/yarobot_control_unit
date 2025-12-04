@@ -32,7 +32,7 @@ This document provides the complete epic and story breakdown for yarobot_control
 
 **Motor Control Capabilities (FR1-FR10):**
 - FR1: System can control up to 8 independent motor axes simultaneously (X,Y,Z,A,B,C,D,E)
-- FR2: System can generate STEP pulses up to 80-100 kHz for high-speed motion
+- FR2: System can generate STEP pulses up to 500 kHz (LIMIT_MAX_PULSE_FREQ_HZ), with 200 kHz default per-axis maximum (DEFAULT_MAX_PULSE_FREQ_HZ)
 - FR3: System can control 5 servo motors through STEP/DIR interfaces with position feedback
 - FR4: System can control 2 stepper motors with hardware position counting
 - FR5: System can control 1 discrete actuator (E axis) with time-based position calculation
@@ -920,7 +920,7 @@ uint64_t sr_get_state(void);                              // Read current 40-bit
 
 **As a** developer,
 **I want** RMT-based pulse generation for servo axes,
-**So that** I can generate precise STEP pulses up to 100kHz with DMA.
+**So that** I can generate precise STEP pulses up to 500 kHz with DMA streaming.
 
 **Acceptance Criteria:**
 
@@ -943,15 +943,16 @@ public:
 ```
 
 **RMT Implementation:**
-**Given** I call `start(50000, 10000)` (50kHz, 10000 pulses)
+**Given** I call `startMove(10000, 200000, 1000000)` (10000 pulses, 200kHz max velocity, 1M accel)
 **When** RMT generates pulses
-**Then** exactly 10000 pulses are output at 50kHz (±1%)
-**And** pulse width is 50% duty cycle (configurable)
+**Then** exactly 10000 pulses are output with ±1% timing accuracy
+**And** pulse width is 50% duty cycle (±5%)
 **And** generation stops automatically after pulse_count reached
-**And** callback fires on completion
+**And** callback fires on completion with total_pulses count
 
 **Frequency Range:**
-**And** frequencies from LIMIT_MIN_PULSE_FREQ_HZ (1) to LIMIT_MAX_PULSE_FREQ_HZ (100000) are supported
+**And** frequencies from LIMIT_MIN_PULSE_FREQ_HZ (1) to LIMIT_MAX_PULSE_FREQ_HZ (500000) are supported
+**And** DEFAULT_MAX_PULSE_FREQ_HZ (200000) is the per-axis default maximum
 **And** invalid frequencies return ESP_ERR_INVALID_ARG
 
 **Direction Setup:**
@@ -965,9 +966,9 @@ public:
 - Implement in `firmware/components/pulse_gen/rmt_pulse_gen.cpp`
 - Use RMT TX with DMA (esp_rmt_new_tx_channel)
 - Use RMT encoder for pulse pattern generation
-- Loop mode for continuous, finite mode for counted pulses
+- DMA streaming double-buffer for unlimited motion length
 - End-of-transmission callback for completion event
-- FR2: 80-100kHz pulse generation
+- FR2: Up to 500 kHz pulse generation (200 kHz default max)
 
 ---
 
@@ -3235,7 +3236,7 @@ EVENT WARNING X INPOS_LOST            # InPos went inactive while idle
 |----|-------------|------|-------|--------|
 | **Motor Control Capabilities** |
 | FR1 | Control 8 independent motor axes | Epic 3 | 3.9 | Planned |
-| FR2 | Generate STEP pulses up to 80-100 kHz | Epic 3 | 3.2, 3.3, 3.4 | Planned |
+| FR2 | Generate STEP pulses up to 500 kHz (200 kHz default) | Epic 3 | 3.2, 3.3, 3.4 | Planned |
 | FR3 | Control 5 servo motors (STEP/DIR) | Epic 3 | 3.6 | Planned |
 | FR4 | Control 2 stepper motors with position counting | Epic 3 | 3.7 | Planned |
 | FR5 | Control 1 discrete actuator (E axis) | Epic 3 | 3.8 | Planned |

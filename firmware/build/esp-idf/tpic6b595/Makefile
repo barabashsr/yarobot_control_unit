@@ -161,6 +161,68 @@ depend:
 	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
+# Convenience name for target.
+esp-idf/tpic6b595/CMakeFiles/__idf_tpic6b595.dir/rule:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 esp-idf/tpic6b595/CMakeFiles/__idf_tpic6b595.dir/rule
+.PHONY : esp-idf/tpic6b595/CMakeFiles/__idf_tpic6b595.dir/rule
+
+# Convenience name for target.
+__idf_tpic6b595: esp-idf/tpic6b595/CMakeFiles/__idf_tpic6b595.dir/rule
+.PHONY : __idf_tpic6b595
+
+# fast build rule for target.
+__idf_tpic6b595/fast:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/tpic6b595/CMakeFiles/__idf_tpic6b595.dir/build.make esp-idf/tpic6b595/CMakeFiles/__idf_tpic6b595.dir/build
+.PHONY : __idf_tpic6b595/fast
+
+test/test_tpic6b595.obj: test/test_tpic6b595.c.obj
+.PHONY : test/test_tpic6b595.obj
+
+# target to build an object file
+test/test_tpic6b595.c.obj:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/tpic6b595/CMakeFiles/__idf_tpic6b595.dir/build.make esp-idf/tpic6b595/CMakeFiles/__idf_tpic6b595.dir/test/test_tpic6b595.c.obj
+.PHONY : test/test_tpic6b595.c.obj
+
+test/test_tpic6b595.i: test/test_tpic6b595.c.i
+.PHONY : test/test_tpic6b595.i
+
+# target to preprocess a source file
+test/test_tpic6b595.c.i:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/tpic6b595/CMakeFiles/__idf_tpic6b595.dir/build.make esp-idf/tpic6b595/CMakeFiles/__idf_tpic6b595.dir/test/test_tpic6b595.c.i
+.PHONY : test/test_tpic6b595.c.i
+
+test/test_tpic6b595.s: test/test_tpic6b595.c.s
+.PHONY : test/test_tpic6b595.s
+
+# target to generate assembly for a file
+test/test_tpic6b595.c.s:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/tpic6b595/CMakeFiles/__idf_tpic6b595.dir/build.make esp-idf/tpic6b595/CMakeFiles/__idf_tpic6b595.dir/test/test_tpic6b595.c.s
+.PHONY : test/test_tpic6b595.c.s
+
+tpic6b595.obj: tpic6b595.c.obj
+.PHONY : tpic6b595.obj
+
+# target to build an object file
+tpic6b595.c.obj:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/tpic6b595/CMakeFiles/__idf_tpic6b595.dir/build.make esp-idf/tpic6b595/CMakeFiles/__idf_tpic6b595.dir/tpic6b595.c.obj
+.PHONY : tpic6b595.c.obj
+
+tpic6b595.i: tpic6b595.c.i
+.PHONY : tpic6b595.i
+
+# target to preprocess a source file
+tpic6b595.c.i:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/tpic6b595/CMakeFiles/__idf_tpic6b595.dir/build.make esp-idf/tpic6b595/CMakeFiles/__idf_tpic6b595.dir/tpic6b595.c.i
+.PHONY : tpic6b595.c.i
+
+tpic6b595.s: tpic6b595.c.s
+.PHONY : tpic6b595.s
+
+# target to generate assembly for a file
+tpic6b595.c.s:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/tpic6b595/CMakeFiles/__idf_tpic6b595.dir/build.make esp-idf/tpic6b595/CMakeFiles/__idf_tpic6b595.dir/tpic6b595.c.s
+.PHONY : tpic6b595.c.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -173,6 +235,13 @@ help:
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
+	@echo "... __idf_tpic6b595"
+	@echo "... test/test_tpic6b595.obj"
+	@echo "... test/test_tpic6b595.i"
+	@echo "... test/test_tpic6b595.s"
+	@echo "... tpic6b595.obj"
+	@echo "... tpic6b595.i"
+	@echo "... tpic6b595.s"
 .PHONY : help
 
 

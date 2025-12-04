@@ -1,0 +1,250 @@
+<story-context id="3-2-rmt-pulse-generator" v="1.0">
+  <metadata>
+    <epicId>3</epicId>
+    <storyId>2</storyId>
+    <title>RMT Pulse Generator</title>
+    <status>drafted</status>
+    <generatedAt>2025-12-04</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/3-2-rmt-pulse-generator.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>RMT-based pulse generation for servo axes X, Z, A, B</iWant>
+    <soThat>I can generate precise STEP pulses up to 500 kHz with DMA streaming for high-speed servo motion</soThat>
+    <tasks>
+      <task id="1" ac="4,13">Update pulse frequency limits in config_limits.h
+        <subtask>Change LIMIT_MAX_PULSE_FREQ_HZ from 100000 to 500000</subtask>
+        <subtask>Add DEFAULT_MAX_PULSE_FREQ_HZ = 200000</subtask>
+        <subtask>Add LIMIT_RMT_RESOLUTION_HZ = 80000000</subtask>
+        <subtask>Add static_assert validating DEFAULT &lt;= LIMIT_MAX</subtask>
+      </task>
+      <task id="2" ac="1">Create pulse_gen component structure
+        <subtask>Create firmware/components/pulse_gen/include/i_pulse_generator.h</subtask>
+        <subtask>Create firmware/components/pulse_gen/include/rmt_pulse_gen.h</subtask>
+        <subtask>Create firmware/components/pulse_gen/rmt_pulse_gen.cpp</subtask>
+        <subtask>Create firmware/components/pulse_gen/CMakeLists.txt</subtask>
+      </task>
+      <task id="3" ac="2,6-9,11-12">Define IPulseGenerator interface with pure virtual methods</task>
+      <task id="4" ac="1">Implement RmtPulseGenerator constructor and init()</task>
+      <task id="5" ac="2,7,8">Implement trapezoidal profile generator</task>
+      <task id="6" ac="2,7">Implement DMA streaming double-buffer</task>
+      <task id="7" ac="2,5,6">Implement startMove()</task>
+      <task id="8" ac="7">Implement startVelocity()</task>
+      <task id="9" ac="8,9">Implement stop() and stopImmediate()</task>
+      <task id="10" ac="11,12">Implement status methods</task>
+      <task id="11" ac="6">Implement completion callback</task>
+      <task id="12" ac="1-13">Create unit tests</task>
+      <task id="13" ac="2,3,10">Hardware verification</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <criterion id="AC1">RMT channels 0-3 generate STEP pulses on GPIO_X_STEP, GPIO_Z_STEP, GPIO_A_STEP, GPIO_B_STEP</criterion>
+    <criterion id="AC2">startMove(10000, 200000, 1000000) outputs exactly 10000 pulses with ±1% timing accuracy</criterion>
+    <criterion id="AC3">Pulse width is 50% duty cycle (±5%)</criterion>
+    <criterion id="AC4">Frequencies from 1 Hz to 500000 Hz valid; invalid returns ESP_ERR_INVALID_ARG</criterion>
+    <criterion id="AC5">Direction change waits TIMING_DIR_SETUP_US (20µs) before first STEP pulse</criterion>
+    <criterion id="AC6">Motion complete fires MotionCompleteCallback with total_pulses count</criterion>
+    <criterion id="AC7">startVelocity() generates continuous pulses until stop() called</criterion>
+    <criterion id="AC8">stop(deceleration) stops gracefully with controlled deceleration profile</criterion>
+    <criterion id="AC9">stopImmediate() stops within 10µs with no further pulses</criterion>
+    <criterion id="AC10">4 axes at 200kHz simultaneously with no interference</criterion>
+    <criterion id="AC11">isRunning() returns true during motion, false when idle</criterion>
+    <criterion id="AC12">getCurrentVelocity() returns current pulse frequency (Hz) as float</criterion>
+    <criterion id="AC13">DEFAULT_MAX_PULSE_FREQ_HZ = 200000 used as per-axis default max velocity</criterion>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-3.md</path>
+        <title>Epic 3 Technical Specification</title>
+        <section>Services and Modules - RmtPulseGenerator</section>
+        <snippet>RMT pulse generator for servo axes X, Z, A, B. 4 channels × 500kHz max. Double-buffer streaming for unlimited motion length.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-3.md</path>
+        <title>Epic 3 Technical Specification</title>
+        <section>APIs and Interfaces - IPulseGenerator</section>
+        <snippet>Interface with startMove(), startVelocity(), stop(), stopImmediate(), isRunning(), getPulseCount(), getCurrentVelocity(), setCompletionCallback().</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-3.md</path>
+        <title>Epic 3 Technical Specification</title>
+        <section>MANDATORY Architecture Constraints</section>
+        <snippet>Header-Only Configuration: All values from config headers. Streaming Double-Buffer: Same infrastructure for all motion types.</snippet>
+      </doc>
+      <doc>
+        <path>docs/prd.md</path>
+        <title>Product Requirements Document</title>
+        <section>FR2, NFR1</section>
+        <snippet>Step pulse generation up to 500 kHz with 200 kHz default. Timing accuracy within 1% up to 500kHz.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/3-1-shift-register-driver.md</path>
+        <title>Story 3-1 Shift Register Driver</title>
+        <section>Completion Notes</section>
+        <snippet>SPI HAL layer available. sr_set_direction() for DIR control before motion. Thread safety mutex pattern established.</snippet>
+      </doc>
+    </docs>
+    <code>
+      <file>
+        <path>firmware/components/config/include/config_limits.h</path>
+        <kind>config header</kind>
+        <symbol>LIMIT_MAX_PULSE_FREQ_HZ, LIMIT_MIN_PULSE_FREQ_HZ</symbol>
+        <lines>107-114</lines>
+        <reason>Current pulse freq limits (100kHz) - must update to 500kHz max, add 200kHz default</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_peripherals.h</path>
+        <kind>config header</kind>
+        <symbol>RMT_CHANNEL_X, RMT_CHANNEL_Z, RMT_CHANNEL_A, RMT_CHANNEL_B</symbol>
+        <lines>29-44</lines>
+        <reason>RMT channel assignments for X(0), Z(1), A(2), B(3) axes</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_gpio.h</path>
+        <kind>config header</kind>
+        <symbol>GPIO_X_STEP, GPIO_Z_STEP, GPIO_A_STEP, GPIO_B_STEP</symbol>
+        <lines>35-48</lines>
+        <reason>GPIO pins for STEP outputs: X=GPIO4, Z=GPIO6, A=GPIO7, B=GPIO15</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_timing.h</path>
+        <kind>config header</kind>
+        <symbol>TIMING_DIR_SETUP_US</symbol>
+        <lines>27</lines>
+        <reason>Direction setup delay (20µs) before first STEP pulse</reason>
+      </file>
+      <file>
+        <path>firmware/components/drivers/tpic6b595/include/tpic6b595.h</path>
+        <kind>driver header</kind>
+        <symbol>sr_set_direction(), sr_update()</symbol>
+        <lines>79-140</lines>
+        <reason>Call sr_set_direction() before motion start for DIR signal control</reason>
+      </file>
+      <file>
+        <path>firmware/components/drivers/tpic6b595/tpic6b595.c</path>
+        <kind>driver implementation</kind>
+        <symbol>sr_set_direction</symbol>
+        <lines>117-136</lines>
+        <reason>Reference implementation for shift register direction control</reason>
+      </file>
+      <file>
+        <path>firmware/components/pulse_gen/CMakeLists.txt</path>
+        <kind>build config</kind>
+        <symbol>idf_component_register</symbol>
+        <lines>1-3</lines>
+        <reason>Existing stub CMakeLists - needs SRCS, REQUIRES esp_driver_rmt, config</reason>
+      </file>
+      <file>
+        <path>firmware/components/drivers/tpic6b595/test/test_tpic6b595.c</path>
+        <kind>test</kind>
+        <symbol>TEST_CASE patterns</symbol>
+        <lines>1-431</lines>
+        <reason>Template for unit test structure with Unity framework</reason>
+      </file>
+    </code>
+    <dependencies>
+      <esp-idf>
+        <component name="driver/rmt">RMT TX channel, DMA streaming, callbacks</component>
+        <component name="esp_driver_rmt">ESP-IDF 5.4+ new RMT API</component>
+        <component name="freertos">Task notifications for ISR-to-task communication</component>
+      </esp-idf>
+      <internal>
+        <component name="config">config_limits.h, config_peripherals.h, config_gpio.h, config_timing.h</component>
+        <component name="tpic6b595">sr_set_direction() for DIR signal before motion</component>
+      </internal>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint source="tech-spec-epic-3.md" priority="MANDATORY">
+      Header-Only Configuration: Every configurable value MUST be defined in a header file. No magic numbers in source code.
+    </constraint>
+    <constraint source="tech-spec-epic-3.md" priority="MANDATORY">
+      Streaming Double-Buffer Pulse Generation: All pulse generation uses streaming double-buffer architecture. Short moves, long moves, and continuous jogging use the same infrastructure.
+    </constraint>
+    <constraint source="tech-spec-epic-3.md" priority="MANDATORY">
+      Motion Blending: New MOVE commands during active motion blend to new target. No "axis busy" errors.
+    </constraint>
+    <constraint source="prd.md">
+      NFR1: Step pulse generation must maintain timing accuracy within 1% up to 500 kHz.
+    </constraint>
+    <constraint source="prd.md">
+      NFR5: Motion commands must execute with deterministic timing (no jitter &gt;1ms).
+    </constraint>
+    <constraint source="story-3-1">
+      Use existing SPI HAL layer pattern. Call sr_set_direction() before motion start.
+    </constraint>
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>IPulseGenerator</name>
+      <kind>C++ abstract class</kind>
+      <signature>
+class IPulseGenerator {
+public:
+    virtual ~IPulseGenerator() = default;
+    virtual esp_err_t init() = 0;
+    virtual esp_err_t startMove(int32_t pulses, float max_velocity, float acceleration) = 0;
+    virtual esp_err_t startVelocity(float velocity, float acceleration) = 0;
+    virtual esp_err_t stop(float deceleration) = 0;
+    virtual void stopImmediate() = 0;
+    virtual bool isRunning() const = 0;
+    virtual int64_t getPulseCount() const = 0;
+    virtual float getCurrentVelocity() const = 0;
+    using MotionCompleteCallback = std::function&lt;void(int64_t total_pulses)&gt;;
+    virtual void setCompletionCallback(MotionCompleteCallback cb) = 0;
+};
+      </signature>
+      <path>firmware/components/pulse_gen/include/i_pulse_generator.h</path>
+    </interface>
+    <interface>
+      <name>RMT TX Channel API</name>
+      <kind>ESP-IDF driver API</kind>
+      <signature>
+rmt_new_tx_channel(&amp;config, &amp;channel_handle)
+rmt_new_copy_encoder(&amp;config, &amp;encoder_handle)
+rmt_enable(channel_handle)
+rmt_transmit(channel_handle, encoder, data, len, &amp;tx_config)
+rmt_tx_register_event_callbacks(channel_handle, &amp;cbs, user_data)
+rmt_disable(channel_handle)
+      </signature>
+      <path>ESP-IDF esp_driver_rmt component</path>
+    </interface>
+    <interface>
+      <name>Shift Register Direction</name>
+      <kind>C function</kind>
+      <signature>esp_err_t sr_set_direction(uint8_t axis, bool forward)</signature>
+      <path>firmware/components/drivers/tpic6b595/include/tpic6b595.h</path>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+      ESP-IDF Unity test framework. Test files in component/test/ directory. TEST_CASE macro with descriptive name and [component] tag. Tests organized by acceptance criteria. Pattern established in test_tpic6b595.c.
+    </standards>
+    <locations>
+      <location>firmware/components/pulse_gen/test/test_rmt_pulse_gen.cpp</location>
+    </locations>
+    <ideas>
+      <idea ac="1">Test init() returns ESP_OK for all 4 RMT channels (X, Z, A, B)</idea>
+      <idea ac="2">Test startMove() with various pulse counts and verify exact count output</idea>
+      <idea ac="3">Test pulse duty cycle at 10kHz, 100kHz, 200kHz, 500kHz with timing measurements</idea>
+      <idea ac="4">Test frequency validation: 1Hz min, 500kHz max, reject out of range</idea>
+      <idea ac="5">Test DIR setup timing delay before first STEP (measure with esp_timer)</idea>
+      <idea ac="6">Test completion callback fires with correct pulse count</idea>
+      <idea ac="7">Test startVelocity() continuous mode until stop()</idea>
+      <idea ac="8">Test stop() deceleration profile</idea>
+      <idea ac="9">Test stopImmediate() timing requirement (&lt;10µs)</idea>
+      <idea ac="10">Test 4 channels simultaneously at 200kHz - no interference</idea>
+      <idea ac="11">Test isRunning() state transitions</idea>
+      <idea ac="12">Test getCurrentVelocity() during motion phases</idea>
+      <idea ac="13">Test DEFAULT_MAX_PULSE_FREQ_HZ configuration value</idea>
+    </ideas>
+  </tests>
+</story-context>

@@ -20,7 +20,7 @@ This epic represents the core product value—after completion, users can contro
 **In Scope:**
 
 - 5x TPIC6B595N shift register chain driver for DIR/EN/BRAKE/ALARM_CLR signals
-- RMT pulse generator for servo axes X, Z, A, B (up to 100kHz pulses)
+- RMT pulse generator for servo axes X, Z, A, B (up to 500 kHz pulses, 200 kHz default max)
 - MCPWM pulse generator with internal PCNT routing for Y, C axes
 - LEDC pulse generator with software counting for D axis stepper
 - Position tracking interfaces (PCNT, software, time-based)
@@ -298,7 +298,7 @@ Host                    CommandParser           MotionController          Motor 
 
 | Requirement | Target | Source | Measurement |
 |-------------|--------|--------|-------------|
-| NFR1: Pulse timing accuracy | ±1% up to 80kHz | PRD NFR1 | Oscilloscope verification |
+| NFR1: Pulse timing accuracy | ±1% up to 500kHz | PRD NFR1 | Oscilloscope verification |
 | NFR2: Command response latency | <10ms | PRD NFR2 | Time from CR to OK |
 | NFR3: Multi-axis degradation | None with 8 axes | PRD NFR3 | Profile test with all axes |
 | NFR5: Motion jitter | <1ms | PRD NFR5 | Oscilloscope pulse timing |
@@ -308,8 +308,8 @@ Host                    CommandParser           MotionController          Motor 
 
 **Pulse Generation Performance:**
 
-- RMT: 4 channels × 100kHz max = 400k pulses/sec aggregate capacity
-- MCPWM: 2 timers × 100kHz max with PCNT internal routing
+- RMT: 4 channels × 500kHz max = 2M pulses/sec aggregate capacity (200kHz default per axis)
+- MCPWM: 2 timers × 500kHz max with PCNT internal routing
 - LEDC: 1 channel, adequate for D-axis stepper requirements
 - Double-buffer streaming: unlimited motion length, no buffer constraints
 
@@ -422,7 +422,7 @@ Derived from PRD FR1-10, FR43-44, FR48:
 | # | Criteria | Testable Statement | Source |
 |---|----------|-------------------|--------|
 | AC1 | 8-axis control | System controls all 8 axes (X-E) independently via MOVE commands | FR1 |
-| AC2 | Pulse frequency | STEP pulses generated up to 80kHz with ±1% timing accuracy | FR2 |
+| AC2 | Pulse frequency | STEP pulses generated up to 500kHz with ±1% timing accuracy (200kHz default max) | FR2 |
 | AC3 | Servo STEP/DIR | 5 servo axes (X,Y,Z,A,B) generate STEP/DIR signals | FR3 |
 | AC4 | Stepper + count | 2 stepper axes (C,D) generate pulses with position counting | FR4 |
 | AC5 | Discrete actuator | E axis controls discrete actuator via time-based positioning | FR5 |
@@ -473,7 +473,7 @@ Derived from PRD FR1-10, FR43-44, FR48:
 
 | Risk | Impact | Mitigation |
 |------|--------|------------|
-| R1: RMT double-buffer timing tight at 100kHz | High pulse rate may miss refill deadline | Profile buffer fill time, use 80kHz as practical limit |
+| R1: RMT double-buffer timing tight at 500kHz | High pulse rate may miss refill deadline | Profile buffer fill time, validate at 500kHz before production use |
 | R2: MCPWM+PCNT internal routing undocumented | May require different approach for Y/C | Verify with test program before full implementation |
 | R3: SPI shift register chain timing | 40-bit transfer time affects DIR setup | Measure actual SPI timing, adjust delays if needed |
 | R4: Multi-axis DMA contention | Multiple axes at high speed may starve CPU | Profile aggregate bandwidth, prioritize motion task |
@@ -484,7 +484,7 @@ Derived from PRD FR1-10, FR43-44, FR48:
 | Assumption | Basis | Validation |
 |------------|-------|------------|
 | A1: ESP-IDF 5.4 RMT API stable | LTS release | Already in use for Epic 1-2 |
-| A2: 80MHz RMT resolution adequate | 12.5ns tick = 80kHz fine at 50% duty | Oscilloscope verification |
+| A2: 80MHz RMT resolution adequate | 12.5ns tick = 500kHz at 50% duty (160 ticks/period) | Oscilloscope verification |
 | A3: Single motion task per axis sufficient | No coordinated motion in MVP | Architecture decision |
 | A4: Atomic pulse_count updates thread-safe | std::atomic<int64_t> on ESP32-S3 | Platform documentation |
 | A5: TPIC6B595N responds within spec | Datasheet claims <1µs propagation | Verified in hardware |
@@ -513,7 +513,7 @@ Derived from PRD FR1-10, FR43-44, FR48:
 | Story | Critical Tests |
 |-------|----------------|
 | 3.1 | Shift register bit mapping, emergency disable timing, SPI throughput |
-| 3.2 | RMT pulse accuracy at 10/50/80kHz, buffer underrun prevention |
+| 3.2 | RMT pulse accuracy at 10/100/200/500kHz, buffer underrun prevention |
 | 3.3 | MCPWM+PCNT internal routing, count accuracy, stop timing |
 | 3.4 | LEDC frequency accuracy, software count tracking |
 | 3.5 | Position tracker reset, direction handling, overflow |

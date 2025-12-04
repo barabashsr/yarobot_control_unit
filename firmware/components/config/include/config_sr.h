@@ -254,6 +254,16 @@
  */
 
 /**
+ * @brief Number of TPIC6B595N chips in the daisy chain
+ */
+#define SR_CHAIN_LENGTH     5
+
+/**
+ * @brief Total number of bits in the shift register chain (5 chips × 8 bits)
+ */
+#define SR_BITS_TOTAL       40
+
+/**
  * @brief Safe state value (all bits 0)
  *
  * All enables OFF, all brakes engaged, all alarm clears inactive.

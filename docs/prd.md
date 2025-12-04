@@ -49,7 +49,7 @@ This is an embedded system project creating a hardware device with firmware that
 - No more searching for suitable commercial controllers that don't exist
 
 **Technical Performance Targets**
-- Step pulse generation up to ESP32-S3 practical limits (80-100 kHz reliable)
+- Step pulse generation up to 500 kHz hardware capability, 200 kHz default maximum per axis (compile-time configurable)
 - Command-to-motion latency under 10ms for responsive operation
 - Deterministic real-time performance without jitter
 - Full ROS2 compatibility for integration with robotics workflows
@@ -328,7 +328,7 @@ This abstraction layer handles:
 **Motor Control Capabilities**
 
 - FR1: System can control up to 8 independent motor axes simultaneously (X,Y,Z,A,B,C,D,E)
-- FR2: System can generate STEP pulses up to 80-100 kHz for high-speed motion
+- FR2: System can generate STEP pulses up to 500 kHz (LIMIT_MAX_PULSE_FREQ_HZ), with 200 kHz default per-axis maximum (DEFAULT_MAX_PULSE_FREQ_HZ)
 - FR3: System can control 5 servo motors through STEP/DIR interfaces with position feedback
 - FR4: System can control 2 stepper motors with hardware position counting
 - FR5: System can control 1 discrete actuator (E axis) with time-based position calculation
@@ -434,7 +434,7 @@ This abstraction layer handles:
 
 ### Performance
 
-- NFR1: Step pulse generation must maintain timing accuracy within 1% up to 80 kHz
+- NFR1: Step pulse generation must maintain timing accuracy within 1% up to 500 kHz
 - NFR2: Command response latency must not exceed 10ms under normal load
 - NFR3: System must handle simultaneous motion on all 8 axes without degradation
 - NFR4: I2C polling cycle must complete within 5ms for responsive limit detection

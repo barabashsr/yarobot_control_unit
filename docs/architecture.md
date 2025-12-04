@@ -2909,9 +2909,15 @@ components/config/include/
 // ============================================================================
 // MOTION LIMITS
 // ============================================================================
-#define LIMIT_MAX_PULSE_FREQ_HZ     100000  // Maximum pulse frequency (100kHz)
+#define LIMIT_MAX_PULSE_FREQ_HZ     500000  // Maximum pulse frequency (500kHz hardware limit)
+#define DEFAULT_MAX_PULSE_FREQ_HZ   200000  // Default per-axis maximum (200kHz)
 #define LIMIT_MIN_PULSE_FREQ_HZ     1       // Minimum pulse frequency (1Hz)
+#define LIMIT_RMT_RESOLUTION_HZ     80000000 // RMT clock resolution (80MHz)
 #define LIMIT_MOTION_QUEUE_DEPTH    4       // Motion commands per axis
+
+// Compile-time validation
+static_assert(DEFAULT_MAX_PULSE_FREQ_HZ <= LIMIT_MAX_PULSE_FREQ_HZ,
+              "Default max frequency cannot exceed hardware limit");
 
 // ============================================================================
 // STACK SIZES (words, not bytes)
