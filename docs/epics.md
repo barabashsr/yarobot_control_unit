@@ -157,7 +157,7 @@ This document provides the complete epic and story breakdown for yarobot_control
 **Acceptance Criteria:**
 
 **Given** a fresh clone of the repository
-**When** I run `idf.py build`
+**When** I run `cd firmware && idf.py build`
 **Then** the project compiles without errors
 
 **And** the target is set to esp32s3
@@ -190,16 +190,15 @@ This document provides the complete epic and story breakdown for yarobot_control
 **Acceptance Criteria:**
 
 **Given** the project is initialized
-**When** I examine the `components/` directory
+**When** I examine the `firmware/components/` directory
 **Then** the following structure exists:
 ```
-components/
+firmware/components/
 ├── hal/
 │   ├── gpio_hal/
 │   ├── i2c_hal/
 │   └── spi_hal/
 ├── drivers/
-│   ├── mcp23017/
 │   ├── tpic6b595/
 │   └── oled/
 ├── pulse_gen/
@@ -244,7 +243,7 @@ components/
 **When** I include `config.h` in any source file
 **Then** I have access to all configuration constants
 
-**And** the following headers exist in `components/config/include/`:
+**And** the following headers exist in `firmware/components/config/include/`:
 - `config.h` (master include with FIRMWARE_VERSION, FEATURE_FLAGS)
 - `config_gpio.h` (all GPIO assignments per architecture)
 - `config_peripherals.h` (RMT, MCPWM, PCNT, LEDC, SPI assignments)
@@ -408,7 +407,7 @@ esp_err_t spi_hal_transfer(spi_host_device_t host, const uint8_t* tx, uint8_t* r
 **Technical Notes:**
 - Implement minimal CMD_TEST command handler in cmd_executor
 - Use ESP_LOGI for detailed diagnostic output during tests
-- Create `components/drivers/test_utils/` for reusable test functions
+- Create `firmware/components/drivers/test_utils/` for reusable test functions
 - This validates hardware before building full driver implementations
 - If any test fails, stop and debug hardware/wiring before proceeding
 - CMD_DIAG command can be implemented here as alias to CMD_TEST
@@ -485,7 +484,7 @@ esp_err_t spi_hal_transfer(spi_host_device_t host, const uint8_t* tx, uint8_t* r
 
 **Technical Notes:**
 - Use ESP-IDF TinyUSB component with CDC class
-- Implement in `components/interface/usb_cdc/`
+- Implement in `firmware/components/interface/usb_cdc/`
 - Create FreeRTOS queues for RX and TX (LIMIT_COMMAND_QUEUE_DEPTH, LIMIT_RESPONSE_QUEUE_DEPTH)
 - usb_rx_task reads from USB, pushes to rx_queue
 - usb_tx_task reads from tx_queue, writes to USB
@@ -539,7 +538,7 @@ typedef struct {
 **Prerequisites:** Story 2.1
 
 **Technical Notes:**
-- Implement in `components/interface/command_parser/`
+- Implement in `firmware/components/interface/command_parser/`
 - Use `strtok_r` for thread-safe tokenization
 - Use `strtof` for float parsing with error checking
 - Validate axis against valid set (X,Y,Z,A,B,C,D,E or alias lookup)
@@ -595,7 +594,7 @@ Examples using RESP_EVENT from config_commands.h:
 **Prerequisites:** Story 2.1
 
 **Technical Notes:**
-- Implement in `components/interface/command_parser/` (or separate response_formatter)
+- Implement in `firmware/components/interface/command_parser/` (or separate response_formatter)
 - Use `snprintf` with LIMIT_RESPONSE_MAX_LENGTH buffer
 - Thread-safe: multiple tasks may generate events
 - Events go to same TX queue as responses
@@ -648,7 +647,7 @@ static const CommandEntry command_table[] = {
 **Prerequisites:** Story 2.2, Story 2.3
 
 **Technical Notes:**
-- Implement in `components/control/command_executor/`
+- Implement in `firmware/components/control/command_executor/`
 - Command table uses CMD_* constants, never literal strings
 - Handler functions are stateless (receive all context as params)
 - Use mutex if handlers access shared state
@@ -837,7 +836,7 @@ EVENT ESTOP ACTIVE
 **Prerequisites:** Story 2.4
 
 **Technical Notes:**
-- Implement in `components/events/event_manager/`
+- Implement in `firmware/components/events/event_manager/`
 - Use FreeRTOS queue for thread safety
 - ISR-safe publish uses `xQueueSendFromISR`
 - Callback registration uses linked list or static array
@@ -903,7 +902,7 @@ uint64_t sr_get_state(void);                              // Read current 40-bit
 **Prerequisites:** Epic 1 complete, Epic 2 complete
 
 **Technical Notes:**
-- Implement in `components/drivers/tpic6b595/`
+- Implement in `firmware/components/drivers/tpic6b595/`
 - Use SPI DMA for efficient 40-bit transfers (5 bytes)
 - Maintain shadow register in RAM for read-back (uint64_t)
 - Bit positions from `config_sr.h`: SR0-SR3 for motor control (4 bits/axis), SR4 for GP outputs
@@ -958,7 +957,7 @@ public:
 **Prerequisites:** Story 3.1
 
 **Technical Notes:**
-- Implement in `components/pulse_gen/rmt_pulse_gen.cpp`
+- Implement in `firmware/components/pulse_gen/rmt_pulse_gen.cpp`
 - Use RMT TX with DMA (esp_rmt_new_tx_channel)
 - Use RMT encoder for pulse pattern generation
 - Loop mode for continuous, finite mode for counted pulses
@@ -1007,7 +1006,7 @@ public:
 **Prerequisites:** Story 3.1
 
 **Technical Notes:**
-- Implement in `components/pulse_gen/mcpwm_pulse_gen.cpp`
+- Implement in `firmware/components/pulse_gen/mcpwm_pulse_gen.cpp`
 - ESP-IDF v5.x: Use `io_loop_back` in PCNT and MCPWM config for internal routing
 - Reference: https://esp32.com/viewtopic.php?t=30817
 - PCNT high/low limits trigger stop and callback
@@ -1044,7 +1043,7 @@ public:
 **Prerequisites:** Story 3.1
 
 **Technical Notes:**
-- Implement in `components/pulse_gen/ledc_pulse_gen.cpp`
+- Implement in `firmware/components/pulse_gen/ledc_pulse_gen.cpp`
 - LEDC provides frequency generation
 - Use high-resolution timer for pulse counting
 - Less precise than RMT/MCPWM but sufficient for D axis stepper
@@ -1094,7 +1093,7 @@ public:
 **Prerequisites:** Story 3.2, Story 3.3, Story 3.4
 
 **Technical Notes:**
-- Implement in `components/position/`
+- Implement in `firmware/components/position/`
 - PCNT tracker wraps ESP-IDF PCNT driver
 - Software tracker uses atomic counters updated from callbacks
 - E axis: binary state, time-based position interpolation
@@ -1159,7 +1158,7 @@ public:
 **Prerequisites:** Story 3.1, Story 3.2, Story 3.3, Story 3.5
 
 **Technical Notes:**
-- Implement in `components/motor/`
+- Implement in `firmware/components/motor/`
 - Composition: motor HAS-A pulse generator and position tracker
 - Servo motors: X (RMT), Y (MCPWM), Z (RMT), A (RMT), B (RMT)
 - Thread-safe state access
@@ -1246,7 +1245,7 @@ public:
 **Prerequisites:** Story 3.6
 
 **Technical Notes:**
-- Implement in `components/motor/discrete_axis.cpp`
+- Implement in `firmware/components/motor/discrete_axis.cpp`
 - E axis: solenoid, pneumatic cylinder, or similar
 - Travel time configured in YAML (e.g., 500ms extend, 500ms retract)
 - FR5: 1 discrete actuator with time-based position
@@ -1301,7 +1300,7 @@ public:
 **Prerequisites:** Story 3.6, Story 3.7, Story 3.8, Epic 2 complete
 
 **Technical Notes:**
-- Implement handlers in `components/control/command_executor/`
+- Implement handlers in `firmware/components/control/command_executor/`
 - MotionController holds array of IMotor* for all LIMIT_NUM_AXES (8) axes
 - Default velocity from config if not specified in command (DEFAULT_MAX_VELOCITY)
 - FR6, FR7: absolute and relative moves
@@ -1469,7 +1468,7 @@ esp_err_t mcp23017_set_interrupt(uint8_t addr, uint8_t port, uint8_t mask, mcp23
 **Prerequisites:** Epic 1 complete, Epic 3 complete
 
 **Technical Notes:**
-- Implement in `components/drivers/mcp23017/`
+- Implement in `firmware/components/drivers/mcp23017/`
 - Use espressif/mcp23017 component from ESP Component Registry
 - Configure interrupt-on-change for limit switch inputs (MCP0)
 - Configure interrupt-on-change for ALARM_INPUT (MCP1 Port A)
@@ -1539,7 +1538,7 @@ OK X:00 Y:00 Z:01 A:00 B:00 C:10 D:00 E:--
 **Prerequisites:** Story 4.1
 
 **Technical Notes:**
-- Implement in `components/control/safety_monitor/`
+- Implement in `firmware/components/control/safety_monitor/`
 - Debouncing handled in software (TIMING_DEBOUNCE_MS)
 - FR11: 14 limit switches monitored
 - FR18: configurable polarity
@@ -1700,7 +1699,7 @@ OK X:00 Y:00 Z:01 A:00 B:00 C:10 D:00 E:--
 **Prerequisites:** Story 3.1
 
 **Technical Notes:**
-- Implement in `components/control/safety_monitor/`
+- Implement in `firmware/components/control/safety_monitor/`
 - Brake timing critical: engage before disable, release after enable
 - Per-axis strategy stored in configuration
 - FR14: configurable brake strategies
@@ -1812,7 +1811,7 @@ OK X:00 Y:00 Z:01 A:00 B:00 C:10 D:00 E:--
 **Prerequisites:** Story 4.1, Story 3.1 (shift register driver)
 
 **Technical Notes:**
-- Implement commands in `components/control/command_executor/`
+- Implement commands in `firmware/components/control/command_executor/`
 - FR35: 4 digital inputs (spare pins on MCP23017 #1)
 - FR36: 8 digital outputs via shift register SR4 (bits 32-39)
 - FR41: debouncing
@@ -2018,7 +2017,7 @@ OK 0x20:MCP23017 0x21:MCP23017 0x3C:OLED
 **Prerequisites:** Story 4.1
 
 **Technical Notes:**
-- Implement in `components/control/safety_monitor/` or dedicated i2c_health component
+- Implement in `firmware/components/control/safety_monitor/` or dedicated i2c_health component
 - FR46: I2C health monitoring
 - FR56: detect I2C failures
 - FR58: transient error recovery
@@ -2075,7 +2074,7 @@ ERROR E020 I2C communication failure: 0x20
 **Prerequisites:** Story 4.10
 
 **Technical Notes:**
-- Implement in `components/events/` or separate logging component
+- Implement in `firmware/components/events/` or separate logging component
 - Store in RAM (not NVS - too many writes)
 - Circular buffer with configurable depth
 - FR57: detailed error messages
@@ -2149,7 +2148,7 @@ OK X POS:0.000 EN:1 MOV:0 ERR:0 LIM:00 HOMED:1
 **Prerequisites:** Story 4.2, Story 4.3, Story 3.9
 
 **Technical Notes:**
-- Implement in `components/control/motion_controller/` or dedicated homing component
+- Implement in `firmware/components/control/motion_controller/` or dedicated homing component
 - Two-stage homing: fast approach, slow final (limit-only)
 - Uses limit switches as home sensors
 - FR33: homing sequences (basic limit-based)
@@ -2322,7 +2321,7 @@ io:
 **Prerequisites:** Epic 1 complete
 
 **Technical Notes:**
-- Implement in `components/config/yaml_parser/`
+- Implement in `firmware/components/config/yaml_parser/`
 - Consider using minimal YAML parser (no full libyaml to save flash)
 - Or implement simple line-by-line parser for flat/simple structures
 - Schema validation against config_yaml_schema.h macros
@@ -2374,7 +2373,7 @@ io:
 **Prerequisites:** Story 5.1, Story 2.6 (mode management)
 
 **Technical Notes:**
-- Implement in `components/config/`
+- Implement in `firmware/components/config/`
 - Base64 encoding handles binary-safe transfer
 - RAM buffer sized to LIMIT_CONFIG_MAX_SIZE (4KB typical)
 - Atomic application: parse/validate before applying
@@ -2529,7 +2528,7 @@ OK CONFIG END
 **Prerequisites:** Story 5.1
 
 **Technical Notes:**
-- Implement in `components/config/nvs_manager/`
+- Implement in `firmware/components/config/nvs_manager/`
 - Use ESP-IDF NVS API with namespace "yarobot"
 - Store serialized config structure or key-value pairs
 - NVS wear leveling handled by ESP-IDF
@@ -2720,7 +2719,7 @@ esp_err_t oled_update(void);  // Flush buffer to display
 **Prerequisites:** Story 1.6 (I2C1 verified)
 
 **Technical Notes:**
-- Implement in `components/drivers/oled/`
+- Implement in `firmware/components/drivers/oled/`
 - Use SSD1306 driver from ESP Component Registry or custom
 - I2C1 at lower speed okay (OLED not time-critical)
 - FR47c: dedicated I2C bus isolation

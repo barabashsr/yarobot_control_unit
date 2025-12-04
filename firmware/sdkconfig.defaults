@@ -1,0 +1,22 @@
+# ESP32-S3 N16R8 Configuration for YaRobot Control Unit
+# Story 1.1 - ESP-IDF Project Initialization
+
+# Flash Configuration (16MB)
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+
+# PSRAM Configuration (8MB Octal)
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_OCT=y
+
+# FreeRTOS Configuration (1ms tick)
+CONFIG_FREERTOS_HZ=1000
+
+# Console via USB CDC
+CONFIG_ESP_CONSOLE_USB_CDC=y
+
+# CPU Frequency (240 MHz)
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
+
+# Custom Partition Table
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"

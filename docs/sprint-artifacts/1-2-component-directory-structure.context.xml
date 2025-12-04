@@ -1,0 +1,132 @@
+<story-context id="1-2-component-directory-structure" v="1.0">
+  <metadata>
+    <epicId>1</epicId>
+    <storyId>2</storyId>
+    <title>Component Directory Structure</title>
+    <status>ready-for-dev</status>
+    <generatedAt>2025-12-03</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/1-2-component-directory-structure.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>the component folder structure established per architecture spec</iWant>
+    <soThat>all subsequent code has a defined home and dependencies are clear</soThat>
+    <tasks>
+      <task id="1" name="Create HAL layer components" acs="1,2,3">
+        <subtask>Create firmware/components/hal/gpio_hal/ with CMakeLists.txt and include/</subtask>
+        <subtask>Create firmware/components/hal/i2c_hal/ with CMakeLists.txt and include/</subtask>
+        <subtask>Create firmware/components/hal/spi_hal/ with CMakeLists.txt and include/</subtask>
+      </task>
+      <task id="2" name="Create driver components" acs="1,2,3">
+        <subtask>Create firmware/components/drivers/tpic6b595/ with CMakeLists.txt and include/</subtask>
+        <subtask>Create firmware/components/drivers/oled/ with CMakeLists.txt and include/</subtask>
+        <note>MCP23017 uses espressif/mcp23017 from Component Registry - no custom component needed</note>
+      </task>
+      <task id="3" name="Create pulse generation component" acs="1,2,3">
+        <subtask>Create firmware/components/pulse_gen/ with CMakeLists.txt and include/</subtask>
+      </task>
+      <task id="4" name="Create position tracking component" acs="1,2,3">
+        <subtask>Create firmware/components/position/ with CMakeLists.txt and include/</subtask>
+      </task>
+      <task id="5" name="Create motor abstraction component" acs="1,2,3">
+        <subtask>Create firmware/components/motor/ with CMakeLists.txt and include/</subtask>
+      </task>
+      <task id="6" name="Create control layer components" acs="1,2,3">
+        <subtask>Create firmware/components/control/motion_controller/ with CMakeLists.txt and include/</subtask>
+        <subtask>Create firmware/components/control/safety_monitor/ with CMakeLists.txt and include/</subtask>
+        <subtask>Create firmware/components/control/command_executor/ with CMakeLists.txt and include/</subtask>
+      </task>
+      <task id="7" name="Create interface layer components" acs="1,2,3">
+        <subtask>Create firmware/components/interface/usb_cdc/ with CMakeLists.txt and include/</subtask>
+        <subtask>Create firmware/components/interface/command_parser/ with CMakeLists.txt and include/</subtask>
+      </task>
+      <task id="8" name="Create configuration components" acs="1,2,3">
+        <subtask>Create firmware/components/config/nvs_manager/ with CMakeLists.txt and include/</subtask>
+        <subtask>Create firmware/components/config/yaml_parser/ with CMakeLists.txt and include/</subtask>
+      </task>
+      <task id="9" name="Create event system component" acs="1,2,3">
+        <subtask>Create firmware/components/events/event_manager/ with CMakeLists.txt and include/</subtask>
+      </task>
+      <task id="10" name="Verify build" acs="4,5">
+        <subtask>Run cd firmware and idf.py build to verify all components are recognized</subtask>
+        <subtask>Confirm no build errors from empty components</subtask>
+      </task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <criterion id="AC1">Given the project is initialized, when I examine the firmware/components/ directory, then the following structure exists with all subdirectories created</criterion>
+    <criterion id="AC2">Each component directory contains a valid CMakeLists.txt with idf_component_register()</criterion>
+    <criterion id="AC3">Each component has an include/ directory for public headers</criterion>
+    <criterion id="AC4">The project builds successfully with cd firmware and idf.py build (empty components don't break build)</criterion>
+    <criterion id="AC5">Component dependency declarations use REQUIRES and PRIV_REQUIRES appropriately (even if empty for now)</criterion>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/architecture.md" title="System Architecture" section="Project Structure" snippet="Complete directory layout showing firmware/components/ structure with HAL, drivers, control, interface, config, and events layers. See lines 121-188."/>
+      <doc path="docs/architecture.md" title="System Architecture" section="FR Category to Architecture Mapping" snippet="Maps functional requirements to architecture components. Motor Control to components/motor/, Safety to components/control/safety_monitor/, etc."/>
+      <doc path="docs/sprint-artifacts/tech-spec-epic-1.md" title="Epic 1 Technical Specification" section="System Architecture Alignment" snippet="Defines component references: main/, components/hal/, components/drivers/, components/config/, components/control/, components/interface/"/>
+      <doc path="docs/epics.md" title="Epics Document" section="Story 1.2" snippet="Original story definition with acceptance criteria and directory structure diagram showing 17 custom components."/>
+    </docs>
+    <code>
+      <file path="firmware/CMakeLists.txt" kind="build" symbol="project()" lines="1-6" reason="Project root CMake - components/ will be auto-discovered"/>
+      <file path="firmware/main/CMakeLists.txt" kind="build" symbol="idf_component_register()" lines="1-4" reason="Template for component CMakeLists.txt syntax"/>
+      <file path="firmware/main/idf_component.yml" kind="config" symbol="dependencies" lines="1-2" reason="Shows component dependency declaration format for managed components"/>
+      <file path="firmware/main/yarobot_control_unit.cpp" kind="main" symbol="app_main()" lines="1-19" reason="Entry point from Story 1.1 - components will be used by main"/>
+    </code>
+    <dependencies>
+      <framework name="ESP-IDF" version="5.4" type="embedded">
+        <note>ESP-IDF automatically discovers components in components/ directory</note>
+        <note>Each component needs CMakeLists.txt with idf_component_register()</note>
+      </framework>
+      <managed_component name="espressif/mcp23017" version="^0.1.1" type="i2c-gpio-expander">
+        <note>Already declared in main/idf_component.yml - no custom wrapper needed</note>
+      </managed_component>
+      <managed_component name="espressif/i2c_bus" version="auto" type="i2c-abstraction">
+        <note>Transitive dependency of mcp23017</note>
+      </managed_component>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint type="mandatory" source="architecture.md">
+      ESP-IDF Component Structure: Each component MUST follow ESP-IDF conventions - CMakeLists.txt at component root with idf_component_register(), include/ directory for public headers, source files at component root or in src/
+    </constraint>
+    <constraint type="mandatory" source="story">
+      No Implementation Code: This story creates structure only. All CMakeLists.txt files should be minimal stubs. Implementation code belongs in subsequent stories.
+    </constraint>
+    <constraint type="pattern" source="esp-idf">
+      Empty components must still register with idf_component_register() with at minimum INCLUDE_DIRS "include"
+    </constraint>
+    <constraint type="dependency" source="architecture.md">
+      Use REQUIRES for public dependencies exposed in headers, PRIV_REQUIRES for private dependencies used only in .cpp files
+    </constraint>
+  </constraints>
+
+  <interfaces>
+    <interface name="idf_component_register" kind="cmake-function" path="ESP-IDF build system">
+      <signature>idf_component_register(SRCS source_files INCLUDE_DIRS dirs REQUIRES deps PRIV_REQUIRES private_deps)</signature>
+      <note>For empty components: idf_component_register(INCLUDE_DIRS "include")</note>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+      ESP-IDF projects use the Unity test framework. Host-based unit tests go in firmware/test/components/. For this story, the primary verification is build success - no source files to test yet. Verification is structural: count CMakeLists.txt files (should be 17) and confirm build completes without errors.
+    </standards>
+    <locations>
+      <location>firmware/test/components/ (future unit tests)</location>
+    </locations>
+    <ideas>
+      <test ac="AC1">Run find firmware/components -type d to verify all 17 component directories exist</test>
+      <test ac="AC2">Run find firmware/components -name CMakeLists.txt | wc -l and verify count is 17</test>
+      <test ac="AC2">Grep each CMakeLists.txt for idf_component_register to confirm valid syntax</test>
+      <test ac="AC3">Run find firmware/components -type d -name include | wc -l and verify count is 17</test>
+      <test ac="AC4">Run cd firmware and idf.py build and verify exit code 0</test>
+      <test ac="AC5">Verify CMakeLists.txt files have valid REQUIRES/PRIV_REQUIRES syntax (empty allowed)</test>
+    </ideas>
+  </tests>
+</story-context>

@@ -1,0 +1,246 @@
+<story-context id="1-5-freertos-task-framework" v="1.0">
+  <metadata>
+    <epicId>1</epicId>
+    <storyId>5</storyId>
+    <title>FreeRTOS Task Framework</title>
+    <status>ready-for-dev</status>
+    <generatedAt>2025-12-04</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/1-5-freertos-task-framework.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>the FreeRTOS task structure defined with proper core affinity and priorities</iWant>
+    <soThat>real-time requirements are met from the start</soThat>
+    <tasks>
+      <task id="1" ac="5">Add task stack size constants to config_limits.h
+        <subtask>Define STACK_MOTION_TASK (recommended: 4096)</subtask>
+        <subtask>Define STACK_SAFETY_TASK (recommended: 4096)</subtask>
+        <subtask>Define STACK_USB_RX_TASK (recommended: 4096)</subtask>
+        <subtask>Define STACK_USB_TX_TASK (recommended: 4096)</subtask>
+        <subtask>Define STACK_CMD_EXECUTOR_TASK (recommended: 4096)</subtask>
+        <subtask>Define STACK_I2C_MONITOR_TASK (recommended: 2048)</subtask>
+        <subtask>Define STACK_DISPLAY_TASK (recommended: 2048)</subtask>
+        <subtask>Define STACK_IDLE_MONITOR_TASK (recommended: 2048)</subtask>
+        <subtask>Add Doxygen documentation for all constants</subtask>
+        <note>ALREADY DONE - config_limits.h already contains these stack constants (lines 122-147)</note>
+      </task>
+      <task id="2" ac="1,6">Create task stub functions
+        <subtask>Create firmware/components/control/tasks/include/task_defs.h with task function declarations</subtask>
+        <subtask>Create firmware/components/control/tasks/task_stubs.c with stub implementations</subtask>
+        <subtask>Each stub logs entry: ESP_LOGI(TAG, "Task %s started on core %d", pcTaskGetName(NULL), xPortGetCoreID())</subtask>
+        <subtask>Each stub enters infinite loop: for(;;) { vTaskDelay(pdMS_TO_TICKS(1000)); }</subtask>
+        <subtask>Stubs for: safety_monitor_task, usb_rx_task, usb_tx_task, cmd_executor_task, i2c_monitor_task, motion_task, display_task, idle_monitor_task</subtask>
+      </task>
+      <task id="3" ac="8">Create tasks component CMakeLists.txt
+        <subtask>Register component with SRCS and INCLUDE_DIRS</subtask>
+        <subtask>Add REQUIRES: config, freertos</subtask>
+      </task>
+      <task id="4" ac="1,2,3,4">Implement task creation in app_main()
+        <subtask>Edit firmware/main/yarobot_control_unit.cpp</subtask>
+        <subtask>Include task_defs.h and freertos/FreeRTOS.h, freertos/task.h</subtask>
+        <subtask>Create Core 0 tasks: safety_monitor(24), usb_rx(10), usb_tx(10), cmd_executor(12), i2c_monitor(8), idle_monitor(4)</subtask>
+        <subtask>Create Core 1 tasks: motion_task × 8 (15), display_task (5)</subtask>
+        <subtask>Use stack constants from config_limits.h</subtask>
+      </task>
+      <task id="5" ac="7">Implement EVENT BOOT notification
+        <subtask>After all tasks created, send "EVENT BOOT V1.0.0 AXES:8 STATE:IDLE\n" to stdout</subtask>
+        <subtask>Use printf() or ESP_LOGI() for now</subtask>
+      </task>
+      <task id="6" ac="8,9">Build and verify
+        <subtask>Run get_idf to source ESP-IDF environment</subtask>
+        <subtask>Run cd firmware &amp;&amp; idf.py build</subtask>
+        <subtask>Flash with idf.py flash</subtask>
+        <subtask>Monitor with idf.py monitor</subtask>
+        <subtask>Verify all 16 task creation logs appear with correct core IDs</subtask>
+        <subtask>Verify EVENT BOOT message appears</subtask>
+      </task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1">Given HAL stubs are in place, when the firmware boots, then all 16 tasks are created successfully</ac>
+    <ac id="2">Core 0 tasks (safety_monitor, usb_rx, usb_tx, cmd_executor, i2c_monitor, idle_monitor) are pinned to Core 0</ac>
+    <ac id="3">Core 1 tasks (motion_X through motion_E ×8, display) are pinned to Core 1</ac>
+    <ac id="4">Task priorities match the architecture specification (safety=24 highest, idle_monitor=4 lowest)</ac>
+    <ac id="5">All stack sizes use constants from config_limits.h (no magic numbers)</ac>
+    <ac id="6">Each task logs creation with ESP_LOGI(TAG, "Task %s started on core %d", name, core_id)</ac>
+    <ac id="7">"EVENT BOOT V1.0.0 AXES:8 STATE:IDLE" notification is sent via USB CDC after all tasks start</ac>
+    <ac id="8">Project builds successfully with cd firmware &amp;&amp; idf.py build</ac>
+    <ac id="9">idf.py monitor shows all 16 tasks running with correct core affinity</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-1.md</path>
+        <title>Epic 1 Technical Specification</title>
+        <section>Task Creation Sequence</section>
+        <snippet>Defines the exact boot sequence and xTaskCreatePinnedToCore calls for all 16 tasks with priorities and core assignments.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-1.md</path>
+        <title>Epic 1 Technical Specification</title>
+        <section>Dual-Core Separation</section>
+        <snippet>Core 0: Communication, safety, coordination tasks. Core 1: Motion control tasks (time-critical). ADR-001 decision.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-1.md</path>
+        <title>Epic 1 Technical Specification</title>
+        <section>Development Environment Setup</section>
+        <snippet>Before running idf.py commands, source ESP-IDF with get_idf or `. /Users/sergeybarabash/robo/esp/v5.4/esp-idf/export.sh`</snippet>
+      </doc>
+      <doc>
+        <path>docs/epics.md</path>
+        <title>Epic Breakdown</title>
+        <section>Story 1.5</section>
+        <snippet>FreeRTOS task framework story defining all 16 tasks with core affinity requirements.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/1-4-hal-layer-stubs.md</path>
+        <title>Story 1-4: HAL Layer Stubs</title>
+        <section>Completion Notes List</section>
+        <snippet>Umbrella component pattern: ESP-IDF has built-in hal component, use yarobot_hal/ path. Single CMakeLists.txt aggregates all sources.</snippet>
+      </doc>
+    </docs>
+    <code>
+      <file>
+        <path>firmware/components/config/include/config_limits.h</path>
+        <kind>config header</kind>
+        <symbol>STACK_* constants</symbol>
+        <lines>122-147</lines>
+        <reason>Stack size constants already defined: STACK_SAFETY_TASK, STACK_USB_RX_TASK, STACK_USB_TX_TASK, STACK_CMD_EXECUTOR_TASK, STACK_I2C_MONITOR_TASK, STACK_MOTION_TASK, STACK_DISPLAY_TASK, STACK_IDLE_MONITOR_TASK</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_limits.h</path>
+        <kind>config header</kind>
+        <symbol>LIMIT_NUM_AXES</symbol>
+        <lines>80</lines>
+        <reason>Total axis count (8) for motion task loop iteration</reason>
+      </file>
+      <file>
+        <path>firmware/main/yarobot_control_unit.cpp</path>
+        <kind>application entry</kind>
+        <symbol>app_main()</symbol>
+        <lines>7-26</lines>
+        <reason>Main entry point where FreeRTOS tasks must be created. Currently logs PSRAM and config info.</reason>
+      </file>
+      <file>
+        <path>firmware/components/yarobot_hal/CMakeLists.txt</path>
+        <kind>build config</kind>
+        <symbol>idf_component_register</symbol>
+        <lines>1-18</lines>
+        <reason>Reference for umbrella component pattern - use same approach for control/ component</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/motion_controller/CMakeLists.txt</path>
+        <kind>placeholder</kind>
+        <symbol>-</symbol>
+        <reason>Existing placeholder subdirectory in control/ - shows structure is already scaffolded</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/safety_monitor/CMakeLists.txt</path>
+        <kind>placeholder</kind>
+        <symbol>-</symbol>
+        <reason>Existing placeholder subdirectory in control/ - shows structure is already scaffolded</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/command_executor/CMakeLists.txt</path>
+        <kind>placeholder</kind>
+        <symbol>-</symbol>
+        <reason>Existing placeholder subdirectory in control/ - shows structure is already scaffolded</reason>
+      </file>
+    </code>
+    <dependencies>
+      <esp-idf version="5.4">
+        <component>freertos</component>
+        <component>esp_log</component>
+        <component>config (project)</component>
+      </esp-idf>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint source="architecture" mandatory="true">
+      ADR-001: Dual-Core Separation - Core 0 for communication/safety/coordination, Core 1 for motion control (time-critical)
+    </constraint>
+    <constraint source="architecture" mandatory="true">
+      MANDATORY: No Magic Numbers - All stack sizes must use constants from config_limits.h (STACK_* defines)
+    </constraint>
+    <constraint source="tech-spec" mandatory="true">
+      Task priorities from architecture: safety_monitor=24, motion=15, cmd_executor=12, usb_rx/tx=10, i2c_monitor=8, display=5, idle_monitor=4
+    </constraint>
+    <constraint source="story-1-4">
+      Use umbrella component pattern for control/ - single CMakeLists.txt aggregating tasks/ subdirectory
+    </constraint>
+    <constraint source="development">
+      Must source ESP-IDF before building: get_idf or `. /Users/sergeybarabash/robo/esp/v5.4/esp-idf/export.sh`
+    </constraint>
+    <constraint source="behavioral-decision">
+      Behavioral Decision #2: Send EVENT BOOT notification at startup with format "EVENT BOOT V1.0.0 AXES:8 STATE:IDLE"
+    </constraint>
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>xTaskCreatePinnedToCore</name>
+      <kind>FreeRTOS API</kind>
+      <signature>BaseType_t xTaskCreatePinnedToCore(TaskFunction_t pxTaskCode, const char* pcName, uint32_t ulStackDepth, void* pvParameters, UBaseType_t uxPriority, TaskHandle_t* pxCreatedTask, BaseType_t xCoreID)</signature>
+      <path>freertos/task.h</path>
+    </interface>
+    <interface>
+      <name>vTaskDelay</name>
+      <kind>FreeRTOS API</kind>
+      <signature>void vTaskDelay(TickType_t xTicksToDelay)</signature>
+      <path>freertos/task.h</path>
+    </interface>
+    <interface>
+      <name>pcTaskGetName</name>
+      <kind>FreeRTOS API</kind>
+      <signature>char* pcTaskGetName(TaskHandle_t xTaskToQuery)</signature>
+      <path>freertos/task.h</path>
+    </interface>
+    <interface>
+      <name>xPortGetCoreID</name>
+      <kind>FreeRTOS API</kind>
+      <signature>BaseType_t xPortGetCoreID(void)</signature>
+      <path>freertos/portmacro.h</path>
+    </interface>
+    <interface>
+      <name>pdMS_TO_TICKS</name>
+      <kind>FreeRTOS macro</kind>
+      <signature>TickType_t pdMS_TO_TICKS(uint32_t ms)</signature>
+      <path>freertos/projdefs.h</path>
+    </interface>
+    <interface>
+      <name>ESP_LOGI</name>
+      <kind>ESP-IDF logging macro</kind>
+      <signature>ESP_LOGI(tag, format, ...)</signature>
+      <path>esp_log.h</path>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+      FreeRTOS tasks are verified by monitoring boot output via idf.py monitor. Each task stub logs its name and core ID on startup.
+      The build system with -Werror ensures compilation correctness. No unit testing framework is established yet for Epic 1 -
+      verification is done through build success and monitor observation.
+    </standards>
+    <locations>
+      <location>firmware/components/control/tasks/</location>
+      <location>firmware/main/</location>
+    </locations>
+    <ideas>
+      <idea ac="1">Monitor boot output for 16 task creation log messages</idea>
+      <idea ac="2">Verify Core 0 task logs show "on core 0" for safety_monitor, usb_rx, usb_tx, cmd_executor, i2c_monitor, idle_monitor</idea>
+      <idea ac="3">Verify Core 1 task logs show "on core 1" for motion_X through motion_E and display</idea>
+      <idea ac="4">Manual review of xTaskCreatePinnedToCore priority parameters matching spec</idea>
+      <idea ac="5">Grep source for magic numbers - no hardcoded stack sizes allowed</idea>
+      <idea ac="6">Search monitor output for ESP_LOGI messages with task names and core IDs</idea>
+      <idea ac="7">Search monitor output for "EVENT BOOT V1.0.0 AXES:8 STATE:IDLE"</idea>
+      <idea ac="8">Clean build with idf.py fullclean &amp;&amp; idf.py build</idea>
+      <idea ac="9">idf.py monitor and observe all 16 tasks logging startup</idea>
+    </ideas>
+  </tests>
+</story-context>

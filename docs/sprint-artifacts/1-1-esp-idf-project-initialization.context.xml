@@ -1,0 +1,128 @@
+<story-context id="bmm/workflows/4-implementation/story-context" v="1.0">
+  <metadata>
+    <epicId>1</epicId>
+    <storyId>1.1</storyId>
+    <title>ESP-IDF Project Initialization</title>
+    <status>ready-for-dev</status>
+    <generatedAt>2025-12-02</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/1-1-esp-idf-project-initialization.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>an ESP-IDF project properly configured for ESP32-S3 N16R8</iWant>
+    <soThat>I can build and flash firmware to the target hardware</soThat>
+    <tasks>
+      <task id="1">Create ESP-IDF project using idf.py create-project and set-target esp32s3</task>
+      <task id="2">Configure target and board via menuconfig (flash, PSRAM, FreeRTOS, console, CPU)</task>
+      <task id="3">Create partitions.csv with NVS, factory, storage partitions</task>
+      <task id="4">Customize main.cpp with ESP_LOGI logging</task>
+      <task id="5">Add idf_component.yml with espressif/mcp23017 dependency</task>
+      <task id="6">Build project with idf.py build</task>
+      <task id="7">Flash and verify on hardware</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <criterion id="AC1">idf.py build completes without errors</criterion>
+    <criterion id="AC2">Target set to esp32s3</criterion>
+    <criterion id="AC3">sdkconfig contains: CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y, CONFIG_SPIRAM=y, CONFIG_SPIRAM_MODE_OCT=y, CONFIG_FREERTOS_HZ=1000, CONFIG_ESP_CONSOLE_USB_CDC=y, CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y</criterion>
+    <criterion id="AC4">idf.py flash successfully programs the device</criterion>
+    <criterion id="AC5">idf.py monitor shows boot messages including "Hello from app_main" and PSRAM detection</criterion>
+    <criterion id="AC6">partitions.csv exists with NVS, factory app, and storage partitions</criterion>
+    <criterion id="AC7">idf_component.yml declares dependency on espressif/mcp23017 ^0.1.1</criterion>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/architecture.md" section="Project-Initialization">Development environment setup, sdkconfig settings, partition table format</doc>
+      <doc path="docs/sprint-artifacts/tech-spec-epic-1.md">Epic 1 technical specification with acceptance criteria</doc>
+      <doc path="docs/epics.md" section="Story-1.1">Original story definition and prerequisites</doc>
+    </docs>
+    <code>
+      <note>No existing code - this is the first story that creates the project structure</note>
+      <expectedOutput>
+        <file>CMakeLists.txt</file>
+        <file>sdkconfig</file>
+        <file>partitions.csv</file>
+        <file>main/CMakeLists.txt</file>
+        <file>main/yarobot_control_unit.cpp</file>
+        <file>main/idf_component.yml</file>
+      </expectedOutput>
+    </code>
+    <dependencies>
+      <dependency name="esp-idf" version="5.4" type="framework">ESP-IDF LTS release</dependency>
+      <dependency name="espressif/mcp23017" version="^0.1.1" type="component">I2C GPIO expander driver</dependency>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint type="environment">
+      <title>ESP-IDF Environment Setup Required</title>
+      <description>Before running any idf.py commands, source the ESP-IDF environment:
+        get_idf
+        Or: . /Users/sergeybarabash/robo/esp/v5.4/esp-idf/export.sh
+      </description>
+    </constraint>
+    <constraint type="architecture">
+      <title>Header-Only Configuration Mandate</title>
+      <description>This story creates project infrastructure only. No application constants should be hardcoded. All future constants must go in configuration headers (Story 1.3).</description>
+    </constraint>
+    <constraint type="hardware">
+      <title>N16R8 Module Specifics</title>
+      <description>R8 modules (8MB PSRAM) use Octal SPI mode. GPIO35, 36, 37 are reserved for PSRAM and must not be used for other purposes.</description>
+    </constraint>
+  </constraints>
+
+  <interfaces>
+    <interface type="tool">
+      <name>idf.py</name>
+      <commands>
+        <command>idf.py create-project -p . yarobot_control_unit</command>
+        <command>idf.py set-target esp32s3</command>
+        <command>idf.py menuconfig</command>
+        <command>idf.py build</command>
+        <command>idf.py flash</command>
+        <command>idf.py monitor</command>
+        <command>idf.py size</command>
+      </commands>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+      <standard>Build succeeds with zero warnings (future stories will add -Werror)</standard>
+      <standard>Flash and boot on actual hardware required for verification</standard>
+    </standards>
+    <locations>
+      <location>No test directory in this story - test/ created in later stories</location>
+    </locations>
+    <ideas>
+      <idea>Verify PSRAM detected in boot log: "Found 8MB SPI RAM device"</idea>
+      <idea>Verify USB CDC enumeration on host machine</idea>
+      <idea>Run grep to verify all required CONFIG_ values in sdkconfig</idea>
+      <idea>Run idf.py size to verify memory usage is within budget</idea>
+    </ideas>
+  </tests>
+
+  <menuconfig>
+    <title>Menuconfig Settings for ESP32-S3 N16R8</title>
+    <settings>
+      <setting path="Serial flasher config → Flash size" value="16 MB" config="CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y"/>
+      <setting path="Component config → Hardware Settings → SPI RAM config → Support for external, SPI-connected RAM" value="Enable [*]" config="CONFIG_SPIRAM=y"/>
+      <setting path="Component config → Hardware Settings → SPI RAM config → Mode (QUAD/OCT)" value="Octal Mode PSRAM" config="CONFIG_SPIRAM_MODE_OCT=y"/>
+      <setting path="Component config → FreeRTOS → Kernel → configTICK_RATE_HZ" value="1000" config="CONFIG_FREERTOS_HZ=1000"/>
+      <setting path="Component config → ESP System Settings → Channel for console output" value="USB CDC" config="CONFIG_ESP_CONSOLE_USB_CDC=y"/>
+      <setting path="Component config → ESP System Settings → CPU frequency" value="240 MHz" config="CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y"/>
+      <setting path="Partition Table → Partition Table" value="Custom partition table CSV" config="CONFIG_PARTITION_TABLE_CUSTOM=y"/>
+      <setting path="Partition Table → Custom partition CSV file" value="partitions.csv" config="CONFIG_PARTITION_TABLE_CUSTOM_FILENAME=partitions.csv"/>
+    </settings>
+  </menuconfig>
+
+  <externalReferences>
+    <reference url="https://docs.espressif.com/projects/esp-idf/en/stable/esp32s3/api-reference/kconfig-reference.html">ESP32-S3 Kconfig Reference - All CONFIG_ options</reference>
+    <reference url="https://docs.espressif.com/projects/esp-idf/en/stable/esp32s3/api-guides/flash_psram_config.html">SPI Flash and External SPI RAM Configuration - PSRAM for N16R8</reference>
+    <reference url="https://docs.espressif.com/projects/esp-idf/en/stable/esp32s3/api-guides/build-system.html">ESP-IDF Build System - sdkconfig management</reference>
+  </externalReferences>
+</story-context>

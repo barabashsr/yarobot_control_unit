@@ -1,0 +1,23 @@
+
+# Consider dependencies only in project.
+set(CMAKE_DEPENDS_IN_PROJECT_ONLY OFF)
+
+# The set of languages for which implicit dependencies are needed:
+set(CMAKE_DEPENDS_LANGUAGES
+  )
+
+# The set of dependency files which are needed:
+set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "/Users/sergeybarabash/robo/yarobot_control_unit/firmware/managed_components/espressif__i2c_bus/i2c_bus_v2.c" "esp-idf/espressif__i2c_bus/CMakeFiles/__idf_espressif__i2c_bus.dir/i2c_bus_v2.c.obj" "gcc" "esp-idf/espressif__i2c_bus/CMakeFiles/__idf_espressif__i2c_bus.dir/i2c_bus_v2.c.obj.d"
+  )
+
+# Targets to which this target links which contain Fortran sources.
+set(CMAKE_Fortran_TARGET_LINKED_INFO_FILES
+  )
+
+# Targets to which this target links which contain Fortran sources.
+set(CMAKE_Fortran_TARGET_FORWARD_LINKED_INFO_FILES
+  )
+
+# Fortran module output directory.
+set(CMAKE_Fortran_TARGET_MODULE_DIR "")

@@ -37,12 +37,13 @@ This foundation enables a clean development workflow where subsequent epics can 
 ## System Architecture Alignment
 
 **Component References:**
-- `main/` - Application entry point with app_main()
-- `components/hal/` - Hardware abstraction layer (gpio_hal, i2c_hal, spi_hal)
-- `components/drivers/` - Device driver stubs (mcp23017, tpic6b595, oled)
-- `components/config/` - All configuration headers
-- `components/control/` - Task framework stubs
-- `components/interface/` - USB CDC basic functionality
+- `firmware/main/` - Application entry point with app_main()
+- `firmware/components/hal/` - Hardware abstraction layer (gpio_hal, i2c_hal, spi_hal)
+- `firmware/components/drivers/` - Device driver stubs (tpic6b595, oled)
+- `firmware/components/config/` - All configuration headers
+- `firmware/components/control/` - Task framework stubs
+- `firmware/components/interface/` - USB CDC basic functionality
+- `firmware/managed_components/` - ESP Component Registry dependencies (espressif/mcp23017)
 
 **Architecture Constraints Applied:**
 
@@ -78,19 +79,19 @@ This foundation enables a clean development workflow where subsequent epics can 
 
 | Module | Responsibility | Inputs | Outputs | Owner |
 |--------|---------------|--------|---------|-------|
-| `main/main.cpp` | Application entry, task creation | - | Boot sequence, tasks | Epic 1 |
-| `hal/gpio_hal` | GPIO abstraction | Pin configs | GPIO operations | Story 1.4 |
-| `hal/i2c_hal` | I2C bus abstraction | Port, address, data | I2C transactions | Story 1.4 |
-| `hal/spi_hal` | SPI bus abstraction | Host, data | SPI transfers | Story 1.4 |
-| `config/*.h` | Compile-time constants | - | #define values | Story 1.3 |
-| `control/cmd_executor` | Basic command handling | CMD_TEST input | Diagnostic output | Story 1.6 |
+| `firmware/main/yarobot_control_unit.cpp` | Application entry, task creation | - | Boot sequence, tasks | Epic 1 |
+| `firmware/components/hal/gpio_hal` | GPIO abstraction | Pin configs | GPIO operations | Story 1.4 |
+| `firmware/components/hal/i2c_hal` | I2C bus abstraction | Port, address, data | I2C transactions | Story 1.4 |
+| `firmware/components/hal/spi_hal` | SPI bus abstraction | Host, data | SPI transfers | Story 1.4 |
+| `firmware/components/config/*.h` | Compile-time constants | - | #define values | Story 1.3 |
+| `firmware/components/control/command_executor` | Basic command handling | CMD_TEST input | Diagnostic output | Story 1.6 |
 
 ### Data Models and Contracts
 
 **Configuration Header Organization:**
 
 ```
-components/config/include/
+firmware/components/config/include/
 ├── config.h              # Master include, FIRMWARE_VERSION, FEATURE_FLAGS
 ├── config_gpio.h         # GPIO_X_STEP, GPIO_I2C_SDA, etc.
 ├── config_peripherals.h  # RMT_CHANNEL_X, MCPWM_UNIT_Y, SPI_HOST_SR
@@ -300,18 +301,18 @@ dependencies:
 | AC | Spec Section | Component(s) | Test Approach |
 |----|--------------|--------------|---------------|
 | AC1 | Story 1.7 | All | `idf.py build` |
-| AC2 | Story 1.1, 1.7 | main, partitions.csv | `idf.py flash` |
-| AC3 | Story 1.5 | main, control | `idf.py monitor`, task list |
-| AC4 | Story 1.1 | sdkconfig.defaults | Grep sdkconfig |
-| AC5 | Story 1.3 | config/*.h | Compilation |
-| AC6 | Story 1.3 | config_limits.h | static_assert |
-| AC7 | Story 1.2 | components/* | Directory inspection |
-| AC8 | Story 1.4 | hal/* | Compilation, stub returns |
-| AC9 | Story 1.6 | hal/i2c_hal | I2C scan test |
-| AC10 | Story 1.6 | hal/i2c_hal | I2C scan test |
-| AC11 | Story 1.6 | hal/spi_hal | SR pattern test |
-| AC12 | Story 1.6 | control/cmd_executor | USB terminal test |
-| AC13 | Story 1.5 | main | Monitor boot output |
+| AC2 | Story 1.1, 1.7 | firmware/main, firmware/partitions.csv | `idf.py flash` |
+| AC3 | Story 1.5 | firmware/main, firmware/components/control | `idf.py monitor`, task list |
+| AC4 | Story 1.1 | firmware/sdkconfig.defaults | Grep sdkconfig |
+| AC5 | Story 1.3 | firmware/components/config/*.h | Compilation |
+| AC6 | Story 1.3 | firmware/components/config/include/config_limits.h | static_assert |
+| AC7 | Story 1.2 | firmware/components/* | Directory inspection |
+| AC8 | Story 1.4 | firmware/components/hal/* | Compilation, stub returns |
+| AC9 | Story 1.6 | firmware/components/hal/i2c_hal | I2C scan test |
+| AC10 | Story 1.6 | firmware/components/hal/i2c_hal | I2C scan test |
+| AC11 | Story 1.6 | firmware/components/hal/spi_hal | SR pattern test |
+| AC12 | Story 1.6 | firmware/components/control/command_executor | USB terminal test |
+| AC13 | Story 1.5 | firmware/main | Monitor boot output |
 | AC14 | Story 1.7 | README.md | Documentation review |
 | AC15 | All stories | All | Code review checklist |
 

@@ -1,0 +1,243 @@
+<story-context id=".bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1</epicId>
+    <storyId>4</storyId>
+    <title>HAL Layer Stubs</title>
+    <status>drafted</status>
+    <generatedAt>2025-12-04</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/1-4-hal-layer-stubs.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>Hardware Abstraction Layer interfaces defined with stub implementations</iWant>
+    <soThat>drivers can be implemented against stable abstractions and unit tested</soThat>
+    <tasks>
+      <task id="1" title="Create gpio_hal component" acs="1,4,5,6,8">
+        <subtask>Create firmware/components/hal/gpio_hal/include/gpio_hal.h with function declarations</subtask>
+        <subtask>Create firmware/components/hal/gpio_hal/gpio_hal.c with stub implementations</subtask>
+        <subtask>Create firmware/components/hal/gpio_hal/CMakeLists.txt with REQUIRES config</subtask>
+        <subtask>Add Doxygen documentation for all functions</subtask>
+        <subtask>Implement gpio_hal_init() returning ESP_OK</subtask>
+        <subtask>Implement gpio_hal_set_direction() returning ESP_OK</subtask>
+        <subtask>Implement gpio_hal_set_level() returning ESP_OK</subtask>
+        <subtask>Implement gpio_hal_get_level() returning 0 (placeholder)</subtask>
+        <subtask>Implement gpio_hal_set_interrupt() returning ESP_OK</subtask>
+      </task>
+      <task id="2" title="Create i2c_hal component" acs="2,4,5,6,8">
+        <subtask>Create firmware/components/hal/i2c_hal/include/i2c_hal.h with function declarations</subtask>
+        <subtask>Create firmware/components/hal/i2c_hal/i2c_hal.c with stub implementations</subtask>
+        <subtask>Create firmware/components/hal/i2c_hal/CMakeLists.txt with REQUIRES config</subtask>
+        <subtask>Add Doxygen documentation for all functions</subtask>
+        <subtask>Implement i2c_hal_init() returning ESP_OK</subtask>
+        <subtask>Implement i2c_hal_write() returning ESP_OK</subtask>
+        <subtask>Implement i2c_hal_read() returning ESP_OK</subtask>
+        <subtask>Implement i2c_hal_write_read() returning ESP_OK</subtask>
+      </task>
+      <task id="3" title="Create spi_hal component" acs="3,4,5,6,8">
+        <subtask>Create firmware/components/hal/spi_hal/include/spi_hal.h with function declarations</subtask>
+        <subtask>Create firmware/components/hal/spi_hal/spi_hal.c with stub implementations</subtask>
+        <subtask>Create firmware/components/hal/spi_hal/CMakeLists.txt with REQUIRES config</subtask>
+        <subtask>Add Doxygen documentation for all functions</subtask>
+        <subtask>Implement spi_hal_init() returning ESP_OK</subtask>
+        <subtask>Implement spi_hal_transfer() returning ESP_OK</subtask>
+      </task>
+      <task id="4" title="Update parent hal CMakeLists.txt" acs="8">
+        <subtask>Ensure firmware/components/hal/CMakeLists.txt properly includes subdirectory HALs or acts as umbrella</subtask>
+        <subtask>Verify component dependencies are correctly specified</subtask>
+      </task>
+      <task id="5" title="Verify build" acs="7">
+        <subtask>Run cd firmware and idf.py build</subtask>
+        <subtask>Confirm no build errors or warnings</subtask>
+        <subtask>Confirm HAL components are compiled and linked</subtask>
+      </task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <criterion id="AC1">Given configuration headers are complete, when I examine firmware/components/hal/gpio_hal/include/gpio_hal.h, then it contains all function declarations per architecture spec</criterion>
+    <criterion id="AC2">Given configuration headers are complete, when I examine firmware/components/hal/i2c_hal/include/i2c_hal.h, then it contains all function declarations per architecture spec</criterion>
+    <criterion id="AC3">Given configuration headers are complete, when I examine firmware/components/hal/spi_hal/include/spi_hal.h, then it contains all function declarations per architecture spec</criterion>
+    <criterion id="AC4">All stub implementations return ESP_OK or appropriate placeholder values (0 for gpio_hal_get_level)</criterion>
+    <criterion id="AC5">Each HAL header includes Doxygen-style documentation (@file, @brief, @param, @return)</criterion>
+    <criterion id="AC6">Each HAL uses constants from configuration headers (never magic numbers)</criterion>
+    <criterion id="AC7">Project builds successfully with cd firmware and idf.py build</criterion>
+    <criterion id="AC8">All HAL components are registered in their respective CMakeLists.txt files with proper REQUIRES dependencies</criterion>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-1.md</path>
+        <title>Epic Technical Specification: Foundation and Infrastructure</title>
+        <section>APIs and Interfaces</section>
+        <snippet>Defines HAL GPIO, I2C, and SPI interfaces with complete function signatures. gpio_hal: init, set_direction, set_level, get_level, set_interrupt. i2c_hal: init, write, read, write_read. spi_hal: init, transfer.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>System Architecture</title>
+        <section>ADR-002: Layered Component Architecture</section>
+        <snippet>HAL to Drivers to Control to Interface layering. Clear dependencies, unit testable, follows ESP-IDF conventions.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/1-3-configuration-header-framework.md</path>
+        <title>Story 1.3: Configuration Header Framework</title>
+        <section>Dev Agent Record</section>
+        <snippet>All 11 configuration headers created. Use config.h as master include to access all configuration constants. Build verified with ESP-IDF 5.4.</snippet>
+      </doc>
+    </docs>
+    <code>
+      <artifact>
+        <path>firmware/components/config/include/config_gpio.h</path>
+        <kind>header</kind>
+        <symbol>GPIO_X_STEP, GPIO_I2C_SDA, GPIO_I2C_SCL, GPIO_SR_MOSI, GPIO_SR_SCLK, GPIO_SR_CS</symbol>
+        <reason>GPIO pin definitions for HAL implementations - must use these constants, not magic numbers</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/config/include/config_i2c.h</path>
+        <kind>header</kind>
+        <symbol>I2C_PORT, I2C_FREQ_HZ, I2C_ADDR_MCP23017_0, I2C_ADDR_MCP23017_1</symbol>
+        <reason>I2C bus configuration and device addresses for i2c_hal</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/config/include/config_peripherals.h</path>
+        <kind>header</kind>
+        <symbol>SPI_HOST_SR, RMT_CHANNEL_X, MCPWM_GROUP_ID</symbol>
+        <reason>SPI host assignment for spi_hal shift register communication</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/config/include/config_timing.h</path>
+        <kind>header</kind>
+        <symbol>TIMING_I2C_TIMEOUT_MS, TIMING_I2C_POLL_MS</symbol>
+        <reason>I2C timing constants for timeout configuration in i2c_hal</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/config/CMakeLists.txt</path>
+        <kind>build</kind>
+        <symbol>idf_component_register</symbol>
+        <reason>Reference for HAL CMakeLists.txt structure - header-only component pattern</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/hal/gpio_hal/CMakeLists.txt</path>
+        <kind>build</kind>
+        <symbol>idf_component_register</symbol>
+        <reason>Existing stub CMakeLists.txt - needs SRCS and REQUIRES config added</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/hal/i2c_hal/CMakeLists.txt</path>
+        <kind>build</kind>
+        <symbol>idf_component_register</symbol>
+        <reason>Existing stub CMakeLists.txt - needs SRCS and REQUIRES config added</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/hal/spi_hal/CMakeLists.txt</path>
+        <kind>build</kind>
+        <symbol>idf_component_register</symbol>
+        <reason>Existing stub CMakeLists.txt - needs SRCS and REQUIRES config added</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/hal/gpio_hal/include/</path>
+        <kind>directory</kind>
+        <symbol>gpio_hal.h location</symbol>
+        <reason>Empty directory - needs gpio_hal.h created</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/hal/i2c_hal/include/</path>
+        <kind>directory</kind>
+        <symbol>i2c_hal.h location</symbol>
+        <reason>Empty directory - needs i2c_hal.h created</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/hal/spi_hal/include/</path>
+        <kind>directory</kind>
+        <symbol>spi_hal.h location</symbol>
+        <reason>Empty directory - needs spi_hal.h created</reason>
+      </artifact>
+    </code>
+    <dependencies>
+      <esp-idf version="5.4">
+        <component>driver/gpio.h</component>
+        <component>driver/i2c_master.h</component>
+        <component>driver/spi_master.h</component>
+        <component>esp_err.h</component>
+        <component>esp_log.h</component>
+      </esp-idf>
+      <managed>
+        <component name="espressif/mcp23017" version="^0.1.1">I2C GPIO expander (not directly used by HAL stubs)</component>
+        <component name="espressif/i2c_bus" version="*">I2C bus abstraction (optional reference)</component>
+      </managed>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint type="architecture" source="docs/architecture.md#ADR-002">
+      HAL to Drivers to Control to Interface layering. HAL provides hardware abstraction that drivers build upon.
+    </constraint>
+    <constraint type="mandatory" source="docs/architecture.md#Header-Only-Configuration-Requirement">
+      MANDATORY: No Magic Numbers. All GPIO pins must use config_gpio.h constants (GPIO_X_STEP, not GPIO_NUM_4). All I2C addresses must use config_i2c.h constants. All timing values must use config_timing.h constants.
+    </constraint>
+    <constraint type="coding" source="docs/sprint-artifacts/tech-spec-epic-1.md#Code-Review-Checklist">
+      Header guards present on all .h files. ESP_LOGI/LOGW/LOGE used for logging (not printf). Doxygen-style documentation for all public functions.
+    </constraint>
+    <constraint type="build" source="docs/sprint-artifacts/tech-spec-epic-1.md#AC1">
+      idf.py build must complete without errors or warnings (with -Werror).
+    </constraint>
+    <constraint type="stub" source="docs/sprint-artifacts/1-4-hal-layer-stubs.md#Dev-Notes">
+      Stub implementations must log calls with ESP_LOGI(TAG, "function_name() stub called") and return ESP_OK or appropriate placeholder values.
+    </constraint>
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>gpio_hal</name>
+      <kind>HAL API</kind>
+      <signature>
+esp_err_t gpio_hal_init(void);
+esp_err_t gpio_hal_set_direction(gpio_num_t pin, gpio_mode_t mode);
+esp_err_t gpio_hal_set_level(gpio_num_t pin, uint32_t level);
+int gpio_hal_get_level(gpio_num_t pin);
+esp_err_t gpio_hal_set_interrupt(gpio_num_t pin, gpio_int_type_t type, gpio_isr_t handler, void* arg);
+      </signature>
+      <path>firmware/components/hal/gpio_hal/include/gpio_hal.h</path>
+    </interface>
+    <interface>
+      <name>i2c_hal</name>
+      <kind>HAL API</kind>
+      <signature>
+esp_err_t i2c_hal_init(i2c_port_t port, gpio_num_t sda, gpio_num_t scl, uint32_t freq_hz);
+esp_err_t i2c_hal_write(i2c_port_t port, uint8_t addr, const uint8_t* data, size_t len);
+esp_err_t i2c_hal_read(i2c_port_t port, uint8_t addr, uint8_t* data, size_t len);
+esp_err_t i2c_hal_write_read(i2c_port_t port, uint8_t addr, const uint8_t* wr, size_t wr_len, uint8_t* rd, size_t rd_len);
+      </signature>
+      <path>firmware/components/hal/i2c_hal/include/i2c_hal.h</path>
+    </interface>
+    <interface>
+      <name>spi_hal</name>
+      <kind>HAL API</kind>
+      <signature>
+esp_err_t spi_hal_init(spi_host_device_t host, gpio_num_t mosi, gpio_num_t sclk, gpio_num_t cs);
+esp_err_t spi_hal_transfer(spi_host_device_t host, const uint8_t* tx, uint8_t* rx, size_t len);
+      </signature>
+      <path>firmware/components/hal/spi_hal/include/spi_hal.h</path>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+      HAL stubs are inherently testable - they return ESP_OK without side effects. Configuration headers are validated via static_assert. Build verification confirms compilation and linking. No complex logic to unit test in these stubs.
+    </standards>
+    <locations>
+      <location>firmware/components/hal/*/</location>
+      <location>firmware/build/ (build artifacts)</location>
+    </locations>
+    <ideas>
+      <idea ac="AC7">Run idf.py build from firmware directory - must complete without errors or warnings</idea>
+      <idea ac="AC1,AC2,AC3">Verify each HAL header contains all specified function declarations per tech-spec</idea>
+      <idea ac="AC4">Call each stub function and verify return values: ESP_OK for most, 0 for gpio_hal_get_level</idea>
+      <idea ac="AC5">Inspect headers for @file, @brief, @param, @return Doxygen tags</idea>
+      <idea ac="AC6">Grep source files for magic numbers - should find none</idea>
+      <idea ac="AC8">Inspect CMakeLists.txt files for proper REQUIRES config dependency</idea>
+    </ideas>
+  </tests>
+</story-context>

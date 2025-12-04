@@ -30,26 +30,26 @@ idf.py --version
 **First implementation step:**
 
 ```bash
-# Create ESP-IDF project
-idf.py create-project yarobot_control_unit
-cd yarobot_control_unit
+# Source ESP-IDF environment
+get_idf
 
-# Set target to ESP32-S3
+# Create ESP-IDF project in firmware/ directory
+cd firmware
+idf.py create-project -p . yarobot_control_unit
 idf.py set-target esp32s3
 
-# Add ESP-IDF component dependencies
-idf.py add-dependency "espressif/mcp23017^0.1.1"
-
-# Configure for N16R8 variant (16MB Flash, 8MB PSRAM)
-idf.py menuconfig
+# Build (sdkconfig.defaults applies configuration automatically)
+idf.py build
 ```
 
-**Key sdkconfig settings to configure:**
+**Key sdkconfig.defaults settings (pre-configured):**
 - `CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y`
 - `CONFIG_SPIRAM_MODE_OCT=y` (Octal PSRAM)
 - `CONFIG_FREERTOS_HZ=1000` (1ms tick for timing precision)
 - `CONFIG_ESP_CONSOLE_USB_CDC=y` (USB CDC for serial)
 - `CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y`
+
+> **Note:** Component dependencies are declared in `main/idf_component.yml` and resolved automatically on build.
 
 **ESP-IDF provides these decisions:**
 - FreeRTOS (IDF SMP variant for dual-core)
@@ -112,71 +112,84 @@ The following behavioral decisions define how the system responds to operator co
 
 ```
 yarobot_control_unit/
-├── CMakeLists.txt                 # Top-level project CMake
-├── sdkconfig                      # ESP-IDF configuration
-├── sdkconfig.defaults             # Default config values
-├── partitions.csv                 # Flash partition table
+├── docs/                          # Documentation
+│   ├── architecture.md
+│   ├── prd.md
+│   ├── epics.md
+│   └── sprint-artifacts/          # Sprint planning & story files
 │
-├── main/                          # Application entry point
-│   ├── CMakeLists.txt
-│   ├── main.cpp                   # app_main() entry
-│   └── Kconfig.projbuild          # Project-specific menu options
-│
-├── components/
-│   ├── hal/                       # Hardware Abstraction Layer
-│   │   ├── gpio_hal/
-│   │   ├── i2c_hal/
-│   │   └── spi_hal/
-│   │
-│   ├── drivers/                   # Device drivers
-│   │   ├── mcp23017/              # I2C GPIO expander (espressif/mcp23017 component)
-│   │   ├── tpic6b595/             # Shift register chain (custom SPI driver)
-│   │   └── oled/                  # OLED display (esp_lcd_panel_ssd1306 from ESP-IDF)
-│   │
-│   ├── pulse_gen/                 # Pulse generation interfaces
-│   │   ├── include/
-│   │   │   └── pulse_generator.h  # IPulseGenerator interface
-│   │   ├── rmt_pulse_gen.cpp      # RMT+DMA implementation
-│   │   ├── mcpwm_pulse_gen.cpp    # MCPWM implementation
-│   │   └── ledc_pulse_gen.cpp     # LEDC implementation
-│   │
-│   ├── position/                  # Position tracking
-│   │   ├── include/
-│   │   │   └── position_tracker.h # IPositionTracker interface
-│   │   ├── pcnt_tracker.cpp       # Hardware counter
-│   │   └── time_tracker.cpp       # Time-based calculation
-│   │
-│   ├── motor/                     # Motor abstraction
-│   │   ├── include/
-│   │   │   ├── motor_base.h
-│   │   │   ├── servo_motor.h
-│   │   │   ├── stepper_motor.h
-│   │   │   └── discrete_axis.h
-│   │   └── src/
-│   │
-│   ├── control/                   # Control logic
-│   │   ├── motion_controller/     # Coordinates all axes
-│   │   ├── safety_monitor/        # E-stop, limits, faults
-│   │   └── command_executor/      # Command processing
-│   │
-│   ├── interface/                 # External interfaces
-│   │   ├── usb_cdc/               # USB serial interface
-│   │   └── command_parser/        # Text command parsing
-│   │
-│   ├── config/                    # Configuration management
-│   │   ├── nvs_manager/           # NVS read/write
-│   │   └── yaml_parser/           # YAML config handling
-│   │
-│   └── events/                    # Event system
-│       └── event_manager/         # Publish/subscribe events
-│
-├── test/                          # Unit tests (host-based)
-│   └── components/
-│
-└── docs/                          # Documentation
-    ├── architecture.md
-    └── planning_phase/
+└── firmware/                      # ESP-IDF project (isolated from docs)
+    ├── CMakeLists.txt             # Top-level project CMake
+    ├── sdkconfig                  # ESP-IDF configuration (generated)
+    ├── sdkconfig.defaults         # Default config values (committed)
+    ├── partitions.csv             # Flash partition table
+    ├── dependencies.lock          # Component dependency lock file
+    │
+    ├── main/                      # Application entry point
+    │   ├── CMakeLists.txt
+    │   ├── yarobot_control_unit.cpp  # app_main() entry
+    │   ├── idf_component.yml      # Component dependencies (mcp23017, etc.)
+    │   └── Kconfig.projbuild      # Project-specific menu options
+    │
+    ├── components/                # Custom ESP-IDF components
+    │   ├── hal/                   # Hardware Abstraction Layer
+    │   │   ├── gpio_hal/
+    │   │   ├── i2c_hal/
+    │   │   └── spi_hal/
+    │   │
+    │   ├── drivers/               # Device drivers
+    │   │   ├── tpic6b595/         # Shift register chain (custom SPI driver)
+    │   │   └── oled/              # OLED display (esp_lcd_panel_ssd1306)
+    │   │
+    │   ├── pulse_gen/             # Pulse generation interfaces
+    │   │   ├── include/
+    │   │   │   └── pulse_generator.h  # IPulseGenerator interface
+    │   │   ├── rmt_pulse_gen.cpp  # RMT+DMA implementation
+    │   │   ├── mcpwm_pulse_gen.cpp    # MCPWM implementation
+    │   │   └── ledc_pulse_gen.cpp     # LEDC implementation
+    │   │
+    │   ├── position/              # Position tracking
+    │   │   ├── include/
+    │   │   │   └── position_tracker.h # IPositionTracker interface
+    │   │   ├── pcnt_tracker.cpp   # Hardware counter
+    │   │   └── time_tracker.cpp   # Time-based calculation
+    │   │
+    │   ├── motor/                 # Motor abstraction
+    │   │   ├── include/
+    │   │   │   ├── motor_base.h
+    │   │   │   ├── servo_motor.h
+    │   │   │   ├── stepper_motor.h
+    │   │   │   └── discrete_axis.h
+    │   │   └── src/
+    │   │
+    │   ├── control/               # Control logic
+    │   │   ├── motion_controller/ # Coordinates all axes
+    │   │   ├── safety_monitor/    # E-stop, limits, faults
+    │   │   └── command_executor/  # Command processing
+    │   │
+    │   ├── interface/             # External interfaces
+    │   │   ├── usb_cdc/           # USB serial interface
+    │   │   └── command_parser/    # Text command parsing
+    │   │
+    │   ├── config/                # Configuration management
+    │   │   ├── nvs_manager/       # NVS read/write
+    │   │   └── yaml_parser/       # YAML config handling
+    │   │
+    │   └── events/                # Event system
+    │       └── event_manager/     # Publish/subscribe events
+    │
+    ├── managed_components/        # Downloaded ESP Component Registry deps
+    │   ├── espressif__mcp23017/   # I2C GPIO expander
+    │   └── espressif__i2c_bus/    # I2C bus abstraction (mcp23017 dependency)
+    │
+    ├── test/                      # Unit tests (host-based)
+    │   └── components/
+    │
+    └── build/                     # Build artifacts (not tracked in git)
 ```
+
+> **Note:** The `firmware/` directory isolates the ESP-IDF project from documentation and other project files.
+> This keeps the repository root clean and allows ESP-IDF tooling to work within its dedicated directory.
 
 ## FR Category to Architecture Mapping
 
@@ -186,7 +199,7 @@ yarobot_control_unit/
 | Safety (FR11-18) | `components/control/safety_monitor/` | Core 0, highest priority |
 | Communication (FR19-26) | `components/interface/usb_cdc/`, `command_parser/` | USB CDC, text protocol |
 | Configuration (FR27-34) | `components/config/nvs_manager/`, `yaml_parser/` | NVS + serial YAML transfer |
-| I/O (FR35-42) | `components/drivers/mcp23017/` | 3x I2C expanders |
+| I/O (FR35-42) | `managed_components/espressif__mcp23017/` | 2x I2C expanders (via Component Registry) |
 | Monitoring (FR43-50) | `components/control/`, `components/drivers/oled/` | OLED + events |
 | Modes (FR51-55) | `components/control/command_executor/` | State machine |
 | Errors (FR56-61) | `components/control/safety_monitor/`, `events/` | Centralized error manager |
@@ -4328,14 +4341,16 @@ factory,  app,  factory, 0x10000,  0x300000
 ### Firmware Update Process
 
 ```bash
+cd firmware
+
 # Build
 idf.py build
 
-# Flash via USB
-idf.py -p /dev/ttyACM0 flash
+# Flash via UART port
+idf.py flash
 
-# Monitor
-idf.py -p /dev/ttyACM0 monitor
+# Monitor via USB CDC port
+idf.py monitor -p /dev/cu.usbmodem1101  # macOS example
 ```
 
 ### Configuration Deployment
@@ -4374,22 +4389,25 @@ source export.sh
 # Clone project
 cd ~/projects
 git clone <repository_url> yarobot_control_unit
-cd yarobot_control_unit
+cd yarobot_control_unit/firmware
 
-# Configure
-idf.py set-target esp32s3
-idf.py menuconfig  # Verify Flash size, PSRAM, USB CDC settings
-
-# Build
+# Build (sdkconfig.defaults auto-applies configuration)
 idf.py build
 
-# Flash and monitor
-idf.py -p /dev/ttyACM0 flash monitor
+# Flash via UART port and monitor via USB CDC port
+idf.py flash
+idf.py monitor -p /dev/cu.usbmodem1101  # USB CDC port (macOS example)
 ```
+
+> **Note:** The ESP32-S3-DevKitC-1 has two USB ports:
+> - **UART port** - for flashing (`idf.py flash`)
+> - **USB-OTG port** - for USB CDC console (`idf.py monitor`)
 
 ### Debugging
 
 ```bash
+cd firmware
+
 # OpenOCD for JTAG debugging
 idf.py openocd
 

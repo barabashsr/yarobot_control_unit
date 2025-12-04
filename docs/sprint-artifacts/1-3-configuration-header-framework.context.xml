@@ -1,0 +1,378 @@
+<story-context id="1-3-configuration-header-framework" v="1.0">
+  <metadata>
+    <epicId>1</epicId>
+    <storyId>3</storyId>
+    <title>Configuration Header Framework</title>
+    <status>ready-for-dev</status>
+    <generatedAt>2025-12-03</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/1-3-configuration-header-framework.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>all configuration headers created with compile-time constants and Doxygen documentation</iWant>
+    <soThat>no magic numbers appear in code, hardware assignments are centralized, and the codebase is self-documenting</soThat>
+    <tasks>
+      <task id="1" ac="2,3,6">Create config_gpio.h - GPIO pin assignments (27 pins)</task>
+      <task id="2" ac="2,3,6">Create config_peripherals.h - RMT/MCPWM/PCNT/LEDC/SPI assignments</task>
+      <task id="3" ac="2,3,6">Create config_timing.h - All timing constants (ms/µs)</task>
+      <task id="4" ac="2,3,4,6">Create config_limits.h - Buffer sizes, queue depths, axis counts, stack sizes with static_assert</task>
+      <task id="5" ac="2,3,6">Create config_commands.h - CMD_*, RESP_*, ERR_*, EVT_* definitions</task>
+      <task id="6" ac="2,3,6">Create config_i2c.h - I2C addresses, MCP23017 pin mappings</task>
+      <task id="7" ac="2,3,6">Create config_sr.h - Shift register bit positions (40-bit), helper macros</task>
+      <task id="8" ac="2,3,6">Create config_defaults.h - Default axis parameters (SI units)</task>
+      <task id="9" ac="2,3,6">Create config_oled.h - OLED display configuration</task>
+      <task id="10" ac="2,3,6">Create config_yaml_schema.h - YAML keys, NVS mappings, validation macros</task>
+      <task id="11" ac="1,2,6">Create config.h master include with version and feature flags</task>
+      <task id="12" ac="5">Update config component CMakeLists.txt</task>
+      <task id="13" ac="4,5">Verify build with static_assert validation</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <criterion id="AC1">Including config.h provides access to all configuration constants</criterion>
+    <criterion id="AC2">All 11 headers exist in firmware/components/config/include/</criterion>
+    <criterion id="AC3">All values match the architecture document exactly</criterion>
+    <criterion id="AC4">static_assert validates LIMIT_NUM_SERVOS + LIMIT_NUM_STEPPERS + LIMIT_NUM_DISCRETE == LIMIT_NUM_AXES</criterion>
+    <criterion id="AC5">Project builds successfully with idf.py build</criterion>
+    <criterion id="AC6">All headers use Doxygen-style comments (@file, @brief, @defgroup, @note)</criterion>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>System Architecture</title>
+        <section>Configuration System</section>
+        <snippet>Complete header specifications with all constant values. Defines the "no magic numbers" mandate - every configurable value MUST be in a header file.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>System Architecture</title>
+        <section>config_gpio.h — Pin Assignments</section>
+        <snippet>Full GPIO pin definitions including servo STEP outputs, Z-signal inputs, SPI shift register pins, I2C bus pins, MCP23017 interrupts, safety signals, and OLED I2C.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>System Architecture</title>
+        <section>config_peripherals.h through config_yaml_schema.h</section>
+        <snippet>Complete C code for all 11 configuration headers with exact constant values for RMT channels, MCPWM, timing, limits, commands, I2C addresses, shift register bits, defaults, OLED, and YAML schema.</snippet>
+      </doc>
+      <doc>
+        <path>docs/gpio-assignment.md</path>
+        <title>GPIO Assignment Document</title>
+        <section>Complete GPIO Layout</section>
+        <snippet>Physical board layout, ESP32-S3-DevKitC-1 N16R8 constraints, shift register bit assignments, MCP23017 pin mappings. All values must match config headers exactly.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-1.md</path>
+        <title>Epic 1 Technical Specification</title>
+        <section>Configuration Header Organization</section>
+        <snippet>Header structure diagram showing all 11 files and their responsibilities. Defines compile-time validation via static_assert.</snippet>
+      </doc>
+      <doc>
+        <path>docs/epics.md</path>
+        <title>Epic Breakdown</title>
+        <section>Story 1.3: Configuration Header Framework</section>
+        <snippet>Original acceptance criteria specifying header list, static_assert requirement, and architecture alignment.</snippet>
+      </doc>
+    </docs>
+
+    <code>
+      <file>
+        <path>firmware/components/config/nvs_manager/CMakeLists.txt</path>
+        <kind>component-cmake</kind>
+        <reason>Config component already exists from Story 1-2. Headers go in sibling include/ directory.</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/yaml_parser/CMakeLists.txt</path>
+        <kind>component-cmake</kind>
+        <reason>Part of config component structure. config_yaml_schema.h will be used by yaml_parser.</reason>
+      </file>
+      <file>
+        <path>firmware/main/idf_component.yml</path>
+        <kind>dependency-manifest</kind>
+        <reason>Defines ESP Component Registry dependencies (espressif/mcp23017 ^0.1.1).</reason>
+      </file>
+      <file>
+        <path>firmware/CMakeLists.txt</path>
+        <kind>project-cmake</kind>
+        <reason>Root project CMakeLists - config component auto-discovered via EXTRA_COMPONENT_DIRS.</reason>
+      </file>
+    </code>
+
+    <dependencies>
+      <espidf>
+        <component name="esp-idf" version="5.4">ESP-IDF framework with FreeRTOS SMP</component>
+        <component name="espressif/mcp23017" version="^0.1.1">I2C GPIO expander component</component>
+        <component name="espressif/i2c_bus" version="auto">I2C bus abstraction (dependency of mcp23017)</component>
+      </espidf>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint priority="MANDATORY" source="docs/architecture.md#Configuration-System">
+      NO MAGIC NUMBERS: Every configurable value MUST be defined in a header file.
+      - GPIO pins → config_gpio.h (never GPIO_NUM_2, always GPIO_X_STEP)
+      - Timing values → config_timing.h (never 20, always TIMING_DIR_SETUP_US)
+      - Buffer sizes → config_limits.h (never 256, always LIMIT_CMD_MAX_LENGTH)
+      - Command strings → config_commands.h (never "MOVE", always CMD_MOVE)
+      - Error codes → config_commands.h (never "E002", always ERR_INVALID_AXIS)
+      - I2C addresses → config_i2c.h (never 0x20, always I2C_ADDR_MCP23017_0)
+      - YAML keys → config_yaml_schema.h (never "velocity", always YAML_KEY_VELOCITY)
+    </constraint>
+    <constraint priority="MANDATORY" source="story-requirements">
+      DOXYGEN DOCUMENTATION: All header files MUST use Doxygen-style comments:
+      - File header with @file, @brief, @author, @date
+      - Group definitions with @defgroup and @{ ... @}
+      - Each constant documented with /** @brief ... */
+      - Use @note for important implementation details
+      - Use @warning for critical constraints
+    </constraint>
+    <constraint priority="MANDATORY" source="docs/architecture.md">
+      SINGLE SOURCE OF TRUTH: Each configuration domain lives in exactly one header file.
+      No duplication of constants across files.
+    </constraint>
+    <constraint priority="MANDATORY" source="docs/architecture.md">
+      COMPILE-TIME VALIDATION: Use static_assert in config_limits.h to validate axis count consistency.
+    </constraint>
+    <constraint priority="REQUIRED" source="docs/architecture.md">
+      HEADER GUARDS: All headers must use #ifndef CONFIG_*_H / #define CONFIG_*_H / #endif pattern.
+    </constraint>
+    <constraint priority="REQUIRED" source="docs/sprint-artifacts/tech-spec-epic-1.md">
+      VALUES FROM ARCHITECTURE: All constant values must match docs/architecture.md exactly.
+      Cross-reference with docs/gpio-assignment.md for GPIO pins.
+    </constraint>
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>config.h</name>
+      <kind>master-include</kind>
+      <signature>#include "config.h" provides all configuration constants</signature>
+      <path>firmware/components/config/include/config.h</path>
+    </interface>
+    <interface>
+      <name>Axis Constants</name>
+      <kind>compile-time-defines</kind>
+      <signature>LIMIT_NUM_AXES=8, LIMIT_NUM_SERVOS=5, LIMIT_NUM_STEPPERS=2, LIMIT_NUM_DISCRETE=1</signature>
+      <path>firmware/components/config/include/config_limits.h</path>
+    </interface>
+    <interface>
+      <name>Shift Register Macros</name>
+      <kind>macro-functions</kind>
+      <signature>SR_SET_BIT(data,bit), SR_CLR_BIT(data,bit), SR_GET_BIT(data,bit), SR_DIR_BIT(axis), SR_EN_BIT(axis), SR_BRAKE_BIT(axis), SR_ALARM_CLR_BIT(axis)</signature>
+      <path>firmware/components/config/include/config_sr.h</path>
+    </interface>
+    <interface>
+      <name>YAML Validation Macros</name>
+      <kind>macro-functions</kind>
+      <signature>YAML_VALIDATE_VELOCITY(vel,ppr,upr), YAML_VALIDATE_AXIS(idx), YAML_VALIDATE_LIMITS(min,max), NVS_AXIS_KEY(buf,axis_idx,suffix)</signature>
+      <path>firmware/components/config/include/config_yaml_schema.h</path>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+      ESP-IDF projects use static_assert for compile-time validation of configuration consistency.
+      No runtime unit tests for header-only code. Validation is via successful compilation with -Werror.
+      Headers are validated by including in main.cpp and verifying build succeeds.
+    </standards>
+    <locations>
+      <location>firmware/main/yarobot_control_unit.cpp - verify config.h inclusion works</location>
+      <location>idf.py build output - verify no warnings or errors</location>
+    </locations>
+    <ideas>
+      <idea ac="AC1">Include config.h in main.cpp and reference a constant from each sub-header</idea>
+      <idea ac="AC2">Verify all 11 header files exist in firmware/components/config/include/</idea>
+      <idea ac="AC3">Cross-reference GPIO values with docs/gpio-assignment.md</idea>
+      <idea ac="AC4">Verify static_assert compiles without error</idea>
+      <idea ac="AC5">Run idf.py build and confirm success with no warnings</idea>
+      <idea ac="AC6">Verify each header has @file and @brief Doxygen comments</idea>
+    </ideas>
+  </tests>
+
+  <headerSpecifications>
+    <!-- Complete specifications extracted from architecture.md for developer reference -->
+
+    <header name="config_gpio.h">
+      <description>GPIO pin assignments for ESP32-S3-DevKitC-1 N16R8</description>
+      <constants>
+        <!-- Servo STEP outputs -->
+        <define name="GPIO_X_STEP" value="GPIO_NUM_4" comment="X-axis servo (RMT CH0) - J1-4"/>
+        <define name="GPIO_Y_STEP" value="GPIO_NUM_5" comment="Y-axis servo (MCPWM T0) - J1-5"/>
+        <define name="GPIO_Z_STEP" value="GPIO_NUM_6" comment="Z-axis servo (RMT CH1) - J1-6"/>
+        <define name="GPIO_A_STEP" value="GPIO_NUM_7" comment="A-axis servo (RMT CH2) - J1-7"/>
+        <define name="GPIO_B_STEP" value="GPIO_NUM_15" comment="B-axis servo (RMT CH3) - J1-8"/>
+        <!-- Stepper STEP outputs -->
+        <define name="GPIO_C_STEP" value="GPIO_NUM_16" comment="C-axis stepper (MCPWM T1) - J1-9"/>
+        <define name="GPIO_D_STEP" value="GPIO_NUM_17" comment="D-axis stepper (LEDC CH0) - J1-10"/>
+        <!-- Z-Signal inputs -->
+        <define name="GPIO_X_Z_SIGNAL" value="GPIO_NUM_1" comment="X servo index pulse - J3-4"/>
+        <define name="GPIO_Y_Z_SIGNAL" value="GPIO_NUM_2" comment="Y servo index pulse - J3-5"/>
+        <define name="GPIO_Z_Z_SIGNAL" value="GPIO_NUM_42" comment="Z servo index pulse - J3-6"/>
+        <define name="GPIO_A_Z_SIGNAL" value="GPIO_NUM_41" comment="A servo index pulse - J3-7"/>
+        <define name="GPIO_B_Z_SIGNAL" value="GPIO_NUM_40" comment="B servo index pulse - J3-8"/>
+        <!-- Shift register SPI -->
+        <define name="GPIO_SR_OE" value="GPIO_NUM_9" comment="Output enable (active-low) - J1-15"/>
+        <define name="GPIO_SR_CS" value="GPIO_NUM_10" comment="Shift register latch - J1-16"/>
+        <define name="GPIO_SR_MOSI" value="GPIO_NUM_11" comment="Shift register data - J1-17"/>
+        <define name="GPIO_SR_SCLK" value="GPIO_NUM_12" comment="Shift register clock - J1-18"/>
+        <!-- I2C Bus 0 -->
+        <define name="GPIO_I2C_SCL" value="GPIO_NUM_18" comment="I2C clock - J1-11"/>
+        <define name="GPIO_I2C_SDA" value="GPIO_NUM_8" comment="I2C data - J1-12"/>
+        <!-- MCP23017 interrupts -->
+        <define name="GPIO_MCP0_INTA" value="GPIO_NUM_3" comment="MCP #0 Port A - J1-13"/>
+        <define name="GPIO_MCP1_INTA" value="GPIO_NUM_46" comment="MCP #1 Port A - J1-14"/>
+        <define name="GPIO_MCP0_INTB" value="GPIO_NUM_39" comment="MCP #0 Port B - J3-9"/>
+        <define name="GPIO_MCP1_INTB" value="GPIO_NUM_38" comment="MCP #1 Port B - J3-10"/>
+        <!-- Safety -->
+        <define name="GPIO_E_STOP" value="GPIO_NUM_13" comment="Emergency stop input - J1-19"/>
+        <!-- OLED I2C Bus 1 -->
+        <define name="GPIO_OLED_SDA" value="GPIO_NUM_14" comment="OLED I2C data (I2C_NUM_1) - J1-20"/>
+        <define name="GPIO_OLED_SCL" value="GPIO_NUM_21" comment="OLED I2C clock (I2C_NUM_1) - J3-18"/>
+        <!-- USB (fixed) -->
+        <define name="GPIO_USB_DN" value="GPIO_NUM_19" comment="USB D- - J3-20"/>
+        <define name="GPIO_USB_DP" value="GPIO_NUM_20" comment="USB D+ - J3-19"/>
+      </constants>
+    </header>
+
+    <header name="config_peripherals.h">
+      <description>ESP32 peripheral assignments</description>
+      <constants>
+        <define name="RMT_CHANNEL_X" value="0"/>
+        <define name="RMT_CHANNEL_Z" value="1"/>
+        <define name="RMT_CHANNEL_A" value="2"/>
+        <define name="RMT_CHANNEL_B" value="3"/>
+        <define name="MCPWM_GROUP_ID" value="0"/>
+        <define name="MCPWM_TIMER_Y" value="0"/>
+        <define name="MCPWM_TIMER_C" value="1"/>
+        <define name="PCNT_UNIT_Y" value="0"/>
+        <define name="PCNT_UNIT_C" value="1"/>
+        <define name="LEDC_TIMER" value="LEDC_TIMER_0"/>
+        <define name="LEDC_CHANNEL_D" value="LEDC_CHANNEL_0"/>
+        <define name="LEDC_MODE" value="LEDC_LOW_SPEED_MODE"/>
+        <define name="SPI_HOST_SR" value="SPI2_HOST"/>
+      </constants>
+    </header>
+
+    <header name="config_timing.h">
+      <description>Timing constants (all in ms or µs)</description>
+      <constants>
+        <define name="TIMING_DIR_SETUP_US" value="20"/>
+        <define name="TIMING_ENABLE_DELAY_US" value="50"/>
+        <define name="TIMING_BRAKE_ENGAGE_MS" value="50"/>
+        <define name="TIMING_BRAKE_RELEASE_MS" value="30"/>
+        <define name="TIMING_CMD_RESPONSE_MS" value="10"/>
+        <define name="TIMING_USB_RX_TIMEOUT_MS" value="100"/>
+        <define name="TIMING_I2C_POLL_MS" value="5"/>
+        <define name="TIMING_I2C_TIMEOUT_MS" value="50"/>
+        <define name="TIMING_I2C_RETRY_COUNT" value="3"/>
+        <define name="TIMING_ESTOP_DEBOUNCE_MS" value="5"/>
+        <define name="TIMING_LIMIT_DEBOUNCE_MS" value="10"/>
+        <define name="TIMING_IDLE_TIMEOUT_S" value="300"/>
+        <define name="TIMING_SAFETY_POLL_MS" value="10"/>
+        <define name="PERIOD_I2C_MONITOR_MS" value="100"/>
+        <define name="PERIOD_DISPLAY_UPDATE_MS" value="100"/>
+        <define name="PERIOD_IDLE_CHECK_MS" value="1000"/>
+      </constants>
+    </header>
+
+    <header name="config_limits.h">
+      <description>Buffer sizes, queue depths, axis counts, stack sizes</description>
+      <constants>
+        <define name="LIMIT_CMD_MAX_LENGTH" value="256"/>
+        <define name="LIMIT_RESPONSE_MAX_LENGTH" value="256"/>
+        <define name="LIMIT_YAML_BUFFER_SIZE" value="8192"/>
+        <define name="LIMIT_ALIAS_MAX_LENGTH" value="16"/>
+        <define name="LIMIT_COMMAND_QUEUE_DEPTH" value="32"/>
+        <define name="LIMIT_RESPONSE_QUEUE_DEPTH" value="32"/>
+        <define name="LIMIT_SAFETY_QUEUE_DEPTH" value="64"/>
+        <define name="LIMIT_EVENT_QUEUE_DEPTH" value="32"/>
+        <define name="LIMIT_BACKGROUND_QUEUE_DEPTH" value="32"/>
+        <define name="LIMIT_ERROR_INFO_QUEUE_DEPTH" value="16"/>
+        <define name="LIMIT_NUM_AXES" value="8"/>
+        <define name="LIMIT_NUM_SERVOS" value="5"/>
+        <define name="LIMIT_NUM_STEPPERS" value="2"/>
+        <define name="LIMIT_NUM_DISCRETE" value="1"/>
+        <define name="LIMIT_CONFIG_SLOTS" value="10"/>
+        <define name="LIMIT_MAX_PULSE_FREQ_HZ" value="100000"/>
+        <define name="LIMIT_MIN_PULSE_FREQ_HZ" value="1"/>
+        <define name="LIMIT_MOTION_QUEUE_DEPTH" value="4"/>
+        <define name="STACK_SAFETY_TASK" value="4096"/>
+        <define name="STACK_USB_RX_TASK" value="2048"/>
+        <define name="STACK_USB_TX_TASK" value="2048"/>
+        <define name="STACK_CMD_EXECUTOR_TASK" value="8192"/>
+        <define name="STACK_I2C_MONITOR_TASK" value="2048"/>
+        <define name="STACK_MOTION_TASK" value="2048"/>
+        <define name="STACK_DISPLAY_TASK" value="4096"/>
+        <define name="STACK_IDLE_MONITOR_TASK" value="2048"/>
+        <define name="STACK_BACKGROUND_TASK" value="4096"/>
+      </constants>
+      <staticAssert>static_assert(LIMIT_NUM_SERVOS + LIMIT_NUM_STEPPERS + LIMIT_NUM_DISCRETE == LIMIT_NUM_AXES, "Axis count mismatch")</staticAssert>
+    </header>
+
+    <header name="config_commands.h">
+      <description>Command strings, response prefixes, error codes, event types</description>
+      <note>Contains CMD_*, RESP_*, ERR_*, MSG_*, EVT_* definitions and EndSwitchMode enum. See docs/architecture.md for complete list.</note>
+    </header>
+
+    <header name="config_i2c.h">
+      <description>I2C addresses and MCP23017 pin mappings</description>
+      <constants>
+        <define name="I2C_PORT" value="I2C_NUM_0"/>
+        <define name="I2C_FREQ_HZ" value="400000"/>
+        <define name="I2C_ADDR_MCP23017_0" value="0x20" comment="Limit switches"/>
+        <define name="I2C_ADDR_MCP23017_1" value="0x21" comment="ALARM_INPUT + InPos"/>
+        <!-- MCP0 limit switch pins GPA0-GPB7 -->
+        <!-- MCP1 alarm/inpos pins GPA0-GPB7 -->
+      </constants>
+      <note>See docs/gpio-assignment.md for complete MCP23017 pin mappings</note>
+    </header>
+
+    <header name="config_sr.h">
+      <description>Shift register bit positions (5x TPIC6B595N = 40 bits)</description>
+      <note>4 bits per axis [DIR, EN, BRAKE, ALARM_CLR] + 8 GP outputs. Includes helper macros.</note>
+    </header>
+
+    <header name="config_defaults.h">
+      <description>Default axis parameters (SI units - meters, radians, seconds)</description>
+      <note>ROS2 REP-103 compliant. Includes math constants, linear/rotary defaults, E-axis config.</note>
+    </header>
+
+    <header name="config_oled.h">
+      <description>OLED display configuration</description>
+      <constants>
+        <define name="I2C_OLED_PORT" value="I2C_NUM_1"/>
+        <define name="I2C_OLED_FREQ_HZ" value="400000"/>
+        <define name="OLED_ADDRESS" value="0x3C"/>
+        <define name="OLED_WIDTH" value="128"/>
+        <define name="OLED_HEIGHT" value="64"/>
+        <define name="OLED_UPDATE_HZ" value="2"/>
+        <define name="OLED_EVENT_DISPLAY_MS" value="2000"/>
+      </constants>
+    </header>
+
+    <header name="config_yaml_schema.h">
+      <description>YAML configuration schema and NVS key mappings</description>
+      <includes>config_limits.h, config_defaults.h</includes>
+      <note>Contains YAML_KEY_*, YAML_AXIS_*, NVS_KEY_*, and validation macros</note>
+    </header>
+
+    <header name="config.h">
+      <description>Master include header</description>
+      <includes>All 10 config headers</includes>
+      <constants>
+        <define name="FIRMWARE_NAME" value='"YAROBOT_CONTROL_UNIT"'/>
+        <define name="FIRMWARE_VERSION_MAJOR" value="1"/>
+        <define name="FIRMWARE_VERSION_MINOR" value="0"/>
+        <define name="FIRMWARE_VERSION_PATCH" value="0"/>
+        <define name="FIRMWARE_VERSION_STRING" value='"1.0.0"'/>
+        <define name="FEATURE_OLED_DISPLAY" value="1"/>
+        <define name="FEATURE_Z_SIGNAL" value="1"/>
+        <define name="FEATURE_STREAMING" value="1"/>
+      </constants>
+    </header>
+  </headerSpecifications>
+</story-context>
