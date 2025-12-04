@@ -194,6 +194,7 @@ yarobot_control_unit.elf: esp-idf/control/libcontrol.a
 yarobot_control_unit.elf: esp-idf/espressif__i2c_bus/libespressif__i2c_bus.a
 yarobot_control_unit.elf: esp-idf/espressif__mcp23017/libespressif__mcp23017.a
 yarobot_control_unit.elf: esp-idf/main/libmain.a
+yarobot_control_unit.elf: esp-idf/command_parser/libcommand_parser.a
 yarobot_control_unit.elf: esp-idf/app_trace/libapp_trace.a
 yarobot_control_unit.elf: esp-idf/unity/libunity.a
 yarobot_control_unit.elf: esp-idf/esp_https_server/libesp_https_server.a

@@ -1,0 +1,120 @@
+<story-context id=".bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>2</epicId>
+    <storyId>2.2</storyId>
+    <title>Command Parser</title>
+    <status>drafted</status>
+    <generatedAt>2025-12-04</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/2-2-command-parser.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>incoming text parsed into structured command objects</iWant>
+    <soThat>command handlers receive validated, typed parameters</soThat>
+    <tasks>
+      <task id="1" ac="1">Create Command Parser Component Structure - Create directory, CMakeLists.txt, header, and implementation files</task>
+      <task id="2" ac="1">Define ParsedCommand Structure - verb[16], axis, params[4], param_count, str_param[32], has_str_param</task>
+      <task id="3" ac="1">Implement parser_init() - Initialize any static parser state</task>
+      <task id="4" ac="1-6,13,15">Implement parse_command() Core Logic - NULL check, length check, whitespace skip, empty/comment line handling, tokenization</task>
+      <task id="5" ac="2,7-12">Implement Verb Parsing - Convert to uppercase, store in verb field, match CMD_* constants</task>
+      <task id="6" ac="3,7-12,14">Implement Axis Parsing - Single char A-Z check, uppercase, validate X-E range, axis_to_index/index_to_axis</task>
+      <task id="7" ac="7-10,12,13">Implement Numeric Parameter Parsing - strtof with endptr check, up to 4 params, handle negatives/decimals</task>
+      <task id="8" ac="11">Implement String Parameter Parsing - For ALIAS etc., store in str_param, set has_str_param=true</task>
+      <task id="9" ac="14">Implement Helper Functions - is_valid_axis(), axis_to_index(), index_to_axis()</task>
+      <task id="10" ac="1">Integrate with Build System - Add component to CMakeLists, ensure config headers accessible</task>
+      <task id="11" ac="1-15">Test Parser Functionality - All parsing scenarios from acceptance criteria</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1">Given a text line is received from USB, when the parser processes it, then a ParsedCommand structure is populated with verb, axis, params, and str_param fields</ac>
+    <ac id="2">Given command input, when parsing, then command verb is case-insensitive (move = MOVE = Move)</ac>
+    <ac id="3">Given axis input, when parsing, then axis letters are case-insensitive (x = X)</ac>
+    <ac id="4">Given input with whitespace, when parsing, then whitespace correctly separates tokens</ac>
+    <ac id="5">Given an empty line, when parsing, then line is ignored (no error, no command)</ac>
+    <ac id="6">Given a line starting with #, when parsing, then line is treated as comment (ignored)</ac>
+    <ac id="7">Given `MOVE X 100`, when parsed, then verb=CMD_MOVE, axis='X', params=[100.0], param_count=1</ac>
+    <ac id="8">Given `MOVR Y -50.5 200`, when parsed, then verb=CMD_MOVR, axis='Y', params=[-50.5, 200.0], param_count=2</ac>
+    <ac id="9">Given `STOP`, when parsed, then verb=CMD_STOP, axis='\0', param_count=0</ac>
+    <ac id="10">Given `STOP Z`, when parsed, then verb=CMD_STOP, axis='Z', param_count=0</ac>
+    <ac id="11">Given `ALIAS X RAILWAY`, when parsed, then verb=CMD_ALIAS, axis='X', str_param="RAILWAY", has_str_param=true</ac>
+    <ac id="12">Given `EN X 1`, when parsed, then verb=CMD_EN, axis='X', params=[1.0], param_count=1</ac>
+    <ac id="13">Given invalid/malformed input, when parsing, then return ESP_ERR_INVALID_ARG (no crash)</ac>
+    <ac id="14">Given axis letter in input, when validating, then only valid axes (X,Y,Z,A,B,C,D,E) are accepted</ac>
+    <ac id="15">Given input exceeding LIMIT_CMD_MAX_LENGTH (256), when parsing, then return error without buffer overflow</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/sprint-artifacts/tech-spec-epic-2.md" title="Epic 2 Technical Specification" section="Data Models and Contracts" snippet="Defines ParsedCommand structure with verb[16], axis char, params[4], param_count, str_param[32], has_str_param. Also defines Command Parser API: parser_init(), parse_command(), is_valid_axis(), axis_to_index(), index_to_axis()." />
+      <doc path="docs/sprint-artifacts/tech-spec-epic-2.md" title="Epic 2 Technical Specification" section="Workflows and Sequencing" snippet="Command processing flow: usb_rx_task receives line, pushes to rx_queue, cmd_executor_task calls parse_command(), validates state, dispatches, formats response." />
+      <doc path="docs/sprint-artifacts/tech-spec-epic-2.md" title="Epic 2 Technical Specification" section="Performance" snippet="Parser throughput requirement: >1000 commands/sec. Input validation prevents buffer overflows (LIMIT_CMD_MAX_LENGTH = 256). Malformed commands return error, never crash." />
+      <doc path="docs/sprint-artifacts/2-1-usb-cdc-serial-interface.md" title="Story 2.1 USB CDC Serial Interface" section="Dev Agent Record" snippet="USB CDC implementation complete. Lines pushed to usb_rx_queue as null-terminated strings. Line endings stripped before queueing. ECHO command demonstrates basic text handling." />
+      <doc path="docs/architecture.md" title="Architecture" section="MANDATORY: Header-Only Configuration Requirement" snippet="Every configurable value MUST be defined in a header file. Use CMD_MOVE not 'MOVE', ERR_INVALID_AXIS not 'E002', LIMIT_CMD_MAX_LENGTH not 256." />
+    </docs>
+    <code>
+      <artifact path="firmware/components/config/include/config_commands.h" kind="header" symbol="CMD_*, ERR_*, MSG_*, RESP_*" lines="1-407" reason="Contains all command verb constants (CMD_MOVE, CMD_STOP, etc.), response prefixes (RESP_OK, RESP_ERROR), error codes (ERR_INVALID_COMMAND), and error messages. Parser MUST use these constants for verb matching and error responses." />
+      <artifact path="firmware/components/config/include/config_limits.h" kind="header" symbol="LIMIT_CMD_MAX_LENGTH, LIMIT_NUM_AXES" lines="1-170" reason="Defines LIMIT_CMD_MAX_LENGTH (256 bytes max command), LIMIT_NUM_AXES (8 axes X-E). Parser must respect these limits." />
+      <artifact path="firmware/components/interface/usb_cdc/include/usb_cdc.h" kind="header" symbol="usb_rx_queue, usb_tx_queue" lines="1-128" reason="Defines queue handles that receive parsed input. Parser receives lines from usb_rx_queue." />
+      <artifact path="firmware/components/interface/usb_cdc/usb_cdc.c" kind="implementation" symbol="usb_cdc_init, cdc_rx_callback" reason="USB CDC implementation that pushes lines to usb_rx_queue. Parser consumes these lines." />
+      <artifact path="firmware/components/control/tasks/task_stubs.c" kind="implementation" symbol="cmd_executor_task, process_command" lines="119-165" reason="Current command processing stub. Uses hardcoded strings that MUST be replaced with CMD_* constants. Shows current ECHO handling and error response pattern." />
+      <artifact path="firmware/components/interface/command_parser/CMakeLists.txt" kind="build" lines="1-3" reason="Empty component structure exists. Needs SRCS and REQUIRES to be added." />
+    </code>
+    <dependencies>
+      <ecosystem name="ESP-IDF">
+        <package name="esp-idf" version="5.4" purpose="ESP32-S3 development framework" />
+        <package name="freertos" version="IDF bundled" purpose="Task, queue, mutex primitives" />
+        <package name="esp_tinyusb" version="^1.0.0" purpose="USB CDC ACM implementation (Story 2.1)" />
+      </ecosystem>
+      <ecosystem name="ESP Component Registry">
+        <package name="espressif/mcp23017" version="^0.1.1" purpose="I/O expander driver" />
+        <package name="espressif/esp_tinyusb" version="^1.0.0" purpose="TinyUSB wrapper" />
+      </ecosystem>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint type="architecture" source="docs/architecture.md">MANDATORY: All configurable values in headers. Use CMD_MOVE not "MOVE", LIMIT_CMD_MAX_LENGTH not 256, ERR_* constants for error codes.</constraint>
+    <constraint type="architecture" source="docs/sprint-artifacts/tech-spec-epic-2.md">All responses terminate with \r\n. Error codes use ERR_* constants from config_commands.h.</constraint>
+    <constraint type="threading" source="docs/sprint-artifacts/tech-spec-epic-2.md">Use strtok_r (thread-safe) for tokenization, not strtok.</constraint>
+    <constraint type="memory" source="story">Work with stack-allocated ParsedCommand, no heap allocation needed. verb[16], str_param[32], params[4].</constraint>
+    <constraint type="performance" source="docs/sprint-artifacts/tech-spec-epic-2.md">Parser throughput: >1000 commands/sec</constraint>
+    <constraint type="safety" source="story">Malformed commands return ESP_ERR_INVALID_ARG, never crash. Input validation prevents buffer overflows.</constraint>
+    <constraint type="axis-mapping" source="story">Valid axes: X(0), Y(1), Z(2), A(3), B(4), C(5), D(6), E(7). axis_to_index returns 0-7, index_to_axis returns 'X'-'E'.</constraint>
+  </constraints>
+
+  <interfaces>
+    <interface name="parser_init" kind="function" signature="esp_err_t parser_init(void)" path="firmware/components/interface/command_parser/include/command_parser.h">Initialize parser state. Returns ESP_OK on success.</interface>
+    <interface name="parse_command" kind="function" signature="esp_err_t parse_command(const char* line, ParsedCommand* cmd)" path="firmware/components/interface/command_parser/include/command_parser.h">Parse text line into ParsedCommand struct. Returns ESP_OK on success, ESP_ERR_INVALID_ARG on error.</interface>
+    <interface name="is_valid_axis" kind="function" signature="bool is_valid_axis(char axis)" path="firmware/components/interface/command_parser/include/command_parser.h">Returns true for X,Y,Z,A,B,C,D,E (case-insensitive).</interface>
+    <interface name="axis_to_index" kind="function" signature="uint8_t axis_to_index(char axis)" path="firmware/components/interface/command_parser/include/command_parser.h">'X'->0, 'Y'->1, ... 'E'->7. Returns -1 for invalid.</interface>
+    <interface name="index_to_axis" kind="function" signature="char index_to_axis(uint8_t index)" path="firmware/components/interface/command_parser/include/command_parser.h">0->'X', 1->'Y', ... 7->'E'. Returns '\0' for invalid.</interface>
+    <interface name="ParsedCommand" kind="struct" signature="typedef struct { char verb[16]; char axis; float params[4]; uint8_t param_count; char str_param[32]; bool has_str_param; } ParsedCommand" path="firmware/components/interface/command_parser/include/command_parser.h">Parsed command structure populated by parse_command().</interface>
+  </interfaces>
+
+  <tests>
+    <standards>ESP-IDF unit testing framework. Tests run on host or device. All error paths must have corresponding test. Parser must handle edge cases without crashing. Coverage target: 100% of acceptance criteria.</standards>
+    <locations>
+      <location>firmware/components/interface/command_parser/test/</location>
+      <location>firmware/test/</location>
+    </locations>
+    <ideas>
+      <idea ac="1">Test basic parsing: "MOVE X 100" populates all fields correctly</idea>
+      <idea ac="2">Test case-insensitive verbs: "move", "MOVE", "Move" all parse to CMD_MOVE</idea>
+      <idea ac="3">Test case-insensitive axes: "x", "X" both parse to 'X'</idea>
+      <idea ac="4">Test whitespace handling: multiple spaces between tokens, leading/trailing spaces</idea>
+      <idea ac="5">Test empty line returns success with empty verb</idea>
+      <idea ac="6">Test comment lines starting with # are ignored</idea>
+      <idea ac="7,8">Test numeric parameter parsing with integers, floats, negatives</idea>
+      <idea ac="9,10">Test commands with optional axis (STOP vs STOP Z)</idea>
+      <idea ac="11">Test string parameter parsing for ALIAS command</idea>
+      <idea ac="13">Test malformed input: invalid floats, too many params, truncated lines</idea>
+      <idea ac="14">Test invalid axis letters (W, Q, etc.) return error</idea>
+      <idea ac="15">Test buffer overflow protection with 257+ char input</idea>
+      <idea>Test axis_to_index and index_to_axis round-trip for all 8 axes</idea>
+      <idea>Test is_valid_axis returns true for X-E, false for others</idea>
+    </ideas>
+  </tests>
+</story-context>

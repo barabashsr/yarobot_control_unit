@@ -1,0 +1,194 @@
+<story-context id="2-3-response-formatter" v="1.0">
+  <metadata>
+    <epicId>2</epicId>
+    <storyId>3</storyId>
+    <title>Response Formatter</title>
+    <status>drafted</status>
+    <generatedAt>2025-12-04</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/2-3-response-formatter.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>user</asA>
+    <iWant>consistent, parseable response formats</iWant>
+    <soThat>I can programmatically process controller output</soThat>
+    <tasks>
+      <task id="1" acs="1-3,11,14">Create Response Formatter Header with API functions per Tech Spec</task>
+      <task id="2" acs="4,10,11">Implement format_ok() - generates OK\r\n response</task>
+      <task id="3" acs="1,5,10,11,14">Implement format_ok_data() - generates OK data\r\n response</task>
+      <task id="4" acs="2,6,10,11,14">Implement format_error() - generates ERROR code message\r\n response</task>
+      <task id="5" acs="3,7-9">Define Event Structure (EventType enum and Event struct)</task>
+      <task id="6" acs="3,7-9,10,11,14">Implement format_event() - generates EVENT type axis data\r\n</task>
+      <task id="7" acs="12">Ensure Thread Safety - caller-provided buffers, no static state</task>
+      <task id="8" acs="1">Integrate with Build System - add to CMakeLists.txt</task>
+      <task id="9" acs="1-14">Test Response Formatter - comprehensive test coverage</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1">Success responses follow format OK [data]\r\n</ac>
+    <ac id="2">Error responses follow format ERROR code message\r\n</ac>
+    <ac id="3">Event notifications follow format EVENT type axis [data]\r\n</ac>
+    <ac id="4">format_ok() generates exactly OK\r\n</ac>
+    <ac id="5">format_ok_data() generates OK X 123.456\r\n for position data</ac>
+    <ac id="6">format_error() with ERR_INVALID_COMMAND generates ERROR E001 Invalid command\r\n</ac>
+    <ac id="7">format_event() for motion complete generates EVENT DONE X 100.000\r\n</ac>
+    <ac id="8">format_event() for limit trigger generates EVENT LIMIT Y MIN\r\n</ac>
+    <ac id="9">format_event() for E-stop generates EVENT ESTOP ACTIVE\r\n</ac>
+    <ac id="10">All responses terminate with exactly \r\n (CR+LF)</ac>
+    <ac id="11">Output never exceeds LIMIT_RESPONSE_MAX_LENGTH (256 bytes)</ac>
+    <ac id="12">Concurrent format function calls from multiple tasks are thread-safe</ac>
+    <ac id="13">Response generation completes within TIMING_CMD_RESPONSE_MS (10ms)</ac>
+    <ac id="14">All string literals use constants from config_commands.h (RESP_OK, RESP_ERROR, RESP_EVENT, ERR_*, MSG_*)</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-2.md</path>
+        <title>Epic 2 Technical Specification</title>
+        <section>APIs and Interfaces - Response Formatter API</section>
+        <snippet>Defines format_ok(), format_ok_data(), format_error(), format_event() API signatures and Event/EventType structures.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-2.md</path>
+        <title>Epic 2 Technical Specification</title>
+        <section>Data Models and Contracts</section>
+        <snippet>Event structure with EventType enum (EVT_MOTION_COMPLETE, EVT_LIMIT_TRIGGERED, EVT_ESTOP_CHANGED, etc.) and union data field.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>System Architecture</title>
+        <section>Communication</section>
+        <snippet>All responses terminate with \r\n. Success: OK [data], Error: ERROR code message, Event: EVENT type axis [data].</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/2-2-command-parser.md</path>
+        <title>Story 2-2 Command Parser</title>
+        <section>Completion Notes</section>
+        <snippet>Component structure established: CMakeLists.txt pattern, include/ subdirectory, test/ subdirectory. Thread-safe via stack-allocated buffers.</snippet>
+      </doc>
+      <doc>
+        <path>docs/bmm-workflow-status.yaml</path>
+        <title>BMM Workflow Status</title>
+        <section>mandatory_constraints</section>
+        <snippet>Header-only configuration: ALL configurable values MUST use constants from config headers. Never hardcode strings.</snippet>
+      </doc>
+    </docs>
+
+    <code>
+      <file>
+        <path>firmware/components/interface/command_parser/include/command_parser.h</path>
+        <kind>header</kind>
+        <symbol>ParsedCommand</symbol>
+        <reason>Response formatter companion to parser - shares component structure and follows same patterns</reason>
+      </file>
+      <file>
+        <path>firmware/components/interface/command_parser/command_parser.c</path>
+        <kind>implementation</kind>
+        <symbol>parse_command()</symbol>
+        <reason>Reference for implementation patterns - thread-safe strtok_r, config includes, error handling</reason>
+      </file>
+      <file>
+        <path>firmware/components/interface/command_parser/CMakeLists.txt</path>
+        <kind>build</kind>
+        <symbol>idf_component_register</symbol>
+        <reason>Add response_formatter.c to SRCS list</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_commands.h</path>
+        <kind>header</kind>
+        <symbol>RESP_OK, RESP_ERROR, RESP_EVENT, ERR_*, MSG_*, EVT_*</symbol>
+        <reason>Response prefixes, error codes/messages, and event type strings - MUST use these constants</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_limits.h</path>
+        <kind>header</kind>
+        <symbol>LIMIT_RESPONSE_MAX_LENGTH</symbol>
+        <reason>Maximum response buffer size (256 bytes)</reason>
+      </file>
+    </code>
+
+    <dependencies>
+      <esp-idf>
+        <component>esp_err.h</component>
+        <component>stdarg.h</component>
+        <component>stdio.h (vsnprintf, snprintf)</component>
+      </esp-idf>
+      <project-components>
+        <component>config</component>
+      </project-components>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint priority="critical">MANDATORY: Use constants from config_commands.h for all string literals (RESP_OK, RESP_ERROR, RESP_EVENT, ERR_*, MSG_*, EVT_*)</constraint>
+    <constraint priority="critical">MANDATORY: All responses must terminate with exactly \r\n (CR+LF)</constraint>
+    <constraint priority="critical">MANDATORY: Response must not exceed LIMIT_RESPONSE_MAX_LENGTH (256 bytes)</constraint>
+    <constraint priority="high">Thread-safe: All format functions must operate on caller-provided buffers, no static/global state</constraint>
+    <constraint priority="high">Return ESP_ERR_INVALID_SIZE if buffer too small or output would be truncated</constraint>
+    <constraint priority="high">Float formatting: Use %.3f for positions (3 decimal places), locale-independent</constraint>
+    <constraint priority="medium">Performance: Response generation must complete within 10ms (TIMING_CMD_RESPONSE_MS)</constraint>
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>format_ok</name>
+      <kind>function</kind>
+      <signature>esp_err_t format_ok(char* buf, size_t len)</signature>
+      <path>firmware/components/interface/command_parser/include/response_formatter.h</path>
+    </interface>
+    <interface>
+      <name>format_ok_data</name>
+      <kind>function</kind>
+      <signature>esp_err_t format_ok_data(char* buf, size_t len, const char* fmt, ...)</signature>
+      <path>firmware/components/interface/command_parser/include/response_formatter.h</path>
+    </interface>
+    <interface>
+      <name>format_error</name>
+      <kind>function</kind>
+      <signature>esp_err_t format_error(char* buf, size_t len, const char* code, const char* msg)</signature>
+      <path>firmware/components/interface/command_parser/include/response_formatter.h</path>
+    </interface>
+    <interface>
+      <name>format_event</name>
+      <kind>function</kind>
+      <signature>esp_err_t format_event(char* buf, size_t len, const Event* event)</signature>
+      <path>firmware/components/interface/command_parser/include/response_formatter.h</path>
+    </interface>
+    <interface>
+      <name>EventType</name>
+      <kind>enum</kind>
+      <signature>typedef enum { EVT_MOTION_COMPLETE, EVT_MOTION_ERROR, EVT_LIMIT_TRIGGERED, EVT_ESTOP_CHANGED, EVT_MODE_CHANGED, EVT_ERROR, EVT_WIDTH_MEASURED, EVT_BOOT } EventType</signature>
+      <path>firmware/components/interface/command_parser/include/response_formatter.h</path>
+    </interface>
+    <interface>
+      <name>Event</name>
+      <kind>struct</kind>
+      <signature>typedef struct { EventType type; uint8_t axis; union { float position; float width; uint8_t error_code; uint8_t limit_state; bool estop_active; } data; int64_t timestamp; } Event</signature>
+      <path>firmware/components/interface/command_parser/include/response_formatter.h</path>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>Unit tests use ESP-IDF Unity test framework. Tests are placed in component test/ subdirectory. Each acceptance criterion should have at least one corresponding test case. Test functions follow pattern: test_[function]_[scenario]. Tests verify both success and error paths.</standards>
+    <locations>
+      <location>firmware/components/interface/command_parser/test/test_response_formatter.c</location>
+    </locations>
+    <ideas>
+      <idea acRef="4">test_format_ok_simple - verify output is exactly "OK\r\n"</idea>
+      <idea acRef="5">test_format_ok_data_position - verify "OK X 123.456\r\n" format</idea>
+      <idea acRef="6">test_format_error_invalid_command - verify "ERROR E001 Invalid command\r\n"</idea>
+      <idea acRef="7">test_format_event_motion_complete - verify "EVENT DONE X 100.000\r\n"</idea>
+      <idea acRef="8">test_format_event_limit - verify "EVENT LIMIT Y MIN\r\n"</idea>
+      <idea acRef="9">test_format_event_estop - verify "EVENT ESTOP ACTIVE\r\n"</idea>
+      <idea acRef="10">test_all_outputs_have_crlf - verify all outputs end with \r\n</idea>
+      <idea acRef="11">test_buffer_overflow_protection - verify ESP_ERR_INVALID_SIZE for small buffers</idea>
+      <idea acRef="11">test_truncation_handling - verify snprintf respects max length</idea>
+      <idea acRef="14">test_uses_config_constants - verify RESP_OK, ERR_*, MSG_* constants used</idea>
+      <idea acRef="1-3">test_format_boot_event - verify "EVENT BOOT V1.0.0 AXES:8 STATE:IDLE\r\n"</idea>
+      <idea acRef="1-3">test_format_mode_event - verify "EVENT MODE READY\r\n"</idea>
+    </ideas>
+  </tests>
+</story-context>

@@ -632,4 +632,5 @@ set(CMAKE_DEPEND_INFO_FILES
   "esp-idf/espressif__i2c_bus/CMakeFiles/__idf_espressif__i2c_bus.dir/DependInfo.cmake"
   "esp-idf/espressif__mcp23017/CMakeFiles/__idf_espressif__mcp23017.dir/DependInfo.cmake"
   "esp-idf/main/CMakeFiles/__idf_main.dir/DependInfo.cmake"
+  "esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/DependInfo.cmake"
   )

@@ -161,6 +161,44 @@ depend:
 	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
+# Convenience name for target.
+esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/rule:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/rule
+.PHONY : esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/rule
+
+# Convenience name for target.
+__idf_command_parser: esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/rule
+.PHONY : __idf_command_parser
+
+# fast build rule for target.
+__idf_command_parser/fast:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/build.make esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/build
+.PHONY : __idf_command_parser/fast
+
+command_parser.obj: command_parser.c.obj
+.PHONY : command_parser.obj
+
+# target to build an object file
+command_parser.c.obj:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/build.make esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/command_parser.c.obj
+.PHONY : command_parser.c.obj
+
+command_parser.i: command_parser.c.i
+.PHONY : command_parser.i
+
+# target to preprocess a source file
+command_parser.c.i:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/build.make esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/command_parser.c.i
+.PHONY : command_parser.c.i
+
+command_parser.s: command_parser.c.s
+.PHONY : command_parser.s
+
+# target to generate assembly for a file
+command_parser.c.s:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/build.make esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/command_parser.c.s
+.PHONY : command_parser.c.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -173,6 +211,10 @@ help:
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
+	@echo "... __idf_command_parser"
+	@echo "... command_parser.obj"
+	@echo "... command_parser.i"
+	@echo "... command_parser.s"
 .PHONY : help
 
 
