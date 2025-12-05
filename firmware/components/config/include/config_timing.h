@@ -35,6 +35,15 @@
 /** @brief Time to release brake before motion start (ms) */
 #define TIMING_BRAKE_RELEASE_MS     30
 
+/**
+ * @brief E-axis discrete actuator travel time (ms)
+ *
+ * Time for E-axis pneumatic cylinder or solenoid to complete
+ * full travel from retracted (0) to extended (1) position.
+ * Used by TimeTracker for position interpolation.
+ */
+#define TIMING_E_AXIS_TRAVEL_MS     1000
+
 /** @} */ // end timing_motion
 
 /**
@@ -87,6 +96,26 @@
 #define TIMING_SAFETY_POLL_MS       10
 
 /** @} */ // end timing_safety
+
+/**
+ * @defgroup timing_position Position Tracking Timing
+ * @brief Position update intervals for software-counted axes
+ * @{
+ */
+
+/**
+ * @brief LEDC (D-axis) position update interval (ms)
+ *
+ * How often the LEDC pulse generator updates the SoftwareTracker
+ * with the current pulse count during motion. Lower values give
+ * more responsive position queries but increase timer overhead.
+ *
+ * RMT axes update on DMA buffer completion (hardware-driven).
+ * PCNT axes count in hardware (always real-time).
+ */
+#define TIMING_LEDC_POSITION_UPDATE_MS  20
+
+/** @} */ // end timing_position
 
 /**
  * @defgroup timing_periods Task Periods

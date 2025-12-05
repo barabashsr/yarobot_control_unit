@@ -2,6 +2,7 @@
 # Aggregates all control sub-components for a unified build
 
 # STORY-3-2-TEST: Remove test_pulse_cmd.cpp and pulse_gen dependency after hardware verification
+# STORY-3-5-TEST: Remove position dependency after hardware verification
 idf_component_register(
     SRCS
         "tasks/task_stubs.c"
@@ -18,6 +19,7 @@ idf_component_register(
         test_utils
         usb_cdc
         pulse_gen
+        position
     PRIV_REQUIRES
         esp_tinyusb
         esp_timer

@@ -2034,6 +2034,19 @@ __idf_tpic6b595/fast:
 .PHONY : __idf_tpic6b595/fast
 
 #=============================================================================
+# Target rules for targets named __idf_position
+
+# Build rule for target.
+__idf_position: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 __idf_position
+.PHONY : __idf_position
+
+# fast build rule for target.
+__idf_position/fast:
+	$(MAKE) $(MAKESILENT) -f esp-idf/position/CMakeFiles/__idf_position.dir/build.make esp-idf/position/CMakeFiles/__idf_position.dir/build
+.PHONY : __idf_position/fast
+
+#=============================================================================
 # Target rules for targets named __idf_pulse_gen
 
 # Build rule for target.
@@ -2255,6 +2268,7 @@ help:
 	@echo "... __idf_nvs_flash"
 	@echo "... __idf_nvs_sec_provider"
 	@echo "... __idf_perfmon"
+	@echo "... __idf_position"
 	@echo "... __idf_protobuf-c"
 	@echo "... __idf_protocomm"
 	@echo "... __idf_pthread"

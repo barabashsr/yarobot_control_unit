@@ -130,6 +130,35 @@
 #define LIMIT_MIN_PULSE_FREQ_HZ     1
 
 /**
+ * @brief Maximum stop latency for immediate stop (microseconds)
+ *
+ * stopImmediate() must complete within this time.
+ * 100µs provides adequate margin for LEDC and RMT stop operations.
+ */
+#define LIMIT_STOP_LATENCY_US       100
+
+/**
+ * @brief LEDC maximum frequency (Hz) at configured resolution
+ *
+ * At 10-bit resolution (1024 levels) with 80 MHz APB clock:
+ * max_freq = APB_CLK / 2^resolution = 80000000 / 1024 ≈ 78125 Hz
+ * Conservative limit set below theoretical max for stability.
+ */
+#define LIMIT_LEDC_MAX_FREQ_HZ      75000
+
+/**
+ * @brief LEDC minimum frequency (Hz) at configured resolution
+ *
+ * At 10-bit resolution with low-speed timer, minimum frequency is limited
+ * by the maximum clock divider. With APB_CLK = 80 MHz and 18-bit divider:
+ * min_freq ≈ 80000000 / (2^18 * 2^10) ≈ 0.3 Hz (theoretical)
+ *
+ * In practice, very low frequencies cause timer instability. 100 Hz provides
+ * a safe minimum for D-axis stepper positioning while allowing slow moves.
+ */
+#define LIMIT_LEDC_MIN_FREQ_HZ      100
+
+/**
  * @brief RMT peripheral resolution (Hz)
  *
  * 80 MHz clock provides 12.5ns resolution per tick.
@@ -151,6 +180,22 @@
  * Valid range: 64 (minimum for DMA) to 1024 (recommended max by Espressif)
  */
 #define LIMIT_RMT_BUFFER_SYMBOLS    512
+
+/**
+ * @brief PCNT high limit for overflow detection
+ *
+ * ESP32-S3 PCNT is 16-bit signed (-32768 to +32767).
+ * Watch points at ±32767 catch overflow before wrap-around.
+ * ISR accumulates overflow count to extend to int64_t.
+ */
+#define LIMIT_PCNT_HIGH_LIMIT       32767
+
+/**
+ * @brief PCNT low limit for overflow detection
+ *
+ * Negative overflow watch point for reverse counting.
+ */
+#define LIMIT_PCNT_LOW_LIMIT        (-32767)
 
 /** @} */ // end limits_motion
 

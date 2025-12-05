@@ -19,6 +19,7 @@
 #define MCPWM_PULSE_GEN_H
 
 #include "i_pulse_generator.h"
+#include "i_position_tracker.h"
 #include "config_limits.h"
 #include "config_peripherals.h"
 #include "driver/mcpwm_timer.h"
@@ -110,6 +111,7 @@ public:
     int64_t getPulseCount() const override;
     float getCurrentVelocity() const override;
     void setCompletionCallback(MotionCompleteCallback cb) override;
+    void setPositionTracker(IPositionTracker* tracker) override;
 
     /**
      * @brief Get the timer ID
@@ -159,6 +161,9 @@ private:
     // Callback
     MotionCompleteCallback completion_callback_;
     SemaphoreHandle_t callback_mutex_;
+
+    // Position tracker (stored but not used - PCNT provides real-time position)
+    IPositionTracker* position_tracker_;
 
     // Profile calculation (same as RMT)
     void calculateTrapezoidalProfile(int32_t pulses, float max_vel, float accel);

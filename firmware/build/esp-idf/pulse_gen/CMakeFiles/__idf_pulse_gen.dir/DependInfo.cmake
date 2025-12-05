@@ -8,6 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/ledc_pulse_gen.cpp" "esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/ledc_pulse_gen.cpp.obj" "gcc" "esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/ledc_pulse_gen.cpp.obj.d"
   "/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/mcpwm_pulse_gen.cpp" "esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/mcpwm_pulse_gen.cpp.obj" "gcc" "esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/mcpwm_pulse_gen.cpp.obj.d"
   "/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/rmt_pulse_gen.cpp" "esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/rmt_pulse_gen.cpp.obj" "gcc" "esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/rmt_pulse_gen.cpp.obj.d"
   )

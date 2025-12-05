@@ -1,0 +1,298 @@
+<story-context id="bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>3</epicId>
+    <storyId>4</storyId>
+    <title>LEDC Pulse Generator (D Axis)</title>
+    <status>ready-for-dev</status>
+    <generatedAt>2025-12-05</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/3-4-ledc-pulse-generator.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>LEDC-based pulse generation for D axis stepper with software position tracking</iWant>
+    <soThat>the D-axis stepper motor can execute motion commands through the unified IPulseGenerator interface</soThat>
+    <tasks>
+      <task id="1" ac="13">Add LEDC configuration constants to config headers (LEDC_RESOLUTION_BITS, LEDC_DUTY_CYCLE_PERCENT, LIMIT_STOP_LATENCY_US)</task>
+      <task id="2" ac="1,13">Create LedcPulseGenerator class implementing IPulseGenerator interface</task>
+      <task id="3" ac="1,13">Implement LEDC timer and channel initialization via ledc_timer_config() and ledc_channel_config()</task>
+      <task id="4" ac="3,11">Implement software pulse counting using esp_timer with atomic counter</task>
+      <task id="5" ac="2,6,7">Implement trapezoidal profile generator (reuse from RMT/MCPWM)</task>
+      <task id="6" ac="2,5">Implement startMove() with direction setup and profile calculation</task>
+      <task id="7" ac="6">Implement startVelocity() for continuous mode</task>
+      <task id="8" ac="7,8">Implement stop() with deceleration and stopImmediate()</task>
+      <task id="9" ac="9,10,11">Implement status methods: isRunning(), getPulseCount(), getCurrentVelocity()</task>
+      <task id="10" ac="4">Implement completion callback with FreeRTOS task notification</task>
+      <task id="11" ac="1-13">Create unit tests in test_ledc_pulse_gen.cpp</task>
+      <task id="12" ac="2,8,12">Hardware verification with oscilloscope</task>
+      <task id="13" ac="13">Code review - verify no magic numbers, all values from config headers</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1">LEDC_TIMER_D (LEDC_TIMER_2) and LEDC_CHANNEL_D (LEDC_CHANNEL_2) configured from config_peripherals.h; STEP pulses on GPIO_D_STEP</ac>
+    <ac id="2">startMove(2000, 10000, 100000) generates exactly 2000 pulses with trapezoidal profile</ac>
+    <ac id="3">Software counter tracks pulse count via high-resolution timer callbacks (no hardware PCNT)</ac>
+    <ac id="4">LEDC stops and MotionCompleteCallback fires when target pulse count reached</ac>
+    <ac id="5">TIMING_DIR_SETUP_US (20us) delay after DIR signal change before first STEP pulse</ac>
+    <ac id="6">startVelocity(10000, 100000) generates continuous pulses until stop() called</ac>
+    <ac id="7">stop(100000) decelerates gracefully with controlled profile</ac>
+    <ac id="8">stopImmediate() stops within LIMIT_STOP_LATENCY_US; completion callback NOT fired</ac>
+    <ac id="9">isRunning() returns true during motion, false when idle</ac>
+    <ac id="10">getCurrentVelocity() returns current pulse frequency (Hz) during motion</ac>
+    <ac id="11">getPulseCount() returns accurate software counter matching generated pulses</ac>
+    <ac id="12">Pulse frequency range LIMIT_LEDC_MIN_FREQ_HZ (100 Hz) to LIMIT_LEDC_MAX_FREQ_HZ (75000 Hz) supported</ac>
+    <ac id="13" mandatory="true">NO hardcoded values or magic numbers; ALL config values from dedicated headers (config_gpio.h, config_peripherals.h, config_timing.h, config_limits.h)</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-3.md</path>
+        <title>Epic 3 Technical Specification</title>
+        <section>Services and Modules - LedcPulseGenerator</section>
+        <snippet>LedcPulseGenerator in pulse_gen/ledc_pulse_gen.cpp takes pulse count, velocity, accel and outputs GPIO STEP pulses for D axis.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-3.md</path>
+        <title>Epic 3 Technical Specification</title>
+        <section>MANDATORY Architecture Constraints</section>
+        <snippet>Header-Only Configuration: Every configurable value MUST be defined in a header file. No magic numbers in source code. Streaming Double-Buffer Pulse Generation: All pulse generation uses streaming architecture.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-3.md</path>
+        <title>Epic 3 Technical Specification</title>
+        <section>APIs and Interfaces - IPulseGenerator</section>
+        <snippet>IPulseGenerator interface: init(), startMove(pulses, max_velocity, acceleration), startVelocity(velocity, acceleration), stop(deceleration), stopImmediate(), isRunning(), getPulseCount(), getCurrentVelocity(), setCompletionCallback().</snippet>
+      </doc>
+      <doc>
+        <path>docs/epics.md</path>
+        <title>Epic Breakdown</title>
+        <section>Story 3.4: LEDC Pulse Generator (D Axis)</section>
+        <snippet>LEDC-based pulse generation for D axis stepper. LEDC_TIMER and LEDC_CHANNEL_D configured. Software counter tracks pulse count. Less precise than RMT/MCPWM but sufficient for D axis.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/3-3-mcpwm-pulse-generator-with-pcnt.md</path>
+        <title>Previous Story: MCPWM Pulse Generator</title>
+        <section>Completion Notes List</section>
+        <snippet>Patterns established: Trapezoidal profile algorithm, atomic state management with std::atomic, FreeRTOS task notification for completion callback, no magic numbers (AC15) verified via grep.</snippet>
+      </doc>
+    </docs>
+
+    <code>
+      <file>
+        <path>firmware/components/pulse_gen/include/i_pulse_generator.h</path>
+        <kind>interface</kind>
+        <symbol>IPulseGenerator</symbol>
+        <lines>30-126</lines>
+        <reason>Abstract interface that LedcPulseGenerator must implement. Defines startMove(), startVelocity(), stop(), stopImmediate(), isRunning(), getPulseCount(), getCurrentVelocity(), setCompletionCallback().</reason>
+      </file>
+      <file>
+        <path>firmware/components/pulse_gen/include/rmt_pulse_gen.h</path>
+        <kind>class</kind>
+        <symbol>RmtPulseGenerator</symbol>
+        <lines>82-173</lines>
+        <reason>Reference implementation for trapezoidal profile (ProfileState enum, TrapezoidalProfile struct). Reuse profile calculation logic.</reason>
+      </file>
+      <file>
+        <path>firmware/components/pulse_gen/include/mcpwm_pulse_gen.h</path>
+        <kind>class</kind>
+        <symbol>McpwmPulseGenerator</symbol>
+        <lines>90-189</lines>
+        <reason>Reference implementation for profile task pattern. Similar architecture without PCNT (use software counting instead).</reason>
+      </file>
+      <file>
+        <path>firmware/components/pulse_gen/rmt_pulse_gen.cpp</path>
+        <kind>implementation</kind>
+        <symbol>calculateTrapezoidalProfile, velocityAtPosition</symbol>
+        <lines>full</lines>
+        <reason>Trapezoidal profile calculation algorithm to reuse. ISR-safe callback patterns.</reason>
+      </file>
+      <file>
+        <path>firmware/components/pulse_gen/mcpwm_pulse_gen.cpp</path>
+        <kind>implementation</kind>
+        <symbol>profileTaskLoop, notifyCompletion</symbol>
+        <lines>full</lines>
+        <reason>Profile update task pattern and completion callback via FreeRTOS task notification.</reason>
+      </file>
+      <file>
+        <path>firmware/components/drivers/tpic6b595/include/tpic6b595.h</path>
+        <kind>driver</kind>
+        <symbol>sr_set_direction, sr_update</symbol>
+        <lines>79-80, 140</lines>
+        <reason>Must call sr_set_direction() before motion start, then sr_update() to latch. Required for TIMING_DIR_SETUP_US compliance.</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_peripherals.h</path>
+        <kind>config</kind>
+        <symbol>LEDC_TIMER_D (=LEDC_TIMER_2), LEDC_CHANNEL_D (=LEDC_CHANNEL_2), LEDC_MODE_D, LEDC_RESOLUTION_BITS, LEDC_DUTY_CYCLE_PERCENT</symbol>
+        <lines>98-130</lines>
+        <reason>LEDC configuration constants. Timer 2 and Channel 2 selected to avoid conflicts with other peripherals.</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_gpio.h</path>
+        <kind>config</kind>
+        <symbol>GPIO_D_STEP</symbol>
+        <lines>54</lines>
+        <reason>GPIO pin for D-axis STEP output (GPIO_NUM_17).</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_timing.h</path>
+        <kind>config</kind>
+        <symbol>TIMING_DIR_SETUP_US</symbol>
+        <lines>27</lines>
+        <reason>Direction setup delay (20us) before first STEP pulse.</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_limits.h</path>
+        <kind>config</kind>
+        <symbol>LIMIT_MAX_PULSE_FREQ_HZ, DEFAULT_MAX_PULSE_FREQ_HZ, LIMIT_MIN_PULSE_FREQ_HZ, LIMIT_LEDC_MIN_FREQ_HZ (100), LIMIT_LEDC_MAX_FREQ_HZ (75000), LIMIT_STOP_LATENCY_US (100)</symbol>
+        <lines>119-160</lines>
+        <reason>Frequency limits for validation. LEDC limits are more restrictive due to 10-bit resolution.</reason>
+      </file>
+      <file>
+        <path>firmware/components/pulse_gen/CMakeLists.txt</path>
+        <kind>build</kind>
+        <symbol>idf_component_register</symbol>
+        <lines>1-5</lines>
+        <reason>Add ledc_pulse_gen.cpp to SRCS and esp_driver_ledc to REQUIRES.</reason>
+      </file>
+      <file>
+        <path>firmware/components/pulse_gen/test/test_rmt_pulse_gen.cpp</path>
+        <kind>test</kind>
+        <symbol>TEST_CASE</symbol>
+        <lines>full</lines>
+        <reason>Reference for unit test structure and patterns. Follow same test organization.</reason>
+      </file>
+      <file>
+        <path>firmware/components/pulse_gen/test/test_mcpwm_pulse_gen.cpp</path>
+        <kind>test</kind>
+        <symbol>TEST_CASE</symbol>
+        <lines>full</lines>
+        <reason>Reference for unit test structure. Includes magic number verification grep check.</reason>
+      </file>
+    </code>
+
+    <dependencies>
+      <esp-idf>
+        <component name="driver">Core ESP-IDF driver framework</component>
+        <component name="esp_driver_ledc">LEDC peripheral driver for PWM generation</component>
+        <component name="esp_timer">High-resolution timer for software pulse counting</component>
+        <component name="freertos">FreeRTOS for task notifications and mutexes</component>
+      </esp-idf>
+      <internal>
+        <component name="config">Configuration headers (config_peripherals.h, config_gpio.h, config_timing.h, config_limits.h)</component>
+        <component name="tpic6b595">Shift register driver for direction control</component>
+      </internal>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint type="mandatory" source="tech-spec-epic-3.md">
+      Header-Only Configuration: Every configurable value MUST be defined in a header file. No magic numbers in source code. GPIO pins from config_gpio.h, timing from config_timing.h, limits from config_limits.h, LEDC settings from config_peripherals.h.
+    </constraint>
+    <constraint type="mandatory" source="tech-spec-epic-3.md">
+      Streaming Double-Buffer Pulse Generation: All pulse generation uses streaming architecture. For LEDC, this means progressive frequency updates during motion rather than pre-computed buffers.
+    </constraint>
+    <constraint type="mandatory" source="story AC13">
+      Code review grep check: `grep -E "[^A-Z_][0-9]{2,}" ledc_pulse_gen.cpp` should return minimal results (only loop indices).
+    </constraint>
+    <constraint type="pattern" source="3-3-mcpwm-pulse-generator">
+      Use std::atomic for thread-safe state (ProfileState enum) and pulse count (int64_t).
+    </constraint>
+    <constraint type="pattern" source="3-3-mcpwm-pulse-generator">
+      Completion callback must be deferred from ISR/timer context to task context using FreeRTOS task notification.
+    </constraint>
+    <constraint type="timing" source="config_timing.h">
+      TIMING_DIR_SETUP_US (20us) delay must occur after DIR signal change before first STEP pulse.
+    </constraint>
+    <constraint type="timing" source="story AC8">
+      stopImmediate() must complete within LIMIT_STOP_LATENCY_US (to be added to config_limits.h).
+    </constraint>
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>IPulseGenerator</name>
+      <kind>C++ abstract class</kind>
+      <signature>
+class IPulseGenerator {
+public:
+    virtual esp_err_t init() = 0;
+    virtual esp_err_t startMove(int32_t pulses, float max_velocity, float acceleration) = 0;
+    virtual esp_err_t startVelocity(float velocity, float acceleration) = 0;
+    virtual esp_err_t stop(float deceleration) = 0;
+    virtual void stopImmediate() = 0;
+    virtual bool isRunning() const = 0;
+    virtual int64_t getPulseCount() const = 0;
+    virtual float getCurrentVelocity() const = 0;
+    using MotionCompleteCallback = std::function&lt;void(int64_t total_pulses)&gt;;
+    virtual void setCompletionCallback(MotionCompleteCallback cb) = 0;
+};
+      </signature>
+      <path>firmware/components/pulse_gen/include/i_pulse_generator.h</path>
+    </interface>
+    <interface>
+      <name>Shift Register Direction Control</name>
+      <kind>C function</kind>
+      <signature>esp_err_t sr_set_direction(uint8_t axis, bool forward); esp_err_t sr_update(void);</signature>
+      <path>firmware/components/drivers/tpic6b595/include/tpic6b595.h</path>
+    </interface>
+    <interface>
+      <name>LEDC Timer Config</name>
+      <kind>ESP-IDF API</kind>
+      <signature>esp_err_t ledc_timer_config(const ledc_timer_config_t *timer_conf);</signature>
+      <path>ESP-IDF driver/ledc.h</path>
+    </interface>
+    <interface>
+      <name>LEDC Channel Config</name>
+      <kind>ESP-IDF API</kind>
+      <signature>esp_err_t ledc_channel_config(const ledc_channel_config_t *ledc_conf);</signature>
+      <path>ESP-IDF driver/ledc.h</path>
+    </interface>
+    <interface>
+      <name>LEDC Frequency Control</name>
+      <kind>ESP-IDF API</kind>
+      <signature>esp_err_t ledc_set_freq(ledc_mode_t speed_mode, ledc_timer_t timer_num, uint32_t freq_hz);</signature>
+      <path>ESP-IDF driver/ledc.h</path>
+    </interface>
+    <interface>
+      <name>LEDC Duty Control</name>
+      <kind>ESP-IDF API</kind>
+      <signature>esp_err_t ledc_set_duty(ledc_mode_t speed_mode, ledc_channel_t channel, uint32_t duty); esp_err_t ledc_update_duty(ledc_mode_t speed_mode, ledc_channel_t channel);</signature>
+      <path>ESP-IDF driver/ledc.h</path>
+    </interface>
+    <interface>
+      <name>High Resolution Timer</name>
+      <kind>ESP-IDF API</kind>
+      <signature>esp_err_t esp_timer_create(const esp_timer_create_args_t *create_args, esp_timer_handle_t *out_handle); esp_err_t esp_timer_start_periodic(esp_timer_handle_t timer, uint64_t period_us);</signature>
+      <path>ESP-IDF esp_timer.h</path>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+      Unit tests use ESP-IDF Unity framework. Tests are placed in component test/ directories. Test functions use TEST_CASE macro. Follow patterns from test_rmt_pulse_gen.cpp and test_mcpwm_pulse_gen.cpp. All test values must use named constants from config headers - no magic numbers in tests.
+    </standards>
+    <locations>
+      <location>firmware/components/pulse_gen/test/test_ledc_pulse_gen.cpp</location>
+      <location>firmware/components/pulse_gen/test/</location>
+    </locations>
+    <ideas>
+      <idea ac="1">Test init() returns ESP_OK and LEDC timer/channel configured correctly</idea>
+      <idea ac="2">Test startMove() with various pulse counts (100, 1000, 10000) and frequencies (1kHz, 10kHz, 50kHz)</idea>
+      <idea ac="3,11">Test software counter matches commanded pulses within tolerance</idea>
+      <idea ac="4">Test completion callback fires with correct pulse count after motion completes</idea>
+      <idea ac="5">Test direction setup delay is applied (measure or mock timing)</idea>
+      <idea ac="6">Test startVelocity() generates continuous pulses</idea>
+      <idea ac="7">Test stop() decelerates and fires callback</idea>
+      <idea ac="8">Test stopImmediate() stops quickly and does NOT fire callback</idea>
+      <idea ac="9">Test isRunning() returns correct state during motion lifecycle</idea>
+      <idea ac="10">Test getCurrentVelocity() returns expected frequency</idea>
+      <idea ac="12">Test frequency limits: 1 Hz (min), DEFAULT_MAX_PULSE_FREQ_HZ (max), and boundary cases</idea>
+      <idea ac="12">Test invalid parameters return ESP_ERR_INVALID_ARG (negative velocity, zero acceleration)</idea>
+      <idea ac="13">Run grep check: `grep -E "[^A-Z_][0-9]{2,}" ledc_pulse_gen.cpp` should return minimal results</idea>
+    </ideas>
+  </tests>
+</story-context>

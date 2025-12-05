@@ -16,6 +16,9 @@
 #include <functional>
 #include "esp_err.h"
 
+// Forward declaration to avoid circular include
+class IPositionTracker;
+
 /**
  * @brief Abstract interface for pulse generation
  *
@@ -123,6 +126,21 @@ public:
      * @param cb Callback function, or nullptr to clear
      */
     virtual void setCompletionCallback(MotionCompleteCallback cb) = 0;
+
+    /**
+     * @brief Set position tracker for real-time position updates during motion
+     *
+     * When set, the pulse generator will call the tracker's addPulses() method
+     * during motion to provide incremental position updates:
+     * - RMT: Updates on each DMA buffer TX-done callback
+     * - LEDC: Updates periodically every TIMING_LEDC_POSITION_UPDATE_MS
+     * - MCPWM: Not used (PCNT provides real-time position directly)
+     *
+     * The tracker's setDirection() is called before motion starts.
+     *
+     * @param tracker Position tracker instance, or nullptr to disable updates
+     */
+    virtual void setPositionTracker(IPositionTracker* tracker) = 0;
 };
 
 #endif // I_PULSE_GENERATOR_H

@@ -473,3 +473,137 @@ TEST_CASE("stop fails if not running", "[pulse_gen][error]")
 
     TEST_ASSERT_EQUAL(ESP_ERR_INVALID_STATE, gen.stop(500000.0f));
 }
+
+// ============================================================================
+// Story 3.5b: Real-time position tracking during motion
+// ============================================================================
+
+#include "software_tracker.h"
+
+TEST_CASE("setPositionTracker sets tracker and updates position during motion", "[pulse_gen][position_tracking]")
+{
+    RmtPulseGenerator gen(RMT_CHANNEL_X, GPIO_X_STEP);
+    TEST_ASSERT_EQUAL(ESP_OK, gen.init());
+
+    SoftwareTracker tracker;
+    TEST_ASSERT_EQUAL(ESP_OK, tracker.init());
+
+    // Set tracker before motion
+    gen.setPositionTracker(&tracker);
+
+    gen.setCompletionCallback(test_completion_callback);
+
+    // Start move
+    TEST_ASSERT_EQUAL(ESP_OK, gen.startMove(2000, 100000.0f, 500000.0f));
+
+    // Wait a bit to let some buffers complete
+    vTaskDelay(pdMS_TO_TICKS(10));
+
+    // Position should be updating during motion (not waiting for completion)
+    int64_t pos_mid = tracker.getPosition();
+    TEST_ASSERT_GREATER_THAN(0, pos_mid);
+
+    // Wait for completion
+    int timeout = 100;
+    while (!g_callback_fired.load(std::memory_order_acquire) && timeout > 0) {
+        vTaskDelay(pdMS_TO_TICKS(10));
+        timeout--;
+    }
+
+    TEST_ASSERT_TRUE(g_callback_fired.load());
+
+    // Final position should match commanded pulses exactly
+    int64_t final_pos = tracker.getPosition();
+    TEST_ASSERT_EQUAL(2000, final_pos);
+}
+
+TEST_CASE("RMT position tracker direction is set before motion", "[pulse_gen][position_tracking]")
+{
+    RmtPulseGenerator gen(RMT_CHANNEL_X, GPIO_X_STEP);
+    TEST_ASSERT_EQUAL(ESP_OK, gen.init());
+
+    SoftwareTracker tracker;
+    TEST_ASSERT_EQUAL(ESP_OK, tracker.init());
+
+    gen.setPositionTracker(&tracker);
+    gen.setCompletionCallback(test_completion_callback);
+
+    // Forward move
+    TEST_ASSERT_EQUAL(ESP_OK, gen.startMove(500, 100000.0f, 500000.0f));
+
+    int timeout = 100;
+    while (!g_callback_fired.load(std::memory_order_acquire) && timeout > 0) {
+        vTaskDelay(pdMS_TO_TICKS(10));
+        timeout--;
+    }
+    TEST_ASSERT_TRUE(g_callback_fired.load());
+
+    int64_t forward_pos = tracker.getPosition();
+    TEST_ASSERT_EQUAL(500, forward_pos);  // Should be positive
+
+    // Reset
+    g_callback_fired.store(false);
+
+    // Reverse move (negative pulses)
+    TEST_ASSERT_EQUAL(ESP_OK, gen.startMove(-500, 100000.0f, 500000.0f));
+
+    timeout = 100;
+    while (!g_callback_fired.load(std::memory_order_acquire) && timeout > 0) {
+        vTaskDelay(pdMS_TO_TICKS(10));
+        timeout--;
+    }
+    TEST_ASSERT_TRUE(g_callback_fired.load());
+
+    int64_t final_pos = tracker.getPosition();
+    // Should be back at zero (forward 500, reverse 500)
+    TEST_ASSERT_EQUAL(0, final_pos);
+}
+
+TEST_CASE("RMT position updates occur on each buffer completion", "[pulse_gen][position_tracking]")
+{
+    RmtPulseGenerator gen(RMT_CHANNEL_X, GPIO_X_STEP);
+    TEST_ASSERT_EQUAL(ESP_OK, gen.init());
+
+    SoftwareTracker tracker;
+    TEST_ASSERT_EQUAL(ESP_OK, tracker.init());
+
+    gen.setPositionTracker(&tracker);
+
+    // Start velocity mode at high frequency
+    TEST_ASSERT_EQUAL(ESP_OK, gen.startVelocity(200000.0f, 500000.0f));
+
+    // Sample position multiple times to verify incremental updates
+    vTaskDelay(pdMS_TO_TICKS(10));
+    int64_t pos1 = tracker.getPosition();
+
+    vTaskDelay(pdMS_TO_TICKS(10));
+    int64_t pos2 = tracker.getPosition();
+
+    vTaskDelay(pdMS_TO_TICKS(10));
+    int64_t pos3 = tracker.getPosition();
+
+    // Position should be monotonically increasing
+    TEST_ASSERT_GREATER_THAN(pos1, pos2);
+    TEST_ASSERT_GREATER_THAN(pos2, pos3);
+
+    gen.stopImmediate();
+}
+
+TEST_CASE("RMT null tracker does not crash", "[pulse_gen][position_tracking]")
+{
+    RmtPulseGenerator gen(RMT_CHANNEL_X, GPIO_X_STEP);
+    TEST_ASSERT_EQUAL(ESP_OK, gen.init());
+
+    // Don't set tracker (remains null)
+    gen.setCompletionCallback(test_completion_callback);
+
+    TEST_ASSERT_EQUAL(ESP_OK, gen.startMove(500, 100000.0f, 500000.0f));
+
+    int timeout = 100;
+    while (!g_callback_fired.load(std::memory_order_acquire) && timeout > 0) {
+        vTaskDelay(pdMS_TO_TICKS(10));
+        timeout--;
+    }
+
+    TEST_ASSERT_TRUE(g_callback_fired.load());
+}

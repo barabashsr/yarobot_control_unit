@@ -102,14 +102,30 @@
  * @{
  */
 
-/** @brief LEDC timer for D-axis stepper */
-#define LEDC_TIMER_D        LEDC_TIMER_0
+/** @brief LEDC timer for D-axis stepper (using timer 2 to avoid conflicts) */
+#define LEDC_TIMER_D        LEDC_TIMER_2
 
-/** @brief LEDC channel for D-axis step output */
-#define LEDC_CHANNEL_D      LEDC_CHANNEL_0
+/** @brief LEDC channel for D-axis step output (using channel 2 to avoid conflicts) */
+#define LEDC_CHANNEL_D      LEDC_CHANNEL_2
 
 /** @brief LEDC speed mode (low-speed mode for ESP32-S3) */
 #define LEDC_MODE_D         LEDC_LOW_SPEED_MODE
+
+/**
+ * @brief LEDC timer resolution in bits
+ *
+ * 10-bit resolution = 1024 duty levels
+ * At 80 MHz APB clock: max freq = 80MHz / 1024 = ~78 kHz
+ * Adequate for D-axis stepper which has lower precision requirements
+ */
+#define LEDC_RESOLUTION_BITS    10
+
+/**
+ * @brief LEDC duty cycle percentage (0-100)
+ *
+ * 50% duty cycle for symmetric step pulses (equal high/low time)
+ */
+#define LEDC_DUTY_CYCLE_PERCENT 50
 
 /** @} */ // end periph_ledc
 

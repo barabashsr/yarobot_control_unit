@@ -1,0 +1,306 @@
+<story-context id="3-6-motor-base-class-servo-motor" v="1.0">
+  <metadata>
+    <epicId>3</epicId>
+    <storyId>6</storyId>
+    <title>Motor Base Class &amp; Servo Motor</title>
+    <status>ready-for-dev</status>
+    <generatedAt>2025-12-05</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/3-6-motor-base-class-servo-motor.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>the motor abstraction layer with servo motor implementation</iWant>
+    <soThat>servo axes (X, Y, Z, A, B) can execute motion commands through a unified interface</soThat>
+    <tasks>
+      <task id="1" ac="1,16">Create IMotor interface - header-only with moveAbsolute(), moveRelative(), moveVelocity(), stop(), stopImmediate(), getPosition(), getVelocity(), isMoving(), isEnabled(), enable(), getState(), getConfig(), setConfig()</task>
+      <task id="2" ac="11,16">Create AxisState enum and AxisConfig struct in motor_types.h</task>
+      <task id="3" ac="2-15">Implement ServoMotor class with IPulseGenerator, IPositionTracker, ShiftRegisterController dependencies</task>
+      <task id="4" ac="3,4,14,15">Implement position moves - moveAbsolute() and moveRelative() with limit validation</task>
+      <task id="5" ac="5">Implement velocity mode - moveVelocity() with velocity clamping</task>
+      <task id="6" ac="6,7">Implement stop methods - stop() with decel, stopImmediate() without</task>
+      <task id="7" ac="8,9">Implement enable/disable with SR control and TIMING_ENABLE_DELAY_US</task>
+      <task id="8" ac="10,11">Implement status methods - getPosition(), getVelocity(), isMoving(), getState()</task>
+      <task id="9" ac="12">Implement motion completion callback integration with pulse generator</task>
+      <task id="10" ac="13">Implement motion blending - no "axis busy" error on mid-motion MOVE</task>
+      <task id="11" ac="1-16">Create motor component CMakeLists.txt with REQUIRES: config, pulse_gen, position, tpic6b595</task>
+      <task id="12" ac="1-16">Create unit tests in test_servo_motor.cpp</task>
+      <task id="13" ac="16">Code review for magic numbers - verify all values from config headers</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1">IMotor interface defined with unified API for all motor types</ac>
+    <ac id="2">ServoMotor constructed with IPulseGenerator, IPositionTracker, ShiftRegisterController, AxisConfig and validated on init()</ac>
+    <ac id="3">moveAbsolute() validates limits, sets direction via SR, converts SI to pulses, invokes startMove()</ac>
+    <ac id="4">moveRelative() delegates to moveAbsolute(current + delta, velocity)</ac>
+    <ac id="5">moveVelocity() clamps to max_velocity, sets direction, invokes startVelocity()</ac>
+    <ac id="6">stop() decelerates via pulse generator, transitions to IDLE on completion</ac>
+    <ac id="7">stopImmediate() halts immediately, transitions to IDLE</ac>
+    <ac id="8">enable(true) sets SR EN bit, waits TIMING_ENABLE_DELAY_US, transitions to IDLE</ac>
+    <ac id="9">enable(false) stops motion, clears SR EN bit, transitions to DISABLED</ac>
+    <ac id="10">getPosition() returns pulse_count / pulses_per_unit in SI units</ac>
+    <ac id="11">getState() returns AxisState: DISABLED, IDLE, MOVING, ERROR, UNHOMED</ac>
+    <ac id="12">Motion completion callback transitions state to IDLE and invokes registered callback</ac>
+    <ac id="13">Mid-motion moveAbsolute() blends to new target (no axis busy error)</ac>
+    <ac id="14">Position exceeding limits returns ESP_ERR_INVALID_ARG</ac>
+    <ac id="15">Motion command on disabled axis returns ESP_ERR_INVALID_STATE</ac>
+    <ac id="16">MANDATORY: NO hardcoded values - ALL config from headers</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-3.md</path>
+        <title>Epic 3 Technical Specification</title>
+        <section>APIs and Interfaces - IMotor</section>
+        <snippet>IMotor interface with SI unit methods. pulse_count_ is single source of truth for position. All conversion in motor layer.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Motor Control Pattern</section>
+        <snippet>Composition pattern: Motor uses injected pulse generator and position tracker. Unit conversion from SI to pulses happens in motor layer.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Behavioral Decisions #6</section>
+        <snippet>Motion blending: Blend to new target on mid-motion MOVE. Profile generator recalculates on-the-fly for smooth transition.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Unit Conversion Implementation</section>
+        <snippet>pulses_per_unit = pulses_per_rev / units_per_rev. External: SI units (m, rad). Internal: pulses.</snippet>
+      </doc>
+      <doc>
+        <path>docs/epics.md</path>
+        <title>Epics</title>
+        <section>Story 3.6</section>
+        <snippet>Motor Base Class &amp; Servo Motor: IMotor interface, ServoMotor composition with IPulseGenerator and IPositionTracker.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/3-5-position-tracker-interface.md</path>
+        <title>Previous Story</title>
+        <section>Completion Notes</section>
+        <snippet>IPositionTracker interface complete. SoftwareTracker for X/Z/A/B, PcntTracker for Y/C. All have setPositionTracker() integration.</snippet>
+      </doc>
+    </docs>
+
+    <code>
+      <file>
+        <path>firmware/components/pulse_gen/include/i_pulse_generator.h</path>
+        <kind>interface</kind>
+        <symbol>IPulseGenerator</symbol>
+        <lines>33-144</lines>
+        <reason>Primary dependency - ServoMotor delegates motion execution to IPulseGenerator. Methods: startMove(), startVelocity(), stop(), stopImmediate(), setCompletionCallback(), setPositionTracker()</reason>
+      </file>
+      <file>
+        <path>firmware/components/position/include/i_position_tracker.h</path>
+        <kind>interface</kind>
+        <symbol>IPositionTracker</symbol>
+        <lines>34-98</lines>
+        <reason>Primary dependency - ServoMotor uses for position tracking. Methods: init(), reset(), getPosition(), setDirection(), addPulses()</reason>
+      </file>
+      <file>
+        <path>firmware/components/drivers/tpic6b595/include/tpic6b595.h</path>
+        <kind>driver</kind>
+        <symbol>sr_set_direction, sr_set_enable, sr_update</symbol>
+        <lines>67-140</lines>
+        <reason>Primary dependency - ServoMotor sets DIR/EN via shift register. Functions: sr_set_direction(), sr_set_enable(), sr_update()</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_timing.h</path>
+        <kind>config</kind>
+        <symbol>TIMING_DIR_SETUP_US, TIMING_ENABLE_DELAY_US</symbol>
+        <lines>27-30</lines>
+        <reason>Required timing constants for direction setup (20us) and enable delay (50us)</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_sr.h</path>
+        <kind>config</kind>
+        <symbol>SR_DIR_BIT, SR_EN_BIT, sr_axis_t</symbol>
+        <lines>44-212</lines>
+        <reason>Shift register bit position macros and axis enum for SR control</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_defaults.h</path>
+        <kind>config</kind>
+        <symbol>DEFAULT_MAX_VELOCITY, DEFAULT_MAX_ACCELERATION, DEFAULT_PULSES_PER_UNIT</symbol>
+        <lines>55-81</lines>
+        <reason>Default axis configuration values for AxisConfig struct initialization</reason>
+      </file>
+      <file>
+        <path>firmware/components/pulse_gen/rmt_pulse_gen.cpp</path>
+        <kind>implementation</kind>
+        <symbol>RmtPulseGenerator</symbol>
+        <reason>Reference implementation for X, Z, A, B axes - shows startMove(), completion callback, position tracker integration</reason>
+      </file>
+      <file>
+        <path>firmware/components/pulse_gen/mcpwm_pulse_gen.cpp</path>
+        <kind>implementation</kind>
+        <symbol>McpwmPulseGenerator</symbol>
+        <reason>Reference implementation for Y axis - uses PCNT for position</reason>
+      </file>
+      <file>
+        <path>firmware/components/position/software_tracker.cpp</path>
+        <kind>implementation</kind>
+        <symbol>SoftwareTracker</symbol>
+        <reason>SoftwareTracker implementation for X/Z/A/B - shows addPulses() pattern</reason>
+      </file>
+      <file>
+        <path>firmware/components/position/pcnt_tracker.cpp</path>
+        <kind>implementation</kind>
+        <symbol>PcntTracker</symbol>
+        <reason>PcntTracker implementation for Y/C - hardware position counting</reason>
+      </file>
+    </code>
+
+    <dependencies>
+      <espidf>
+        <component>esp_driver_rmt</component>
+        <component>esp_driver_mcpwm</component>
+        <component>esp_driver_pcnt</component>
+        <component>esp_driver_ledc</component>
+        <component>esp_timer</component>
+        <component>freertos</component>
+        <component>driver</component>
+      </espidf>
+      <internal>
+        <component>config</component>
+        <component>pulse_gen</component>
+        <component>position</component>
+        <component>tpic6b595</component>
+      </internal>
+    </dependencies>
+  </artifacts>
+
+  <interfaces>
+    <interface>
+      <name>IMotor</name>
+      <kind>abstract class</kind>
+      <signature><![CDATA[
+class IMotor {
+public:
+    virtual ~IMotor() = default;
+    virtual esp_err_t init() = 0;
+    virtual esp_err_t moveAbsolute(float position, float velocity) = 0;
+    virtual esp_err_t moveRelative(float delta, float velocity) = 0;
+    virtual esp_err_t moveVelocity(float velocity) = 0;
+    virtual esp_err_t stop() = 0;
+    virtual void stopImmediate() = 0;
+    virtual float getPosition() const = 0;
+    virtual float getVelocity() const = 0;
+    virtual bool isMoving() const = 0;
+    virtual bool isEnabled() const = 0;
+    virtual esp_err_t enable(bool en) = 0;
+    virtual AxisState getState() const = 0;
+    virtual const AxisConfig& getConfig() const = 0;
+    virtual esp_err_t setConfig(const AxisConfig& config) = 0;
+    using MotionCompleteCallback = std::function<void(uint8_t axis, float position)>;
+    virtual void setMotionCompleteCallback(MotionCompleteCallback cb) = 0;
+};
+]]></signature>
+      <path>firmware/components/motor/include/i_motor.h (TO CREATE)</path>
+    </interface>
+    <interface>
+      <name>IPulseGenerator</name>
+      <kind>abstract class</kind>
+      <signature><![CDATA[
+virtual esp_err_t startMove(int32_t pulses, float max_velocity, float acceleration) = 0;
+virtual esp_err_t startVelocity(float velocity, float acceleration) = 0;
+virtual esp_err_t stop(float deceleration) = 0;
+virtual void stopImmediate() = 0;
+virtual bool isRunning() const = 0;
+virtual int64_t getPulseCount() const = 0;
+virtual float getCurrentVelocity() const = 0;
+virtual void setCompletionCallback(MotionCompleteCallback cb) = 0;
+virtual void setPositionTracker(IPositionTracker* tracker) = 0;
+]]></signature>
+      <path>firmware/components/pulse_gen/include/i_pulse_generator.h</path>
+    </interface>
+    <interface>
+      <name>IPositionTracker</name>
+      <kind>abstract class</kind>
+      <signature><![CDATA[
+virtual esp_err_t init() = 0;
+virtual esp_err_t reset(int64_t position = 0) = 0;
+virtual int64_t getPosition() const = 0;
+virtual void setDirection(bool forward) = 0;
+virtual void addPulses(int64_t count) { }
+]]></signature>
+      <path>firmware/components/position/include/i_position_tracker.h</path>
+    </interface>
+    <interface>
+      <name>ShiftRegister API</name>
+      <kind>C functions</kind>
+      <signature><![CDATA[
+esp_err_t sr_set_direction(uint8_t axis, bool forward);
+esp_err_t sr_set_enable(uint8_t axis, bool enable);
+esp_err_t sr_update(void);
+]]></signature>
+      <path>firmware/components/drivers/tpic6b595/include/tpic6b595.h</path>
+    </interface>
+  </interfaces>
+
+  <constraints>
+    <constraint type="mandatory">
+      <title>No Magic Numbers</title>
+      <description>ALL numeric values MUST come from config headers. No hardcoded values in source files. Use TIMING_*, LIMIT_*, DEFAULT_*, SR_* constants.</description>
+      <source>docs/sprint-artifacts/tech-spec-epic-3.md#MANDATORY-Architecture-Constraints</source>
+    </constraint>
+    <constraint type="mandatory">
+      <title>Pulse Count Authority</title>
+      <description>pulse_count_ is the SINGLE SOURCE OF TRUTH for position. current_position_ is DERIVED: pulse_count / pulses_per_unit. All modifications go through pulse_count_ first.</description>
+      <source>docs/sprint-artifacts/tech-spec-epic-3.md#MANDATORY-Architecture-Constraints</source>
+    </constraint>
+    <constraint type="mandatory">
+      <title>SI Units External</title>
+      <description>All external interfaces use SI units (meters, radians, seconds). Internal pulse domain uses pulses/Hz. Conversion happens ONLY in motor layer.</description>
+      <source>docs/architecture.md#Unit-Conversion</source>
+    </constraint>
+    <constraint type="pattern">
+      <title>Thread Safety</title>
+      <description>Use std::atomic for pulse_count_ (int64_t) and state_ (AxisState). ISR callbacks must not block.</description>
+      <source>docs/architecture.md#ISR-Safety</source>
+    </constraint>
+    <constraint type="pattern">
+      <title>Motion Blending</title>
+      <description>New MOVE during active motion blends to new target. Do NOT return "axis busy" error. Profile generator recalculates on-the-fly.</description>
+      <source>docs/architecture.md#Behavioral-Decisions</source>
+    </constraint>
+    <constraint type="pattern">
+      <title>Direction Setup Timing</title>
+      <description>Wait TIMING_DIR_SETUP_US (20us) after setting direction before starting pulses. Wait TIMING_ENABLE_DELAY_US (50us) after enabling before motion.</description>
+      <source>firmware/components/config/include/config_timing.h</source>
+    </constraint>
+  </constraints>
+
+  <tests>
+    <standards>
+      Tests are written using ESP-IDF Unity framework. Each component has a test/ subdirectory with test_*.cpp files. Tests use UNITY_BEGIN/UNITY_END macros. Hardware tests require actual GPIO/peripheral access. Mock tests use stub implementations for unit testing interfaces. All test values must use named constants from config headers (no magic numbers in tests either).
+    </standards>
+    <locations>
+      <location>firmware/components/motor/test/test_servo_motor.cpp (TO CREATE)</location>
+      <location>firmware/components/pulse_gen/test/test_*.cpp (reference)</location>
+      <location>firmware/components/position/test/test_position_tracker.cpp (reference)</location>
+      <location>firmware/components/control/command_executor/test_pulse_cmd.cpp (integration reference)</location>
+    </locations>
+    <ideas>
+      <idea ac="1,2">Test IMotor interface implementation - ServoMotor can be constructed and init() validates dependencies</idea>
+      <idea ac="3">Test moveAbsolute() with mock pulse generator - verify SI to pulse conversion, direction setting, startMove() call</idea>
+      <idea ac="4">Test moveRelative() delegates to moveAbsolute(current + delta)</idea>
+      <idea ac="5">Test moveVelocity() clamps to max_velocity, calls startVelocity()</idea>
+      <idea ac="6,7">Test stop() and stopImmediate() - verify state transitions</idea>
+      <idea ac="8,9">Test enable()/disable() - SR calls, timing delays, state transitions</idea>
+      <idea ac="10">Test getPosition() returns SI units from pulse_count</idea>
+      <idea ac="12">Test completion callback invocation and state transition to IDLE</idea>
+      <idea ac="13">Test mid-motion moveAbsolute() does not return error (blending)</idea>
+      <idea ac="14">Test limit validation rejects out-of-bounds positions</idea>
+      <idea ac="15">Test disabled axis rejects motion commands with ESP_ERR_INVALID_STATE</idea>
+      <idea ac="16">grep -E "[^A-Z_][0-9]{2,}" *.cpp to verify no magic numbers</idea>
+    </ideas>
+  </tests>
+</story-context>

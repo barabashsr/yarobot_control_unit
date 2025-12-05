@@ -1,3 +1,12 @@
 idf_component_register(
-    INCLUDE_DIRS "include"
+    SRCS
+        "pcnt_tracker.cpp"
+        "software_tracker.cpp"
+        "time_tracker.cpp"
+    INCLUDE_DIRS
+        "include"
+    REQUIRES
+        config
+        esp_driver_pcnt
+        esp_timer
 )

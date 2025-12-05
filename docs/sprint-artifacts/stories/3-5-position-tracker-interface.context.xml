@@ -1,0 +1,279 @@
+<story-context id="3-5-position-tracker-interface" v="1.1">
+  <metadata>
+    <epicId>3</epicId>
+    <storyId>5</storyId>
+    <title>Position Tracker Interface + Real-Time Position During Motion</title>
+    <status>ready-for-dev</status>
+    <generatedAt>2025-12-05</generatedAt>
+    <updatedAt>2025-12-05</updatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/3-5-position-tracker-interface.md</sourceStoryPath>
+    <note>Updated to include Story 3.5b: Real-Time Position Tracking During Motion</note>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>position tracking abstractions for different motor types with real-time feedback during motion</iWant>
+    <soThat>each axis can track position appropriately and position queries return accurate values at any point during movement</soThat>
+    <tasks>
+      <!-- Original Story 3.5 tasks (DONE) -->
+      <task id="1" ac="1,9" status="done">Create IPositionTracker interface header with virtual methods: init(), reset(), getPosition(), setDirection()</task>
+      <task id="2" ac="2,3,5,9" status="done">Implement PcntTracker for Y/C axes with PCNT hardware counting and overflow handling</task>
+      <task id="3" ac="4,5,6,8,9" status="done">Implement SoftwareTracker for X/Z/A/B/D axes with atomic position tracking via completion callback</task>
+      <task id="4" ac="7,8,9" status="done">Implement TimeTracker for E axis discrete actuator with binary position (0/1)</task>
+      <task id="5" ac="9" status="done">Add PCNT limits and E axis timing to config headers</task>
+      <task id="6" ac="1-9" status="done">Update position component CMakeLists.txt with sources and dependencies</task>
+      <task id="7" ac="1-9" status="done">Create unit tests for all three tracker implementations</task>
+      <task id="8" ac="9" status="done">Code review for no magic numbers</task>
+
+      <!-- Story 3.5b tasks (TODO) -->
+      <task id="b1" ac="b3" status="todo">Add setPositionTracker(IPositionTracker*) to IPulseGenerator interface</task>
+      <task id="b2" ac="b1,b4,b6" status="todo">Update RmtPulseGenerator: call addPulses() on each DMA buffer TX-done callback</task>
+      <task id="b3" ac="b2,b5,b6" status="todo">Update LedcPulseGenerator: call addPulses() periodically every TIMING_LEDC_POSITION_UPDATE_MS</task>
+      <task id="b4" ac="b8" status="todo">Add TIMING_LEDC_POSITION_UPDATE_MS to config_timing.h</task>
+      <task id="b5" ac="b3" status="todo">Update McpwmPulseGenerator: add setPositionTracker() stub (not used - PCNT is real-time)</task>
+      <task id="b6" ac="b1-b7" status="todo">Unit tests for incremental position updates during motion</task>
+      <task id="b7" ac="b1-b7" status="todo">Integration test: POS command during motion returns incrementing position</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <!-- Original Story 3.5 criteria (DONE) -->
+    <criterion id="AC1" status="done">IPositionTracker interface with unified API: init(), reset(), getPosition(), setDirection()</criterion>
+    <criterion id="AC2" status="done">PcntTracker using PCNT_UNIT_Y or PCNT_UNIT_C from config_peripherals.h for hardware pulse counting</criterion>
+    <criterion id="AC3" status="done">PCNT overflow handling via ISR extending 16-bit counter to int64_t accumulator</criterion>
+    <criterion id="AC4" status="done">SoftwareTracker receives pulse counts via IPulseGenerator completion callback</criterion>
+    <criterion id="AC5" status="done">setDirection(forward) controls increment/decrement behavior</criterion>
+    <criterion id="AC6" status="done">reset(position) sets position atomically without physical motion</criterion>
+    <criterion id="AC7" status="done">TimeTracker returns 0.0 or 1.0 for E axis based on elapsed time and known travel speed</criterion>
+    <criterion id="AC8" status="done">getPosition() thread-safe via std::atomic</criterion>
+    <criterion id="AC9" status="done">MANDATORY: No hardcoded values - all config from header files</criterion>
+
+    <!-- Story 3.5b criteria (TODO) -->
+    <criterion id="b-AC1" status="todo">RMT axis (X, Z, A, B) getPosition() reflects pulses up to last DMA buffer completion during motion</criterion>
+    <criterion id="b-AC2" status="todo">LEDC axis (D) getPosition() reflects pulses within last TIMING_LEDC_POSITION_UPDATE_MS during motion</criterion>
+    <criterion id="b-AC3" status="todo">IPulseGenerator::setPositionTracker() allows pulse gen to call addPulses() during motion</criterion>
+    <criterion id="b-AC4" status="todo">RMT TX-done callback fires addPulses(buffer_pulses) on associated SoftwareTracker</criterion>
+    <criterion id="b-AC5" status="todo">LEDC timer fires addPulses(delta) every TIMING_LEDC_POSITION_UPDATE_MS</criterion>
+    <criterion id="b-AC6" status="todo">Final pulse count accurate after motion completion (no missed pulses)</criterion>
+    <criterion id="b-AC7" status="todo">Position query latency &lt; 10ms from actual physical position</criterion>
+    <criterion id="b-AC8" status="todo">MANDATORY: TIMING_LEDC_POSITION_UPDATE_MS defined in config_timing.h</criterion>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-3.md</path>
+        <title>Epic 3 Technical Specification</title>
+        <section>APIs and Interfaces - IPulseGenerator</section>
+        <snippet>IPulseGenerator now includes setPositionTracker(IPositionTracker*) for real-time position updates. RMT updates on buffer completion, LEDC updates every TIMING_LEDC_POSITION_UPDATE_MS.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-3.md</path>
+        <title>Epic 3 Technical Specification</title>
+        <section>Real-Time Position Update Strategy</section>
+        <snippet>RMT (X,Z,A,B): DMA buffer TX-done, ~1-10ms interval. LEDC (D): esp_timer periodic, configurable. MCPWM (Y,C): N/A - PCNT real-time hardware.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Real-Time Position Tracking</section>
+        <snippet>ARCHITECTURE CONSTRAINT: Position must be queryable at any time during motion with &lt;10ms latency. Pulse generator owns tracker reference and calls addPulses() during motion.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-3.md</path>
+        <title>Epic 3 Technical Specification</title>
+        <section>MANDATORY Architecture Constraints</section>
+        <snippet>Header-Only Configuration: Every configurable value MUST be in a header file. No magic numbers. Pulse Count Authority: pulse_count_ is single source of truth for position.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/3-5-position-tracker-interface.md</path>
+        <title>Story 3.5 + 3.5b</title>
+        <section>Story 3.5b: Real-Time Position Tracking During Motion</section>
+        <snippet>Full story definition with acceptance criteria, tasks, and implementation patterns for real-time position feedback.</snippet>
+      </doc>
+    </docs>
+
+    <code>
+      <artifact>
+        <path>firmware/components/pulse_gen/include/i_pulse_generator.h</path>
+        <kind>interface</kind>
+        <symbol>IPulseGenerator</symbol>
+        <lines>30-128</lines>
+        <reason>ADD setPositionTracker(IPositionTracker*) method to interface</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/pulse_gen/rmt_pulse_gen.cpp</path>
+        <kind>implementation</kind>
+        <symbol>RmtPulseGenerator</symbol>
+        <reason>Modify TX-done callback to call position_tracker_->addPulses(buffer_pulses)</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/pulse_gen/include/rmt_pulse_gen.h</path>
+        <kind>class</kind>
+        <symbol>RmtPulseGenerator</symbol>
+        <reason>Add IPositionTracker* position_tracker_ member and setPositionTracker() method</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/pulse_gen/ledc_pulse_gen.cpp</path>
+        <kind>implementation</kind>
+        <symbol>LedcPulseGenerator</symbol>
+        <reason>Add periodic timer for position updates every TIMING_LEDC_POSITION_UPDATE_MS</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/pulse_gen/include/ledc_pulse_gen.h</path>
+        <kind>class</kind>
+        <symbol>LedcPulseGenerator</symbol>
+        <reason>Add IPositionTracker* position_tracker_ member, last_reported_pulses_, and setPositionTracker() method</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/pulse_gen/mcpwm_pulse_gen.cpp</path>
+        <kind>implementation</kind>
+        <symbol>McpwmPulseGenerator</symbol>
+        <reason>Add setPositionTracker() stub (stores but doesn't use - PCNT is hardware real-time)</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/position/include/i_position_tracker.h</path>
+        <kind>interface</kind>
+        <symbol>IPositionTracker</symbol>
+        <reason>Existing interface - no changes needed, addPulses() already in SoftwareTracker</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/position/include/software_tracker.h</path>
+        <kind>class</kind>
+        <symbol>SoftwareTracker::addPulses</symbol>
+        <reason>Existing method - will be called more frequently (per buffer, not just completion)</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/config/include/config_timing.h</path>
+        <kind>config</kind>
+        <symbol>TIMING_LEDC_POSITION_UPDATE_MS</symbol>
+        <lines>100-118</lines>
+        <reason>ALREADY ADDED: 20ms interval for LEDC position updates</reason>
+      </artifact>
+    </code>
+
+    <dependencies>
+      <esp-idf>
+        <component>esp_driver_pcnt</component>
+        <component>freertos</component>
+        <component>esp_timer</component>
+        <component>driver/rmt_tx.h</component>
+        <component>driver/ledc.h</component>
+      </esp-idf>
+      <internal>
+        <component>config</component>
+        <component>position (IPositionTracker, SoftwareTracker)</component>
+      </internal>
+    </dependencies>
+  </artifacts>
+
+  <interfaces>
+    <interface>
+      <name>IPulseGenerator::setPositionTracker</name>
+      <kind>virtual method (NEW)</kind>
+      <signature>virtual void setPositionTracker(IPositionTracker* tracker) = 0</signature>
+      <path>firmware/components/pulse_gen/include/i_pulse_generator.h</path>
+      <note>Add to interface. When set, pulse generator calls tracker->addPulses() during motion.</note>
+    </interface>
+    <interface>
+      <name>IPositionTracker</name>
+      <kind>abstract class</kind>
+      <signature>
+class IPositionTracker {
+public:
+    virtual ~IPositionTracker() = default;
+    virtual esp_err_t init() = 0;
+    virtual esp_err_t reset(int64_t position = 0) = 0;
+    virtual int64_t getPosition() const = 0;
+    virtual void setDirection(bool forward) = 0;
+};
+      </signature>
+      <path>firmware/components/position/include/i_position_tracker.h</path>
+    </interface>
+    <interface>
+      <name>SoftwareTracker::addPulses</name>
+      <kind>method</kind>
+      <signature>void addPulses(int64_t count)</signature>
+      <path>firmware/components/position/include/software_tracker.h</path>
+      <note>Existing method - will now be called more frequently during motion</note>
+    </interface>
+    <interface>
+      <name>RMT TX-done callback pattern</name>
+      <kind>callback</kind>
+      <signature>
+// In TX-done callback:
+if (position_tracker_) {
+    position_tracker_->addPulses(buffer_pulse_count);
+}
+      </signature>
+      <path>firmware/components/pulse_gen/rmt_pulse_gen.cpp</path>
+    </interface>
+    <interface>
+      <name>LEDC periodic position update pattern</name>
+      <kind>timer callback</kind>
+      <signature>
+// In periodic timer callback (every TIMING_LEDC_POSITION_UPDATE_MS):
+int64_t current = pulse_count_.load();
+int64_t delta = current - last_reported_pulses_;
+if (delta > 0 &amp;&amp; position_tracker_) {
+    position_tracker_->addPulses(delta);
+    last_reported_pulses_ = current;
+}
+      </signature>
+      <path>firmware/components/pulse_gen/ledc_pulse_gen.cpp</path>
+    </interface>
+  </interfaces>
+
+  <constraints>
+    <constraint type="mandatory">Header-Only Configuration: All values from config_peripherals.h, config_limits.h, config_timing.h. NO magic numbers.</constraint>
+    <constraint type="mandatory">Pulse Count Authority: pulse_count_ is single source of truth. Position derived as pulse_count_ / pulses_per_unit.</constraint>
+    <constraint type="mandatory">Thread Safety: All getPosition() implementations must use std::atomic for safe concurrent access.</constraint>
+    <constraint type="mandatory">Position Query Latency: Must be queryable during motion with &lt; 10ms latency from actual position.</constraint>
+    <constraint type="mandatory">TIMING_LEDC_POSITION_UPDATE_MS: LEDC position update interval must be from config_timing.h (currently 20ms).</constraint>
+    <constraint type="pattern">Atomic State Pattern: Use std::atomic&lt;int64_t&gt; for position, std::atomic&lt;bool&gt; for direction flags.</constraint>
+    <constraint type="pattern">ISR Safety: TX-done callback should only update atomics and call addPulses() - no FPU operations.</constraint>
+    <constraint type="pattern">Direction Setup: Call tracker->setDirection() BEFORE motion starts (in startMove/startVelocity).</constraint>
+    <constraint type="integration">RMT: addPulses() called per DMA buffer completion (natural hardware timing).</constraint>
+    <constraint type="integration">LEDC: addPulses() called via periodic esp_timer (TIMING_LEDC_POSITION_UPDATE_MS interval).</constraint>
+    <constraint type="integration">MCPWM: setPositionTracker() ignored - PCNT hardware provides real-time position.</constraint>
+  </constraints>
+
+  <tests>
+    <standards>
+      Unity test framework via ESP-IDF test component. Tests in firmware/components/pulse_gen/test/ and firmware/components/position/test/.
+      Use TEST_CASE macro with component tag. All test values use named constants from config headers.
+      Follow patterns from existing tests in pulse_gen/test/.
+    </standards>
+    <locations>
+      <location>firmware/components/position/test/test_position_tracker.cpp</location>
+      <location>firmware/components/pulse_gen/test/test_rmt_pulse_gen.cpp</location>
+      <location>firmware/components/pulse_gen/test/test_ledc_pulse_gen.cpp</location>
+    </locations>
+    <ideas>
+      <!-- Original 3.5 test ideas (DONE) -->
+      <idea ac="AC1" status="done">Test that all three trackers implement IPositionTracker interface correctly</idea>
+      <idea ac="AC2" status="done">Test PcntTracker init returns ESP_OK with valid PCNT unit</idea>
+      <idea ac="AC3" status="done">Test PcntTracker overflow handling by simulating ±32767 crossings</idea>
+      <idea ac="AC4" status="done">Test SoftwareTracker addPulses correctly updates position</idea>
+      <idea ac="AC5" status="done">Test setDirection affects increment/decrement behavior for all trackers</idea>
+      <idea ac="AC6" status="done">Test reset() sets position without motion for all trackers</idea>
+      <idea ac="AC7" status="done">Test TimeTracker returns 0 or 1 only, interpolates during motion</idea>
+      <idea ac="AC8" status="done">Test concurrent getPosition() calls are thread-safe</idea>
+      <idea ac="AC9" status="done">Verify no hardcoded numeric values via grep check</idea>
+
+      <!-- Story 3.5b test ideas (TODO) -->
+      <idea ac="b-AC1" status="todo">Test RMT position reflects mid-motion progress after buffer completion</idea>
+      <idea ac="b-AC2" status="todo">Test LEDC position updates within TIMING_LEDC_POSITION_UPDATE_MS of actual</idea>
+      <idea ac="b-AC3" status="todo">Test setPositionTracker() stores tracker reference correctly</idea>
+      <idea ac="b-AC4" status="todo">Test RMT TX-done callback fires addPulses() with correct buffer count</idea>
+      <idea ac="b-AC5" status="todo">Test LEDC timer callback fires addPulses() at correct interval</idea>
+      <idea ac="b-AC6" status="todo">Test final position accuracy matches total pulse count after completion</idea>
+      <idea ac="b-AC7" status="todo">Test position query latency &lt; 10ms during motion</idea>
+      <idea ac="b-AC8" status="todo">Verify TIMING_LEDC_POSITION_UPDATE_MS constant exists in config_timing.h</idea>
+      <idea ac="b-AC4,b-AC5" status="todo">Test direction handling (forward and reverse motion) with incremental updates</idea>
+      <idea ac="integration" status="todo">Test POS X command during RMT motion returns incrementing position</idea>
+      <idea ac="integration" status="todo">Test POS D command during LEDC motion returns incrementing position</idea>
+    </ideas>
+  </tests>
+</story-context>

@@ -469,6 +469,7 @@ set(CMAKE_MAKEFILE_PRODUCTS
   "esp-idf/yarobot_hal/CMakeFiles/CMakeDirectoryInformation.cmake"
   "esp-idf/test_utils/CMakeFiles/CMakeDirectoryInformation.cmake"
   "esp-idf/tpic6b595/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "esp-idf/position/CMakeFiles/CMakeDirectoryInformation.cmake"
   "esp-idf/pulse_gen/CMakeFiles/CMakeDirectoryInformation.cmake"
   "esp-idf/control/CMakeFiles/CMakeDirectoryInformation.cmake"
   "esp-idf/espressif__cmake_utilities/CMakeFiles/CMakeDirectoryInformation.cmake"
@@ -482,7 +483,6 @@ set(CMAKE_MAKEFILE_PRODUCTS
   "esp-idf/events/CMakeFiles/CMakeDirectoryInformation.cmake"
   "esp-idf/interface/CMakeFiles/CMakeDirectoryInformation.cmake"
   "esp-idf/motor/CMakeFiles/CMakeDirectoryInformation.cmake"
-  "esp-idf/position/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
@@ -631,6 +631,7 @@ set(CMAKE_DEPEND_INFO_FILES
   "esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/DependInfo.cmake"
   "esp-idf/test_utils/CMakeFiles/__idf_test_utils.dir/DependInfo.cmake"
   "esp-idf/tpic6b595/CMakeFiles/__idf_tpic6b595.dir/DependInfo.cmake"
+  "esp-idf/position/CMakeFiles/__idf_position.dir/DependInfo.cmake"
   "esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/DependInfo.cmake"
   "esp-idf/control/CMakeFiles/__idf_control.dir/DependInfo.cmake"
   "esp-idf/espressif__i2c_bus/CMakeFiles/__idf_espressif__i2c_bus.dir/DependInfo.cmake"

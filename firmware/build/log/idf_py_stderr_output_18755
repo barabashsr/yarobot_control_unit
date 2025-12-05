@@ -1,0 +1,26 @@
+CMake Deprecation Warning at /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/mbedtls/mbedtls/CMakeLists.txt:21 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/ledc_pulse_gen.cpp: In member function 'void LedcPulseGenerator::handlePositionUpdate()':
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/ledc_pulse_gen.cpp:587:28: error: 'class IPositionTracker' has no member named 'addPulses'
+  587 |         position_tracker_->addPulses(delta);
+      |                            ^~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/rmt_pulse_gen.cpp: In member function 'bool RmtPulseGenerator::handleTxDoneISR()':
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/rmt_pulse_gen.cpp:683:28: error: 'class IPositionTracker' has no member named 'addPulses'
+  683 |         position_tracker_->addPulses(static_cast<int64_t>(completed_symbols));
+      |                            ^~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/ledc_pulse_gen.cpp: In member function 'void LedcPulseGenerator::stopPulseOutput()':
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/ledc_pulse_gen.cpp:783:32: error: 'class IPositionTracker' has no member named 'addPulses'
+  783 |             position_tracker_->addPulses(delta);
+      |                                ^~~~~~~~~
+make[2]: *** [esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/ledc_pulse_gen.cpp.obj] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[2]: *** [esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/rmt_pulse_gen.cpp.obj] Error 1
+make[1]: *** [esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/all] Error 2
+make: *** [all] Error 2

@@ -317,6 +317,7 @@ esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/test_pulse_cmd.cpp
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_system/include/esp_ipc.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_system/include/esp_private/crosscore_int.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_system/include/esp_system.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_timer/include/esp_timer.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/FreeRTOS.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/deprecated_definitions.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/event_groups.h \
@@ -389,10 +390,16 @@ esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/test_pulse_cmd.cpp
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_gpio.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_limits.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_peripherals.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_timing.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/include/command_executor.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/interface/command_parser/include/command_parser.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/interface/command_parser/include/response_formatter.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/position/include/i_position_tracker.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/position/include/pcnt_tracker.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/position/include/software_tracker.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/position/include/time_tracker.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/include/i_pulse_generator.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/include/ledc_pulse_gen.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/include/mcpwm_pulse_gen.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/include/rmt_pulse_gen.h
 
@@ -554,6 +561,12 @@ esp-idf/control/CMakeFiles/__idf_control.dir/tasks/task_stubs.c.obj: /Users/serg
 
 /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/include/mcpwm_pulse_gen.h:
 
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/include/ledc_pulse_gen.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/position/include/time_tracker.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/position/include/software_tracker.h:
+
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/sys/unistd.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/sys/select.h:
@@ -621,6 +634,8 @@ esp-idf/control/CMakeFiles/__idf_control.dir/tasks/task_stubs.c.obj: /Users/serg
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/xtensa-esp-elf/esp32s3/no-rtti/bits/c++allocator.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/ext/numeric_traits.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/position/include/pcnt_tracker.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_mcpwm/include/driver/mcpwm_timer.h:
 
@@ -825,6 +840,8 @@ config/sdkconfig.h:
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/node_handle.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/esp32s3/include/xtensa/config/core.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/position/include/i_position_tracker.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/exception.h:
 

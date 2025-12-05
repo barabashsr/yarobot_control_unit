@@ -1111,6 +1111,30 @@ public:
 - E axis: binary state, time-based position interpolation
 - All positions stored as int64_t pulses, converted to user units via config
 
+**Implementation Notes (DONE):**
+- **IPositionTracker Interface**: Created header-only abstract interface with `init()`, `reset(int64_t)`, `getPosition()`, `setDirection(bool)` methods.
+- **PcntTracker (Y, C)**: Hardware PCNT-based position tracking. Uses ESP-IDF 5.x PCNT API with watch points at ±32767 for overflow detection. Overflow ISR extends 16-bit counter to int64_t via atomic accumulator.
+- **SoftwareTracker (X, Z, A, B, D)**: Atomic-based position tracking. Receives pulse counts via `addPulses()` method for pulse generator callbacks. Uses `std::atomic<int64_t>` for thread-safe position.
+- **TimeTracker (E)**: Time-based binary position tracking for discrete actuator. Returns 0 (retracted) or 1 (extended). Position interpolated during motion based on `TIMING_E_AXIS_TRAVEL_MS`.
+- **Config Constants**: `LIMIT_PCNT_HIGH_LIMIT` (32767), `LIMIT_PCNT_LOW_LIMIT` (-32767) in config_limits.h; `TIMING_E_AXIS_TRAVEL_MS` (1000) in config_timing.h.
+
+**Story 3.5b - Real-Time Position During Motion (DONE):**
+
+Added real-time position feedback so `getPosition()` returns accurate values during motion, not just after completion:
+
+| Axis | Peripheral | Tracker Type | Update Method | Update Frequency |
+|------|------------|--------------|---------------|------------------|
+| X, Z, A, B | RMT | SoftwareTracker | ISR callback on DMA buffer completion | Every ~1ms (512 symbols) |
+| Y, C | MCPWM | PcntTracker | Hardware PCNT counts pulses directly | Real-time (hardware) |
+| D | LEDC | SoftwareTracker | Time-based accumulation in profile timer | Every 1ms, reported every 20ms |
+| E | Discrete | TimeTracker | Time interpolation from motion start | On query |
+
+**Key Implementation Details:**
+- **RMT**: `handleTxDoneISR()` calls `position_tracker_->addPulses(completed_symbols)` after each DMA buffer completes
+- **LEDC**: Profile timer (1ms) accumulates pulses via `velocity * time`, position timer (20ms) reports delta to tracker. Original software timer approach failed due to timer restart conflicts.
+- **IPulseGenerator**: Added `setPositionTracker(IPositionTracker* tracker)` method to interface
+- **Config**: Added `TIMING_LEDC_POSITION_UPDATE_MS = 20` to config_timing.h
+
 ---
 
 ### Story 3.6: Motor Base Class & Servo Motor

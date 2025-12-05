@@ -53,6 +53,8 @@ RmtPulseGenerator::RmtPulseGenerator(int channel_id, int gpio_num, uint32_t reso
     , task_should_exit_(false)
     , completion_callback_(nullptr)
     , callback_mutex_(nullptr)
+    , position_tracker_(nullptr)
+    , last_reported_pulses_(0)
 {
     callback_mutex_ = xSemaphoreCreateMutex();
 }
@@ -210,7 +212,9 @@ void RmtPulseGenerator::handleRefillRequest()
 {
     ProfileState current = state_.load(std::memory_order_acquire);
     if (current == ProfileState::IDLE) {
-        return;  // Motion already stopped
+        // Motion just completed - notify callback
+        notifyCompletion();
+        return;
     }
 
     // Get the next buffer to fill
@@ -222,7 +226,8 @@ void RmtPulseGenerator::handleRefillRequest()
     symbols_in_next_buffer_.store(new_symbols, std::memory_order_release);
 
     if (new_symbols == 0) {
-        // Motion complete - state transition handled in ISR
+        // Motion complete - ISR will set state to IDLE and signal us again
+        // We'll call notifyCompletion() when we see IDLE state
         return;
     }
 
@@ -280,6 +285,12 @@ esp_err_t RmtPulseGenerator::startMove(int32_t pulses, float max_velocity, float
     current_velocity_.store(0.0f, std::memory_order_relaxed);
     profile_.current_pulse = 0;
     profile_.current_velocity = 0.0f;
+    last_reported_pulses_ = 0;
+
+    // Set direction on position tracker before motion
+    if (position_tracker_) {
+        position_tracker_->setDirection(direction_);
+    }
 
     // Prime both buffers
     primeBuffers();
@@ -346,6 +357,12 @@ esp_err_t RmtPulseGenerator::startVelocity(float velocity, float acceleration)
     current_velocity_.store(0.0f, std::memory_order_relaxed);
     profile_.current_pulse = 0;
     profile_.current_velocity = 0.0f;
+    last_reported_pulses_ = 0;
+
+    // Set direction on position tracker before motion
+    if (position_tracker_) {
+        position_tracker_->setDirection(direction_);
+    }
 
     // Prime buffers
     primeBuffers();
@@ -455,6 +472,11 @@ void RmtPulseGenerator::setCompletionCallback(MotionCompleteCallback cb)
         completion_callback_ = cb;
         xSemaphoreGive(callback_mutex_);
     }
+}
+
+void RmtPulseGenerator::setPositionTracker(IPositionTracker* tracker)
+{
+    position_tracker_ = tracker;
 }
 
 // ============================================================================
@@ -654,6 +676,12 @@ bool RmtPulseGenerator::handleTxDoneISR()
     size_t completed_symbols = symbols_in_current_buffer_.load(std::memory_order_relaxed);
     pulse_count_.fetch_add(completed_symbols, std::memory_order_relaxed);
     current_velocity_.store(profile_.current_velocity, std::memory_order_relaxed);
+
+    // Update position tracker with buffer pulses (real-time position update)
+    // Note: addPulses() only uses atomics, safe for ISR context
+    if (position_tracker_ && completed_symbols > 0) {
+        position_tracker_->addPulses(static_cast<int64_t>(completed_symbols));
+    }
 
     // Swap buffers
     bool was_buffer_a = use_buffer_a_.load(std::memory_order_relaxed);

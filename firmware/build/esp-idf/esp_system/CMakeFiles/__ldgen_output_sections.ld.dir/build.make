@@ -216,6 +216,7 @@ esp-idf/esp_system/ld/sections.ld: esp-idf/event_manager/libevent_manager.a
 esp-idf/esp_system/ld/sections.ld: esp-idf/yarobot_hal/libyarobot_hal.a
 esp-idf/esp_system/ld/sections.ld: esp-idf/test_utils/libtest_utils.a
 esp-idf/esp_system/ld/sections.ld: esp-idf/tpic6b595/libtpic6b595.a
+esp-idf/esp_system/ld/sections.ld: esp-idf/position/libposition.a
 esp-idf/esp_system/ld/sections.ld: esp-idf/pulse_gen/libpulse_gen.a
 esp-idf/esp_system/ld/sections.ld: esp-idf/control/libcontrol.a
 esp-idf/esp_system/ld/sections.ld: esp-idf/espressif__i2c_bus/libespressif__i2c_bus.a

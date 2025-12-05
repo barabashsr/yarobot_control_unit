@@ -19,6 +19,7 @@
 #define RMT_PULSE_GEN_H
 
 #include "i_pulse_generator.h"
+#include "i_position_tracker.h"
 #include "config_limits.h"
 #include "driver/rmt_tx.h"
 #include "driver/rmt_encoder.h"
@@ -103,6 +104,7 @@ public:
     int64_t getPulseCount() const override;
     float getCurrentVelocity() const override;
     void setCompletionCallback(MotionCompleteCallback cb) override;
+    void setPositionTracker(IPositionTracker* tracker) override;
 
     /**
      * @brief Get the channel ID
@@ -146,6 +148,10 @@ private:
     // Callback
     MotionCompleteCallback completion_callback_;
     SemaphoreHandle_t callback_mutex_;
+
+    // Position tracker for real-time position updates
+    IPositionTracker* position_tracker_;
+    int64_t last_reported_pulses_;  ///< Tracks pulses reported to position tracker
 
     // Profile calculation
     void calculateTrapezoidalProfile(int32_t pulses, float max_vel, float accel);

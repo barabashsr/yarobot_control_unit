@@ -68,6 +68,7 @@ McpwmPulseGenerator::McpwmPulseGenerator(int timer_id, int gpio_num, int pcnt_un
     , task_should_exit_(false)
     , completion_callback_(nullptr)
     , callback_mutex_(nullptr)
+    , position_tracker_(nullptr)
 {
     callback_mutex_ = xSemaphoreCreateMutex();
 }
@@ -693,6 +694,15 @@ void McpwmPulseGenerator::setCompletionCallback(MotionCompleteCallback cb)
         completion_callback_ = cb;
         xSemaphoreGive(callback_mutex_);
     }
+}
+
+void McpwmPulseGenerator::setPositionTracker(IPositionTracker* tracker)
+{
+    // Store but don't use - MCPWM axes (Y, C) use PcntTracker which
+    // provides real-time position directly via hardware PCNT.
+    // This stub exists for interface compliance.
+    position_tracker_ = tracker;
+    (void)position_tracker_;  // Suppress unused warning
 }
 
 // ============================================================================

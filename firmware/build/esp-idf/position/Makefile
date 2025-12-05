@@ -161,6 +161,92 @@ depend:
 	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
+# Convenience name for target.
+esp-idf/position/CMakeFiles/__idf_position.dir/rule:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 esp-idf/position/CMakeFiles/__idf_position.dir/rule
+.PHONY : esp-idf/position/CMakeFiles/__idf_position.dir/rule
+
+# Convenience name for target.
+__idf_position: esp-idf/position/CMakeFiles/__idf_position.dir/rule
+.PHONY : __idf_position
+
+# fast build rule for target.
+__idf_position/fast:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/position/CMakeFiles/__idf_position.dir/build.make esp-idf/position/CMakeFiles/__idf_position.dir/build
+.PHONY : __idf_position/fast
+
+pcnt_tracker.obj: pcnt_tracker.cpp.obj
+.PHONY : pcnt_tracker.obj
+
+# target to build an object file
+pcnt_tracker.cpp.obj:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/position/CMakeFiles/__idf_position.dir/build.make esp-idf/position/CMakeFiles/__idf_position.dir/pcnt_tracker.cpp.obj
+.PHONY : pcnt_tracker.cpp.obj
+
+pcnt_tracker.i: pcnt_tracker.cpp.i
+.PHONY : pcnt_tracker.i
+
+# target to preprocess a source file
+pcnt_tracker.cpp.i:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/position/CMakeFiles/__idf_position.dir/build.make esp-idf/position/CMakeFiles/__idf_position.dir/pcnt_tracker.cpp.i
+.PHONY : pcnt_tracker.cpp.i
+
+pcnt_tracker.s: pcnt_tracker.cpp.s
+.PHONY : pcnt_tracker.s
+
+# target to generate assembly for a file
+pcnt_tracker.cpp.s:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/position/CMakeFiles/__idf_position.dir/build.make esp-idf/position/CMakeFiles/__idf_position.dir/pcnt_tracker.cpp.s
+.PHONY : pcnt_tracker.cpp.s
+
+software_tracker.obj: software_tracker.cpp.obj
+.PHONY : software_tracker.obj
+
+# target to build an object file
+software_tracker.cpp.obj:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/position/CMakeFiles/__idf_position.dir/build.make esp-idf/position/CMakeFiles/__idf_position.dir/software_tracker.cpp.obj
+.PHONY : software_tracker.cpp.obj
+
+software_tracker.i: software_tracker.cpp.i
+.PHONY : software_tracker.i
+
+# target to preprocess a source file
+software_tracker.cpp.i:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/position/CMakeFiles/__idf_position.dir/build.make esp-idf/position/CMakeFiles/__idf_position.dir/software_tracker.cpp.i
+.PHONY : software_tracker.cpp.i
+
+software_tracker.s: software_tracker.cpp.s
+.PHONY : software_tracker.s
+
+# target to generate assembly for a file
+software_tracker.cpp.s:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/position/CMakeFiles/__idf_position.dir/build.make esp-idf/position/CMakeFiles/__idf_position.dir/software_tracker.cpp.s
+.PHONY : software_tracker.cpp.s
+
+time_tracker.obj: time_tracker.cpp.obj
+.PHONY : time_tracker.obj
+
+# target to build an object file
+time_tracker.cpp.obj:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/position/CMakeFiles/__idf_position.dir/build.make esp-idf/position/CMakeFiles/__idf_position.dir/time_tracker.cpp.obj
+.PHONY : time_tracker.cpp.obj
+
+time_tracker.i: time_tracker.cpp.i
+.PHONY : time_tracker.i
+
+# target to preprocess a source file
+time_tracker.cpp.i:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/position/CMakeFiles/__idf_position.dir/build.make esp-idf/position/CMakeFiles/__idf_position.dir/time_tracker.cpp.i
+.PHONY : time_tracker.cpp.i
+
+time_tracker.s: time_tracker.cpp.s
+.PHONY : time_tracker.s
+
+# target to generate assembly for a file
+time_tracker.cpp.s:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/position/CMakeFiles/__idf_position.dir/build.make esp-idf/position/CMakeFiles/__idf_position.dir/time_tracker.cpp.s
+.PHONY : time_tracker.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -173,6 +259,16 @@ help:
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
+	@echo "... __idf_position"
+	@echo "... pcnt_tracker.obj"
+	@echo "... pcnt_tracker.i"
+	@echo "... pcnt_tracker.s"
+	@echo "... software_tracker.obj"
+	@echo "... software_tracker.i"
+	@echo "... software_tracker.s"
+	@echo "... time_tracker.obj"
+	@echo "... time_tracker.i"
+	@echo "... time_tracker.s"
 .PHONY : help
 
 

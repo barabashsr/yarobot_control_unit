@@ -146,8 +146,8 @@ yarobot_control_unit/
     │   │   │   ├── i_pulse_generator.h   # IPulseGenerator interface
     │   │   │   └── rmt_pulse_gen.h       # RMT implementation header
     │   │   ├── rmt_pulse_gen.cpp     # RMT+DMA implementation (X,Z,A,B)
-    │   │   ├── mcpwm_pulse_gen.cpp   # MCPWM implementation (Y,C) [PLANNED]
-    │   │   ├── ledc_pulse_gen.cpp    # LEDC implementation (D) [PLANNED]
+    │   │   ├── mcpwm_pulse_gen.cpp   # MCPWM implementation (Y,C) [DONE]
+    │   │   ├── ledc_pulse_gen.cpp    # LEDC implementation (D) [DONE]
     │   │   └── test/
     │   │       └── test_rmt_pulse_gen.cpp  # Unit tests
     │   │
@@ -562,7 +562,9 @@ Add to `config_limits.h`:
 #define LIMIT_RMT_BUFFER_SYMBOLS    512     // Symbols per buffer (×2 for double)
 #define LIMIT_RMT_BUFFER_COUNT      2       // Always 2 for double-buffering
 #define LIMIT_MCPWM_BUFFER_PULSES   256     // MCPWM pulse batch size
-#define LIMIT_LEDC_BUFFER_PULSES    128     // LEDC pulse batch size
+// NOTE: LEDC uses software pulse counting via esp_timer, not buffer-based counting
+#define LIMIT_LEDC_MIN_FREQ_HZ      100     // LEDC minimum frequency (Hz)
+#define LIMIT_LEDC_MAX_FREQ_HZ      75000   // LEDC maximum frequency (Hz) at 10-bit resolution
 
 // Timing constraints
 #define LIMIT_MIN_PULSE_PERIOD_NS   500     // 2MHz max pulse rate
@@ -599,6 +601,89 @@ Add to `config_limits.h`:
 5. DRAINING: Decel ramp completes
 6. TX-done: Motion stopped, fire callback
 ```
+
+### Real-Time Position Tracking [IMPLEMENTED: Story 3.5/3.5b]
+
+> **⚠️ ARCHITECTURE CONSTRAINT - POSITION ALWAYS QUERYABLE**
+>
+> Position must be queryable at any time during motion with < 10ms latency.
+> This is achieved differently per peripheral type:
+>
+> - **PCNT (Y, C)**: Hardware counts every pulse - always real-time
+> - **RMT (X, Z, A, B)**: SoftwareTracker updated on each DMA buffer completion (~1ms at typical speeds)
+> - **LEDC (D)**: SoftwareTracker updated via time-based accumulation (1ms profile timer + 20ms position timer)
+> - **Time-based (E)**: TimeTracker interpolates binary position (0/1) based on elapsed time
+
+**Position Update Architecture:**
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                     Position Tracking Flow [IMPLEMENTED]            │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│   RMT Axes (X, Z, A, B):                                           │
+│   ┌──────────────┐    TX-done ISR    ┌──────────────┐              │
+│   │ RMT DMA      │ ────────────────► │ Software     │              │
+│   │ Buffer Done  │   addPulses(N)    │ Tracker      │              │
+│   │ (~512 sym)   │   (ISR-safe)      │ (atomic)     │              │
+│   └──────────────┘                   └──────────────┘              │
+│                                                                     │
+│   LEDC Axis (D):                                                   │
+│   ┌──────────────┐    Profile Timer  ┌──────────────┐              │
+│   │ Time-based   │ ────────────────► │ accumulated  │              │
+│   │ Accumulation │   pulses += v*dt  │ _pulses_     │              │
+│   └──────────────┘        │          └──────────────┘              │
+│                           ▼                                         │
+│   ┌──────────────┐    Position Timer ┌──────────────┐              │
+│   │ esp_timer    │ ────────────────► │ Software     │              │
+│   │ (20ms)       │   addPulses(Δ)    │ Tracker      │              │
+│   └──────────────┘                   └──────────────┘              │
+│                                                                     │
+│   MCPWM Axes (Y, C):                                               │
+│   ┌──────────────┐    Hardware       ┌──────────────┐              │
+│   │ PCNT Unit    │ ────────────────► │ PCNT         │              │
+│   │ (overflow    │   Every pulse     │ Tracker      │              │
+│   │  ISR ±32767) │                   │ (int64 acc)  │              │
+│   └──────────────┘                   └──────────────┘              │
+│                                                                     │
+│   E Axis (Discrete):                                               │
+│   ┌──────────────┐    Time elapsed   ┌──────────────┐              │
+│   │ startMotion()│ ────────────────► │ Time         │              │
+│   │ timestamp    │   interpolate     │ Tracker      │              │
+│   └──────────────┘   (0.0 or 1.0)    └──────────────┘              │
+│                                                                     │
+│   Query Path (all axes):                                           │
+│   ┌──────────────┐                   ┌──────────────┐              │
+│   │ POS X        │ ────────────────► │ tracker->    │ ──► Position │
+│   │ Command      │   getPosition()   │ getPosition()│              │
+│   └──────────────┘                   └──────────────┘              │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+**Pulse Generator Position Tracker Integration:**
+
+The `IPulseGenerator` interface includes `setPositionTracker(IPositionTracker*)` method. When a tracker is set:
+
+| Implementation | Update Trigger | Update Method | Typical Latency |
+|----------------|----------------|---------------|-----------------|
+| **RmtPulseGenerator** | TX-done ISR (each buffer) | `addPulses(completed_symbols)` in `handleTxDoneISR()` | ~1ms (512 symbols) |
+| **LedcPulseGenerator** | Profile timer (1ms) + Position timer (20ms) | Time-based: `pulses = velocity * interval_time` | 20ms max |
+| **McpwmPulseGenerator** | N/A | Stores pointer but doesn't use it (PCNT handles tracking) | Real-time |
+
+**LEDC Position Tracking Details (Story 3.5b):**
+- Original approach using `pulse_timer_` at LEDC frequency failed - profile timer (1ms) kept restarting pulse timer
+- Working solution: profile timer accumulates `velocity * dt` every 1ms, position timer (20ms) reports delta to tracker
+- Provides reasonable accuracy; exact pulse count would require hardware PCNT (not available for D axis)
+
+**Position Tracker Implementations:**
+
+| Tracker | Axes | Data Type | Thread Safety | Overflow Handling |
+|---------|------|-----------|---------------|-------------------|
+| `PcntTracker` | Y, C | `std::atomic<int64_t>` | ISR-safe atomics | Watch points at ±32767, ISR accumulator |
+| `SoftwareTracker` | X, Z, A, B, D | `std::atomic<int64_t>` | ISR-safe atomics | 64-bit, no overflow |
+| `TimeTracker` | E | `std::atomic<int64_t>` | Atomic position | Binary (0 or 1) only |
+
+This ensures position is always queryable during motion, with maximum latency determined by buffer size (RMT) or timer interval (LEDC).
 
 ### SI Units Convention (ROS2 Compatible)
 
@@ -2013,7 +2098,7 @@ static void IRAM_ATTR stop_axis_pulse_generation(uint8_t axis) {
         case 3: RMT.conf_ch[RMT_CHANNEL_A].conf1.tx_start = 0; break;  // A
         case 4: RMT.conf_ch[RMT_CHANNEL_B].conf1.tx_start = 0; break;  // B
         case 5: MCPWM0.timer[MCPWM_TIMER_C].mode.start = 0; break;     // C
-        case 6: ledc_stop(LEDC_MODE, LEDC_CHANNEL_D, 0); break;        // D
+        case 6: ledc_stop(LEDC_MODE_D, LEDC_CHANNEL_D, 0); break;       // D
         // E-axis is discrete, no pulse generation
     }
 }
@@ -2397,7 +2482,7 @@ components/config/include/
 │   │
 │   ├── Stepper Axes (no Z-signal)
 │   │   ├── GPIO_C_STEP               # J1-9 (MCPWM T1)
-│   │   └── GPIO_D_STEP               # J1-10 (LEDC CH0)
+│   │   └── GPIO_D_STEP               # J1-10 (LEDC CH2 via LEDC_TIMER_2)
 │   │
 │   ├── E Axis                        # Discrete - DIR/EN/BRAKE/ALARM_CLR via shift register (bits 28-31)
 │   │
@@ -2447,9 +2532,11 @@ components/config/include/
 │   │   └── PCNT_UNIT_C               # 1
 │   │
 │   ├── LEDC
-│   │   ├── LEDC_TIMER                # LEDC_TIMER_0
-│   │   ├── LEDC_CHANNEL_D            # LEDC_CHANNEL_0
-│   │   └── LEDC_MODE                 # LEDC_LOW_SPEED_MODE
+│   │   ├── LEDC_TIMER_D              # LEDC_TIMER_2 (uses timer 2 to avoid conflicts)
+│   │   ├── LEDC_CHANNEL_D            # LEDC_CHANNEL_2 (uses channel 2 to avoid conflicts)
+│   │   ├── LEDC_MODE_D               # LEDC_LOW_SPEED_MODE
+│   │   ├── LEDC_RESOLUTION_BITS      # 10 (1024 duty levels)
+│   │   └── LEDC_DUTY_CYCLE_PERCENT   # 50
 │   │
 │   └── SPI
 │       └── SPI_HOST_SR               # SPI2_HOST
@@ -2716,7 +2803,7 @@ components/config/include/
 
 // Stepper axes (C, D) - no Z-signal
 #define GPIO_C_STEP         GPIO_NUM_16     // C-axis stepper (MCPWM T1) - J1-9
-#define GPIO_D_STEP         GPIO_NUM_17     // D-axis stepper (LEDC CH0) - J1-10
+#define GPIO_D_STEP         GPIO_NUM_17     // D-axis stepper (LEDC CH2) - J1-10
 
 // E-axis: DIR/EN via shift register (bits 21-22), no STEP GPIO needed (discrete actuator)
 
@@ -2818,10 +2905,13 @@ components/config/include/
 
 // ============================================================================
 // LEDC ASSIGNMENTS
+// NOTE: Timer 2 and Channel 2 used to avoid conflicts with other peripherals
 // ============================================================================
-#define LEDC_TIMER          LEDC_TIMER_0
-#define LEDC_CHANNEL_D      LEDC_CHANNEL_0  // D-axis LEDC channel
-#define LEDC_MODE           LEDC_LOW_SPEED_MODE
+#define LEDC_TIMER_D        LEDC_TIMER_2    // D-axis LEDC timer (avoids conflicts)
+#define LEDC_CHANNEL_D      LEDC_CHANNEL_2  // D-axis LEDC channel (avoids conflicts)
+#define LEDC_MODE_D         LEDC_LOW_SPEED_MODE
+#define LEDC_RESOLUTION_BITS    10          // 1024 duty levels
+#define LEDC_DUTY_CYCLE_PERCENT 50          // 50% duty cycle for step pulses
 
 // ============================================================================
 // SPI ASSIGNMENTS
