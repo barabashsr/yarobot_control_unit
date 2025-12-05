@@ -1,12 +1,13 @@
 /**
  * @file ledc_pulse_gen.cpp
- * @brief LEDC-based pulse generator implementation with software pulse counting
+ * @brief LEDC-based pulse generator implementation with hardware PCNT position tracking
  * @author YaRobot Team
  * @date 2025
  *
  * Architecture:
  * - LEDC generates variable-frequency PWM for trapezoidal motion profile
- * - esp_timer counts pulses via periodic callback (matches LEDC frequency)
+ * - GPIO configured as INPUT_OUTPUT for internal loopback to PCNT
+ * - PcntTracker (PCNT_UNIT_D) counts actual pulses via hardware
  * - Profile update timer adjusts LEDC frequency during motion
  * - Completion callback deferred to task context via FreeRTOS notification
  */
@@ -50,11 +51,9 @@ LedcPulseGenerator::LedcPulseGenerator(int gpio_num, ledc_timer_t timer, ledc_ch
     , last_direction_(true)
     , start_time_us_(0)
     , current_velocity_(0.0f)
-    , accumulated_pulses_(0.0)
+    , pulse_count_(0)
     , profile_timer_(nullptr)
-    , position_timer_(nullptr)
     , position_tracker_(nullptr)
-    , last_reported_pulses_(0)
     , completion_task_handle_(nullptr)
     , task_should_exit_(false)
     , completion_callback_(nullptr)
@@ -83,11 +82,6 @@ LedcPulseGenerator::~LedcPulseGenerator()
             esp_timer_delete(profile_timer_);
             profile_timer_ = nullptr;
         }
-        if (position_timer_) {
-            esp_timer_stop(position_timer_);
-            esp_timer_delete(position_timer_);
-            position_timer_ = nullptr;
-        }
 
         // Stop LEDC
         ledc_stop(LEDC_MODE_D, channel_, 0);
@@ -113,6 +107,25 @@ esp_err_t LedcPulseGenerator::init()
              timer_, channel_, gpio_num_);
 
     // =========================================================================
+    // GPIO Configuration for PCNT Internal Loopback
+    // =========================================================================
+    // Configure GPIO as both output (for LEDC) and input (for PCNT) to enable
+    // internal loopback. This allows PCNT to count pulses without external wiring.
+    gpio_config_t gpio_conf = {};
+    gpio_conf.pin_bit_mask = (1ULL << gpio_num_);
+    gpio_conf.mode = GPIO_MODE_INPUT_OUTPUT;  // Enable internal loopback
+    gpio_conf.pull_up_en = GPIO_PULLUP_DISABLE;
+    gpio_conf.pull_down_en = GPIO_PULLDOWN_DISABLE;
+    gpio_conf.intr_type = GPIO_INTR_DISABLE;
+
+    esp_err_t ret = gpio_config(&gpio_conf);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to configure GPIO for loopback: %s", esp_err_to_name(ret));
+        return ret;
+    }
+    ESP_LOGI(TAG, "Configured GPIO %d for PCNT internal loopback", gpio_num_);
+
+    // =========================================================================
     // LEDC Timer Configuration
     // =========================================================================
     ledc_timer_config_t timer_config = {};
@@ -122,7 +135,7 @@ esp_err_t LedcPulseGenerator::init()
     timer_config.freq_hz = LIMIT_LEDC_MIN_FREQ_HZ;  // Start at LEDC minimum frequency
     timer_config.clk_cfg = LEDC_AUTO_CLK;
 
-    esp_err_t ret = ledc_timer_config(&timer_config);
+    ret = ledc_timer_config(&timer_config);
     if (ret != ESP_OK) {
         ESP_LOGE(TAG, "Failed to configure LEDC timer: %s", esp_err_to_name(ret));
         return ret;
@@ -162,23 +175,6 @@ esp_err_t LedcPulseGenerator::init()
     }
 
     // =========================================================================
-    // Position Update Timer (esp_timer) - for real-time position tracking
-    // =========================================================================
-    esp_timer_create_args_t position_timer_args = {};
-    position_timer_args.callback = positionTimerCallback;
-    position_timer_args.arg = this;
-    position_timer_args.dispatch_method = ESP_TIMER_TASK;
-    position_timer_args.name = "ledc_position";
-
-    ret = esp_timer_create(&position_timer_args, &position_timer_);
-    if (ret != ESP_OK) {
-        ESP_LOGE(TAG, "Failed to create position timer: %s", esp_err_to_name(ret));
-        esp_timer_delete(profile_timer_);
-        profile_timer_ = nullptr;
-        return ret;
-    }
-
-    // =========================================================================
     // Create Completion Handler Task
     // =========================================================================
     char task_name[24];
@@ -195,9 +191,7 @@ esp_err_t LedcPulseGenerator::init()
     if (xret != pdPASS) {
         ESP_LOGE(TAG, "Failed to create completion task");
         esp_timer_delete(profile_timer_);
-        esp_timer_delete(position_timer_);
         profile_timer_ = nullptr;
-        position_timer_ = nullptr;
         return ESP_ERR_NO_MEM;
     }
 
@@ -253,18 +247,16 @@ void LedcPulseGenerator::handleProfileUpdate()
         return;
     }
 
-    // Get current velocity and accumulate pulses based on time elapsed
+    // Get current velocity and estimate pulses based on time elapsed for profile control
     // Profile timer runs every PROFILE_UPDATE_INTERVAL_US (1ms)
+    // Note: Actual position tracking is done by hardware PCNT via internal loopback
     float velocity = current_velocity_.load(std::memory_order_relaxed);
 
-    // Calculate pulses generated in this interval: pulses = freq * time
+    // Calculate estimated pulses generated in this interval: pulses = freq * time
     // time = PROFILE_UPDATE_INTERVAL_US / 1000000.0 seconds
-    double pulses_this_interval = velocity * (PROFILE_UPDATE_INTERVAL_US / 1000000.0);
-    double current_accumulated = accumulated_pulses_.load(std::memory_order_relaxed);
-    current_accumulated += pulses_this_interval;
-    accumulated_pulses_.store(current_accumulated, std::memory_order_relaxed);
-
-    int64_t current_count = static_cast<int64_t>(current_accumulated);
+    // This is used for profile control (when to start decel, when to stop), not position tracking
+    int64_t pulses_this_interval = static_cast<int64_t>(velocity * (PROFILE_UPDATE_INTERVAL_US / 1000000.0));
+    int64_t current_count = pulse_count_.fetch_add(pulses_this_interval, std::memory_order_relaxed) + pulses_this_interval;
     profile_.current_pulse = current_count;
 
     // Check for completion in position mode
@@ -363,14 +355,13 @@ esp_err_t LedcPulseGenerator::startMove(int32_t pulses, float max_velocity, floa
     calculateTrapezoidalProfile(abs_pulses, max_velocity, acceleration);
 
     // Reset counters - start with minimum frequency (will ramp up)
-    accumulated_pulses_.store(0.0, std::memory_order_relaxed);
+    pulse_count_.store(0, std::memory_order_relaxed);
     current_velocity_.store(static_cast<float>(LIMIT_LEDC_MIN_FREQ_HZ), std::memory_order_relaxed);
     start_time_us_ = esp_timer_get_time();
     profile_.current_pulse = 0;
     profile_.current_velocity = LIMIT_LEDC_MIN_FREQ_HZ;
-    last_reported_pulses_.store(0, std::memory_order_relaxed);
 
-    // Set direction on position tracker before motion
+    // Set direction on PcntTracker before motion (hardware PCNT handles position)
     if (position_tracker_) {
         position_tracker_->setDirection(direction_);
     }
@@ -421,14 +412,13 @@ esp_err_t LedcPulseGenerator::startVelocity(float velocity, float acceleration)
     calculateVelocityProfile(abs_velocity, acceleration);
 
     // Reset counters - start with minimum frequency (will ramp up)
-    accumulated_pulses_.store(0.0, std::memory_order_relaxed);
+    pulse_count_.store(0, std::memory_order_relaxed);
     current_velocity_.store(static_cast<float>(LIMIT_LEDC_MIN_FREQ_HZ), std::memory_order_relaxed);
     start_time_us_ = esp_timer_get_time();
     profile_.current_pulse = 0;
     profile_.current_velocity = LIMIT_LEDC_MIN_FREQ_HZ;
-    last_reported_pulses_.store(0, std::memory_order_relaxed);
 
-    // Set direction on position tracker before motion
+    // Set direction on PcntTracker before motion (hardware PCNT handles position)
     if (position_tracker_) {
         position_tracker_->setDirection(direction_);
     }
@@ -466,7 +456,7 @@ esp_err_t LedcPulseGenerator::stop(float deceleration)
     float stop_pulses = (current_vel * current_vel) / (2.0f * deceleration);
 
     // Update profile for stopping
-    int64_t current_pos = static_cast<int64_t>(accumulated_pulses_.load(std::memory_order_relaxed));
+    int64_t current_pos = pulse_count_.load(std::memory_order_relaxed);
     profile_.target_pulses = static_cast<int32_t>(current_pos + stop_pulses);
     profile_.decel_pulses = static_cast<int32_t>(stop_pulses);
 
@@ -490,7 +480,7 @@ void LedcPulseGenerator::stopImmediate()
     stopPulseOutput();
 
     // Read final count
-    int64_t final_count = static_cast<int64_t>(accumulated_pulses_.load(std::memory_order_relaxed));
+    int64_t final_count = pulse_count_.load(std::memory_order_relaxed);
 
     // Clear state
     state_.store(LedcProfileState::IDLE, std::memory_order_release);
@@ -512,7 +502,7 @@ bool LedcPulseGenerator::isRunning() const
 
 int64_t LedcPulseGenerator::getPulseCount() const
 {
-    return static_cast<int64_t>(accumulated_pulses_.load(std::memory_order_relaxed));
+    return pulse_count_.load(std::memory_order_relaxed);
 }
 
 float LedcPulseGenerator::getCurrentVelocity() const
@@ -530,35 +520,10 @@ void LedcPulseGenerator::setCompletionCallback(MotionCompleteCallback cb)
 
 void LedcPulseGenerator::setPositionTracker(IPositionTracker* tracker)
 {
+    // Note: For D axis, position tracker is PcntTracker (hardware PCNT via internal loopback).
+    // PCNT counts pulses directly from GPIO - no software updates needed.
     position_tracker_ = tracker;
-    ESP_LOGI(TAG, "setPositionTracker: tracker=%p", (void*)tracker);
-}
-
-// ============================================================================
-// Position Timer Callback
-// ============================================================================
-
-void LedcPulseGenerator::positionTimerCallback(void* arg)
-{
-    LedcPulseGenerator* self = static_cast<LedcPulseGenerator*>(arg);
-    self->handlePositionUpdate();
-}
-
-void LedcPulseGenerator::handlePositionUpdate()
-{
-    if (!position_tracker_) {
-        return;
-    }
-
-    // Get current pulse count (from time-based accumulation) and compute delta since last report
-    int64_t current = static_cast<int64_t>(accumulated_pulses_.load(std::memory_order_relaxed));
-    int64_t last = last_reported_pulses_.load(std::memory_order_relaxed);
-    int64_t delta = current - last;
-
-    if (delta > 0) {
-        position_tracker_->addPulses(delta);
-        last_reported_pulses_.store(current, std::memory_order_relaxed);
-    }
+    ESP_LOGI(TAG, "setPositionTracker: tracker=%p (PcntTracker for hardware PCNT)", (void*)tracker);
 }
 
 // ============================================================================
@@ -630,8 +595,12 @@ float LedcPulseGenerator::velocityAtPosition(int64_t position) const
     if (mode_ == LedcMotionMode::VELOCITY) {
         LedcProfileState current = state_.load(std::memory_order_acquire);
         if (current == LedcProfileState::ACCELERATING) {
-            // v = sqrt(2 * a * d)
-            float v = std::sqrt(2.0f * profile_.acceleration * static_cast<float>(position));
+            // Use time-based velocity calculation: v = v0 + a*t
+            // Position-based (v = sqrt(2*a*d)) creates circular dependency since
+            // position estimate depends on velocity which depends on position...
+            int64_t elapsed_us = esp_timer_get_time() - start_time_us_;
+            float elapsed_sec = static_cast<float>(elapsed_us) / 1000000.0f;
+            float v = LIMIT_LEDC_MIN_FREQ_HZ + profile_.acceleration * elapsed_sec;
             return std::min(v, profile_.cruise_velocity);
         } else if (current == LedcProfileState::STOPPING) {
             int64_t stop_start = profile_.target_pulses - profile_.decel_pulses;
@@ -701,7 +670,8 @@ esp_err_t LedcPulseGenerator::startPulseOutput()
         return ret;
     }
 
-    // Start profile update timer (also handles pulse accumulation)
+    // Start profile update timer (for velocity control and profile tracking)
+    // Note: Actual position counting is done by hardware PCNT via internal loopback
     ret = esp_timer_start_periodic(profile_timer_, PROFILE_UPDATE_INTERVAL_US);
     if (ret != ESP_OK) {
         ESP_LOGE(TAG, "Failed to start profile timer: %s", esp_err_to_name(ret));
@@ -710,42 +680,18 @@ esp_err_t LedcPulseGenerator::startPulseOutput()
         return ret;
     }
 
-    // Start position update timer (only if tracker is set)
-    if (position_tracker_ && position_timer_) {
-        // Stop first in case it's already running from previous motion
-        esp_timer_stop(position_timer_);
-        ret = esp_timer_start_periodic(position_timer_, TIMING_LEDC_POSITION_UPDATE_MS * 1000);
-        if (ret != ESP_OK) {
-            ESP_LOGW(TAG, "Failed to start position timer: %s", esp_err_to_name(ret));
-            // Non-fatal - position tracking just won't work in real-time
-        } else {
-            ESP_LOGI(TAG, "Position timer started, interval=%d ms", TIMING_LEDC_POSITION_UPDATE_MS);
-        }
-    }
-
     return ESP_OK;
 }
 
 void LedcPulseGenerator::stopPulseOutput()
 {
-    // Stop timers
+    // Stop profile timer
     if (profile_timer_) {
         esp_timer_stop(profile_timer_);
     }
-    if (position_timer_) {
-        esp_timer_stop(position_timer_);
-    }
 
-    // Final position update to sync exact count
-    if (position_tracker_) {
-        int64_t current = static_cast<int64_t>(accumulated_pulses_.load(std::memory_order_relaxed));
-        int64_t last = last_reported_pulses_.load(std::memory_order_relaxed);
-        int64_t delta = current - last;
-        if (delta > 0) {
-            position_tracker_->addPulses(delta);
-            last_reported_pulses_.store(current, std::memory_order_relaxed);
-        }
-    }
+    // Note: Position tracking is handled by hardware PCNT via internal loopback.
+    // PCNT counts pulses directly from GPIO - no software sync needed.
 
     // Set duty to 0 to stop LEDC output
     ledc_set_duty(LEDC_MODE_D, channel_, 0);
@@ -760,7 +706,7 @@ void LedcPulseGenerator::notifyCompletion()
 {
     if (xSemaphoreTake(callback_mutex_, pdMS_TO_TICKS(10)) == pdTRUE) {
         if (completion_callback_) {
-            int64_t total = static_cast<int64_t>(accumulated_pulses_.load(std::memory_order_relaxed));
+            int64_t total = pulse_count_.load(std::memory_order_relaxed);
             completion_callback_(total);
         }
         xSemaphoreGive(callback_mutex_);

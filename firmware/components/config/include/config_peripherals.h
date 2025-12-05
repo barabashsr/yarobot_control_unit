@@ -83,6 +83,7 @@
  * @brief Pulse Counter for position verification
  *
  * PCNT units count pulses for cross-checking commanded vs actual pulses.
+ * ESP32-S3 has 4 PCNT units (0-3).
  * @{
  */
 
@@ -91,6 +92,9 @@
 
 /** @brief PCNT unit for C-axis position counting */
 #define PCNT_UNIT_C         1
+
+/** @brief PCNT unit for D-axis position counting (via LEDC internal loopback) */
+#define PCNT_UNIT_D         2
 
 /** @} */ // end periph_pcnt
 

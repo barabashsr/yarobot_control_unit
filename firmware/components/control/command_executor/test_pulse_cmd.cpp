@@ -93,10 +93,11 @@ static bool s_ledc_direction = true;  // true = forward
 static int64_t s_ledc_start_us = 0;
 
 // STORY-3-5-TEST: Static position tracker instances
-// PcntTracker for Y and C axes (hardware PCNT)
-static PcntTracker* s_pcnt_tracker[2] = {nullptr, nullptr};  // Y=0, C=1
-// SoftwareTracker for X, Z, A, B, D axes
-static SoftwareTracker* s_sw_tracker[5] = {nullptr, nullptr, nullptr, nullptr, nullptr};  // X=0, Z=1, A=2, B=3, D=4
+// PcntTracker for Y, C, and D axes (hardware PCNT)
+// D axis uses internal GPIO loopback from LEDC output to PCNT input
+static PcntTracker* s_pcnt_tracker[3] = {nullptr, nullptr, nullptr};  // Y=0, C=1, D=2
+// SoftwareTracker for X, Z, A, B axes
+static SoftwareTracker* s_sw_tracker[4] = {nullptr, nullptr, nullptr, nullptr};  // X=0, Z=1, A=2, B=3
 // TimeTracker for E axis (discrete actuator)
 static TimeTracker* s_time_tracker = nullptr;
 
@@ -138,6 +139,20 @@ static bool is_mcpwm_axis(char axis)
 }
 
 /**
+ * @brief Get PCNT tracker index (0=Y, 1=C, 2=D)
+ * STORY-3-5-TEST: Remove after hardware verification
+ */
+static int get_pcnt_tracker_index(char axis)
+{
+    switch (axis) {
+        case 'Y': case 'y': return 0;
+        case 'C': case 'c': return 1;
+        case 'D': case 'd': return 2;
+        default: return -1;
+    }
+}
+
+/**
  * @brief Check if axis uses LEDC (D)
  * STORY-3-4-TEST: Remove after hardware verification
  */
@@ -156,8 +171,9 @@ static bool is_discrete_axis(char axis)
 }
 
 /**
- * @brief Get SoftwareTracker index for axis (0=X, 1=Z, 2=A, 3=B, 4=D)
+ * @brief Get SoftwareTracker index for axis (0=X, 1=Z, 2=A, 3=B)
  * STORY-3-5-TEST: Remove after hardware verification
+ * Note: D axis uses PcntTracker (hardware PCNT via internal GPIO loopback)
  */
 static int get_sw_tracker_index(char axis)
 {
@@ -166,7 +182,6 @@ static int get_sw_tracker_index(char axis)
         case 'Z': case 'z': return 1;
         case 'A': case 'a': return 2;
         case 'B': case 'b': return 3;
-        case 'D': case 'd': return 4;
         default: return -1;
     }
 }
@@ -174,12 +189,12 @@ static int get_sw_tracker_index(char axis)
 /**
  * @brief Ensure SoftwareTracker exists for axis and set direction
  * STORY-3-5-TEST: Remove after hardware verification
- * @return SoftwareTracker pointer, or nullptr if not applicable (Y/C/E)
+ * @return SoftwareTracker pointer, or nullptr if not applicable (Y/C/D/E)
  */
 static SoftwareTracker* ensure_sw_tracker(char axis, bool forward)
 {
     int idx = get_sw_tracker_index(axis);
-    if (idx < 0) return nullptr;  // Not a software tracker axis
+    if (idx < 0) return nullptr;  // Not a software tracker axis (Y/C/D use PCNT, E uses Time)
 
     if (s_sw_tracker[idx] == nullptr) {
         ESP_LOGI(TAG, "Creating SoftwareTracker for axis %c", axis);
@@ -194,6 +209,31 @@ static SoftwareTracker* ensure_sw_tracker(char axis, bool forward)
     }
     s_sw_tracker[idx]->setDirection(forward);
     return s_sw_tracker[idx];
+}
+
+/**
+ * @brief Ensure PcntTracker exists for D axis and set direction
+ * STORY-3-5c-TEST: D axis uses hardware PCNT via internal GPIO loopback
+ * @return PcntTracker pointer, or nullptr if not D axis
+ */
+static PcntTracker* ensure_pcnt_tracker_d(bool forward)
+{
+    const int idx = 2;  // D axis is index 2 in s_pcnt_tracker array
+
+    if (s_pcnt_tracker[idx] == nullptr) {
+        ESP_LOGI(TAG, "Creating PcntTracker for axis D (PCNT_UNIT_D=%d, GPIO_D_STEP=%d)",
+                 PCNT_UNIT_D, GPIO_D_STEP);
+        s_pcnt_tracker[idx] = new PcntTracker(PCNT_UNIT_D, GPIO_D_STEP);
+        esp_err_t ret = s_pcnt_tracker[idx]->init();
+        if (ret != ESP_OK) {
+            ESP_LOGE(TAG, "Failed to init PcntTracker for D: %s", esp_err_to_name(ret));
+            delete s_pcnt_tracker[idx];
+            s_pcnt_tracker[idx] = nullptr;
+            return nullptr;
+        }
+    }
+    s_pcnt_tracker[idx]->setDirection(forward);
+    return s_pcnt_tracker[idx];
 }
 
 /**
@@ -327,35 +367,28 @@ static void cleanup_ledc_axis(void)
 }
 
 /**
- * @brief Stop LEDC pulse generation on D axis and update position tracker
+ * @brief Stop LEDC pulse generation on D axis
  * STORY-3-4-TEST: Remove after hardware verification
+ * Note: Position tracking is done by hardware PCNT via internal loopback - no software update needed
  */
 static void stop_ledc_axis(void)
 {
     if (s_ledc_running) {
-        int64_t pulses = 0;
-
-        // If using LedcPulseGenerator, get real pulse count from generator
+        // If using LedcPulseGenerator, stop it
         if (s_ledc_gen && s_ledc_gen->isRunning()) {
-            pulses = s_ledc_gen->getPulseCount();
+            int64_t profile_pulses = s_ledc_gen->getPulseCount();
             s_ledc_gen->stopImmediate();
-            ESP_LOGI(TAG, "D axis: got %lld pulses from generator", (long long)pulses);
+            ESP_LOGI(TAG, "D axis: stopped, profile counted %lld pulses", (long long)profile_pulses);
         } else if (s_ledc_gen) {
             // Generator exists but not running - just stop it
             s_ledc_gen->stopImmediate();
         } else {
             // Legacy: direct LEDC API (shouldn't happen anymore)
             ledc_stop(LEDC_MODE_D, LEDC_CHANNEL_D, 0);
-            // Fallback to time-based calculation
-            int64_t elapsed_us = esp_timer_get_time() - s_ledc_start_us;
-            pulses = static_cast<int64_t>(s_ledc_frequency * elapsed_us / 1000000.0f);
         }
 
-        // Update SoftwareTracker with actual pulses (D is index 4)
-        if (s_sw_tracker[4] && pulses > 0) {
-            s_sw_tracker[4]->addPulses(pulses);
-            ESP_LOGI(TAG, "D axis: added %lld pulses to tracker", (long long)pulses);
-        }
+        // Note: Position is tracked by hardware PCNT (s_pcnt_tracker[2])
+        // PCNT counts pulses directly via internal GPIO loopback - no software update needed
 
         s_ledc_running = false;
         s_ledc_frequency = 0.0f;
@@ -621,14 +654,14 @@ static esp_err_t handle_pulse_test(const ParsedCommand* cmd, char* response, siz
             }
         }
 
-        // STORY-3-5-TEST: Ensure SoftwareTracker exists and connect to generator
-        SoftwareTracker* tracker = ensure_sw_tracker(axis, true);  // Default to forward direction
+        // STORY-3-5c-TEST: Ensure PcntTracker exists and connect to generator (hardware PCNT)
+        PcntTracker* tracker = ensure_pcnt_tracker_d(true);  // Default to forward direction
         if (tracker) {
             s_ledc_gen->setPositionTracker(tracker);
         }
 
-        // Start velocity mode (continuous pulses with real-time pulse counting)
-        ESP_LOGI(TAG, "Starting PULSE D at %.0f Hz via LedcPulseGenerator velocity mode", actual_freq);
+        // Start velocity mode (continuous pulses with hardware PCNT position tracking)
+        ESP_LOGI(TAG, "Starting PULSE D at %.0f Hz via LedcPulseGenerator (PCNT position tracking)", actual_freq);
         ret = s_ledc_gen->startVelocity(actual_freq, actual_freq * 10.0f);  // Fast acceleration
         if (ret != ESP_OK) {
             ESP_LOGE(TAG, "startVelocity failed: %s", esp_err_to_name(ret));
@@ -818,19 +851,18 @@ static esp_err_t handle_move_test(const ParsedCommand* cmd, char* response, size
             }
         }
 
-        // STORY-3-5-TEST: Set direction and connect tracker for real-time position updates
+        // STORY-3-5c-TEST: Set direction and connect PcntTracker for hardware position tracking
         bool forward = (pulses > 0);
         s_ledc_direction = forward;
-        SoftwareTracker* tracker = ensure_sw_tracker(axis, forward);
+        PcntTracker* tracker = ensure_pcnt_tracker_d(forward);
         if (tracker) {
-            // Connect tracker for real-time updates during motion
+            // Connect PcntTracker for hardware PCNT position tracking via internal loopback
             s_ledc_gen->setPositionTracker(tracker);
-            // Note: No completion callback needed - tracker is updated in real-time
-            // and final sync happens in stopPulseOutput()
+            // Note: PCNT counts pulses directly from GPIO - no software updates needed
         }
 
         // Start the move
-        ESP_LOGI(TAG, "Starting MOVE D: pulses=%ld freq=%.0f accel=%.0f dir=%s (LEDC)",
+        ESP_LOGI(TAG, "Starting MOVE D: pulses=%ld freq=%.0f accel=%.0f dir=%s (LEDC+PCNT)",
                  (long)pulses, max_freq, accel, forward ? "FWD" : "REV");
         ret = s_ledc_gen->startMove(pulses, max_freq, accel);
         if (ret != ESP_OK) {
@@ -911,23 +943,27 @@ static IPositionTracker* get_or_create_tracker(char axis)
 {
     esp_err_t ret;
 
-    // PCNT trackers for Y, C
-    if (is_mcpwm_axis(axis)) {
-        int idx = get_mcpwm_axis_index(axis);
-        if (s_pcnt_tracker[idx] == nullptr) {
-            int pcnt_id = (idx == 0) ? PCNT_UNIT_Y : PCNT_UNIT_C;
-            gpio_num_t gpio = (idx == 0) ? GPIO_Y_STEP : GPIO_C_STEP;
+    // PCNT trackers for Y, C, D (D uses internal GPIO loopback from LEDC)
+    int pcnt_idx = get_pcnt_tracker_index(axis);
+    if (pcnt_idx >= 0) {
+        if (s_pcnt_tracker[pcnt_idx] == nullptr) {
+            int pcnt_id;
+            gpio_num_t gpio;
+            if (pcnt_idx == 0) { pcnt_id = PCNT_UNIT_Y; gpio = GPIO_Y_STEP; }
+            else if (pcnt_idx == 1) { pcnt_id = PCNT_UNIT_C; gpio = GPIO_C_STEP; }
+            else { pcnt_id = PCNT_UNIT_D; gpio = GPIO_D_STEP; }  // D axis
+
             ESP_LOGI(TAG, "Creating PcntTracker for axis %c (pcnt=%d, gpio=%d)", axis, pcnt_id, gpio);
-            s_pcnt_tracker[idx] = new PcntTracker(pcnt_id, gpio);
-            ret = s_pcnt_tracker[idx]->init();
+            s_pcnt_tracker[pcnt_idx] = new PcntTracker(pcnt_id, gpio);
+            ret = s_pcnt_tracker[pcnt_idx]->init();
             if (ret != ESP_OK) {
                 ESP_LOGE(TAG, "Failed to init PcntTracker: %s", esp_err_to_name(ret));
-                delete s_pcnt_tracker[idx];
-                s_pcnt_tracker[idx] = nullptr;
+                delete s_pcnt_tracker[pcnt_idx];
+                s_pcnt_tracker[pcnt_idx] = nullptr;
                 return nullptr;
             }
         }
-        return s_pcnt_tracker[idx];
+        return s_pcnt_tracker[pcnt_idx];
     }
 
     // TimeTracker for E
@@ -946,7 +982,7 @@ static IPositionTracker* get_or_create_tracker(char axis)
         return s_time_tracker;
     }
 
-    // SoftwareTracker for X, Z, A, B, D
+    // SoftwareTracker for X, Z, A, B
     int idx = get_sw_tracker_index(axis);
     if (idx >= 0) {
         if (s_sw_tracker[idx] == nullptr) {
@@ -972,7 +1008,7 @@ static IPositionTracker* get_or_create_tracker(char axis)
  */
 static const char* get_tracker_type(char axis)
 {
-    if (is_mcpwm_axis(axis)) return "PCNT";
+    if (get_pcnt_tracker_index(axis) >= 0) return "PCNT";  // Y, C, D all use hardware PCNT
     if (is_discrete_axis(axis)) return "TIME";
     return "SW";
 }
@@ -989,23 +1025,24 @@ static int64_t get_rmt_axis_position(int idx)
 }
 
 /**
- * @brief Get real-time position for LEDC axis (D)
- * STORY-3-5-TEST: Remove after hardware verification
+ * @brief Get real-time position for LEDC axis (D) via hardware PCNT
+ * STORY-3-5c-TEST: D axis uses PcntTracker via internal GPIO loopback
  */
 static int64_t get_ledc_axis_position(void)
 {
-    // With setPositionTracker() connected, tracker is updated in real-time
-    // by the generator via periodic timer - no need to add getPulseCount()
-    return s_sw_tracker[4] ? s_sw_tracker[4]->getPosition() : 0;
+    // D axis uses hardware PCNT (index 2 in s_pcnt_tracker array)
+    // PCNT counts pulses directly via internal GPIO loopback - no software updates needed
+    return s_pcnt_tracker[2] ? s_pcnt_tracker[2]->getPosition() : 0;
 }
 
 /**
- * @brief Get diagnostic info for LEDC axis (D) - shows both tracker and generator counts
- * STORY-3-5-TEST: Debug helper - remove after hardware verification
+ * @brief Get diagnostic info for LEDC axis (D) - shows both PCNT position and generator profile count
+ * STORY-3-5c-TEST: Debug helper - remove after hardware verification
  */
 static void get_ledc_debug_info(int64_t* tracker_pos, int64_t* gen_count, bool* running, bool* has_tracker)
 {
-    *tracker_pos = s_sw_tracker[4] ? s_sw_tracker[4]->getPosition() : 0;
+    // D axis uses PcntTracker (index 2) for hardware PCNT position tracking
+    *tracker_pos = s_pcnt_tracker[2] ? s_pcnt_tracker[2]->getPosition() : 0;
     *gen_count = s_ledc_gen ? s_ledc_gen->getPulseCount() : 0;
     *running = s_ledc_gen ? s_ledc_gen->isRunning() : false;
     *has_tracker = s_ledc_gen ? s_ledc_gen->hasPositionTracker() : false;
@@ -1245,11 +1282,13 @@ void cleanup_pulse_test_command(void)
     cleanup_ledc_axis();
 
     // STORY-3-5-TEST: Cleanup position trackers
-    for (int i = 0; i < 2; i++) {
+    // PcntTracker for Y, C, D (D uses internal GPIO loopback)
+    for (int i = 0; i < 3; i++) {
         delete s_pcnt_tracker[i];
         s_pcnt_tracker[i] = nullptr;
     }
-    for (int i = 0; i < 5; i++) {
+    // SoftwareTracker for X, Z, A, B
+    for (int i = 0; i < 4; i++) {
         delete s_sw_tracker[i];
         s_sw_tracker[i] = nullptr;
     }

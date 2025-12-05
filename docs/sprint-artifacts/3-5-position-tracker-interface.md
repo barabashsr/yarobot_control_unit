@@ -13,7 +13,7 @@ so that **each axis can track position appropriately using hardware or software 
 1. **AC1:** Given an `IPositionTracker` interface is defined, when I implement it, then all position trackers share the same API (`init()`, `reset()`, `getPosition()`, `setDirection()`)
 2. **AC2:** Given `PcntTracker` is configured for Y or C axis with PCNT_UNIT_Y or PCNT_UNIT_C from `config_peripherals.h`, when pulses are generated, then hardware counter accurately tracks pulse count
 3. **AC3:** Given PCNT 16-bit counter overflows at ±32767, when overflow occurs, then ISR extends range to int64_t via accumulator
-4. **AC4:** Given `SoftwareTracker` is used for X, Z, A, B, D axes, when motion runs via IPulseGenerator, then software counter tracks commanded pulses via completion callback
+4. **AC4:** Given `SoftwareTracker` is used for X, Z, A, B axes (D uses PcntTracker per Story 3.5c), when motion runs via IPulseGenerator, then software counter tracks commanded pulses via completion callback
 5. **AC5:** Given direction is set via `setDirection(forward)`, when pulses are counted, then position increments (forward=true) or decrements (forward=false)
 6. **AC6:** Given `reset(position)` is called, when executed, then position is set to specified value (default 0) without physical motion
 7. **AC7:** Given `TimeTracker` is used for E axis discrete actuator, when motion command issued, then position is calculated from elapsed time and known speed (returns 0.0 or 1.0)
@@ -119,8 +119,8 @@ so that **each axis can track position appropriately using hardware or software 
 
 | Tracker | Axes | Method | Precision |
 |---------|------|--------|-----------|
-| PcntTracker | Y, C | Hardware PCNT | Highest - counts actual pulses |
-| SoftwareTracker | X, Z, A, B, D | Callback from pulse gen | High - tracks commanded pulses |
+| PcntTracker | Y, C, D | Hardware PCNT (D via internal GPIO loopback) | Highest - counts actual pulses |
+| SoftwareTracker | X, Z, A, B | Callback from pulse gen | High - tracks commanded pulses |
 | TimeTracker | E | Elapsed time | Binary - 0 or 1 only |
 
 **IPositionTracker Interface:**
@@ -326,7 +326,7 @@ so that **position queries return accurate values at any point during movement, 
 |------|------------|--------------|---------------|------------------|
 | X, Z, A, B | RMT | SoftwareTracker | ISR callback on DMA buffer completion | Every ~1ms (512 symbols @ 500kHz) |
 | Y, C | MCPWM | PcntTracker | Hardware PCNT counts pulses directly | Real-time (hardware) |
-| D | LEDC | SoftwareTracker | Time-based accumulation in profile timer | Every 1ms (PROFILE_UPDATE_INTERVAL_US) |
+| D | LEDC | PcntTracker | Hardware PCNT via internal GPIO loopback | Real-time (hardware) - *Updated in Story 3.5c* |
 | E | Discrete | TimeTracker | Time interpolation from motion start | On query |
 
 #### RMT Position Tracking (X, Z, A, B axes)
@@ -423,3 +423,142 @@ E-axis uses `TimeTracker` for discrete actuator (pneumatic cylinder):
 | 2025-12-05 | Dev Agent (Amelia) | Implemented all position trackers, config constants, and unit tests. Build verified. |
 | 2025-12-05 | SM Agent (Bob) | Added Story 3.5b for real-time position tracking during motion |
 | 2025-12-05 | Dev Agent (Amelia) | Story 3.5b DONE: RMT uses ISR callback on DMA buffer completion; LEDC uses time-based pulse accumulation (software timer approach failed); MCPWM uses hardware PCNT; E-axis uses TimeTracker interpolation. All tested via USB CDC. |
+| 2025-12-06 | SM Agent (Bob) | Added Story 3.5c: Hardware PCNT for D axis (LEDC) via internal GPIO loopback |
+| 2025-12-06 | Dev Agent (Amelia) | Story 3.5c DONE: Added PCNT_UNIT_D, GPIO internal loopback in LedcPulseGenerator, D axis uses PcntTracker for hardware PCNT position tracking |
+
+---
+
+## Story 3.5c: Hardware PCNT for D Axis (LEDC)
+
+Status: done
+
+### Story
+
+As a **developer**,
+I want **hardware PCNT counting for the D axis (LEDC)**,
+so that **position tracking is accurate via hardware counting instead of time-based estimation**.
+
+### Background
+
+Story 3.5b implemented time-based pulse estimation for D axis because "no free PCNT units" was assumed. However, ESP32-S3 has 4 PCNT units (0-3), and only units 0 (Y) and 1 (C) are used. Unit 2 is available for D axis.
+
+The LEDC output and PCNT input can share the same GPIO via internal loopback - no physical wiring required.
+
+### Acceptance Criteria
+
+1. **AC1:** Given `PCNT_UNIT_D` is defined in `config_peripherals.h`, when D axis is initialized, then PCNT unit 2 is allocated for D axis position counting
+2. **AC2:** Given GPIO_D_STEP is configured as `GPIO_MODE_INPUT_OUTPUT`, when LEDC outputs pulses, then PCNT counts them via internal GPIO loopback
+3. **AC3:** Given D axis uses `PcntTracker` instead of `SoftwareTracker`, when motion runs, then position is tracked via hardware pulse counting (same as Y/C axes)
+4. **AC4:** Given LEDC motion completes, when `getPosition()` is called, then position matches exact pulse count (not time-based estimate)
+5. **AC5:** Given time-based pulse accumulation code in LedcPulseGenerator, when this story is complete, then that code is removed (position_timer_, accumulated_pulses_, etc.)
+
+### Tasks / Subtasks
+
+- [x] **Task 1: Add PCNT_UNIT_D to config_peripherals.h** (AC: 1)
+  - [x] Add `#define PCNT_UNIT_D 2` to PCNT section
+  - [x] Add Doxygen comment
+
+- [x] **Task 2: Configure GPIO_D_STEP for internal loopback** (AC: 2)
+  - [x] In LedcPulseGenerator::init(), set GPIO_D_STEP to `GPIO_MODE_INPUT_OUTPUT`
+  - [x] LEDC output already configured on this pin
+  - [x] PCNT will read from same pin via GPIO matrix
+
+- [x] **Task 3: Create PcntTracker for D axis** (AC: 3, 4)
+  - [x] D axis motor/control code should instantiate `PcntTracker(PCNT_UNIT_D, GPIO_D_STEP)`
+  - [x] Wire PcntTracker to D axis instead of SoftwareTracker
+  - [x] PcntTracker implementation already handles overflow, direction, etc.
+
+- [x] **Task 4: Remove time-based pulse tracking from LedcPulseGenerator** (AC: 5)
+  - [x] Remove `position_timer_` and related timer code
+  - [x] Remove `accumulated_pulses_`, `last_reported_pulses_` atomics
+  - [x] Remove `handlePositionUpdate()` callback
+  - [x] Keep `setPositionTracker()` method (still used, but tracker is now PcntTracker)
+  - [x] Keep `TIMING_LEDC_POSITION_UPDATE_MS` in config_timing.h (may be used elsewhere)
+
+- [x] **Task 5: Update tests** (AC: 1-5)
+  - [x] Updated `test_pulse_cmd.cpp` to use PcntTracker for D axis
+  - [x] D axis position tracked via hardware PCNT (not estimated)
+  - [x] Build verified successfully
+
+### Dev Notes
+
+#### Internal GPIO Loopback
+
+ESP32-S3 GPIO matrix allows a single GPIO to be both output and input simultaneously:
+
+```cpp
+gpio_set_direction(GPIO_D_STEP, GPIO_MODE_INPUT_OUTPUT);
+// LEDC already outputs to this GPIO
+// PCNT reads from same GPIO internally - no external wire needed
+```
+
+#### PcntTracker Reuse
+
+`PcntTracker` class already exists and works for Y/C axes. Same class, different PCNT unit:
+
+```cpp
+// For Y axis (MCPWM)
+auto y_tracker = std::make_unique<PcntTracker>(PCNT_UNIT_Y, GPIO_Y_STEP);
+
+// For D axis (LEDC) - same pattern
+auto d_tracker = std::make_unique<PcntTracker>(PCNT_UNIT_D, GPIO_D_STEP);
+```
+
+#### Files to Modify
+
+- `firmware/components/config/include/config_peripherals.h` - Add PCNT_UNIT_D
+- `firmware/components/pulse_gen/ledc_pulse_gen.cpp` - GPIO mode, remove time-based tracking
+- `firmware/components/config/include/config_timing.h` - Remove TIMING_LEDC_POSITION_UPDATE_MS (optional)
+- Motor/control layer where D axis tracker is instantiated (replace SoftwareTracker with PcntTracker)
+
+### References
+
+- [ESP-IDF PCNT Documentation](https://docs.espressif.com/projects/esp-idf/en/stable/esp32s3/api-reference/peripherals/pcnt.html)
+- [ESP32-S3 GPIO Matrix](https://docs.espressif.com/projects/esp-idf/en/stable/esp32s3/api-reference/peripherals/gpio.html)
+- Story 3.5b Dev Notes - explains why time-based approach was used initially
+
+### Completion Notes
+
+- **PCNT_UNIT_D defined**: Added to `config_peripherals.h` as unit 2
+- **GPIO internal loopback**: LedcPulseGenerator::init() now configures GPIO_D_STEP as `GPIO_MODE_INPUT_OUTPUT` for PCNT internal loopback
+- **PcntTracker for D axis**: test_pulse_cmd.cpp updated to use `PcntTracker(PCNT_UNIT_D, GPIO_D_STEP)` instead of SoftwareTracker
+- **Time-based code removed**: Removed `position_timer_`, `accumulated_pulses_`, `last_reported_pulses_`, `handlePositionUpdate()` from LedcPulseGenerator
+- **Simplified architecture**: D axis now uses same hardware PCNT pattern as Y/C axes
+- **Tracker array updated**: `s_pcnt_tracker[3]` for Y/C/D (indices 0/1/2), `s_sw_tracker[4]` for X/Z/A/B (indices 0/1/2/3)
+- **Build verified**: Firmware compiles successfully with all changes
+
+### Bug Fix: Velocity Ramp-Up Circular Dependency
+
+During hardware testing, D axis was only counting ~300 pulses/second instead of the expected 10,000 pulses/second at 10kHz.
+
+**Root Cause:** `velocityAtPosition()` used position-based velocity calculation during acceleration:
+```cpp
+// Broken: v = sqrt(2 * a * d)
+float v = std::sqrt(2.0f * profile_.acceleration * static_cast<float>(position));
+```
+
+But `position` was estimated from `velocity * time` in `handleProfileUpdate()`. This created a circular dependency:
+1. Low velocity → few estimated pulses
+2. Few pulses → `velocityAtPosition()` returns low velocity
+3. Low velocity → few estimated pulses... (stuck at ~100 Hz)
+
+**Fix:** Changed to time-based velocity calculation for velocity mode acceleration:
+```cpp
+// Fixed: v = v0 + a*t
+int64_t elapsed_us = esp_timer_get_time() - start_time_us_;
+float elapsed_sec = static_cast<float>(elapsed_us) / 1000000.0f;
+float v = LIMIT_LEDC_MIN_FREQ_HZ + profile_.acceleration * elapsed_sec;
+return std::min(v, profile_.cruise_velocity);
+```
+
+**Location:** `ledc_pulse_gen.cpp:597-604`
+
+**Hardware Verified:** D axis now correctly counts ~10,000 pulses/second at 10kHz frequency.
+
+### File List
+
+**Modified:**
+- `firmware/components/config/include/config_peripherals.h` - Added PCNT_UNIT_D
+- `firmware/components/pulse_gen/include/ledc_pulse_gen.h` - Updated architecture docs, removed position_timer_ and related members
+- `firmware/components/pulse_gen/ledc_pulse_gen.cpp` - Added GPIO loopback config, removed time-based tracking
+- `firmware/components/control/command_executor/test_pulse_cmd.cpp` - Changed D axis from SoftwareTracker to PcntTracker

@@ -256,7 +256,7 @@ float position = pulse_count_.load() / pulses_per_unit;
 
 - **IPositionTracker Interface**: Available at `firmware/components/position/include/i_position_tracker.h` with `init()`, `reset()`, `getPosition()`, `setDirection()` methods.
 - **SoftwareTracker**: For X, Z, A, B axes. Uses `addPulses()` method — already integrated with pulse generators via `setPositionTracker()`.
-- **PcntTracker**: For Y, C axes. Hardware PCNT provides real-time position. No software updates needed.
+- **PcntTracker**: For Y, C, D axes. Hardware PCNT provides real-time position. D axis uses GPIO internal loopback (Story 3.5c).
 - **Position Tracker Integration**: All pulse generators have `setPositionTracker()` method from Story 3.5b.
 - **Atomic Pattern**: Use `std::atomic<int64_t>` for thread-safe pulse count, `std::atomic<AxisState>` for state.
 - **Config Constants**: All PCNT/timing constants in respective config headers — follow same pattern.

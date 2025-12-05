@@ -227,7 +227,7 @@ yarobot_control_unit/
 | RMT | 4 channels (X,Z,A,B) | DMA-driven pulse generation |
 | MCPWM | 2 timers (Y,C) | PWM + internal PCNT routing |
 | LEDC | 1 channel (D) | Discrete stepper pulses |
-| PCNT | 2 units (Y,C) | Hardware pulse counting |
+| PCNT | 3 units (Y,C,D) | Hardware pulse counting (D via GPIO internal loopback) |
 | SPI2 | Shift registers | 40-bit DIR/EN/Brake/ALARM_CLR/GP chain |
 | I2C0 | MCP23017 x2 | Limit switches, ALARM_INPUT, InPos (inputs only) |
 | I2C1 | SSD1306 OLED | Status display (isolated bus) |
@@ -609,9 +609,8 @@ Add to `config_limits.h`:
 > Position must be queryable at any time during motion with < 10ms latency.
 > This is achieved differently per peripheral type:
 >
-> - **PCNT (Y, C)**: Hardware counts every pulse - always real-time
+> - **PCNT (Y, C, D)**: Hardware counts every pulse - always real-time (D uses GPIO internal loopback)
 > - **RMT (X, Z, A, B)**: SoftwareTracker updated on each DMA buffer completion (~1ms at typical speeds)
-> - **LEDC (D)**: SoftwareTracker updated via time-based accumulation (1ms profile timer + 20ms position timer)
 > - **Time-based (E)**: TimeTracker interpolates binary position (0/1) based on elapsed time
 
 **Position Update Architecture:**
@@ -628,23 +627,13 @@ Add to `config_limits.h`:
 │   │ (~512 sym)   │   (ISR-safe)      │ (atomic)     │              │
 │   └──────────────┘                   └──────────────┘              │
 │                                                                     │
-│   LEDC Axis (D):                                                   │
-│   ┌──────────────┐    Profile Timer  ┌──────────────┐              │
-│   │ Time-based   │ ────────────────► │ accumulated  │              │
-│   │ Accumulation │   pulses += v*dt  │ _pulses_     │              │
-│   └──────────────┘        │          └──────────────┘              │
-│                           ▼                                         │
-│   ┌──────────────┐    Position Timer ┌──────────────┐              │
-│   │ esp_timer    │ ────────────────► │ Software     │              │
-│   │ (20ms)       │   addPulses(Δ)    │ Tracker      │              │
-│   └──────────────┘                   └──────────────┘              │
-│                                                                     │
-│   MCPWM Axes (Y, C):                                               │
+│   MCPWM Axes (Y, C) + LEDC Axis (D):                               │
 │   ┌──────────────┐    Hardware       ┌──────────────┐              │
 │   │ PCNT Unit    │ ────────────────► │ PCNT         │              │
 │   │ (overflow    │   Every pulse     │ Tracker      │              │
 │   │  ISR ±32767) │                   │ (int64 acc)  │              │
 │   └──────────────┘                   └──────────────┘              │
+│   Note: D axis uses GPIO internal loopback (LEDC out + PCNT in)    │
 │                                                                     │
 │   E Axis (Discrete):                                               │
 │   ┌──────────────┐    Time elapsed   ┌──────────────┐              │
@@ -667,23 +656,24 @@ The `IPulseGenerator` interface includes `setPositionTracker(IPositionTracker*)`
 | Implementation | Update Trigger | Update Method | Typical Latency |
 |----------------|----------------|---------------|-----------------|
 | **RmtPulseGenerator** | TX-done ISR (each buffer) | `addPulses(completed_symbols)` in `handleTxDoneISR()` | ~1ms (512 symbols) |
-| **LedcPulseGenerator** | Profile timer (1ms) + Position timer (20ms) | Time-based: `pulses = velocity * interval_time` | 20ms max |
+| **LedcPulseGenerator** | N/A | PCNT via GPIO internal loopback handles tracking | Real-time |
 | **McpwmPulseGenerator** | N/A | Stores pointer but doesn't use it (PCNT handles tracking) | Real-time |
 
-**LEDC Position Tracking Details (Story 3.5b):**
-- Original approach using `pulse_timer_` at LEDC frequency failed - profile timer (1ms) kept restarting pulse timer
-- Working solution: profile timer accumulates `velocity * dt` every 1ms, position timer (20ms) reports delta to tracker
-- Provides reasonable accuracy; exact pulse count would require hardware PCNT (not available for D axis)
+**D Axis Position Tracking (Story 3.5c):**
+- D axis uses hardware PCNT via GPIO internal loopback (GPIO_D_STEP configured as `GPIO_MODE_INPUT_OUTPUT`)
+- LEDC output and PCNT input share the same GPIO - no external wiring required
+- Time-based accumulation code removed from LedcPulseGenerator in Story 3.5c
+- Uses PCNT_UNIT_D (unit 2) for hardware counting
 
 **Position Tracker Implementations:**
 
 | Tracker | Axes | Data Type | Thread Safety | Overflow Handling |
 |---------|------|-----------|---------------|-------------------|
-| `PcntTracker` | Y, C | `std::atomic<int64_t>` | ISR-safe atomics | Watch points at ±32767, ISR accumulator |
-| `SoftwareTracker` | X, Z, A, B, D | `std::atomic<int64_t>` | ISR-safe atomics | 64-bit, no overflow |
+| `PcntTracker` | Y, C, D | `std::atomic<int64_t>` | ISR-safe atomics | Watch points at ±32767, ISR accumulator |
+| `SoftwareTracker` | X, Z, A, B | `std::atomic<int64_t>` | ISR-safe atomics | 64-bit, no overflow |
 | `TimeTracker` | E | `std::atomic<int64_t>` | Atomic position | Binary (0 or 1) only |
 
-This ensures position is always queryable during motion, with maximum latency determined by buffer size (RMT) or timer interval (LEDC).
+This ensures position is always queryable during motion, with maximum latency determined by buffer size (RMT) or real-time (PCNT for Y/C/D).
 
 ### SI Units Convention (ROS2 Compatible)
 
@@ -2900,8 +2890,9 @@ components/config/include/
 // ============================================================================
 // PCNT (Pulse Counter) ASSIGNMENTS
 // ============================================================================
-#define PCNT_UNIT_Y         0               // Y-axis pulse counter
-#define PCNT_UNIT_C         1               // C-axis pulse counter
+#define PCNT_UNIT_Y         0               // Y-axis pulse counter (MCPWM)
+#define PCNT_UNIT_C         1               // C-axis pulse counter (MCPWM)
+#define PCNT_UNIT_D         2               // D-axis pulse counter (LEDC via GPIO internal loopback)
 
 // ============================================================================
 // LEDC ASSIGNMENTS

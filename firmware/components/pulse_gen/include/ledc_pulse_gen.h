@@ -1,16 +1,17 @@
 /**
  * @file ledc_pulse_gen.h
- * @brief LEDC-based pulse generator for D-axis stepper with software pulse counting
+ * @brief LEDC-based pulse generator for D-axis stepper with hardware PCNT position tracking
  * @author YaRobot Team
  * @date 2025
  *
- * @note Uses ESP32-S3 LEDC peripheral for PWM generation with software-based
- *       pulse counting via high-resolution esp_timer. Designed for D-axis
- *       stepper which has lower precision requirements than servo axes.
+ * @note Uses ESP32-S3 LEDC peripheral for PWM generation with hardware PCNT
+ *       position tracking via internal GPIO loopback. The GPIO is configured
+ *       as INPUT_OUTPUT so PCNT can count the pulses that LEDC outputs.
  *
  * Architecture:
  * - LEDC generates PWM pulses at variable frequency for trapezoidal profile
- * - esp_timer counts pulses via periodic callback (no hardware PCNT)
+ * - GPIO configured as INPUT_OUTPUT for internal loopback to PCNT
+ * - PcntTracker (PCNT_UNIT_D) counts actual pulses via hardware
  * - Profile update timer adjusts LEDC frequency during motion
  * - Completion callback fires from task context via FreeRTOS notification
  */
@@ -141,18 +142,19 @@ private:
     bool direction_;  // true = forward, false = reverse
     bool last_direction_;  // For tracking direction changes
 
-    // Time-based pulse estimation (no hardware PCNT available)
+    // Profile tracking (for velocity control, not position tracking)
+    // Actual position is tracked by hardware PCNT via internal GPIO loopback
     int64_t start_time_us_;              ///< Motion start time from esp_timer_get_time()
     std::atomic<float> current_velocity_;
-    std::atomic<double> accumulated_pulses_;  ///< Accumulated pulse estimate (fractional)
+    std::atomic<int64_t> pulse_count_;   ///< Estimated pulse count for profile control
 
     // Profile update timer
     esp_timer_handle_t profile_timer_;   ///< Timer for profile updates
 
-    // Position tracker for real-time updates
-    esp_timer_handle_t position_timer_;  ///< Timer for position updates (TIMING_LEDC_POSITION_UPDATE_MS)
+    // Position tracker (PcntTracker for D axis)
+    // Note: PcntTracker uses hardware PCNT via internal GPIO loopback
+    // No software position updates needed - PCNT counts pulses directly
     IPositionTracker* position_tracker_;
-    std::atomic<int64_t> last_reported_pulses_;  ///< Tracks pulses reported to position tracker
 
     // Completion handling
     TaskHandle_t completion_task_handle_;
@@ -170,13 +172,9 @@ private:
     esp_err_t startPulseOutput();
     void stopPulseOutput();
 
-    // Timer callbacks
+    // Timer callback
     static void profileTimerCallback(void* arg);
-    static void positionTimerCallback(void* arg);
-
-    // Instance callback handlers
     void handleProfileUpdate();
-    void handlePositionUpdate();
 
     // Completion task
     static void completionTaskEntry(void* arg);

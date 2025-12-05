@@ -22,7 +22,7 @@ This epic represents the core product value—after completion, users can contro
 - 5x TPIC6B595N shift register chain driver for DIR/EN/BRAKE/ALARM_CLR signals
 - RMT pulse generator for servo axes X, Z, A, B (up to 500 kHz pulses, 200 kHz default max)
 - MCPWM pulse generator with internal PCNT routing for Y, C axes
-- LEDC pulse generator with software counting for D axis stepper
+- LEDC pulse generator with hardware PCNT counting for D axis stepper (via GPIO internal loopback)
 - Position tracking interfaces (PCNT, software, time-based)
 - IMotor abstraction with ServoMotor, StepperMotor, and DiscreteAxis implementations
 - Motion controller coordinating all 8 axes
@@ -173,7 +173,7 @@ public:
      *
      * When set, the pulse generator calls tracker->addPulses() during motion:
      * - RMT: On each DMA buffer TX-done callback
-     * - LEDC: Periodically every TIMING_LEDC_POSITION_UPDATE_MS
+     * - LEDC: Not used (D axis uses PCNT via GPIO internal loopback for hardware counting)
      * - MCPWM: Not used (PCNT provides hardware counting)
      *
      * @param tracker Position tracker instance, or nullptr to disable
@@ -187,7 +187,7 @@ public:
 | Peripheral | Axes | Update Trigger | Typical Interval | Notes |
 |------------|------|---------------|------------------|-------|
 | RMT | X, Z, A, B | DMA buffer TX-done | ~1-10ms at typical speeds | Hardware-driven, buffer size dependent |
-| LEDC | D | esp_timer periodic | TIMING_LEDC_POSITION_UPDATE_MS (20ms) | Software timer, configurable |
+| LEDC | D | N/A | Real-time hardware | PCNT via GPIO internal loopback (Story 3.5c) |
 | MCPWM | Y, C | N/A | Real-time hardware | PCNT counts every pulse |
 
 **IPositionTracker Interface:**
@@ -645,17 +645,17 @@ Derived from PRD FR1-10, FR43-44, FR48:
 **Implementation:**
 - `firmware/components/position/include/i_position_tracker.h` - Abstract interface
 - `firmware/components/position/include/pcnt_tracker.h` - PCNT tracker header
-- `firmware/components/position/pcnt_tracker.cpp` - PCNT implementation for Y/C axes
+- `firmware/components/position/pcnt_tracker.cpp` - PCNT implementation for Y/C/D axes
 - `firmware/components/position/include/software_tracker.h` - Software tracker header
-- `firmware/components/position/software_tracker.cpp` - Software implementation for X/Z/A/B/D axes
+- `firmware/components/position/software_tracker.cpp` - Software implementation for X/Z/A/B axes
 - `firmware/components/position/include/time_tracker.h` - Time tracker header
 - `firmware/components/position/time_tracker.cpp` - Time implementation for E axis
 - `firmware/components/position/test/test_position_tracker.cpp` - Unit tests
 
 **Key Design Decisions:**
 1. **IPositionTracker Interface**: Header-only abstract class with `init()`, `reset(int64_t)`, `getPosition()`, `setDirection(bool)` methods
-2. **PcntTracker**: Uses ESP-IDF 5.x PCNT API with watch points at ±32767 for overflow detection. ISR extends 16-bit to int64_t via atomic accumulator
-3. **SoftwareTracker**: Atomic-based (`std::atomic<int64_t>`) position tracking. `addPulses()` method receives counts from pulse generator callbacks
+2. **PcntTracker**: Uses ESP-IDF 5.x PCNT API with watch points at ±32767 for overflow detection. ISR extends 16-bit to int64_t via atomic accumulator. Used for Y, C, and D axes (D uses GPIO internal loopback).
+3. **SoftwareTracker**: Atomic-based (`std::atomic<int64_t>`) position tracking. `addPulses()` method receives counts from pulse generator callbacks. Used for X, Z, A, B axes.
 4. **TimeTracker**: Binary position (0 or 1) for E axis discrete actuator. Interpolates during motion based on `TIMING_E_AXIS_TRAVEL_MS`
 
 **Configuration Added (config_limits.h):**
@@ -664,6 +664,9 @@ Derived from PRD FR1-10, FR43-44, FR48:
 
 **Configuration Added (config_timing.h):**
 - `TIMING_E_AXIS_TRAVEL_MS = 1000` (E axis full travel time)
+
+**Configuration Added (config_peripherals.h):**
+- `PCNT_UNIT_D = 2` (D axis PCNT unit for hardware counting via GPIO internal loopback)
 
 ### Story 3.5b: Real-Time Position Tracking During Motion - DONE
 
@@ -675,23 +678,8 @@ Extended `IPulseGenerator` interface with `setPositionTracker(IPositionTracker*)
 | Peripheral | Axes | Update Trigger | Update Frequency | Implementation |
 |------------|------|----------------|------------------|----------------|
 | RMT | X, Z, A, B | DMA buffer TX-done ISR | ~1ms (512 symbols @ typical speed) | `handleTxDoneISR()` calls `addPulses(completed_symbols)` |
-| LEDC | D | Profile timer (1ms) + Position timer (20ms) | Accumulation every 1ms, reported every 20ms | Time-based: `pulses = velocity * interval_time` |
+| LEDC | D | Hardware PCNT | Real-time (every pulse) | PCNT via GPIO internal loopback (Story 3.5c) |
 | MCPWM | Y, C | Hardware PCNT | Real-time (every pulse) | No software updates needed |
-
-**LEDC Implementation Details:**
-- **Initial approach (failed)**: Software `pulse_timer_` at LEDC frequency. Failed because profile timer (1ms) kept restarting pulse timer before it could fire
-- **Working implementation**: Time-based accumulation in profile timer callback:
-  ```cpp
-  // In handleProfileUpdate() - every 1ms:
-  double pulses_this_interval = velocity * (PROFILE_UPDATE_INTERVAL_US / 1000000.0);
-  accumulated_pulses_ += pulses_this_interval;
-  ```
-- Position timer (20ms) calculates delta and reports to tracker:
-  ```cpp
-  // In handlePositionUpdate() - every 20ms:
-  int64_t delta = current_accumulated - last_reported;
-  if (delta > 0) position_tracker_->addPulses(delta);
-  ```
 
 **RMT Implementation Details:**
 ```cpp
@@ -703,10 +691,33 @@ if (position_tracker_ && completed_symbols > 0) {
 }
 ```
 
-**Configuration Added (config_timing.h):**
-- `TIMING_LEDC_POSITION_UPDATE_MS = 20`
-
 **Test Commands:**
 - `PULSE X/D <freq>` - Start pulse output
 - `POS X/D` - Query position during motion
-- D axis shows debug output: `GEN:` (accumulated), `RUN:` (running), `TRK:` (tracker connected)
+
+### Story 3.5c: Hardware PCNT for D Axis (LEDC) - DONE
+
+**Implementation:**
+D axis originally used time-based pulse estimation (Story 3.5b) because "no free PCNT units" was assumed. However, ESP32-S3 has 4 PCNT units (0-3) and only units 0 (Y) and 1 (C) were used. Story 3.5c added hardware PCNT counting for D axis.
+
+**Key Changes:**
+1. Added `PCNT_UNIT_D = 2` to `config_peripherals.h`
+2. Configured GPIO_D_STEP as `GPIO_MODE_INPUT_OUTPUT` for internal loopback (LEDC output + PCNT input on same GPIO)
+3. D axis now uses `PcntTracker(PCNT_UNIT_D, GPIO_D_STEP)` instead of SoftwareTracker
+4. Removed time-based accumulation code from LedcPulseGenerator (`position_timer_`, `accumulated_pulses_`, `last_reported_pulses_`, `handlePositionUpdate()`)
+
+**Bug Fix - Velocity Ramp-Up Circular Dependency:**
+During hardware testing, D axis was only counting ~300 pulses/second instead of the expected 10,000 pulses/second at 10kHz.
+
+Root cause: `velocityAtPosition()` used position-based velocity calculation during acceleration (`v = sqrt(2 * a * d)`), but position was estimated from `velocity * time`. This created a circular dependency where low velocity → few estimated pulses → low velocity.
+
+Fix: Changed to time-based velocity calculation for velocity mode acceleration:
+```cpp
+// Fixed: v = v0 + a*t
+int64_t elapsed_us = esp_timer_get_time() - start_time_us_;
+float elapsed_sec = static_cast<float>(elapsed_us) / 1000000.0f;
+float v = LIMIT_LEDC_MIN_FREQ_HZ + profile_.acceleration * elapsed_sec;
+return std::min(v, profile_.cruise_velocity);
+```
+
+**Hardware Verified:** D axis now correctly counts ~10,000 pulses/second at 10kHz frequency

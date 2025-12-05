@@ -1083,15 +1083,16 @@ public:
 };
 ```
 
-**PCNT Tracker (Y, C axes):**
-**Given** PCNT unit is configured
+**PCNT Tracker (Y, C, D axes):**
+**Given** PCNT unit is configured (PCNT_UNIT_Y=0, PCNT_UNIT_C=1, PCNT_UNIT_D=2)
 **When** pulses are generated
 **Then** hardware counter tracks position
 **And** `getPosition()` returns accurate pulse count
 **And** overflow handling extends range beyond 16-bit PCNT limit
+**And** D axis uses GPIO internal loopback (LEDC output → PCNT input on same GPIO)
 
-**Software Tracker (X, Z, A, B, D axes):**
-**Given** RMT or LEDC generates pulses
+**Software Tracker (X, Z, A, B axes):**
+**Given** RMT generates pulses
 **When** motion runs
 **Then** software counter tracks commanded pulses
 **And** position updated on motion completion callback
@@ -1113,10 +1114,10 @@ public:
 
 **Implementation Notes (DONE):**
 - **IPositionTracker Interface**: Created header-only abstract interface with `init()`, `reset(int64_t)`, `getPosition()`, `setDirection(bool)` methods.
-- **PcntTracker (Y, C)**: Hardware PCNT-based position tracking. Uses ESP-IDF 5.x PCNT API with watch points at ±32767 for overflow detection. Overflow ISR extends 16-bit counter to int64_t via atomic accumulator.
-- **SoftwareTracker (X, Z, A, B, D)**: Atomic-based position tracking. Receives pulse counts via `addPulses()` method for pulse generator callbacks. Uses `std::atomic<int64_t>` for thread-safe position.
+- **PcntTracker (Y, C, D)**: Hardware PCNT-based position tracking. Uses ESP-IDF 5.x PCNT API with watch points at ±32767 for overflow detection. Overflow ISR extends 16-bit counter to int64_t via atomic accumulator. D axis uses GPIO internal loopback (GPIO_MODE_INPUT_OUTPUT) so LEDC output and PCNT input share the same GPIO.
+- **SoftwareTracker (X, Z, A, B)**: Atomic-based position tracking. Receives pulse counts via `addPulses()` method for pulse generator callbacks. Uses `std::atomic<int64_t>` for thread-safe position.
 - **TimeTracker (E)**: Time-based binary position tracking for discrete actuator. Returns 0 (retracted) or 1 (extended). Position interpolated during motion based on `TIMING_E_AXIS_TRAVEL_MS`.
-- **Config Constants**: `LIMIT_PCNT_HIGH_LIMIT` (32767), `LIMIT_PCNT_LOW_LIMIT` (-32767) in config_limits.h; `TIMING_E_AXIS_TRAVEL_MS` (1000) in config_timing.h.
+- **Config Constants**: `LIMIT_PCNT_HIGH_LIMIT` (32767), `LIMIT_PCNT_LOW_LIMIT` (-32767) in config_limits.h; `TIMING_E_AXIS_TRAVEL_MS` (1000) in config_timing.h; `PCNT_UNIT_D` (2) in config_peripherals.h.
 
 **Story 3.5b - Real-Time Position During Motion (DONE):**
 
@@ -1126,14 +1127,22 @@ Added real-time position feedback so `getPosition()` returns accurate values dur
 |------|------------|--------------|---------------|------------------|
 | X, Z, A, B | RMT | SoftwareTracker | ISR callback on DMA buffer completion | Every ~1ms (512 symbols) |
 | Y, C | MCPWM | PcntTracker | Hardware PCNT counts pulses directly | Real-time (hardware) |
-| D | LEDC | SoftwareTracker | Time-based accumulation in profile timer | Every 1ms, reported every 20ms |
+| D | LEDC | PcntTracker | Hardware PCNT via internal GPIO loopback | Real-time (hardware) |
 | E | Discrete | TimeTracker | Time interpolation from motion start | On query |
 
 **Key Implementation Details:**
 - **RMT**: `handleTxDoneISR()` calls `position_tracker_->addPulses(completed_symbols)` after each DMA buffer completes
-- **LEDC**: Profile timer (1ms) accumulates pulses via `velocity * time`, position timer (20ms) reports delta to tracker. Original software timer approach failed due to timer restart conflicts.
+- **LEDC (D axis)**: Uses hardware PCNT via GPIO internal loopback. GPIO_D_STEP configured as `GPIO_MODE_INPUT_OUTPUT` so LEDC output and PCNT input share the same GPIO. Time-based accumulation code was removed in Story 3.5c.
 - **IPulseGenerator**: Added `setPositionTracker(IPositionTracker* tracker)` method to interface
-- **Config**: Added `TIMING_LEDC_POSITION_UPDATE_MS = 20` to config_timing.h
+- **Config**: Added `PCNT_UNIT_D = 2` to config_peripherals.h
+
+**Story 3.5c - Hardware PCNT for D Axis (DONE):**
+
+D axis originally used time-based pulse estimation (Story 3.5b) because "no free PCNT units" was assumed. However, ESP32-S3 has 4 PCNT units and only 2 were used. Story 3.5c added PCNT_UNIT_D (unit 2) for hardware pulse counting:
+- GPIO_D_STEP configured as `GPIO_MODE_INPUT_OUTPUT` for internal loopback
+- D axis now uses `PcntTracker(PCNT_UNIT_D, GPIO_D_STEP)` instead of SoftwareTracker
+- Time-based accumulation code (`position_timer_`, `accumulated_pulses_`) removed from LedcPulseGenerator
+- Velocity ramp-up bug fixed: changed from position-based to time-based velocity calculation (`v = v0 + a*t`)
 
 ---
 
@@ -1213,7 +1222,7 @@ public:
 **StepperMotor Implementation:**
 **Given** a StepperMotor is constructed with:
 - IPulseGenerator (MCPWM for C, LEDC for D)
-- IPositionTracker (PCNT for C, software for D)
+- IPositionTracker (PcntTracker for both C and D)
 - ShiftRegisterController reference
 - Axis configuration
 
@@ -1226,7 +1235,7 @@ public:
 **When** I call `moveAbsolute(500, 100)` on D axis
 **Then:**
 1. Motion executes with LEDC pulses
-2. Position tracked via software counter
+2. Position tracked via hardware PCNT (PCNT_UNIT_D) using GPIO internal loopback
 3. Completion based on commanded pulse count
 
 **Stepper-Specific:**
@@ -1238,8 +1247,9 @@ public:
 
 **Technical Notes:**
 - StepperMotor may inherit from common MotorBase with ServoMotor
-- C axis: MCPWM + PCNT (most accurate)
-- D axis: LEDC + software count (adequate for discrete positioning)
+- C axis: MCPWM + PCNT (PCNT_UNIT_C = 1)
+- D axis: LEDC + PCNT via GPIO internal loopback (PCNT_UNIT_D = 2)
+- Both stepper axes use hardware PCNT for accurate position counting
 - FR4: 2 stepper motors with hardware position counting
 
 ---
