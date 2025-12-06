@@ -179,7 +179,7 @@
  *
  * Valid range: 64 (minimum for DMA) to 1024 (recommended max by Espressif)
  */
-#define LIMIT_RMT_BUFFER_SYMBOLS    512
+#define LIMIT_RMT_BUFFER_SYMBOLS    48
 
 /**
  * @brief PCNT high limit for overflow detection
