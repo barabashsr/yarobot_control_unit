@@ -72,28 +72,28 @@ include esp-idf/main/CMakeFiles/__idf_main.dir/flags.make
 esp-idf/main/CMakeFiles/__idf_main.dir/codegen:
 .PHONY : esp-idf/main/CMakeFiles/__idf_main.dir/codegen
 
-esp-idf/main/CMakeFiles/__idf_main.dir/yarobot_control_unit.cpp.obj: esp-idf/main/CMakeFiles/__idf_main.dir/flags.make
-esp-idf/main/CMakeFiles/__idf_main.dir/yarobot_control_unit.cpp.obj: /Users/sergeybarabash/robo/yarobot_control_unit/firmware/main/yarobot_control_unit.cpp
-esp-idf/main/CMakeFiles/__idf_main.dir/yarobot_control_unit.cpp.obj: esp-idf/main/CMakeFiles/__idf_main.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object esp-idf/main/CMakeFiles/__idf_main.dir/yarobot_control_unit.cpp.obj"
-	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/main && /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/bin/xtensa-esp32s3-elf-g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT esp-idf/main/CMakeFiles/__idf_main.dir/yarobot_control_unit.cpp.obj -MF CMakeFiles/__idf_main.dir/yarobot_control_unit.cpp.obj.d -o CMakeFiles/__idf_main.dir/yarobot_control_unit.cpp.obj -c /Users/sergeybarabash/robo/yarobot_control_unit/firmware/main/yarobot_control_unit.cpp
+esp-idf/main/CMakeFiles/__idf_main.dir/gdma_probe.cpp.obj: esp-idf/main/CMakeFiles/__idf_main.dir/flags.make
+esp-idf/main/CMakeFiles/__idf_main.dir/gdma_probe.cpp.obj: /Users/sergeybarabash/robo/yarobot_control_unit/firmware/main/gdma_probe.cpp
+esp-idf/main/CMakeFiles/__idf_main.dir/gdma_probe.cpp.obj: esp-idf/main/CMakeFiles/__idf_main.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object esp-idf/main/CMakeFiles/__idf_main.dir/gdma_probe.cpp.obj"
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/main && /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/bin/xtensa-esp32s3-elf-g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT esp-idf/main/CMakeFiles/__idf_main.dir/gdma_probe.cpp.obj -MF CMakeFiles/__idf_main.dir/gdma_probe.cpp.obj.d -o CMakeFiles/__idf_main.dir/gdma_probe.cpp.obj -c /Users/sergeybarabash/robo/yarobot_control_unit/firmware/main/gdma_probe.cpp
 
-esp-idf/main/CMakeFiles/__idf_main.dir/yarobot_control_unit.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/__idf_main.dir/yarobot_control_unit.cpp.i"
-	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/main && /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/bin/xtensa-esp32s3-elf-g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sergeybarabash/robo/yarobot_control_unit/firmware/main/yarobot_control_unit.cpp > CMakeFiles/__idf_main.dir/yarobot_control_unit.cpp.i
+esp-idf/main/CMakeFiles/__idf_main.dir/gdma_probe.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/__idf_main.dir/gdma_probe.cpp.i"
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/main && /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/bin/xtensa-esp32s3-elf-g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/sergeybarabash/robo/yarobot_control_unit/firmware/main/gdma_probe.cpp > CMakeFiles/__idf_main.dir/gdma_probe.cpp.i
 
-esp-idf/main/CMakeFiles/__idf_main.dir/yarobot_control_unit.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/__idf_main.dir/yarobot_control_unit.cpp.s"
-	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/main && /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/bin/xtensa-esp32s3-elf-g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sergeybarabash/robo/yarobot_control_unit/firmware/main/yarobot_control_unit.cpp -o CMakeFiles/__idf_main.dir/yarobot_control_unit.cpp.s
+esp-idf/main/CMakeFiles/__idf_main.dir/gdma_probe.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/__idf_main.dir/gdma_probe.cpp.s"
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/main && /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/bin/xtensa-esp32s3-elf-g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/sergeybarabash/robo/yarobot_control_unit/firmware/main/gdma_probe.cpp -o CMakeFiles/__idf_main.dir/gdma_probe.cpp.s
 
 # Object files for target __idf_main
 __idf_main_OBJECTS = \
-"CMakeFiles/__idf_main.dir/yarobot_control_unit.cpp.obj"
+"CMakeFiles/__idf_main.dir/gdma_probe.cpp.obj"
 
 # External object files for target __idf_main
 __idf_main_EXTERNAL_OBJECTS =
 
-esp-idf/main/libmain.a: esp-idf/main/CMakeFiles/__idf_main.dir/yarobot_control_unit.cpp.obj
+esp-idf/main/libmain.a: esp-idf/main/CMakeFiles/__idf_main.dir/gdma_probe.cpp.obj
 esp-idf/main/libmain.a: esp-idf/main/CMakeFiles/__idf_main.dir/build.make
 esp-idf/main/libmain.a: esp-idf/main/CMakeFiles/__idf_main.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking C static library libmain.a"

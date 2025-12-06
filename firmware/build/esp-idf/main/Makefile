@@ -175,29 +175,29 @@ __idf_main/fast:
 	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/main/CMakeFiles/__idf_main.dir/build.make esp-idf/main/CMakeFiles/__idf_main.dir/build
 .PHONY : __idf_main/fast
 
-yarobot_control_unit.obj: yarobot_control_unit.cpp.obj
-.PHONY : yarobot_control_unit.obj
+gdma_probe.obj: gdma_probe.cpp.obj
+.PHONY : gdma_probe.obj
 
 # target to build an object file
-yarobot_control_unit.cpp.obj:
-	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/main/CMakeFiles/__idf_main.dir/build.make esp-idf/main/CMakeFiles/__idf_main.dir/yarobot_control_unit.cpp.obj
-.PHONY : yarobot_control_unit.cpp.obj
+gdma_probe.cpp.obj:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/main/CMakeFiles/__idf_main.dir/build.make esp-idf/main/CMakeFiles/__idf_main.dir/gdma_probe.cpp.obj
+.PHONY : gdma_probe.cpp.obj
 
-yarobot_control_unit.i: yarobot_control_unit.cpp.i
-.PHONY : yarobot_control_unit.i
+gdma_probe.i: gdma_probe.cpp.i
+.PHONY : gdma_probe.i
 
 # target to preprocess a source file
-yarobot_control_unit.cpp.i:
-	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/main/CMakeFiles/__idf_main.dir/build.make esp-idf/main/CMakeFiles/__idf_main.dir/yarobot_control_unit.cpp.i
-.PHONY : yarobot_control_unit.cpp.i
+gdma_probe.cpp.i:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/main/CMakeFiles/__idf_main.dir/build.make esp-idf/main/CMakeFiles/__idf_main.dir/gdma_probe.cpp.i
+.PHONY : gdma_probe.cpp.i
 
-yarobot_control_unit.s: yarobot_control_unit.cpp.s
-.PHONY : yarobot_control_unit.s
+gdma_probe.s: gdma_probe.cpp.s
+.PHONY : gdma_probe.s
 
 # target to generate assembly for a file
-yarobot_control_unit.cpp.s:
-	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/main/CMakeFiles/__idf_main.dir/build.make esp-idf/main/CMakeFiles/__idf_main.dir/yarobot_control_unit.cpp.s
-.PHONY : yarobot_control_unit.cpp.s
+gdma_probe.cpp.s:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/main/CMakeFiles/__idf_main.dir/build.make esp-idf/main/CMakeFiles/__idf_main.dir/gdma_probe.cpp.s
+.PHONY : gdma_probe.cpp.s
 
 # Help Target
 help:
@@ -212,9 +212,9 @@ help:
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... __idf_main"
-	@echo "... yarobot_control_unit.obj"
-	@echo "... yarobot_control_unit.i"
-	@echo "... yarobot_control_unit.s"
+	@echo "... gdma_probe.obj"
+	@echo "... gdma_probe.i"
+	@echo "... gdma_probe.s"
 .PHONY : help
 
 

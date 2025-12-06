@@ -1,0 +1,284 @@
+<story-context id="3-9c" v="1.0">
+  <metadata>
+    <epicId>3</epicId>
+    <storyId>9c</storyId>
+    <title>RMT Pulse Generator FastAccelStepper Refactor</title>
+    <status>ready-for-dev</status>
+    <generatedAt>2025-12-06</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/3-9c-rmt-fastaccelstepper-refactor.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>to refactor RmtPulseGenerator to use FastAccelStepper's proven RMT V2 simple encoder pattern</iWant>
+    <soThat>all 4 RMT channels operate simultaneously at 200kHz without "no free tx channels" errors, enabling full motor system operation</soThat>
+    <tasks>
+      <task id="1" ac="4">
+        <title>Reduce RMT buffer to 48 symbols (ESP32-S3 native size)</title>
+        <subtasks>
+          <subtask>Update LIMIT_RMT_BUFFER_SYMBOLS in config_limits.h from 512 to 48</subtask>
+          <subtask>Update LIMIT_RMT_PART_SIZE = 24 (half of buffer)</subtask>
+          <subtask>Add LIMIT_RMT_RESOLUTION_HZ = 16000000 (16 MHz, FastAccelStepper proven)</subtask>
+          <subtask>Update documentation comments for buffer sizing rationale</subtask>
+        </subtasks>
+      </task>
+      <task id="2" ac="3">
+        <title>Add command queue data structures</title>
+        <subtasks>
+          <subtask>Define queue_entry struct (ticks, steps, toggle_dir, countUp)</subtask>
+          <subtask>Define stepper_command_s struct for RampGenerator interface</subtask>
+          <subtask>Add QUEUE_LEN = 16 constant to config_limits.h</subtask>
+          <subtask>Add atomic read_idx/write_idx for lock-free queue access</subtask>
+        </subtasks>
+      </task>
+      <task id="3" ac="4">
+        <title>Replace RMT initialization with simple encoder pattern</title>
+        <subtasks>
+          <subtask>Remove DMA configuration (with_dma = false)</subtask>
+          <subtask>Create simple encoder with callback via rmt_new_simple_encoder()</subtask>
+          <subtask>Create per-axis ramp task with semaphore</subtask>
+        </subtasks>
+      </task>
+      <task id="4" ac="2, 5">
+        <title>Implement encoder callback (ISR)</title>
+        <subtasks>
+          <subtask>Read commands from queue (atomic read_idx/write_idx)</subtask>
+          <subtask>Generate PART_SIZE symbols per call</subtask>
+          <subtask>Track position via atomic pulse_count_</subtask>
+          <subtask>Call IPositionTracker::addPulses() from ISR</subtask>
+          <subtask>CRITICAL: No FPU operations in ISR (use integer math only)</subtask>
+        </subtasks>
+      </task>
+      <task id="5" ac="3">
+        <title>Implement ramp_fill_buffer() for profile generation</title>
+        <subtasks>
+          <subtask>Port trapezoidal profile logic from existing fillBuffer()</subtask>
+          <subtask>Generate queue_entry commands for encoder</subtask>
+          <subtask>Handle acceleration, cruise, deceleration phases</subtask>
+          <subtask>Support mid-motion blending (new commands while running)</subtask>
+        </subtasks>
+      </task>
+      <task id="6" ac="3">
+        <title>Implement startQueue/forceStop pattern</title>
+        <subtasks>
+          <subtask>startQueue_rmt(): Enable channel, start transmission</subtask>
+          <subtask>forceStop_rmt(): Disable channel, clear queue</subtask>
+          <subtask>isReadyForCommands_rmt(): Check queue capacity</subtask>
+        </subtasks>
+      </task>
+      <task id="7" ac="6">
+        <title>Run existing tests</title>
+        <subtasks>
+          <subtask>Execute idf.py build to verify compilation</subtask>
+          <subtask>Run test_rmt_pulse_gen.cpp unit tests</subtask>
+          <subtask>Verify all existing AC tests pass</subtask>
+        </subtasks>
+      </task>
+      <task id="8" ac="1, 7">
+        <title>Hardware verification</title>
+        <subtasks>
+          <subtask>Initialize all 4 RMT channels (X, Z, A, B)</subtask>
+          <subtask>Run 4-channel simultaneous test at 200kHz</subtask>
+          <subtask>Verify no "no free tx channels" error</subtask>
+          <subtask>Verify mid-motion blend behavior</subtask>
+        </subtasks>
+      </task>
+      <task id="9" ac="8">
+        <title>Code review - No Magic Numbers (MANDATORY)</title>
+        <subtasks>
+          <subtask>Review all .cpp and .h files for hardcoded numeric values</subtask>
+          <subtask>Verify all RMT parameters from config_limits.h (resolution, buffer size, queue length)</subtask>
+          <subtask>Verify all timing from config_timing.h (task periods, timeouts)</subtask>
+          <subtask>Verify all GPIO/peripheral assignments from config_gpio.h and config_peripherals.h</subtask>
+          <subtask>Run grep check: grep -rn "[0-9]{2,}" firmware/components/pulse_gen/ to find suspects</subtask>
+          <subtask>Document any exceptions with explicit comments explaining why literal is acceptable</subtask>
+        </subtasks>
+      </task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <criterion id="AC1">Given all 4 RMT channels initialized, when running simultaneously at 200kHz, then no "no free tx channels" error occurs</criterion>
+    <criterion id="AC2">Given getPulseCount() called during motion, when motion is at any frequency (1Hz-500kHz), then value returns with &lt;10ms latency</criterion>
+    <criterion id="AC3">Given a new startMove() called during existing motion, when new command has different target, then motion blends smoothly without stutter</criterion>
+    <criterion id="AC4">Given RMT channel configuration, when init() called, then with_dma=false, resolution=16MHz, mem_block=48 symbols</criterion>
+    <criterion id="AC5">Given encoder callback (ISR), when generating symbols, then NO floating-point operations are used (integer math only)</criterion>
+    <criterion id="AC6">Given existing test_rmt_pulse_gen.cpp, when all tests executed, then all tests pass</criterion>
+    <criterion id="AC7">Given hardware test with 4 channels, when running at 200kHz for 10 seconds, then all channels operate correctly</criterion>
+    <criterion id="AC8" mandatory="true">Given any implementation code, when reviewed, then NO hardcoded numeric values exist; ALL configuration values MUST come from config headers (config_limits.h, config_timing.h, config_gpio.h, config_peripherals.h)</criterion>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/architecture-changes/fastaccelstepper-migration-strategy.md</path>
+        <title>FastAccelStepper Migration Strategy</title>
+        <section>Complete document</section>
+        <snippet>Defines RMT resolution (16MHz), simple encoder pattern, buffer sizing (48 symbols, PART_SIZE=24), ISR safety requirements, and mid-motion blending strategy. This is the primary architecture document for this story.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/3-2-rmt-pulse-generator.md</path>
+        <title>Story 3.2: RMT Pulse Generator</title>
+        <section>Original implementation</section>
+        <snippet>Original RMT implementation with DMA streaming architecture. This story refactors to FastAccelStepper's simpler approach while preserving the IPulseGenerator interface.</snippet>
+      </doc>
+    </docs>
+
+    <code>
+      <artifact>
+        <path>firmware/components/pulse_gen/rmt_pulse_gen.cpp</path>
+        <kind>implementation</kind>
+        <symbol>RmtPulseGenerator</symbol>
+        <lines>1-736</lines>
+        <reason>Main file to refactor: Replace DMA streaming with simple encoder pattern. Key changes: init() config, fillBuffer() becomes encoder callback, remove refill task.</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/pulse_gen/include/rmt_pulse_gen.h</path>
+        <kind>header</kind>
+        <symbol>RmtPulseGenerator class</symbol>
+        <lines>1-182</lines>
+        <reason>Header to update: Add queue_entry struct, change buffer sizes, remove refill task handle, add ramp task handle.</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/pulse_gen/include/i_pulse_generator.h</path>
+        <kind>interface</kind>
+        <symbol>IPulseGenerator</symbol>
+        <lines>1-147</lines>
+        <reason>Interface MUST NOT CHANGE. All public methods remain identical. Internal implementation changes only.</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/config/include/config_limits.h</path>
+        <kind>config</kind>
+        <symbol>LIMIT_RMT_*</symbol>
+        <lines>164-183</lines>
+        <reason>Update: LIMIT_RMT_BUFFER_SYMBOLS=48, add LIMIT_RMT_PART_SIZE=24, LIMIT_RMT_RESOLUTION_HZ=16000000</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/pulse_gen/test/test_rmt_pulse_gen.cpp</path>
+        <kind>test</kind>
+        <symbol>TEST_CASE functions</symbol>
+        <lines>1-610</lines>
+        <reason>Existing tests MUST PASS after refactor. No changes expected to test file.</reason>
+      </artifact>
+      <artifact>
+        <path>examples/FastAccelStepper/src/StepperISR_idf5_esp32_rmt.cpp</path>
+        <kind>reference</kind>
+        <symbol>encode_commands, init_rmt, startQueue_rmt</symbol>
+        <lines>1-226</lines>
+        <reason>PRIMARY ALGORITHM REFERENCE: Simple encoder callback pattern, queue_done callback, startQueue/forceStop pattern.</reason>
+      </artifact>
+      <artifact>
+        <path>examples/FastAccelStepper/src/StepperISR.h</path>
+        <kind>reference</kind>
+        <symbol>StepperQueue class, queue_entry struct</symbol>
+        <lines>1-236</lines>
+        <reason>Data structure reference: queue_entry layout, atomic read_idx/write_idx, _rmtStopped flag.</reason>
+      </artifact>
+      <artifact>
+        <path>examples/FastAccelStepper/src/StepperISR.cpp</path>
+        <kind>reference</kind>
+        <symbol>addQueueEntry, getCurrentPosition</symbol>
+        <lines>1-340</lines>
+        <reason>Queue management reference: Lock-free queue operations, position tracking from queue state.</reason>
+      </artifact>
+      <artifact>
+        <path>examples/FastAccelStepper/src/RampGenerator.h</path>
+        <kind>reference</kind>
+        <symbol>RampGenerator class</symbol>
+        <lines>1-119</lines>
+        <reason>Ramp generation reference: Profile state machine, velocity calculations, command generation interface.</reason>
+      </artifact>
+      <artifact>
+        <path>examples/FastAccelStepper/src/fas_arch/common_esp32_idf5.h</path>
+        <kind>reference</kind>
+        <symbol>RMT_SIZE, PART_SIZE, QUEUES_RMT</symbol>
+        <lines>48-63</lines>
+        <reason>ESP32-S3 specific: RMT_SIZE=48, PART_SIZE=24, QUEUES_RMT=4 channels</reason>
+      </artifact>
+    </code>
+
+    <dependencies>
+      <esp-idf version="5.4">
+        <component>driver/rmt_tx.h</component>
+        <component>driver/rmt_encoder.h</component>
+        <component>freertos/FreeRTOS.h</component>
+        <component>freertos/semphr.h</component>
+        <component>freertos/task.h</component>
+      </esp-idf>
+    </dependencies>
+  </artifacts>
+
+  <interfaces>
+    <interface>
+      <name>rmt_new_simple_encoder</name>
+      <kind>ESP-IDF API</kind>
+      <signature>esp_err_t rmt_new_simple_encoder(const rmt_simple_encoder_config_t *config, rmt_encoder_handle_t *ret_encoder)</signature>
+      <path>ESP-IDF driver/rmt_encoder.h</path>
+      <note>Key API: Creates encoder with callback for on-demand symbol generation. Callback signature: size_t (*callback)(const void *data, size_t data_size, size_t symbols_written, size_t symbols_free, rmt_symbol_word_t *symbols, bool *done, void *arg)</note>
+    </interface>
+    <interface>
+      <name>IPulseGenerator</name>
+      <kind>C++ interface</kind>
+      <signature>virtual esp_err_t init(); virtual esp_err_t startMove(int32_t, float, float); virtual esp_err_t startVelocity(float, float); virtual esp_err_t stop(float); virtual void stopImmediate(); virtual bool isRunning() const; virtual int64_t getPulseCount() const; virtual float getCurrentVelocity() const;</signature>
+      <path>firmware/components/pulse_gen/include/i_pulse_generator.h</path>
+      <note>INTERFACE UNCHANGED. All public methods retain exact signatures. Internal implementation changes only.</note>
+    </interface>
+    <interface>
+      <name>IPositionTracker::addPulses</name>
+      <kind>C++ method</kind>
+      <signature>virtual void addPulses(int64_t pulses) = 0</signature>
+      <path>firmware/components/position/include/i_position_tracker.h</path>
+      <note>ISR-SAFE: Called from encoder callback. Must use only atomics.</note>
+    </interface>
+  </interfaces>
+
+  <constraints>
+    <constraint type="mandatory" source="docs/architecture-changes/fastaccelstepper-migration-strategy.md">
+      ISR Safety: Encoder callback MUST NOT use floating-point operations. FPU context switch in ISR causes crashes. Use integer math for all symbol generation.
+    </constraint>
+    <constraint type="mandatory" source="docs/architecture-changes/fastaccelstepper-migration-strategy.md">
+      RMT Resolution: Use 16 MHz (not 80 MHz). FastAccelStepper proven at this rate. Provides 62.5ns resolution adequate for 500kHz max.
+    </constraint>
+    <constraint type="mandatory" source="docs/architecture-changes/fastaccelstepper-migration-strategy.md">
+      DMA Disabled: Set with_dma=false. DMA mode reserves channels preventing 4-channel operation.
+    </constraint>
+    <constraint type="mandatory" source="firmware/components/pulse_gen/include/i_pulse_generator.h">
+      Interface Preservation: IPulseGenerator interface signatures MUST NOT change. This is a refactor, not a redesign.
+    </constraint>
+    <constraint type="mandatory" source="config_limits.h">
+      Buffer Size: LIMIT_RMT_BUFFER_SYMBOLS = 48 (ESP32-S3 native per-channel memory). PART_SIZE = 24 symbols per encoder callback.
+    </constraint>
+    <constraint type="code-pattern" source="examples/FastAccelStepper/src/StepperISR_idf5_esp32_rmt.cpp">
+      Pattern: Use rmt_new_simple_encoder with encode_commands callback. Callback reads from queue_entry array, generates PART_SIZE symbols, returns symbol count.
+    </constraint>
+    <constraint type="code-pattern" source="examples/FastAccelStepper/src/StepperISR.h">
+      Queue Structure: Use atomic read_idx/write_idx with QUEUE_LEN_MASK for lock-free queue. Queue entry contains: steps, ticks, toggle_dir, countUp flags.
+    </constraint>
+    <constraint type="mandatory" source="AC8">
+      NO MAGIC NUMBERS: All numeric configuration values MUST be defined in header files. No hardcoded literals in source code.
+      - RMT parameters → config_limits.h (LIMIT_RMT_RESOLUTION_HZ, LIMIT_RMT_BUFFER_SYMBOLS, LIMIT_RMT_PART_SIZE, LIMIT_RMT_QUEUE_LEN)
+      - Timing values → config_timing.h (task periods, timeouts, delays)
+      - GPIO pins → config_gpio.h
+      - Peripheral assignments → config_peripherals.h
+      Exceptions (must be commented): bit masks (0xFF), array indices (0,1,2), boolean (0,1), ESP-IDF API requirements.
+    </constraint>
+  </constraints>
+
+  <tests>
+    <standards>Unity test framework via ESP-IDF test component. Tests tagged by acceptance criteria [AC1], [AC2], etc. Tests located in component test/ directories. All existing tests must pass after refactor (AC6).</standards>
+    <locations>
+      <location>firmware/components/pulse_gen/test/test_rmt_pulse_gen.cpp</location>
+    </locations>
+    <ideas>
+      <idea ac="AC1">test_4_channels_at_200khz_no_error: Initialize all 4 RMT channels, run simultaneously at 200kHz, verify no errors</idea>
+      <idea ac="AC2">test_getPulseCount_latency: During motion, measure time to return getPulseCount(), verify &lt;10ms</idea>
+      <idea ac="AC3">test_mid_motion_blend: Start move, call startMove again mid-motion, verify smooth transition (no stutter)</idea>
+      <idea ac="AC4">test_init_config: After init(), verify channel config has with_dma=false, resolution=16MHz</idea>
+      <idea ac="AC5">test_encoder_no_fpu: Code review task - verify encode_commands uses no float/double</idea>
+      <idea ac="AC6">run_existing_tests: Execute all tests in test_rmt_pulse_gen.cpp, verify all pass</idea>
+      <idea ac="AC7">hardware_test_4ch_10s: Manual test with oscilloscope, run 4 channels at 200kHz for 10 seconds</idea>
+      <idea ac="AC8">code_review_no_magic_numbers: grep -rn "[0-9]{2,}" firmware/components/pulse_gen/ and verify all matches are either config constants or documented exceptions</idea>
+    </ideas>
+  </tests>
+</story-context>
