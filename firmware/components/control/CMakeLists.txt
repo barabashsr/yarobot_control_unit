@@ -1,17 +1,15 @@
 # Control umbrella component
 # Aggregates all control sub-components for a unified build
 
-# STORY-3-2-TEST: Remove test_pulse_cmd.cpp and pulse_gen dependency after hardware verification
-# STORY-3-5-TEST: Remove position dependency after hardware verification
 idf_component_register(
     SRCS
         "tasks/task_stubs.c"
         "command_executor/command_executor.c"
-        "command_executor/test_pulse_cmd.cpp"
         "command_executor/move_handler.cpp"
         "command_executor/movr_handler.cpp"
         "motion_controller/motion_controller.cpp"
         "motor_system/motor_system.cpp"
+    # NOTE: test_pulse_cmd.cpp removed - was creating duplicate RMT/MCPWM/LEDC instances
     INCLUDE_DIRS
         "tasks/include"
         "command_executor/include"

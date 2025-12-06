@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/__idf_main.dir/gdma_probe.cpp.obj"
-  "CMakeFiles/__idf_main.dir/gdma_probe.cpp.obj.d"
+  "CMakeFiles/__idf_main.dir/yarobot_control_unit.cpp.obj"
+  "CMakeFiles/__idf_main.dir/yarobot_control_unit.cpp.obj.d"
   "libmain.a"
   "libmain.pdb"
 )

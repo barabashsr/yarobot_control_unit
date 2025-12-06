@@ -26,8 +26,8 @@
 
 // Position tracker headers
 #include "software_tracker.h"
-#include "pcnt_tracker.h"
 #include "time_tracker.h"
+// Note: PcntTracker not needed - MCPWM/LEDC generators implement IPositionTracker directly
 
 // Motor headers
 #include "servo_motor.h"
@@ -53,10 +53,10 @@ static const char* TAG = "motor_system";
  */
 
 /** @brief RMT pulse generators for servo axes X, Z, A, B */
-static RmtPulseGenerator s_rmt_x(RMT_CHANNEL_X, GPIO_X_STEP, LIMIT_RMT_RESOLUTION_HZ);
-static RmtPulseGenerator s_rmt_z(RMT_CHANNEL_Z, GPIO_Z_STEP, LIMIT_RMT_RESOLUTION_HZ);
-static RmtPulseGenerator s_rmt_a(RMT_CHANNEL_A, GPIO_A_STEP, LIMIT_RMT_RESOLUTION_HZ);
-static RmtPulseGenerator s_rmt_b(RMT_CHANNEL_B, GPIO_B_STEP, LIMIT_RMT_RESOLUTION_HZ);
+static RmtPulseGenerator s_rmt_x(RMT_CHANNEL_X, GPIO_X_STEP);
+static RmtPulseGenerator s_rmt_z(RMT_CHANNEL_Z, GPIO_Z_STEP);
+static RmtPulseGenerator s_rmt_a(RMT_CHANNEL_A, GPIO_A_STEP);
+static RmtPulseGenerator s_rmt_b(RMT_CHANNEL_B, GPIO_B_STEP);
 
 /** @brief MCPWM pulse generators for Y and C axes */
 static McpwmPulseGenerator s_mcpwm_y(MCPWM_TIMER_Y, GPIO_Y_STEP, PCNT_UNIT_Y);
@@ -78,10 +78,13 @@ static SoftwareTracker s_tracker_z;
 static SoftwareTracker s_tracker_a;
 static SoftwareTracker s_tracker_b;
 
-/** @brief PCNT trackers for MCPWM/LEDC axes (Y, C, D) */
-static PcntTracker s_tracker_y(PCNT_UNIT_Y, GPIO_Y_STEP);
-static PcntTracker s_tracker_c(PCNT_UNIT_C, GPIO_C_STEP);
-static PcntTracker s_tracker_d(PCNT_UNIT_D, GPIO_D_STEP);
+/**
+ * @brief MCPWM/LEDC pulse generators also implement IPositionTracker
+ *
+ * These pulse generators have internal PCNT hardware counting, so they
+ * directly provide position tracking. No separate PcntTracker needed.
+ * Pointers to s_mcpwm_y, s_mcpwm_c, s_ledc_d are used as IPositionTracker*.
+ */
 
 /** @brief Time tracker for E axis discrete actuator */
 static TimeTracker s_tracker_e(TIMING_E_AXIS_TRAVEL_MS);
@@ -287,24 +290,8 @@ static esp_err_t init_position_trackers(void)
         return ret;
     }
 
-    // Initialize PCNT trackers (Y, C, D)
-    ret = s_tracker_y.init();
-    if (ret != ESP_OK) {
-        ESP_LOGE(TAG, "Failed to init tracker Y: %s", esp_err_to_name(ret));
-        return ret;
-    }
-
-    ret = s_tracker_c.init();
-    if (ret != ESP_OK) {
-        ESP_LOGE(TAG, "Failed to init tracker C: %s", esp_err_to_name(ret));
-        return ret;
-    }
-
-    ret = s_tracker_d.init();
-    if (ret != ESP_OK) {
-        ESP_LOGE(TAG, "Failed to init tracker D: %s", esp_err_to_name(ret));
-        return ret;
-    }
+    // Note: MCPWM/LEDC axes (Y, C, D) don't need separate PCNT trackers.
+    // Their pulse generators already have internal PCNT and implement IPositionTracker.
 
     // Initialize time tracker (E)
     ret = s_tracker_e.init();
@@ -346,15 +333,16 @@ static void wire_generators_to_trackers(void)
 static esp_err_t create_motor_objects(void)
 {
     // Create servo motors (X, Y, Z, A, B) using placement new
+    // RMT axes use SoftwareTracker, MCPWM axes use pulse generator as tracker (implements IPositionTracker)
     s_servo_x = new (s_servo_x_storage) ServoMotor(&s_rmt_x, &s_tracker_x, AXIS_X, s_config_x);
-    s_servo_y = new (s_servo_y_storage) ServoMotor(&s_mcpwm_y, &s_tracker_y, AXIS_Y, s_config_y);
+    s_servo_y = new (s_servo_y_storage) ServoMotor(&s_mcpwm_y, &s_mcpwm_y, AXIS_Y, s_config_y);
     s_servo_z = new (s_servo_z_storage) ServoMotor(&s_rmt_z, &s_tracker_z, AXIS_Z, s_config_z);
     s_servo_a = new (s_servo_a_storage) ServoMotor(&s_rmt_a, &s_tracker_a, AXIS_A, s_config_a);
     s_servo_b = new (s_servo_b_storage) ServoMotor(&s_rmt_b, &s_tracker_b, AXIS_B, s_config_b);
 
-    // Create stepper motors (C, D)
-    s_stepper_c = new (s_stepper_c_storage) StepperMotor(&s_mcpwm_c, &s_tracker_c, AXIS_C, s_config_c);
-    s_stepper_d = new (s_stepper_d_storage) StepperMotor(&s_ledc_d, &s_tracker_d, AXIS_D, s_config_d);
+    // Create stepper motors (C, D) - pulse generators implement IPositionTracker
+    s_stepper_c = new (s_stepper_c_storage) StepperMotor(&s_mcpwm_c, &s_mcpwm_c, AXIS_C, s_config_c);
+    s_stepper_d = new (s_stepper_d_storage) StepperMotor(&s_ledc_d, &s_ledc_d, AXIS_D, s_config_d);
 
     // Create discrete axis (E)
     s_discrete_e = new (s_discrete_e_storage) DiscreteAxis(&s_tracker_e, AXIS_E, s_config_e);

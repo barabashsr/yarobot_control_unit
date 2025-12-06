@@ -159,27 +159,95 @@
 #define LIMIT_LEDC_MIN_FREQ_HZ      100
 
 /**
- * @brief RMT peripheral resolution (Hz)
+ * @brief RMT clock resolution (Hz)
  *
- * 80 MHz clock provides 12.5ns resolution per tick.
- * At 500 kHz: period = 2µs = 160 ticks (80 high + 80 low for 50% duty)
- * At 200 kHz: period = 5µs = 400 ticks (200 high + 200 low for 50% duty)
+ * FastAccelStepper uses 16 MHz providing 62.5ns per tick.
+ * At 500 kHz output: period = 32 ticks (adequate precision).
+ * At 200 kHz output: period = 80 ticks (good precision).
+ *
+ * @note Changed from 80 MHz to match FastAccelStepper proven configuration.
  */
-#define LIMIT_RMT_RESOLUTION_HZ     80000000
+#define LIMIT_RMT_RESOLUTION_HZ         16000000
 
 /**
- * @brief RMT DMA buffer size (symbols per buffer)
+ * @brief RMT memory block size (symbols per channel)
  *
- * Each RMT channel uses double-buffering (2 buffers).
- * Larger buffers reduce CPU overhead but increase stop latency.
- * Memory usage per channel: 2 × LIMIT_RMT_BUFFER_SYMBOLS × 4 bytes
+ * ESP32-S3 has SOC_RMT_MEM_WORDS_PER_CHANNEL = 48 symbols per channel.
+ * With callback encoder (no DMA), we use exactly one channel's worth.
  *
- * At 512 symbols with 4 channels: 512 × 4 × 8 = 16 KB total
- * At 500 kHz: 512 pulses = 1.024ms buffer duration
- *
- * Valid range: 64 (minimum for DMA) to 1024 (recommended max by Espressif)
+ * @note Must equal SOC_RMT_MEM_WORDS_PER_CHANNEL for ESP32-S3.
  */
-#define LIMIT_RMT_BUFFER_SYMBOLS    48
+#define LIMIT_RMT_MEM_BLOCK_SYMBOLS     48
+
+/**
+ * @brief Symbols per encoder callback (half of memory block)
+ *
+ * RMT double-buffers internally. Encoder fills PART_SIZE symbols per call.
+ * At 500 kHz: 24 symbols = 48µs worth of pulses.
+ *
+ * @note FastAccelStepper pattern: PART_SIZE = RMT_SIZE >> 1
+ */
+#define LIMIT_RMT_PART_SIZE             (LIMIT_RMT_MEM_BLOCK_SYMBOLS >> 1)
+
+/**
+ * @brief Command queue depth (entries)
+ *
+ * Ring buffer holding motion commands. FastAccelStepper uses 32.
+ * With 10ms forward planning at 500 kHz = ~20 commands needed.
+ * 32 entries provides sufficient buffer with margin.
+ *
+ * @note Must be power of 2 for efficient modulo via bitmask.
+ */
+#define LIMIT_RMT_QUEUE_LEN             32
+
+/**
+ * @brief Queue length bitmask for efficient modulo
+ */
+#define LIMIT_RMT_QUEUE_LEN_MASK        (LIMIT_RMT_QUEUE_LEN - 1)
+
+/**
+ * @brief Minimum command period in RMT ticks
+ *
+ * FastAccelStepper: MIN_CMD_TICKS = TICKS_PER_S / 5000 = 3200 ticks.
+ * This limits maximum step frequency to ~5 kHz per command.
+ * Actual max frequency achieved by batching multiple steps per command.
+ *
+ * At 16 MHz: 3200 ticks = 200µs minimum command duration.
+ */
+#define LIMIT_RMT_MIN_CMD_TICKS         3200
+
+/**
+ * @brief Maximum steps per single command
+ *
+ * Limits how many steps can be batched in one queue entry.
+ * At high frequencies, more steps per command = lower ISR rate.
+ * At low frequencies, fewer steps per command = lower latency.
+ *
+ * 255 = uint8_t max (FastAccelStepper compatible)
+ */
+#define LIMIT_RMT_MAX_STEPS_PER_CMD     255
+
+/**
+ * @brief Forward planning time in RMT ticks
+ *
+ * How far ahead to fill the command queue.
+ * Set to 10ms (160,000 ticks at 16MHz) to meet <10ms blend response latency.
+ *
+ * Trade-off: shorter planning = faster blend response but higher risk of
+ * queue underrun at very high step rates. 10ms provides 5000 steps buffer
+ * at 500kHz max frequency - sufficient margin.
+ *
+ * @note Reduced from FastAccelStepper's 20ms to meet PRD <10ms requirement.
+ */
+#define LIMIT_RMT_FORWARD_PLANNING_TICKS (LIMIT_RMT_RESOLUTION_HZ / 100)
+
+/**
+ * @brief Direction pin setup time (µs)
+ *
+ * Time between direction pin change and first step pulse.
+ * Motor driver dependent. Typical: 5-20µs.
+ */
+#define LIMIT_RMT_DIR_SETUP_US          20
 
 /**
  * @brief PCNT high limit for overflow detection

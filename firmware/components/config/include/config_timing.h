@@ -141,6 +141,41 @@
  */
 #define PERIOD_MOTION_UPDATE_MS     10
 
+/**
+ * @brief RMT ramp generator task period (ms)
+ *
+ * How often the ramp generator refills the command queue.
+ * FastAccelStepper default: 4ms. Must be < forward planning time.
+ *
+ * @note Event-driven with fallback periodic wake-up.
+ */
+#define TIMING_RMT_RAMP_TASK_PERIOD_MS  4
+
+/**
+ * @brief RMT ramp generator task stack size (bytes)
+ *
+ * FPU operations in ramp generator require larger stack.
+ */
+#define TIMING_RMT_RAMP_TASK_STACK      4096
+
+/**
+ * @brief Position update latency target (ms)
+ *
+ * Maximum time between position updates during motion.
+ * PRD requirement: <10ms for real-time position feedback.
+ * Used to calculate steps per command.
+ */
+#define TIMING_POSITION_UPDATE_LATENCY_MS  10
+
+/**
+ * @brief RMT stop latency maximum (µs)
+ *
+ * Maximum time for stopImmediate() to halt pulses.
+ * With queue-based system: time to drain current command.
+ * Worst case: PART_SIZE symbols at min frequency.
+ */
+#define TIMING_RMT_STOP_LATENCY_US      100
+
 /** @} */ // end timing_periods
 
 /** @} */ // end config_timing

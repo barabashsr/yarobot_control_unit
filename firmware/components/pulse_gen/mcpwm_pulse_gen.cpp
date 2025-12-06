@@ -706,6 +706,27 @@ void McpwmPulseGenerator::setPositionTracker(IPositionTracker* tracker)
 }
 
 // ============================================================================
+// IPositionTracker Implementation
+// ============================================================================
+
+esp_err_t McpwmPulseGenerator::reset(int64_t position)
+{
+    // Clear PCNT hardware counter
+    if (pcnt_unit_) {
+        pcnt_unit_clear_count(pcnt_unit_);
+    }
+    // Set software accumulator
+    overflow_count_.store(0, std::memory_order_relaxed);
+    pulse_count_.store(position, std::memory_order_relaxed);
+    return ESP_OK;
+}
+
+void McpwmPulseGenerator::setDirection(bool forward)
+{
+    direction_ = forward;
+}
+
+// ============================================================================
 // Profile Calculation
 // ============================================================================
 

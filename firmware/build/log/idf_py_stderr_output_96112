@@ -1,0 +1,20 @@
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/mcpwm_pulse_gen.cpp: In member function 'virtual void McpwmPulseGenerator::setDirection(bool)':
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/mcpwm_pulse_gen.cpp:726:16: error: request for member 'store' in '((McpwmPulseGenerator*)this)->McpwmPulseGenerator::direction_', which is of non-class type 'bool'
+  726 |     direction_.store(forward, std::memory_order_relaxed);
+      |                ^~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/ledc_pulse_gen.cpp: In member function 'virtual esp_err_t LedcPulseGenerator::reset(int64_t)':
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/ledc_pulse_gen.cpp:536:9: error: 'pcnt_unit_' was not declared in this scope
+  536 |     if (pcnt_unit_) {
+      |         ^~~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/ledc_pulse_gen.cpp:537:9: error: 'pcnt_unit_clear_count' was not declared in this scope
+  537 |         pcnt_unit_clear_count(pcnt_unit_);
+      |         ^~~~~~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/ledc_pulse_gen.cpp: In member function 'virtual void LedcPulseGenerator::setDirection(bool)':
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/ledc_pulse_gen.cpp:546:16: error: request for member 'store' in '((LedcPulseGenerator*)this)->LedcPulseGenerator::direction_', which is of non-class type 'bool'
+  546 |     direction_.store(forward, std::memory_order_relaxed);
+      |                ^~~~~
+make[2]: *** [esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/mcpwm_pulse_gen.cpp.obj] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[2]: *** [esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/ledc_pulse_gen.cpp.obj] Error 1
+make[1]: *** [esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/all] Error 2
+make: *** [all] Error 2

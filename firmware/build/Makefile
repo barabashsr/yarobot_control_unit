@@ -1930,6 +1930,19 @@ __idf_wifi_provisioning/fast:
 .PHONY : __idf_wifi_provisioning/fast
 
 #=============================================================================
+# Target rules for targets named __idf_command_parser
+
+# Build rule for target.
+__idf_command_parser: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 __idf_command_parser
+.PHONY : __idf_command_parser
+
+# fast build rule for target.
+__idf_command_parser/fast:
+	$(MAKE) $(MAKESILENT) -f esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/build.make esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/build
+.PHONY : __idf_command_parser/fast
+
+#=============================================================================
 # Target rules for targets named __idf_espressif__tinyusb
 
 # Build rule for target.
@@ -1956,43 +1969,30 @@ __idf_espressif__esp_tinyusb/fast:
 .PHONY : __idf_espressif__esp_tinyusb/fast
 
 #=============================================================================
-# Target rules for targets named __idf_espressif__i2c_bus
+# Target rules for targets named __idf_usb_cdc
 
 # Build rule for target.
-__idf_espressif__i2c_bus: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 __idf_espressif__i2c_bus
-.PHONY : __idf_espressif__i2c_bus
+__idf_usb_cdc: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 __idf_usb_cdc
+.PHONY : __idf_usb_cdc
 
 # fast build rule for target.
-__idf_espressif__i2c_bus/fast:
-	$(MAKE) $(MAKESILENT) -f esp-idf/espressif__i2c_bus/CMakeFiles/__idf_espressif__i2c_bus.dir/build.make esp-idf/espressif__i2c_bus/CMakeFiles/__idf_espressif__i2c_bus.dir/build
-.PHONY : __idf_espressif__i2c_bus/fast
+__idf_usb_cdc/fast:
+	$(MAKE) $(MAKESILENT) -f esp-idf/usb_cdc/CMakeFiles/__idf_usb_cdc.dir/build.make esp-idf/usb_cdc/CMakeFiles/__idf_usb_cdc.dir/build
+.PHONY : __idf_usb_cdc/fast
 
 #=============================================================================
-# Target rules for targets named __idf_espressif__mcp23017
+# Target rules for targets named __idf_event_manager
 
 # Build rule for target.
-__idf_espressif__mcp23017: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 __idf_espressif__mcp23017
-.PHONY : __idf_espressif__mcp23017
+__idf_event_manager: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 __idf_event_manager
+.PHONY : __idf_event_manager
 
 # fast build rule for target.
-__idf_espressif__mcp23017/fast:
-	$(MAKE) $(MAKESILENT) -f esp-idf/espressif__mcp23017/CMakeFiles/__idf_espressif__mcp23017.dir/build.make esp-idf/espressif__mcp23017/CMakeFiles/__idf_espressif__mcp23017.dir/build
-.PHONY : __idf_espressif__mcp23017/fast
-
-#=============================================================================
-# Target rules for targets named __idf_main
-
-# Build rule for target.
-__idf_main: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 __idf_main
-.PHONY : __idf_main
-
-# fast build rule for target.
-__idf_main/fast:
-	$(MAKE) $(MAKESILENT) -f esp-idf/main/CMakeFiles/__idf_main.dir/build.make esp-idf/main/CMakeFiles/__idf_main.dir/build
-.PHONY : __idf_main/fast
+__idf_event_manager/fast:
+	$(MAKE) $(MAKESILENT) -f esp-idf/event_manager/CMakeFiles/__idf_event_manager.dir/build.make esp-idf/event_manager/CMakeFiles/__idf_event_manager.dir/build
+.PHONY : __idf_event_manager/fast
 
 #=============================================================================
 # Target rules for targets named __idf_yarobot_hal
@@ -2006,19 +2006,6 @@ __idf_yarobot_hal: cmake_check_build_system
 __idf_yarobot_hal/fast:
 	$(MAKE) $(MAKESILENT) -f esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/build.make esp-idf/yarobot_hal/CMakeFiles/__idf_yarobot_hal.dir/build
 .PHONY : __idf_yarobot_hal/fast
-
-#=============================================================================
-# Target rules for targets named __idf_usb_cdc
-
-# Build rule for target.
-__idf_usb_cdc: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 __idf_usb_cdc
-.PHONY : __idf_usb_cdc
-
-# fast build rule for target.
-__idf_usb_cdc/fast:
-	$(MAKE) $(MAKESILENT) -f esp-idf/usb_cdc/CMakeFiles/__idf_usb_cdc.dir/build.make esp-idf/usb_cdc/CMakeFiles/__idf_usb_cdc.dir/build
-.PHONY : __idf_usb_cdc/fast
 
 #=============================================================================
 # Target rules for targets named __idf_test_utils
@@ -2045,32 +2032,6 @@ __idf_tpic6b595: cmake_check_build_system
 __idf_tpic6b595/fast:
 	$(MAKE) $(MAKESILENT) -f esp-idf/tpic6b595/CMakeFiles/__idf_tpic6b595.dir/build.make esp-idf/tpic6b595/CMakeFiles/__idf_tpic6b595.dir/build
 .PHONY : __idf_tpic6b595/fast
-
-#=============================================================================
-# Target rules for targets named __idf_command_parser
-
-# Build rule for target.
-__idf_command_parser: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 __idf_command_parser
-.PHONY : __idf_command_parser
-
-# fast build rule for target.
-__idf_command_parser/fast:
-	$(MAKE) $(MAKESILENT) -f esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/build.make esp-idf/command_parser/CMakeFiles/__idf_command_parser.dir/build
-.PHONY : __idf_command_parser/fast
-
-#=============================================================================
-# Target rules for targets named __idf_event_manager
-
-# Build rule for target.
-__idf_event_manager: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 __idf_event_manager
-.PHONY : __idf_event_manager
-
-# fast build rule for target.
-__idf_event_manager/fast:
-	$(MAKE) $(MAKESILENT) -f esp-idf/event_manager/CMakeFiles/__idf_event_manager.dir/build.make esp-idf/event_manager/CMakeFiles/__idf_event_manager.dir/build
-.PHONY : __idf_event_manager/fast
 
 #=============================================================================
 # Target rules for targets named __idf_position
@@ -2123,6 +2084,45 @@ __idf_control: cmake_check_build_system
 __idf_control/fast:
 	$(MAKE) $(MAKESILENT) -f esp-idf/control/CMakeFiles/__idf_control.dir/build.make esp-idf/control/CMakeFiles/__idf_control.dir/build
 .PHONY : __idf_control/fast
+
+#=============================================================================
+# Target rules for targets named __idf_espressif__i2c_bus
+
+# Build rule for target.
+__idf_espressif__i2c_bus: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 __idf_espressif__i2c_bus
+.PHONY : __idf_espressif__i2c_bus
+
+# fast build rule for target.
+__idf_espressif__i2c_bus/fast:
+	$(MAKE) $(MAKESILENT) -f esp-idf/espressif__i2c_bus/CMakeFiles/__idf_espressif__i2c_bus.dir/build.make esp-idf/espressif__i2c_bus/CMakeFiles/__idf_espressif__i2c_bus.dir/build
+.PHONY : __idf_espressif__i2c_bus/fast
+
+#=============================================================================
+# Target rules for targets named __idf_espressif__mcp23017
+
+# Build rule for target.
+__idf_espressif__mcp23017: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 __idf_espressif__mcp23017
+.PHONY : __idf_espressif__mcp23017
+
+# fast build rule for target.
+__idf_espressif__mcp23017/fast:
+	$(MAKE) $(MAKESILENT) -f esp-idf/espressif__mcp23017/CMakeFiles/__idf_espressif__mcp23017.dir/build.make esp-idf/espressif__mcp23017/CMakeFiles/__idf_espressif__mcp23017.dir/build
+.PHONY : __idf_espressif__mcp23017/fast
+
+#=============================================================================
+# Target rules for targets named __idf_main
+
+# Build rule for target.
+__idf_main: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 __idf_main
+.PHONY : __idf_main
+
+# fast build rule for target.
+__idf_main/fast:
+	$(MAKE) $(MAKESILENT) -f esp-idf/main/CMakeFiles/__idf_main.dir/build.make esp-idf/main/CMakeFiles/__idf_main.dir/build
+.PHONY : __idf_main/fast
 
 project_elf_src_esp32s3.obj: project_elf_src_esp32s3.c.obj
 .PHONY : project_elf_src_esp32s3.obj

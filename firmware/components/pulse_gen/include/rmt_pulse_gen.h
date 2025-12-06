@@ -4,15 +4,15 @@
  * @author YaRobot Team
  * @date 2025
  *
- * @note Uses ESP32-S3 RMT peripheral with DMA streaming for precise pulse
- *       generation up to 500 kHz. Implements streaming double-buffer
- *       architecture for unlimited motion length.
+ * @note Uses ESP32-S3 RMT peripheral with FastAccelStepper-pattern callback encoder.
+ *       No DMA - enables all 4 RMT channels to operate simultaneously.
  *
- * Architecture:
- * - RMT TX done callback (ISR) signals a dedicated refill task
- * - Refill task runs at high priority to minimize latency
- * - Double-buffering ensures continuous pulse output
- * - Trapezoidal velocity profile for smooth acceleration
+ * Architecture (FastAccelStepper pattern):
+ * - Command queue filled by ramp generator task
+ * - RMT simple encoder callback reads from queue (ISR context)
+ * - Position tracked in encoder callback via atomic pulse_count_
+ * - Bounded-latency position updates (<10ms at all frequencies)
+ * - Mid-motion blending via atomic parameter replacement
  */
 
 #ifndef RMT_PULSE_GEN_H
@@ -20,65 +20,32 @@
 
 #include "i_pulse_generator.h"
 #include "i_position_tracker.h"
+#include "rmt_pulse_gen_types.h"
 #include "config_limits.h"
+#include "config_timing.h"
 #include "driver/rmt_tx.h"
 #include "driver/rmt_encoder.h"
+#include "driver/gpio.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
 #include "freertos/task.h"
 #include <atomic>
 
 /**
- * @brief Motion profile state machine states
- */
-enum class ProfileState {
-    IDLE,           ///< Not moving
-    ACCELERATING,   ///< Ramping up velocity
-    CRUISING,       ///< At constant velocity
-    DECELERATING,   ///< Ramping down velocity
-    STOPPING        ///< Controlled stop in progress
-};
-
-/**
- * @brief Motion mode for profile generation
- */
-enum class MotionMode {
-    POSITION,       ///< Fixed pulse count move
-    VELOCITY        ///< Continuous velocity until stop
-};
-
-/**
- * @brief Trapezoidal motion profile parameters
- */
-struct TrapezoidalProfile {
-    int32_t target_pulses;      ///< Total pulses to generate (position mode)
-    float max_velocity;         ///< Peak velocity (pulses/second)
-    float acceleration;         ///< Acceleration rate (pulses/second^2)
-    float deceleration;         ///< Deceleration rate (pulses/second^2)
-
-    // Calculated profile segments
-    int32_t accel_pulses;       ///< Pulses during acceleration phase
-    int32_t cruise_pulses;      ///< Pulses during cruise phase
-    int32_t decel_pulses;       ///< Pulses during deceleration phase
-    float cruise_velocity;      ///< Actual cruise velocity achieved
-
-    // Runtime state
-    int64_t current_pulse;      ///< Current position within profile
-    float current_velocity;     ///< Current instantaneous velocity
-    bool is_triangular;         ///< True if no cruise phase (short move)
-};
-
-/**
- * @brief RMT-based pulse generator implementation
+ * @brief RMT pulse generator with callback encoder and software position tracking
  *
- * Uses RMT peripheral with DMA for precise pulse generation on servo axes.
- * Features:
- * - 80 MHz resolution (12.5ns per tick)
+ * Implements FastAccelStepper architecture:
+ * - Command queue filled by ramp generator task
+ * - RMT encoder callback reads from queue (ISR context)
+ * - Position tracked in encoder callback (pulse_count_ incremented per command)
+ * - IPositionTracker::addPulses() called from ISR for external tracking
+ *
+ * Key features:
+ * - 16 MHz resolution (62.5ns per tick)
  * - Up to 500 kHz pulse frequency
  * - 50% duty cycle pulses
- * - DMA streaming for unlimited motion length
- * - Trapezoidal velocity profile
- * - ISR-safe: buffer refill runs in dedicated task
+ * - NO DMA - all 4 RMT channels available simultaneously
+ * - Trapezoidal velocity profile with mid-motion blending
  */
 class RmtPulseGenerator : public IPulseGenerator {
 public:
@@ -86,11 +53,11 @@ public:
      * @brief Construct RMT pulse generator
      *
      * @param channel_id RMT channel index (0-3 for X, Z, A, B)
-     * @param gpio_num GPIO pin for STEP output
-     * @param resolution_hz RMT clock resolution (default 80 MHz)
+     * @param step_pin GPIO pin number for STEP output
+     *
+     * @note Direction pin not controlled here - managed via shift register at MotorBase level
      */
-    RmtPulseGenerator(int channel_id, int gpio_num,
-                      uint32_t resolution_hz = 80000000);
+    RmtPulseGenerator(int channel_id, int step_pin);
 
     ~RmtPulseGenerator() override;
 
@@ -113,69 +80,133 @@ public:
     int getChannelId() const { return channel_id_; }
 
 private:
-    // Configuration
-    int channel_id_;
-    int gpio_num_;
-    uint32_t resolution_hz_;
+    // ============================================================
+    // HARDWARE HANDLES
+    // ============================================================
 
-    // RMT handles
-    rmt_channel_handle_t channel_handle_;
-    rmt_encoder_handle_t encoder_handle_;
-    bool initialized_;
+    rmt_channel_handle_t rmt_channel_{nullptr};
+    rmt_encoder_handle_t rmt_encoder_{nullptr};
 
-    // Motion state
-    std::atomic<ProfileState> state_;
-    MotionMode mode_;
-    TrapezoidalProfile profile_;
-    bool direction_;  // true = forward, false = reverse
+    // ============================================================
+    // CONFIGURATION (immutable after construction)
+    // ============================================================
 
-    // Pulse counting
-    std::atomic<int64_t> pulse_count_;
-    std::atomic<float> current_velocity_;
+    const int channel_id_;
+    const int step_pin_;
 
-    // DMA buffer management - size from config_limits.h
-    rmt_symbol_word_t buffer_a_[LIMIT_RMT_BUFFER_SYMBOLS];
-    rmt_symbol_word_t buffer_b_[LIMIT_RMT_BUFFER_SYMBOLS];
-    std::atomic<bool> use_buffer_a_;
-    std::atomic<size_t> symbols_in_current_buffer_;
-    std::atomic<size_t> symbols_in_next_buffer_;
+    // ============================================================
+    // COMMAND QUEUE (FastAccelStepper pattern)
+    // ============================================================
 
-    // Refill task management
-    TaskHandle_t refill_task_handle_;
-    std::atomic<bool> refill_pending_;
-    std::atomic<bool> task_should_exit_;
+    StepCommand queue_[LIMIT_RMT_QUEUE_LEN];
+    std::atomic<uint8_t> read_idx_{0};      ///< ISR reads from here
+    std::atomic<uint8_t> write_idx_{0};     ///< Task writes to here
+    QueueState queue_end_{};                 ///< State at queue end
 
-    // Callback
-    MotionCompleteCallback completion_callback_;
-    SemaphoreHandle_t callback_mutex_;
+    // ============================================================
+    // RAMP GENERATOR STATE
+    // ============================================================
 
-    // Position tracker for real-time position updates
-    IPositionTracker* position_tracker_;
-    int64_t last_reported_pulses_;  ///< Tracks pulses reported to position tracker
+    RampParameters params_;                  ///< Motion parameters (atomic)
+    RampState ramp_state_{RampState::IDLE};
+    float current_velocity_{0.0f};           ///< Instantaneous velocity (pulses/s)
+    uint32_t current_ticks_{0};              ///< Current step period in ticks
+    int32_t ramp_steps_up_{0};               ///< Steps in acceleration phase
+    int32_t ramp_steps_down_{0};             ///< Steps in deceleration phase
 
-    // Profile calculation
-    void calculateTrapezoidalProfile(int32_t pulses, float max_vel, float accel);
-    void calculateVelocityProfile(float velocity, float acceleration);
-    float velocityAtPosition(int64_t position) const;
-    uint32_t velocityToTickPeriod(float velocity) const;
+    // ============================================================
+    // POSITION TRACKING (Software - encoder callback based)
+    // ============================================================
 
-    // Buffer management
-    size_t fillBuffer(rmt_symbol_word_t* buffer, size_t max_symbols);
-    void primeBuffers();
+    std::atomic<int64_t> pulse_count_{0};        ///< Total pulses (updated in encoder callback)
+    std::atomic<bool> direction_{true};          ///< Current direction (true=forward)
 
-    // Refill task
-    static void refillTaskEntry(void* arg);
-    void refillTaskLoop();
-    void handleRefillRequest();
+    // ============================================================
+    // STATE FLAGS
+    // ============================================================
 
-    // RMT callbacks (static trampolines) - ISR SAFE
-    static bool IRAM_ATTR onTxDone(rmt_channel_handle_t channel,
-                                    const rmt_tx_done_event_data_t* event_data,
-                                    void* user_data);
+    std::atomic<bool> initialized_{false};
+    std::atomic<bool> running_{false};
+    std::atomic<bool> rmt_stopped_{true};
+    std::atomic<bool> completion_pending_{false};
+    bool last_chunk_had_steps_{false};           ///< For direction pause insertion (ISR only)
 
-    // Instance callback handlers
-    bool handleTxDoneISR();
-    void notifyCompletion();
+    // ============================================================
+    // RAMP TASK (Event-driven, one per axis)
+    // ============================================================
+
+    TaskHandle_t ramp_task_handle_{nullptr};
+    SemaphoreHandle_t ramp_semaphore_{nullptr};  ///< Wake-up signal for queue refill
+
+    // ============================================================
+    // CALLBACKS
+    // ============================================================
+
+    MotionCompleteCallback completion_callback_{nullptr};
+    IPositionTracker* position_tracker_{nullptr};  ///< Called from encoder ISR
+
+    // ============================================================
+    // PRIVATE METHODS - Initialization
+    // ============================================================
+
+    esp_err_t initRmt();
+    esp_err_t createEncoder();
+    void createRampTask();
+
+    // ============================================================
+    // PRIVATE METHODS - Queue operations
+    // ============================================================
+
+    bool isQueueFull() const;
+    bool isQueueEmpty() const;
+    uint8_t queueSpace() const;
+    uint32_t ticksInQueue() const;
+    bool pushCommand(const StepCommand& cmd);
+    void clearQueue();
+
+    // ============================================================
+    // PRIVATE METHODS - Ramp generation (task context)
+    // ============================================================
+
+    static void rampTaskFunc(void* arg);
+    void fillQueue();
+    StepCommand generateNextCommand();
+    void recalculateRamp();
+    uint8_t calculateStepsForLatency(uint32_t ticks) const;
+    int32_t calculateDecelDistance(float velocity, float decel) const;
+
+    // ============================================================
+    // PRIVATE METHODS - ISR helpers
+    // ============================================================
+
+    void IRAM_ATTR wakeRampTask();
+
+    // ============================================================
+    // PRIVATE METHODS - Motion control
+    // ============================================================
+
+    void startMotion();
+    void startRmtTransmission();
+    void stopMotion();
+
+    // ============================================================
+    // STATIC CALLBACKS (ISR context)
+    // ============================================================
+
+    static size_t IRAM_ATTR encodeCallback(
+        const void* data, size_t data_size,
+        size_t symbols_written, size_t symbols_free,
+        rmt_symbol_word_t* symbols, bool* done, void* arg);
+
+    static bool IRAM_ATTR onTransmitDone(
+        rmt_channel_handle_t channel,
+        const rmt_tx_done_event_data_t* event_data, void* user_ctx);
+
+    // ============================================================
+    // PRIVATE METHODS - Symbol generation (ISR context - no FPU)
+    // ============================================================
+
+    size_t IRAM_ATTR fillSymbols(rmt_symbol_word_t* symbols, StepCommand* cmd);
 };
 
 #endif // RMT_PULSE_GEN_H

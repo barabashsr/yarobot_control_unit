@@ -1,88 +1,75 @@
 /**
  * @file rmt_pulse_gen.cpp
- * @brief RMT-based pulse generator implementation
+ * @brief RMT-based pulse generator implementation using FastAccelStepper patterns
  * @author YaRobot Team
  * @date 2025
  *
- * Architecture:
- * - ISR callback only updates counters and signals refill task (ISR-safe)
- * - Dedicated high-priority task handles buffer refill (uses FPU, safe for sqrt)
- * - Double-buffering: while one buffer transmits, next is prepared
- * - Trapezoidal profile for smooth acceleration/deceleration
+ * Architecture (FastAccelStepper pattern):
+ * - Command queue filled by ramp generator task (TASK context - FPU allowed)
+ * - RMT simple encoder callback reads from queue (ISR context - no FPU!)
+ * - Position tracked in encoder callback via atomic pulse_count_
+ * - Bounded-latency position updates (<10ms at all frequencies)
+ * - Mid-motion blending via atomic parameter replacement
+ *
+ * Key changes from DMA streaming architecture:
+ * - with_dma = false (enables all 4 RMT channels simultaneously)
+ * - rmt_new_simple_encoder() with on-demand callback
+ * - Command queue instead of double-buffer
+ * - Event-driven ramp task instead of continuous refill
  */
 
 #include "rmt_pulse_gen.h"
-#include "config_limits.h"
 #include "esp_log.h"
-#include "esp_timer.h"
 #include <cmath>
 #include <algorithm>
 
 static const char* TAG = "RMT_PULSE";
 
-// Task priority for buffer refill (high priority for low latency)
-static constexpr UBaseType_t REFILL_TASK_PRIORITY = configMAX_PRIORITIES - 2;
-static constexpr uint32_t REFILL_TASK_STACK = 4096;
-
-// Task notification index for refill signaling
-static constexpr uint32_t NOTIFY_REFILL_BIT = 0x01;
-static constexpr uint32_t NOTIFY_EXIT_BIT = 0x02;
+// Task configuration from config_timing.h (task stack defined there)
+static constexpr UBaseType_t RAMP_TASK_PRIORITY = configTIMER_TASK_PRIORITY - 1;
 
 // ============================================================================
 // Constructor / Destructor
 // ============================================================================
 
-RmtPulseGenerator::RmtPulseGenerator(int channel_id, int gpio_num, uint32_t resolution_hz)
+RmtPulseGenerator::RmtPulseGenerator(int channel_id, int step_pin)
     : channel_id_(channel_id)
-    , gpio_num_(gpio_num)
-    , resolution_hz_(resolution_hz)
-    , channel_handle_(nullptr)
-    , encoder_handle_(nullptr)
-    , initialized_(false)
-    , state_(ProfileState::IDLE)
-    , mode_(MotionMode::POSITION)
-    , profile_{}
-    , direction_(true)
-    , pulse_count_(0)
-    , current_velocity_(0.0f)
-    , use_buffer_a_(true)
-    , symbols_in_current_buffer_(0)
-    , symbols_in_next_buffer_(0)
-    , refill_task_handle_(nullptr)
-    , refill_pending_(false)
-    , task_should_exit_(false)
-    , completion_callback_(nullptr)
-    , callback_mutex_(nullptr)
-    , position_tracker_(nullptr)
-    , last_reported_pulses_(0)
+    , step_pin_(step_pin)
 {
-    callback_mutex_ = xSemaphoreCreateMutex();
+    // Initialize queue state
+    queue_end_.position = 0;
+    queue_end_.direction = true;
+    queue_end_.ticks_queued = 0;
 }
 
 RmtPulseGenerator::~RmtPulseGenerator()
 {
-    // Signal task to exit
-    if (refill_task_handle_) {
-        task_should_exit_.store(true, std::memory_order_release);
-        xTaskNotify(refill_task_handle_, NOTIFY_EXIT_BIT, eSetBits);
-        // Wait for task to exit
-        vTaskDelay(pdMS_TO_TICKS(100));
-        // Task should have deleted itself, but clean up handle
-        refill_task_handle_ = nullptr;
+    // Signal ramp task to exit
+    if (ramp_task_handle_) {
+        running_.store(false, std::memory_order_release);
+        rmt_stopped_.store(true, std::memory_order_release);
+        if (ramp_semaphore_) {
+            xSemaphoreGive(ramp_semaphore_);
+        }
+        vTaskDelay(pdMS_TO_TICKS(50));
+        vTaskDelete(ramp_task_handle_);
+        ramp_task_handle_ = nullptr;
     }
 
-    if (initialized_) {
-        stopImmediate();
-        if (channel_handle_) {
-            rmt_disable(channel_handle_);
-            rmt_del_channel(channel_handle_);
-        }
-        if (encoder_handle_) {
-            rmt_del_encoder(encoder_handle_);
-        }
+    if (ramp_semaphore_) {
+        vSemaphoreDelete(ramp_semaphore_);
+        ramp_semaphore_ = nullptr;
     }
-    if (callback_mutex_) {
-        vSemaphoreDelete(callback_mutex_);
+
+    if (initialized_.load()) {
+        stopImmediate();
+        if (rmt_channel_) {
+            rmt_disable(rmt_channel_);
+            rmt_del_channel(rmt_channel_);
+        }
+        if (rmt_encoder_) {
+            rmt_del_encoder(rmt_encoder_);
+        }
     }
 }
 
@@ -92,157 +79,632 @@ RmtPulseGenerator::~RmtPulseGenerator()
 
 esp_err_t RmtPulseGenerator::init()
 {
-    if (initialized_) {
+    if (initialized_.load()) {
         ESP_LOGW(TAG, "Channel %d already initialized", channel_id_);
         return ESP_OK;
     }
 
-    ESP_LOGI(TAG, "Initializing RMT channel %d on GPIO %d at %lu Hz",
-             channel_id_, gpio_num_, (unsigned long)resolution_hz_);
+    ESP_LOGI(TAG, "Initializing RMT channel %d on GPIO %d (step)",
+             channel_id_, step_pin_);
 
-    // Configure RMT TX channel
-    rmt_tx_channel_config_t tx_config = {};
-    tx_config.gpio_num = static_cast<gpio_num_t>(gpio_num_);
-    tx_config.clk_src = RMT_CLK_SRC_DEFAULT;
-    tx_config.resolution_hz = resolution_hz_;
-    tx_config.mem_block_symbols = LIMIT_RMT_BUFFER_SYMBOLS;
-    tx_config.trans_queue_depth = 4;   // Queue depth for streaming
-    tx_config.flags.with_dma = true;   // Enable DMA for streaming
-    tx_config.flags.invert_out = false;
+    // Initialize RMT with callback encoder (NO DMA)
+    // Note: Direction pin managed externally via shift register at MotorBase level
+    esp_err_t ret = initRmt();
+    if (ret != ESP_OK) {
+        return ret;
+    }
 
-    esp_err_t ret = rmt_new_tx_channel(&tx_config, &channel_handle_);
+    // Create ramp generator task
+    createRampTask();
+
+    initialized_.store(true, std::memory_order_release);
+    ESP_LOGI(TAG, "RMT channel %d initialized successfully (FastAccelStepper pattern)", channel_id_);
+    return ESP_OK;
+}
+
+esp_err_t RmtPulseGenerator::initRmt()
+{
+    // Create RMT TX channel (NO DMA - critical for 4-channel operation)
+    rmt_tx_channel_config_t tx_config = {
+        .gpio_num = static_cast<gpio_num_t>(step_pin_),
+        .clk_src = RMT_CLK_SRC_DEFAULT,
+        .resolution_hz = LIMIT_RMT_RESOLUTION_HZ,  // 16 MHz
+        .mem_block_symbols = LIMIT_RMT_MEM_BLOCK_SYMBOLS,  // 48
+        .trans_queue_depth = 1,
+        .intr_priority = 0,
+        .flags = {
+            .invert_out = 0,
+            .with_dma = 0,  // CRITICAL: No DMA - enables all 4 channels
+            .io_loop_back = 0,
+            .io_od_mode = 0,
+            .allow_pd = 0
+        }
+    };
+
+    esp_err_t ret = rmt_new_tx_channel(&tx_config, &rmt_channel_);
     if (ret != ESP_OK) {
         ESP_LOGE(TAG, "Failed to create RMT TX channel: %s", esp_err_to_name(ret));
         return ret;
     }
 
-    // Create copy encoder for raw symbol transmission
-    rmt_copy_encoder_config_t encoder_config = {};
-    ret = rmt_new_copy_encoder(&encoder_config, &encoder_handle_);
+    // Create simple encoder with callback
+    ret = createEncoder();
     if (ret != ESP_OK) {
-        ESP_LOGE(TAG, "Failed to create copy encoder: %s", esp_err_to_name(ret));
-        rmt_del_channel(channel_handle_);
-        channel_handle_ = nullptr;
+        rmt_del_channel(rmt_channel_);
+        rmt_channel_ = nullptr;
         return ret;
     }
 
-    // Register TX done callback for signaling refill task
-    rmt_tx_event_callbacks_t cbs = {};
-    cbs.on_trans_done = onTxDone;
-    ret = rmt_tx_register_event_callbacks(channel_handle_, &cbs, this);
+    // Register transmit done callback
+    rmt_tx_event_callbacks_t cbs = {
+        .on_trans_done = onTransmitDone
+    };
+    ret = rmt_tx_register_event_callbacks(rmt_channel_, &cbs, this);
     if (ret != ESP_OK) {
         ESP_LOGE(TAG, "Failed to register callbacks: %s", esp_err_to_name(ret));
-        rmt_del_encoder(encoder_handle_);
-        rmt_del_channel(channel_handle_);
-        encoder_handle_ = nullptr;
-        channel_handle_ = nullptr;
+        rmt_del_encoder(rmt_encoder_);
+        rmt_del_channel(rmt_channel_);
+        rmt_encoder_ = nullptr;
+        rmt_channel_ = nullptr;
         return ret;
     }
 
-    // Enable the channel
-    ret = rmt_enable(channel_handle_);
+    // Enable channel
+    ret = rmt_enable(rmt_channel_);
     if (ret != ESP_OK) {
         ESP_LOGE(TAG, "Failed to enable RMT channel: %s", esp_err_to_name(ret));
-        rmt_del_encoder(encoder_handle_);
-        rmt_del_channel(channel_handle_);
-        encoder_handle_ = nullptr;
-        channel_handle_ = nullptr;
+        rmt_del_encoder(rmt_encoder_);
+        rmt_del_channel(rmt_channel_);
+        rmt_encoder_ = nullptr;
+        rmt_channel_ = nullptr;
         return ret;
     }
 
-    // Create refill task
-    char task_name[16];
-    snprintf(task_name, sizeof(task_name), "rmt_refill_%d", channel_id_);
-    BaseType_t xret = xTaskCreatePinnedToCore(
-        refillTaskEntry,
-        task_name,
-        REFILL_TASK_STACK,
-        this,
-        REFILL_TASK_PRIORITY,
-        &refill_task_handle_,
-        1  // Pin to core 1 (motion core)
-    );
-    if (xret != pdPASS) {
-        ESP_LOGE(TAG, "Failed to create refill task");
-        rmt_disable(channel_handle_);
-        rmt_del_encoder(encoder_handle_);
-        rmt_del_channel(channel_handle_);
-        encoder_handle_ = nullptr;
-        channel_handle_ = nullptr;
-        return ESP_ERR_NO_MEM;
-    }
-
-    initialized_ = true;
-    ESP_LOGI(TAG, "RMT channel %d initialized successfully", channel_id_);
     return ESP_OK;
 }
 
-// ============================================================================
-// Refill Task
-// ============================================================================
-
-void RmtPulseGenerator::refillTaskEntry(void* arg)
+esp_err_t RmtPulseGenerator::createEncoder()
 {
-    RmtPulseGenerator* self = static_cast<RmtPulseGenerator*>(arg);
-    self->refillTaskLoop();
+    // Create simple encoder with callback (FastAccelStepper pattern)
+    rmt_simple_encoder_config_t enc_config = {
+        .callback = encodeCallback,
+        .arg = this,
+        .min_chunk_size = LIMIT_RMT_PART_SIZE  // 24 symbols minimum per call
+    };
+    esp_err_t ret = rmt_new_simple_encoder(&enc_config, &rmt_encoder_);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to create simple encoder: %s", esp_err_to_name(ret));
+    }
+    return ret;
 }
 
-void RmtPulseGenerator::refillTaskLoop()
+void RmtPulseGenerator::createRampTask()
 {
-    ESP_LOGI(TAG, "Refill task started for channel %d", channel_id_);
+    // Create binary semaphore for wake-up
+    ramp_semaphore_ = xSemaphoreCreateBinary();
+    configASSERT(ramp_semaphore_ != nullptr);
 
-    while (!task_should_exit_.load(std::memory_order_acquire)) {
-        // Wait for notification from ISR or exit signal
-        uint32_t notification = 0;
-        if (xTaskNotifyWait(0, UINT32_MAX, &notification, pdMS_TO_TICKS(100)) == pdTRUE) {
-            if (notification & NOTIFY_EXIT_BIT) {
-                break;
-            }
-            if (notification & NOTIFY_REFILL_BIT) {
-                handleRefillRequest();
+    // Task name includes channel ID for debugging
+    char task_name[16];
+    snprintf(task_name, sizeof(task_name), "ramp_%d", channel_id_);
+
+    // Create task pinned to Core 1 (motion core)
+    BaseType_t result = xTaskCreatePinnedToCore(
+        rampTaskFunc,
+        task_name,
+        TIMING_RMT_RAMP_TASK_STACK,
+        this,
+        RAMP_TASK_PRIORITY,
+        &ramp_task_handle_,
+        1  // Core 1 (motion core)
+    );
+    configASSERT(result == pdPASS);
+}
+
+// ============================================================================
+// Queue Operations
+// ============================================================================
+
+bool RmtPulseGenerator::isQueueFull() const
+{
+    uint8_t rp = read_idx_.load(std::memory_order_acquire);
+    uint8_t wp = write_idx_.load(std::memory_order_acquire);
+    return ((wp + 1) & LIMIT_RMT_QUEUE_LEN_MASK) == rp;
+}
+
+bool RmtPulseGenerator::isQueueEmpty() const
+{
+    uint8_t rp = read_idx_.load(std::memory_order_acquire);
+    uint8_t wp = write_idx_.load(std::memory_order_acquire);
+    return rp == wp;
+}
+
+uint8_t RmtPulseGenerator::queueSpace() const
+{
+    uint8_t rp = read_idx_.load(std::memory_order_acquire);
+    uint8_t wp = write_idx_.load(std::memory_order_acquire);
+    return (rp - wp - 1) & LIMIT_RMT_QUEUE_LEN_MASK;
+}
+
+uint32_t RmtPulseGenerator::ticksInQueue() const
+{
+    return queue_end_.ticks_queued;
+}
+
+bool RmtPulseGenerator::pushCommand(const StepCommand& cmd)
+{
+    if (isQueueFull()) {
+        return false;
+    }
+
+    uint8_t wp = write_idx_.load(std::memory_order_relaxed);
+    queue_[wp] = cmd;
+    write_idx_.store((wp + 1) & LIMIT_RMT_QUEUE_LEN_MASK, std::memory_order_release);
+
+    // Update queue end state
+    if (cmd.flags & CMD_FLAG_DIRECTION) {
+        queue_end_.position += cmd.steps;
+    } else {
+        queue_end_.position -= cmd.steps;
+    }
+    queue_end_.ticks_queued += static_cast<uint32_t>(cmd.ticks) * cmd.steps;
+
+    return true;
+}
+
+void RmtPulseGenerator::clearQueue()
+{
+    read_idx_.store(0, std::memory_order_relaxed);
+    write_idx_.store(0, std::memory_order_release);
+    queue_end_.position = 0;
+    queue_end_.direction = direction_.load();
+    queue_end_.ticks_queued = 0;
+}
+
+// ============================================================================
+// Ramp Generator Task (TASK context - FPU allowed)
+// ============================================================================
+
+void RmtPulseGenerator::rampTaskFunc(void* arg)
+{
+    RmtPulseGenerator* self = static_cast<RmtPulseGenerator*>(arg);
+
+    ESP_LOGI(TAG, "Ramp task started for channel %d", self->channel_id_);
+
+    while (true) {
+        // Wait for wake-up signal or timeout
+        if (xSemaphoreTake(self->ramp_semaphore_,
+                          pdMS_TO_TICKS(TIMING_RMT_RAMP_TASK_PERIOD_MS))) {
+            // Semaphore taken - new motion or queue low
+        }
+        // Either way, check if queue needs filling
+
+        if (self->ramp_state_ != RampState::IDLE) {
+            self->fillQueue();  // FPU operations OK here
+        }
+
+        // Handle completion notification (task context, not ISR)
+        if (self->completion_pending_.exchange(false, std::memory_order_acq_rel)) {
+            self->running_.store(false, std::memory_order_release);
+            self->ramp_state_ = RampState::IDLE;
+            if (self->completion_callback_) {
+                self->completion_callback_(self->pulse_count_.load(std::memory_order_relaxed));
             }
         }
     }
-
-    ESP_LOGI(TAG, "Refill task exiting for channel %d", channel_id_);
-    vTaskDelete(nullptr);
 }
 
-void RmtPulseGenerator::handleRefillRequest()
+void RmtPulseGenerator::fillQueue()
 {
-    ProfileState current = state_.load(std::memory_order_acquire);
-    if (current == ProfileState::IDLE) {
-        // Motion just completed - notify callback
-        notifyCompletion();
-        return;
+    // Check for parameter changes
+    if (params_.params_changed.exchange(false, std::memory_order_acq_rel)) {
+        recalculateRamp();
     }
 
-    // Get the next buffer to fill
-    bool current_is_a = use_buffer_a_.load(std::memory_order_acquire);
-    rmt_symbol_word_t* next_buffer = current_is_a ? buffer_b_ : buffer_a_;
+    // Fill queue while space available and motion not complete
+    while (queueSpace() > 0 && ramp_state_ != RampState::IDLE) {
+        // Check forward planning limit
+        if (ticksInQueue() >= LIMIT_RMT_FORWARD_PLANNING_TICKS) {
+            break;
+        }
 
-    // Fill the next buffer
-    size_t new_symbols = fillBuffer(next_buffer, LIMIT_RMT_BUFFER_SYMBOLS);
-    symbols_in_next_buffer_.store(new_symbols, std::memory_order_release);
+        StepCommand cmd = generateNextCommand();
 
-    if (new_symbols == 0) {
-        // Motion complete - ISR will set state to IDLE and signal us again
-        // We'll call notifyCompletion() when we see IDLE state
-        return;
+        if (cmd.ticks == 0 && cmd.steps == 0) {
+            // Motion complete
+            break;
+        }
+
+        pushCommand(cmd);
+
+        if (cmd.flags & CMD_FLAG_LAST) {
+            ramp_state_ = RampState::IDLE;
+            break;
+        }
+    }
+}
+
+StepCommand RmtPulseGenerator::generateNextCommand()
+{
+    StepCommand cmd = {};
+
+    // Get current parameters
+    float target_vel = params_.target_velocity.load(std::memory_order_acquire);
+    float accel = params_.acceleration.load(std::memory_order_acquire);
+    int32_t target_pos = params_.target_position.load(std::memory_order_acquire);
+    bool position_mode = params_.position_mode.load(std::memory_order_acquire);
+
+    // Set direction flag
+    if (direction_.load(std::memory_order_relaxed)) {
+        cmd.flags |= CMD_FLAG_DIRECTION;
     }
 
-    // Queue next transmission
-    rmt_transmit_config_t tx_config = {};
-    tx_config.loop_count = 0;
+    // State machine for ramp generation
+    switch (ramp_state_) {
+        case RampState::ACCELERATING: {
+            // Calculate velocity at current ramp position: v = sqrt(2 * a * d)
+            float velocity = std::sqrt(2.0f * accel * static_cast<float>(ramp_steps_up_));
 
-    esp_err_t ret = rmt_transmit(channel_handle_, encoder_handle_,
-                                  next_buffer, new_symbols * sizeof(rmt_symbol_word_t),
-                                  &tx_config);
-    if (ret != ESP_OK) {
-        ESP_LOGE(TAG, "Failed to queue next buffer: %s", esp_err_to_name(ret));
-        state_.store(ProfileState::IDLE, std::memory_order_release);
-        current_velocity_.store(0.0f, std::memory_order_relaxed);
+            if (velocity >= target_vel) {
+                // Reached target velocity
+                velocity = target_vel;
+                ramp_state_ = RampState::CRUISING;
+            }
+
+            // Check if need to start deceleration (position mode)
+            if (position_mode) {
+                int32_t decel_dist = calculateDecelDistance(velocity, accel);
+                int32_t remaining = target_pos - queue_end_.position;
+                if (direction_.load(std::memory_order_relaxed)) {
+                    if (remaining <= decel_dist) {
+                        ramp_state_ = RampState::DECELERATING;
+                        ramp_steps_down_ = 0;
+                    }
+                }
+            }
+
+            // Convert to ticks
+            current_velocity_ = velocity;
+            if (velocity > 0) {
+                current_ticks_ = LIMIT_RMT_RESOLUTION_HZ / static_cast<uint32_t>(velocity);
+            } else {
+                current_ticks_ = LIMIT_RMT_MIN_CMD_TICKS;
+            }
+
+            // Calculate steps for this command
+            uint8_t steps = calculateStepsForLatency(current_ticks_);
+            ramp_steps_up_ += steps;
+
+            cmd.ticks = (current_ticks_ > 65535) ? 65535 : static_cast<uint16_t>(current_ticks_);
+            cmd.steps = steps;
+            break;
+        }
+
+        case RampState::CRUISING: {
+            // Constant velocity
+            if (position_mode) {
+                // Check if need to start deceleration
+                int32_t decel_dist = calculateDecelDistance(current_velocity_, accel);
+                int32_t remaining = target_pos - queue_end_.position;
+
+                if (direction_.load(std::memory_order_relaxed)) {
+                    if (remaining <= decel_dist) {
+                        ramp_state_ = RampState::DECELERATING;
+                        ramp_steps_down_ = 0;
+                    }
+                }
+            }
+
+            uint8_t steps = calculateStepsForLatency(current_ticks_);
+            cmd.ticks = (current_ticks_ > 65535) ? 65535 : static_cast<uint16_t>(current_ticks_);
+            cmd.steps = steps;
+            break;
+        }
+
+        case RampState::DECELERATING: {
+            // Calculate remaining distance to stop
+            int32_t decel_dist = calculateDecelDistance(current_velocity_, accel);
+            int32_t remaining_steps = decel_dist - ramp_steps_down_;
+
+            if (remaining_steps <= 0) {
+                // Motion complete
+                cmd.ticks = 0;
+                cmd.steps = 0;
+                cmd.flags |= CMD_FLAG_LAST;
+                break;
+            }
+
+            // Calculate velocity from decel ramp: v = sqrt(2 * a * remaining)
+            float velocity = std::sqrt(2.0f * accel * static_cast<float>(remaining_steps));
+
+            if (velocity < static_cast<float>(LIMIT_MIN_PULSE_FREQ_HZ)) {
+                // Motion complete
+                cmd.ticks = 0;
+                cmd.steps = 0;
+                cmd.flags |= CMD_FLAG_LAST;
+                break;
+            }
+
+            current_velocity_ = velocity;
+            current_ticks_ = LIMIT_RMT_RESOLUTION_HZ / static_cast<uint32_t>(velocity);
+
+            uint8_t steps = calculateStepsForLatency(current_ticks_);
+            // Don't generate more steps than remaining
+            if (steps > remaining_steps) {
+                steps = static_cast<uint8_t>(remaining_steps);
+            }
+            ramp_steps_down_ += steps;
+
+            cmd.ticks = (current_ticks_ > 65535) ? 65535 : static_cast<uint16_t>(current_ticks_);
+            cmd.steps = steps;
+
+            // Check if this is the last command
+            if (ramp_steps_down_ >= decel_dist) {
+                cmd.flags |= CMD_FLAG_LAST;
+            }
+            break;
+        }
+
+        default:
+            cmd.ticks = 0;
+            cmd.steps = 0;
+            break;
     }
+
+    return cmd;
+}
+
+void RmtPulseGenerator::recalculateRamp()
+{
+    // Recalculate profile based on new parameters
+    float target_vel = params_.target_velocity.load(std::memory_order_acquire);
+    float accel = params_.acceleration.load(std::memory_order_acquire);
+
+    // If velocity changed, may need to adjust state
+    if (current_velocity_ > target_vel) {
+        // Need to decelerate to new target
+        ramp_state_ = RampState::DECELERATING;
+        ramp_steps_down_ = 0;
+    } else if (current_velocity_ < target_vel && ramp_state_ == RampState::CRUISING) {
+        // Need to accelerate to new target
+        ramp_state_ = RampState::ACCELERATING;
+    }
+
+    ESP_LOGD(TAG, "Ramp recalculated: target_vel=%.1f, accel=%.1f, state=%d",
+             target_vel, accel, static_cast<int>(ramp_state_));
+}
+
+uint8_t RmtPulseGenerator::calculateStepsForLatency(uint32_t ticks) const
+{
+    // Frequency in Hz
+    uint32_t freq = LIMIT_RMT_RESOLUTION_HZ / ticks;
+
+    // Calculate steps for position update latency target
+    // max_steps = freq * (TIMING_POSITION_UPDATE_LATENCY_MS / 1000)
+    //           = freq / (1000 / TIMING_POSITION_UPDATE_LATENCY_MS)
+    constexpr uint32_t latency_divisor = 1000 / TIMING_POSITION_UPDATE_LATENCY_MS;  // 100 for 10ms
+    uint32_t max_steps = freq / latency_divisor;
+
+    // Clamp to valid range [1, 255]
+    if (max_steps < 1) max_steps = 1;
+    if (max_steps > LIMIT_RMT_MAX_STEPS_PER_CMD) {
+        max_steps = LIMIT_RMT_MAX_STEPS_PER_CMD;
+    }
+
+    return static_cast<uint8_t>(max_steps);
+}
+
+int32_t RmtPulseGenerator::calculateDecelDistance(float velocity, float decel) const
+{
+    // d = v² / (2 * a)
+    return static_cast<int32_t>((velocity * velocity) / (2.0f * decel));
+}
+
+// ============================================================================
+// Encoder Callback and Symbol Generation (ISR context - NO FPU!)
+// ============================================================================
+
+size_t IRAM_ATTR RmtPulseGenerator::encodeCallback(
+    const void* data, size_t data_size,
+    size_t symbols_written, size_t symbols_free,
+    rmt_symbol_word_t* symbols, bool* done, void* arg)
+{
+    RmtPulseGenerator* self = static_cast<RmtPulseGenerator*>(arg);
+    *done = false;
+
+    // Need at least PART_SIZE symbols available
+    if (symbols_free < LIMIT_RMT_PART_SIZE) {
+        return 0;
+    }
+
+    // Check if stopped
+    if (self->rmt_stopped_.load(std::memory_order_acquire)) {
+        *done = true;
+        return 0;
+    }
+
+    // Check queue
+    uint8_t rp = self->read_idx_.load(std::memory_order_acquire);
+    uint8_t wp = self->write_idx_.load(std::memory_order_acquire);
+
+    if (rp == wp) {
+        // Queue empty - signal completion and stop
+        self->rmt_stopped_.store(true, std::memory_order_release);
+        self->completion_pending_.store(true, std::memory_order_release);
+        *done = true;
+        return 0;
+    }
+
+    // Get current command (may be partially consumed)
+    StepCommand* cmd = &self->queue_[rp & LIMIT_RMT_QUEUE_LEN_MASK];
+
+    // Fill symbols using the command
+    size_t steps_generated = self->fillSymbols(symbols, cmd);
+
+    // ============================================================
+    // POSITION TRACKING (ISR context - atomic operations only)
+    // ============================================================
+    if (steps_generated > 0) {
+        bool dir = self->direction_.load(std::memory_order_relaxed);
+        int64_t delta = dir ? static_cast<int64_t>(steps_generated)
+                            : -static_cast<int64_t>(steps_generated);
+        self->pulse_count_.fetch_add(delta, std::memory_order_relaxed);
+
+        // Notify IPositionTracker if set (MUST be ISR-safe)
+        if (self->position_tracker_) {
+            self->position_tracker_->addPulses(delta);
+        }
+    }
+
+    // Wake ramp task if queue running low (< 8 entries)
+    uint8_t queue_depth = (wp - rp) & LIMIT_RMT_QUEUE_LEN_MASK;
+    if (queue_depth < 8) {
+        self->wakeRampTask();
+    }
+
+    return LIMIT_RMT_PART_SIZE;
+}
+
+size_t RmtPulseGenerator::fillSymbols(rmt_symbol_word_t* symbols, StepCommand* cmd)
+{
+    // ============================================================
+    // DIRECTION CHANGE HANDLING
+    // ============================================================
+    if (cmd->flags & CMD_FLAG_TOGGLE_DIR) {
+        if (last_chunk_had_steps_) {
+            // Insert pause for direction setup time
+            // At 16MHz: LIMIT_RMT_DIR_SETUP_US * 16 ticks per µs
+            uint16_t pause_ticks = LIMIT_RMT_DIR_SETUP_US * (LIMIT_RMT_RESOLUTION_HZ / 1000000);
+            uint16_t ticks_per_symbol = pause_ticks / LIMIT_RMT_PART_SIZE;
+            if (ticks_per_symbol < 2) ticks_per_symbol = 2;
+
+            for (uint8_t i = 0; i < LIMIT_RMT_PART_SIZE; i++) {
+                symbols[i].duration0 = ticks_per_symbol;
+                symbols[i].level0 = 0;
+                symbols[i].duration1 = ticks_per_symbol;
+                symbols[i].level1 = 0;
+            }
+
+            last_chunk_had_steps_ = false;
+            return 0;  // No steps generated
+        }
+
+        // Toggle direction flag (actual pin managed externally via shift register)
+        bool new_dir = !direction_.load(std::memory_order_relaxed);
+        direction_.store(new_dir, std::memory_order_relaxed);
+
+        // Clear toggle flag
+        cmd->flags &= ~CMD_FLAG_TOGGLE_DIR;
+    }
+
+    uint8_t steps = cmd->steps;
+    uint16_t ticks = cmd->ticks;
+
+    // ============================================================
+    // PAUSE COMMAND (steps == 0)
+    // ============================================================
+    if (steps == 0) {
+        last_chunk_had_steps_ = false;
+
+        // Fill with idle symbols
+        uint16_t ticks_per_symbol = ticks / LIMIT_RMT_PART_SIZE;
+        if (ticks_per_symbol < 2) ticks_per_symbol = 2;
+
+        for (uint8_t i = 0; i < LIMIT_RMT_PART_SIZE; i++) {
+            symbols[i].duration0 = ticks_per_symbol;
+            symbols[i].level0 = 0;
+            symbols[i].duration1 = ticks_per_symbol;
+            symbols[i].level1 = 0;
+        }
+
+        // Advance to next command
+        read_idx_.store((read_idx_.load(std::memory_order_relaxed) + 1) & LIMIT_RMT_QUEUE_LEN_MASK,
+                        std::memory_order_release);
+        return 0;
+    }
+
+    // ============================================================
+    // STEP GENERATION
+    // ============================================================
+    last_chunk_had_steps_ = true;
+
+    // Determine how many steps to generate this callback
+    uint8_t steps_to_do = steps;
+    if (steps_to_do > LIMIT_RMT_PART_SIZE) {
+        steps_to_do = LIMIT_RMT_PART_SIZE;
+    }
+
+    // Calculate 50% duty cycle timing (integer math only!)
+    uint16_t half_ticks_high = ticks >> 1;
+    uint16_t half_ticks_low = ticks - half_ticks_high;
+
+    // Ensure minimum tick count
+    if (half_ticks_high < 1) half_ticks_high = 1;
+    if (half_ticks_low < 1) half_ticks_low = 1;
+
+    if (steps_to_do < LIMIT_RMT_PART_SIZE) {
+        // Need to fill unused symbols with idle first
+        uint8_t idle_count = LIMIT_RMT_PART_SIZE - steps_to_do;
+
+        // Generate idle symbols first
+        for (uint8_t i = 0; i < idle_count; i++) {
+            symbols[i].duration0 = 2;  // Minimal idle
+            symbols[i].level0 = 0;
+            symbols[i].duration1 = 2;
+            symbols[i].level1 = 0;
+        }
+
+        // Then generate step pulses
+        for (uint8_t i = 0; i < steps_to_do; i++) {
+            // Step pulse: LOW for half, HIGH for half (rising edge is step)
+            symbols[idle_count + i].duration0 = half_ticks_low;
+            symbols[idle_count + i].level0 = 0;
+            symbols[idle_count + i].duration1 = half_ticks_high;
+            symbols[idle_count + i].level1 = 1;
+        }
+    } else {
+        // All PART_SIZE symbols are step pulses
+        for (uint8_t i = 0; i < LIMIT_RMT_PART_SIZE; i++) {
+            symbols[i].duration0 = half_ticks_low;
+            symbols[i].level0 = 0;
+            symbols[i].duration1 = half_ticks_high;
+            symbols[i].level1 = 1;
+        }
+    }
+
+    // Update command or advance to next
+    uint8_t remaining = steps - steps_to_do;
+    if (remaining == 0) {
+        // Command fully consumed - advance read index
+        read_idx_.store((read_idx_.load(std::memory_order_relaxed) + 1) & LIMIT_RMT_QUEUE_LEN_MASK,
+                        std::memory_order_release);
+    } else {
+        // Partial consumption - update remaining steps in place
+        cmd->steps = remaining;
+    }
+
+    return steps_to_do;
+}
+
+void RmtPulseGenerator::wakeRampTask()
+{
+    if (ramp_semaphore_) {
+        BaseType_t higher_priority_woken = pdFALSE;
+        xSemaphoreGiveFromISR(ramp_semaphore_, &higher_priority_woken);
+        if (higher_priority_woken) {
+            portYIELD_FROM_ISR();
+        }
+    }
+}
+
+bool IRAM_ATTR RmtPulseGenerator::onTransmitDone(
+    rmt_channel_handle_t channel,
+    const rmt_tx_done_event_data_t* event_data,
+    void* user_ctx)
+{
+    // Transmission complete - this is expected when all commands processed
+    // The encoder callback already handled completion_pending_
+    return false;
 }
 
 // ============================================================================
@@ -251,7 +713,7 @@ void RmtPulseGenerator::handleRefillRequest()
 
 esp_err_t RmtPulseGenerator::startMove(int32_t pulses, float max_velocity, float acceleration)
 {
-    if (!initialized_) {
+    if (!initialized_.load()) {
         return ESP_ERR_INVALID_STATE;
     }
 
@@ -260,191 +722,200 @@ esp_err_t RmtPulseGenerator::startMove(int32_t pulses, float max_velocity, float
         return ESP_OK;  // Nothing to do
     }
     if (max_velocity <= 0 || max_velocity > LIMIT_MAX_PULSE_FREQ_HZ) {
-        ESP_LOGE(TAG, "Invalid velocity: %.1f (must be 0 < v <= %d)",
-                 max_velocity, LIMIT_MAX_PULSE_FREQ_HZ);
+        ESP_LOGE(TAG, "Invalid velocity: %.1f", max_velocity);
         return ESP_ERR_INVALID_ARG;
     }
     if (acceleration <= 0) {
-        ESP_LOGE(TAG, "Invalid acceleration: %.1f (must be > 0)", acceleration);
+        ESP_LOGE(TAG, "Invalid acceleration: %.1f", acceleration);
         return ESP_ERR_INVALID_ARG;
     }
 
-    // Handle direction
-    direction_ = (pulses > 0);
-    int32_t abs_pulses = std::abs(pulses);
+    ESP_LOGD(TAG, "startMove: pulses=%ld, vel=%.1f, accel=%.1f",
+             (long)pulses, max_velocity, acceleration);
 
-    ESP_LOGD(TAG, "startMove: pulses=%ld, max_vel=%.1f, accel=%.1f, dir=%s",
-             (long)pulses, max_velocity, acceleration, direction_ ? "FWD" : "REV");
+    // Atomic profile replacement - works whether running or not
+    bool new_direction = (pulses >= 0);
+    int32_t abs_pulses = (pulses >= 0) ? pulses : -pulses;
 
-    // Calculate trapezoidal profile
-    mode_ = MotionMode::POSITION;
-    calculateTrapezoidalProfile(abs_pulses, max_velocity, acceleration);
+    // Update parameters atomically
+    params_.target_position.store(abs_pulses, std::memory_order_relaxed);
+    params_.target_velocity.store(max_velocity, std::memory_order_relaxed);
+    params_.acceleration.store(acceleration, std::memory_order_relaxed);
+    params_.position_mode.store(true, std::memory_order_relaxed);
 
-    // Reset counters
-    pulse_count_.store(0, std::memory_order_relaxed);
-    current_velocity_.store(0.0f, std::memory_order_relaxed);
-    profile_.current_pulse = 0;
-    profile_.current_velocity = 0.0f;
-    last_reported_pulses_ = 0;
+    // Handle direction (actual pin managed externally via shift register)
+    direction_.store(new_direction, std::memory_order_relaxed);
 
-    // Set direction on position tracker before motion
-    if (position_tracker_) {
-        position_tracker_->setDirection(direction_);
-    }
+    // Determine ramp state
+    if (running_.load(std::memory_order_acquire)) {
+        // Already running - blend from current velocity
+        params_.params_changed.store(true, std::memory_order_release);
+    } else {
+        // Starting fresh
+        clearQueue();
+        pulse_count_.store(0, std::memory_order_relaxed);
+        current_velocity_ = 0.0f;
+        current_ticks_ = LIMIT_RMT_MIN_CMD_TICKS;
+        ramp_steps_up_ = 0;
+        ramp_steps_down_ = 0;
+        ramp_state_ = RampState::ACCELERATING;
+        queue_end_.position = 0;
+        queue_end_.direction = new_direction;
+        queue_end_.ticks_queued = 0;
 
-    // Prime both buffers
-    primeBuffers();
-
-    // Start transmission
-    state_.store(ProfileState::ACCELERATING, std::memory_order_release);
-
-    rmt_transmit_config_t tx_config = {};
-    tx_config.loop_count = 0;  // No loop, we stream manually
-
-    // Transmit first buffer
-    rmt_symbol_word_t* buffer = buffer_a_;
-    size_t symbols = symbols_in_current_buffer_.load(std::memory_order_acquire);
-    esp_err_t ret = rmt_transmit(channel_handle_, encoder_handle_,
-                                  buffer, symbols * sizeof(rmt_symbol_word_t),
-                                  &tx_config);
-    if (ret != ESP_OK) {
-        state_.store(ProfileState::IDLE, std::memory_order_release);
-        ESP_LOGE(TAG, "Failed to start RMT transmission: %s", esp_err_to_name(ret));
-        return ret;
-    }
-
-    // Immediately queue second buffer if available
-    if (symbols_in_next_buffer_.load(std::memory_order_acquire) > 0) {
-        ret = rmt_transmit(channel_handle_, encoder_handle_,
-                           buffer_b_, symbols_in_next_buffer_.load() * sizeof(rmt_symbol_word_t),
-                           &tx_config);
-        if (ret != ESP_OK) {
-            ESP_LOGW(TAG, "Failed to queue second buffer: %s", esp_err_to_name(ret));
+        // Set direction on position tracker before motion
+        if (position_tracker_) {
+            position_tracker_->setDirection(new_direction);
         }
+
+        // Start motion
+        running_.store(true, std::memory_order_release);
+        rmt_stopped_.store(false, std::memory_order_release);
+        startRmtTransmission();
     }
+
+    // Wake ramp task to process new profile immediately
+    xSemaphoreGive(ramp_semaphore_);
 
     return ESP_OK;
 }
 
 esp_err_t RmtPulseGenerator::startVelocity(float velocity, float acceleration)
 {
-    if (!initialized_) {
+    if (!initialized_.load()) {
         return ESP_ERR_INVALID_STATE;
     }
 
     float abs_velocity = std::fabs(velocity);
     if (abs_velocity < LIMIT_MIN_PULSE_FREQ_HZ || abs_velocity > LIMIT_MAX_PULSE_FREQ_HZ) {
-        ESP_LOGE(TAG, "Invalid velocity: %.1f (must be %d <= |v| <= %d)",
-                 velocity, LIMIT_MIN_PULSE_FREQ_HZ, LIMIT_MAX_PULSE_FREQ_HZ);
+        ESP_LOGE(TAG, "Invalid velocity: %.1f", velocity);
         return ESP_ERR_INVALID_ARG;
     }
     if (acceleration <= 0) {
-        ESP_LOGE(TAG, "Invalid acceleration: %.1f (must be > 0)", acceleration);
+        ESP_LOGE(TAG, "Invalid acceleration: %.1f", acceleration);
         return ESP_ERR_INVALID_ARG;
     }
 
-    direction_ = (velocity >= 0);
+    ESP_LOGD(TAG, "startVelocity: vel=%.1f, accel=%.1f", velocity, acceleration);
 
-    ESP_LOGD(TAG, "startVelocity: vel=%.1f, accel=%.1f, dir=%s",
-             velocity, acceleration, direction_ ? "FWD" : "REV");
+    bool new_direction = (velocity >= 0);
 
-    // Set up velocity mode profile
-    mode_ = MotionMode::VELOCITY;
-    calculateVelocityProfile(std::fabs(velocity), acceleration);
+    // Update parameters atomically
+    params_.target_velocity.store(abs_velocity, std::memory_order_relaxed);
+    params_.acceleration.store(acceleration, std::memory_order_relaxed);
+    params_.position_mode.store(false, std::memory_order_relaxed);  // Velocity mode
 
-    // Reset counters
-    pulse_count_.store(0, std::memory_order_relaxed);
-    current_velocity_.store(0.0f, std::memory_order_relaxed);
-    profile_.current_pulse = 0;
-    profile_.current_velocity = 0.0f;
-    last_reported_pulses_ = 0;
+    // Handle direction (actual pin managed externally via shift register)
+    direction_.store(new_direction, std::memory_order_relaxed);
 
-    // Set direction on position tracker before motion
-    if (position_tracker_) {
-        position_tracker_->setDirection(direction_);
+    if (running_.load(std::memory_order_acquire)) {
+        // Already running - adjust velocity
+        params_.params_changed.store(true, std::memory_order_release);
+    } else {
+        // Starting fresh
+        clearQueue();
+        pulse_count_.store(0, std::memory_order_relaxed);
+        current_velocity_ = 0.0f;
+        current_ticks_ = LIMIT_RMT_MIN_CMD_TICKS;
+        ramp_steps_up_ = 0;
+        ramp_steps_down_ = 0;
+        ramp_state_ = RampState::ACCELERATING;
+        queue_end_.position = 0;
+        queue_end_.direction = new_direction;
+        queue_end_.ticks_queued = 0;
+
+        if (position_tracker_) {
+            position_tracker_->setDirection(new_direction);
+        }
+
+        running_.store(true, std::memory_order_release);
+        rmt_stopped_.store(false, std::memory_order_release);
+        startRmtTransmission();
     }
 
-    // Prime buffers
-    primeBuffers();
-
-    // Start transmission
-    state_.store(ProfileState::ACCELERATING, std::memory_order_release);
-
-    rmt_transmit_config_t tx_config = {};
-    tx_config.loop_count = 0;
-
-    rmt_symbol_word_t* buffer = buffer_a_;
-    size_t symbols = symbols_in_current_buffer_.load(std::memory_order_acquire);
-    esp_err_t ret = rmt_transmit(channel_handle_, encoder_handle_,
-                                  buffer, symbols * sizeof(rmt_symbol_word_t),
-                                  &tx_config);
-    if (ret != ESP_OK) {
-        state_.store(ProfileState::IDLE, std::memory_order_release);
-        ESP_LOGE(TAG, "Failed to start RMT transmission: %s", esp_err_to_name(ret));
-        return ret;
-    }
-
-    // Queue second buffer
-    if (symbols_in_next_buffer_.load(std::memory_order_acquire) > 0) {
-        rmt_transmit(channel_handle_, encoder_handle_,
-                     buffer_b_, symbols_in_next_buffer_.load() * sizeof(rmt_symbol_word_t),
-                     &tx_config);
-    }
+    xSemaphoreGive(ramp_semaphore_);
 
     return ESP_OK;
 }
 
 esp_err_t RmtPulseGenerator::stop(float deceleration)
 {
-    ProfileState current = state_.load(std::memory_order_acquire);
-    if (current == ProfileState::IDLE) {
+    if (!running_.load(std::memory_order_acquire)) {
         return ESP_ERR_INVALID_STATE;
     }
 
     if (deceleration <= 0) {
-        ESP_LOGE(TAG, "Invalid deceleration: %.1f (must be > 0)", deceleration);
+        ESP_LOGE(TAG, "Invalid deceleration: %.1f", deceleration);
         return ESP_ERR_INVALID_ARG;
     }
 
     ESP_LOGD(TAG, "stop: decel=%.1f", deceleration);
 
-    // Switch to deceleration mode
-    profile_.deceleration = deceleration;
+    // Switch to position mode with target = current + decel distance
+    float current_vel = current_velocity_;
+    int32_t stop_distance = calculateDecelDistance(current_vel, deceleration);
+    int32_t new_target = queue_end_.position + stop_distance;
 
-    // Calculate pulses needed to stop from current velocity
-    float current_vel = current_velocity_.load(std::memory_order_relaxed);
-    float stop_pulses = (current_vel * current_vel) / (2.0f * deceleration);
+    params_.target_position.store(new_target, std::memory_order_relaxed);
+    params_.acceleration.store(deceleration, std::memory_order_relaxed);
+    params_.position_mode.store(true, std::memory_order_relaxed);
+    params_.params_changed.store(true, std::memory_order_release);
 
-    // Update profile for stopping
-    profile_.target_pulses = static_cast<int32_t>(profile_.current_pulse + stop_pulses);
-    profile_.decel_pulses = static_cast<int32_t>(stop_pulses);
+    ramp_state_ = RampState::DECELERATING;
+    ramp_steps_down_ = 0;
 
-    state_.store(ProfileState::STOPPING, std::memory_order_release);
+    xSemaphoreGive(ramp_semaphore_);
 
     return ESP_OK;
 }
 
 void RmtPulseGenerator::stopImmediate()
 {
-    ProfileState current = state_.load(std::memory_order_acquire);
-    if (current == ProfileState::IDLE) {
+    if (!running_.load(std::memory_order_acquire)) {
         return;
     }
 
     ESP_LOGD(TAG, "stopImmediate");
 
-    // Disable RMT channel immediately
-    if (channel_handle_) {
-        rmt_disable(channel_handle_);
-        // Re-enable for next use (but don't transmit)
-        rmt_enable(channel_handle_);
+    // Stop RMT transmission
+    rmt_stopped_.store(true, std::memory_order_release);
+
+    if (rmt_channel_) {
+        rmt_disable(rmt_channel_);
+        rmt_enable(rmt_channel_);  // Re-enable for next use
     }
 
     // Clear state
-    state_.store(ProfileState::IDLE, std::memory_order_release);
-    current_velocity_.store(0.0f, std::memory_order_relaxed);
+    running_.store(false, std::memory_order_release);
+    ramp_state_ = RampState::IDLE;
+    current_velocity_ = 0.0f;
+    clearQueue();
 
     // Note: Do NOT fire completion callback on immediate stop
+}
+
+void RmtPulseGenerator::startRmtTransmission()
+{
+    // Fill initial commands
+    fillQueue();
+
+    // Start transmission with a dummy payload (encoder callback provides actual data)
+    rmt_transmit_config_t tx_config = {
+        .loop_count = 0,  // No loop
+        .flags = {
+            .eot_level = 0,
+            .queue_nonblocking = 0
+        }
+    };
+
+    // The simple encoder callback will be called on-demand to provide symbols
+    static const uint8_t dummy = 0;
+    esp_err_t ret = rmt_transmit(rmt_channel_, rmt_encoder_, &dummy, sizeof(dummy), &tx_config);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to start RMT transmission: %s", esp_err_to_name(ret));
+        running_.store(false, std::memory_order_release);
+        ramp_state_ = RampState::IDLE;
+    }
 }
 
 // ============================================================================
@@ -453,283 +924,28 @@ void RmtPulseGenerator::stopImmediate()
 
 bool RmtPulseGenerator::isRunning() const
 {
-    return state_.load(std::memory_order_acquire) != ProfileState::IDLE;
+    return running_.load(std::memory_order_acquire);
 }
 
 int64_t RmtPulseGenerator::getPulseCount() const
 {
-    return pulse_count_.load(std::memory_order_relaxed);
+    return pulse_count_.load(std::memory_order_acquire);
 }
 
 float RmtPulseGenerator::getCurrentVelocity() const
 {
-    return current_velocity_.load(std::memory_order_relaxed);
+    if (!running_.load(std::memory_order_acquire)) {
+        return 0.0f;
+    }
+    return current_velocity_;
 }
 
 void RmtPulseGenerator::setCompletionCallback(MotionCompleteCallback cb)
 {
-    if (xSemaphoreTake(callback_mutex_, pdMS_TO_TICKS(100)) == pdTRUE) {
-        completion_callback_ = cb;
-        xSemaphoreGive(callback_mutex_);
-    }
+    completion_callback_ = cb;
 }
 
 void RmtPulseGenerator::setPositionTracker(IPositionTracker* tracker)
 {
     position_tracker_ = tracker;
-}
-
-// ============================================================================
-// Profile Calculation
-// ============================================================================
-
-void RmtPulseGenerator::calculateTrapezoidalProfile(int32_t pulses, float max_vel, float accel)
-{
-    profile_.target_pulses = pulses;
-    profile_.max_velocity = max_vel;
-    profile_.acceleration = accel;
-    profile_.deceleration = accel;  // Symmetric by default
-
-    // Calculate acceleration distance: v² / (2 * a)
-    float accel_distance = (max_vel * max_vel) / (2.0f * accel);
-    float total_accel_distance = 2.0f * accel_distance;  // Accel + decel
-
-    if (static_cast<float>(pulses) <= total_accel_distance) {
-        // Triangular profile - can't reach max velocity
-        profile_.is_triangular = true;
-        profile_.accel_pulses = pulses / 2;
-        profile_.decel_pulses = pulses - profile_.accel_pulses;
-        profile_.cruise_pulses = 0;
-        // Peak velocity achieved: v = sqrt(2 * a * d)
-        profile_.cruise_velocity = std::sqrt(2.0f * accel * static_cast<float>(profile_.accel_pulses));
-    } else {
-        // Full trapezoidal profile
-        profile_.is_triangular = false;
-        profile_.accel_pulses = static_cast<int32_t>(accel_distance);
-        profile_.decel_pulses = static_cast<int32_t>(accel_distance);
-        profile_.cruise_pulses = pulses - profile_.accel_pulses - profile_.decel_pulses;
-        profile_.cruise_velocity = max_vel;
-    }
-
-    ESP_LOGD(TAG, "Profile: accel=%ld, cruise=%ld, decel=%ld, peak_vel=%.1f, tri=%d",
-             (long)profile_.accel_pulses, (long)profile_.cruise_pulses,
-             (long)profile_.decel_pulses, profile_.cruise_velocity,
-             profile_.is_triangular);
-}
-
-void RmtPulseGenerator::calculateVelocityProfile(float velocity, float acceleration)
-{
-    profile_.max_velocity = velocity;
-    profile_.acceleration = acceleration;
-    profile_.deceleration = acceleration;
-    profile_.target_pulses = INT32_MAX;  // Continuous mode
-    profile_.cruise_velocity = velocity;
-    profile_.is_triangular = false;
-
-    // Calculate pulses needed to reach target velocity
-    profile_.accel_pulses = static_cast<int32_t>((velocity * velocity) / (2.0f * acceleration));
-    profile_.cruise_pulses = INT32_MAX;  // Unlimited cruise
-    profile_.decel_pulses = 0;  // Will be set on stop()
-}
-
-float RmtPulseGenerator::velocityAtPosition(int64_t position) const
-{
-    if (mode_ == MotionMode::VELOCITY) {
-        ProfileState current = state_.load(std::memory_order_acquire);
-        if (current == ProfileState::ACCELERATING) {
-            // v = sqrt(2 * a * d)
-            float v = std::sqrt(2.0f * profile_.acceleration * static_cast<float>(position));
-            return std::min(v, profile_.cruise_velocity);
-        } else if (current == ProfileState::STOPPING) {
-            int64_t stop_start = profile_.target_pulses - profile_.decel_pulses;
-            if (position >= stop_start) {
-                int64_t decel_pos = position - stop_start;
-                float remaining = static_cast<float>(profile_.decel_pulses - decel_pos);
-                if (remaining <= 0) return LIMIT_MIN_PULSE_FREQ_HZ;
-                return std::sqrt(2.0f * profile_.deceleration * remaining);
-            }
-        }
-        return profile_.cruise_velocity;
-    }
-
-    // Position mode
-    if (position < profile_.accel_pulses) {
-        // Accelerating: v = sqrt(2 * a * d)
-        return std::sqrt(2.0f * profile_.acceleration * static_cast<float>(position));
-    } else if (position < profile_.accel_pulses + profile_.cruise_pulses) {
-        // Cruising
-        return profile_.cruise_velocity;
-    } else {
-        // Decelerating: v = sqrt(2 * a * remaining)
-        int64_t remaining = profile_.target_pulses - position;
-        if (remaining <= 0) return LIMIT_MIN_PULSE_FREQ_HZ;
-        return std::sqrt(2.0f * profile_.deceleration * static_cast<float>(remaining));
-    }
-}
-
-uint32_t RmtPulseGenerator::velocityToTickPeriod(float velocity) const
-{
-    if (velocity < LIMIT_MIN_PULSE_FREQ_HZ) {
-        velocity = LIMIT_MIN_PULSE_FREQ_HZ;
-    }
-    // Period in ticks = resolution / frequency
-    return static_cast<uint32_t>(resolution_hz_ / velocity);
-}
-
-// ============================================================================
-// Buffer Management
-// ============================================================================
-
-size_t RmtPulseGenerator::fillBuffer(rmt_symbol_word_t* buffer, size_t max_symbols)
-{
-    size_t filled = 0;
-    int64_t target = profile_.target_pulses;
-
-    while (filled < max_symbols) {
-        // Check if we've completed the motion
-        if (mode_ == MotionMode::POSITION && profile_.current_pulse >= target) {
-            break;
-        }
-
-        // Check for stopping mode completion
-        ProfileState current = state_.load(std::memory_order_acquire);
-        if (current == ProfileState::STOPPING && profile_.current_pulse >= profile_.target_pulses) {
-            break;
-        }
-
-        // Get velocity at current position
-        float velocity = velocityAtPosition(profile_.current_pulse);
-
-        // Clamp velocity to valid range
-        if (velocity < LIMIT_MIN_PULSE_FREQ_HZ) {
-            velocity = LIMIT_MIN_PULSE_FREQ_HZ;
-        }
-        if (velocity > profile_.cruise_velocity) {
-            velocity = profile_.cruise_velocity;
-        }
-
-        // Update state machine
-        if (current == ProfileState::ACCELERATING && velocity >= profile_.cruise_velocity - 1.0f) {
-            if (profile_.cruise_pulses > 0 || mode_ == MotionMode::VELOCITY) {
-                state_.store(ProfileState::CRUISING, std::memory_order_release);
-            } else {
-                state_.store(ProfileState::DECELERATING, std::memory_order_release);
-            }
-        } else if (current == ProfileState::CRUISING &&
-                   mode_ == MotionMode::POSITION &&
-                   profile_.current_pulse >= profile_.accel_pulses + profile_.cruise_pulses) {
-            state_.store(ProfileState::DECELERATING, std::memory_order_release);
-        }
-
-        // Calculate tick period for this pulse
-        uint32_t period_ticks = velocityToTickPeriod(velocity);
-        uint32_t half_period = period_ticks / 2;
-
-        // Ensure minimum tick count (RMT constraint)
-        if (half_period < 1) half_period = 1;
-        if (half_period > 32767) half_period = 32767;  // 15-bit limit
-
-        // Create RMT symbol: HIGH for half period, LOW for half period
-        buffer[filled].duration0 = half_period;
-        buffer[filled].level0 = 1;
-        buffer[filled].duration1 = half_period;
-        buffer[filled].level1 = 0;
-
-        filled++;
-        profile_.current_pulse++;
-        profile_.current_velocity = velocity;
-    }
-
-    return filled;
-}
-
-void RmtPulseGenerator::primeBuffers()
-{
-    use_buffer_a_.store(true, std::memory_order_release);
-
-    // Fill buffer A
-    size_t symbols_a = fillBuffer(buffer_a_, LIMIT_RMT_BUFFER_SYMBOLS);
-    symbols_in_current_buffer_.store(symbols_a, std::memory_order_release);
-
-    // Fill buffer B (next buffer)
-    size_t symbols_b = fillBuffer(buffer_b_, LIMIT_RMT_BUFFER_SYMBOLS);
-    symbols_in_next_buffer_.store(symbols_b, std::memory_order_release);
-
-    ESP_LOGD(TAG, "Primed buffers: A=%zu, B=%zu symbols", symbols_a, symbols_b);
-}
-
-// ============================================================================
-// RMT Callbacks - ISR SAFE
-// ============================================================================
-
-bool IRAM_ATTR RmtPulseGenerator::onTxDone(rmt_channel_handle_t channel,
-                                            const rmt_tx_done_event_data_t* event_data,
-                                            void* user_data)
-{
-    RmtPulseGenerator* self = static_cast<RmtPulseGenerator*>(user_data);
-    return self->handleTxDoneISR();
-}
-
-bool RmtPulseGenerator::handleTxDoneISR()
-{
-    // Update pulse count with symbols from completed buffer
-    size_t completed_symbols = symbols_in_current_buffer_.load(std::memory_order_relaxed);
-    pulse_count_.fetch_add(completed_symbols, std::memory_order_relaxed);
-    current_velocity_.store(profile_.current_velocity, std::memory_order_relaxed);
-
-    // Update position tracker with buffer pulses (real-time position update)
-    // Note: addPulses() only uses atomics, safe for ISR context
-    if (position_tracker_ && completed_symbols > 0) {
-        position_tracker_->addPulses(static_cast<int64_t>(completed_symbols));
-    }
-
-    // Swap buffers
-    bool was_buffer_a = use_buffer_a_.load(std::memory_order_relaxed);
-    use_buffer_a_.store(!was_buffer_a, std::memory_order_release);
-
-    // Move next buffer count to current
-    size_t next_symbols = symbols_in_next_buffer_.load(std::memory_order_relaxed);
-    symbols_in_current_buffer_.store(next_symbols, std::memory_order_release);
-
-    // Check if motion is complete
-    ProfileState current = state_.load(std::memory_order_relaxed);
-    if (current == ProfileState::IDLE) {
-        return false;  // Already stopped
-    }
-
-    // Check if this was the last buffer
-    if (next_symbols == 0) {
-        state_.store(ProfileState::IDLE, std::memory_order_release);
-        current_velocity_.store(0.0f, std::memory_order_relaxed);
-
-        // Notify completion from task context (signal refill task)
-        if (refill_task_handle_) {
-            BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-            xTaskNotifyFromISR(refill_task_handle_, NOTIFY_REFILL_BIT,
-                               eSetBits, &xHigherPriorityTaskWoken);
-            return xHigherPriorityTaskWoken == pdTRUE;
-        }
-        return false;
-    }
-
-    // Signal refill task to prepare next buffer
-    if (refill_task_handle_) {
-        BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-        xTaskNotifyFromISR(refill_task_handle_, NOTIFY_REFILL_BIT,
-                           eSetBits, &xHigherPriorityTaskWoken);
-        return xHigherPriorityTaskWoken == pdTRUE;
-    }
-
-    return false;
-}
-
-void RmtPulseGenerator::notifyCompletion()
-{
-    if (xSemaphoreTake(callback_mutex_, pdMS_TO_TICKS(10)) == pdTRUE) {
-        if (completion_callback_) {
-            int64_t total = pulse_count_.load(std::memory_order_relaxed);
-            completion_callback_(total);
-        }
-        xSemaphoreGive(callback_mutex_);
-    }
 }

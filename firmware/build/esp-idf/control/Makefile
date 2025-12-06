@@ -247,30 +247,6 @@ command_executor/movr_handler.cpp.s:
 	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/control/CMakeFiles/__idf_control.dir/build.make esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/movr_handler.cpp.s
 .PHONY : command_executor/movr_handler.cpp.s
 
-command_executor/test_pulse_cmd.obj: command_executor/test_pulse_cmd.cpp.obj
-.PHONY : command_executor/test_pulse_cmd.obj
-
-# target to build an object file
-command_executor/test_pulse_cmd.cpp.obj:
-	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/control/CMakeFiles/__idf_control.dir/build.make esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/test_pulse_cmd.cpp.obj
-.PHONY : command_executor/test_pulse_cmd.cpp.obj
-
-command_executor/test_pulse_cmd.i: command_executor/test_pulse_cmd.cpp.i
-.PHONY : command_executor/test_pulse_cmd.i
-
-# target to preprocess a source file
-command_executor/test_pulse_cmd.cpp.i:
-	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/control/CMakeFiles/__idf_control.dir/build.make esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/test_pulse_cmd.cpp.i
-.PHONY : command_executor/test_pulse_cmd.cpp.i
-
-command_executor/test_pulse_cmd.s: command_executor/test_pulse_cmd.cpp.s
-.PHONY : command_executor/test_pulse_cmd.s
-
-# target to generate assembly for a file
-command_executor/test_pulse_cmd.cpp.s:
-	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/control/CMakeFiles/__idf_control.dir/build.make esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/test_pulse_cmd.cpp.s
-.PHONY : command_executor/test_pulse_cmd.cpp.s
-
 motion_controller/motion_controller.obj: motion_controller/motion_controller.cpp.obj
 .PHONY : motion_controller/motion_controller.obj
 
@@ -365,9 +341,6 @@ help:
 	@echo "... command_executor/movr_handler.obj"
 	@echo "... command_executor/movr_handler.i"
 	@echo "... command_executor/movr_handler.s"
-	@echo "... command_executor/test_pulse_cmd.obj"
-	@echo "... command_executor/test_pulse_cmd.i"
-	@echo "... command_executor/test_pulse_cmd.s"
 	@echo "... motion_controller/motion_controller.obj"
 	@echo "... motion_controller/motion_controller.i"
 	@echo "... motion_controller/motion_controller.s"

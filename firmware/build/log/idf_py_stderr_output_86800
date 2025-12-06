@@ -1,0 +1,84 @@
+In file included from /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/motor_system/motor_system.cpp:17:
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_limits.h:170:41: error: invalid conversion from 'int' to 'gpio_num_t' [-fpermissive]
+  170 | #define LIMIT_RMT_RESOLUTION_HZ         16000000
+      |                                         ^~~~~~~~
+      |                                         |
+      |                                         int
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/motor_system/motor_system.cpp:56:62: note: in expansion of macro 'LIMIT_RMT_RESOLUTION_HZ'
+   56 | static RmtPulseGenerator s_rmt_x(RMT_CHANNEL_X, GPIO_X_STEP, LIMIT_RMT_RESOLUTION_HZ);
+      |                                                              ^~~~~~~~~~~~~~~~~~~~~~~
+In file included from /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/motor_system/motor_system.cpp:23:
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/include/rmt_pulse_gen.h:59:71: note:   initializing argument 3 of 'RmtPulseGenerator::RmtPulseGenerator(int, gpio_num_t, gpio_num_t)'
+   59 |     RmtPulseGenerator(int channel_id, gpio_num_t step_pin, gpio_num_t dir_pin);
+      |                                                            ~~~~~~~~~~~^~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_limits.h:170:41: error: invalid conversion from 'int' to 'gpio_num_t' [-fpermissive]
+  170 | #define LIMIT_RMT_RESOLUTION_HZ         16000000
+      |                                         ^~~~~~~~
+      |                                         |
+      |                                         int
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/motor_system/motor_system.cpp:57:62: note: in expansion of macro 'LIMIT_RMT_RESOLUTION_HZ'
+   57 | static RmtPulseGenerator s_rmt_z(RMT_CHANNEL_Z, GPIO_Z_STEP, LIMIT_RMT_RESOLUTION_HZ);
+      |                                                              ^~~~~~~~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/include/rmt_pulse_gen.h:59:71: note:   initializing argument 3 of 'RmtPulseGenerator::RmtPulseGenerator(int, gpio_num_t, gpio_num_t)'
+   59 |     RmtPulseGenerator(int channel_id, gpio_num_t step_pin, gpio_num_t dir_pin);
+      |                                                            ~~~~~~~~~~~^~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_limits.h:170:41: error: invalid conversion from 'int' to 'gpio_num_t' [-fpermissive]
+  170 | #define LIMIT_RMT_RESOLUTION_HZ         16000000
+      |                                         ^~~~~~~~
+      |                                         |
+      |                                         int
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/motor_system/motor_system.cpp:58:62: note: in expansion of macro 'LIMIT_RMT_RESOLUTION_HZ'
+   58 | static RmtPulseGenerator s_rmt_a(RMT_CHANNEL_A, GPIO_A_STEP, LIMIT_RMT_RESOLUTION_HZ);
+      |                                                              ^~~~~~~~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/include/rmt_pulse_gen.h:59:71: note:   initializing argument 3 of 'RmtPulseGenerator::RmtPulseGenerator(int, gpio_num_t, gpio_num_t)'
+   59 |     RmtPulseGenerator(int channel_id, gpio_num_t step_pin, gpio_num_t dir_pin);
+      |                                                            ~~~~~~~~~~~^~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_limits.h:170:41: error: invalid conversion from 'int' to 'gpio_num_t' [-fpermissive]
+  170 | #define LIMIT_RMT_RESOLUTION_HZ         16000000
+      |                                         ^~~~~~~~
+      |                                         |
+      |                                         int
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/motor_system/motor_system.cpp:59:62: note: in expansion of macro 'LIMIT_RMT_RESOLUTION_HZ'
+   59 | static RmtPulseGenerator s_rmt_b(RMT_CHANNEL_B, GPIO_B_STEP, LIMIT_RMT_RESOLUTION_HZ);
+      |                                                              ^~~~~~~~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/include/rmt_pulse_gen.h:59:71: note:   initializing argument 3 of 'RmtPulseGenerator::RmtPulseGenerator(int, gpio_num_t, gpio_num_t)'
+   59 |     RmtPulseGenerator(int channel_id, gpio_num_t step_pin, gpio_num_t dir_pin);
+      |                                                            ~~~~~~~~~~~^~~~~~~
+make[2]: *** [esp-idf/control/CMakeFiles/__idf_control.dir/motor_system/motor_system.cpp.obj] Error 1
+make[2]: *** Waiting for unfinished jobs....
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/test_pulse_cmd.cpp: In function 'esp_err_t handle_pulse_test(const ParsedCommand*, char*, size_t)':
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/test_pulse_cmd.cpp:698:58: error: no matching function for call to 'RmtPulseGenerator::RmtPulseGenerator(int&, int&)'
+  698 |         s_move_gen[idx] = new RmtPulseGenerator(idx, gpio);
+      |                                                          ^
+In file included from /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/test_pulse_cmd.cpp:48:
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/include/rmt_pulse_gen.h:59:5: note: candidate: 'RmtPulseGenerator::RmtPulseGenerator(int, gpio_num_t, gpio_num_t)'
+   59 |     RmtPulseGenerator(int channel_id, gpio_num_t step_pin, gpio_num_t dir_pin);
+      |     ^~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/include/rmt_pulse_gen.h:59:5: note:   candidate expects 3 arguments, 2 provided
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/test_pulse_cmd.cpp: In function 'esp_err_t handle_move_test(const ParsedCommand*, char*, size_t)':
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/test_pulse_cmd.cpp:901:58: error: no matching function for call to 'RmtPulseGenerator::RmtPulseGenerator(int&, int&)'
+  901 |         s_move_gen[idx] = new RmtPulseGenerator(idx, gpio);
+      |                                                          ^
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/include/rmt_pulse_gen.h:59:5: note: candidate: 'RmtPulseGenerator::RmtPulseGenerator(int, gpio_num_t, gpio_num_t)'
+   59 |     RmtPulseGenerator(int channel_id, gpio_num_t step_pin, gpio_num_t dir_pin);
+      |     ^~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/include/rmt_pulse_gen.h:59:5: note:   candidate expects 3 arguments, 2 provided
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/test_pulse_cmd.cpp: At global scope:
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/test_pulse_cmd.cpp:475:18: warning: 'esp_err_t start_pulses(int, float)' defined but not used [-Wunused-function]
+  475 | static esp_err_t start_pulses(int idx, float freq_hz)
+      |                  ^~~~~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/test_pulse_cmd.cpp:422:18: warning: 'esp_err_t init_rmt_channel(int, int)' defined but not used [-Wunused-function]
+  422 | static esp_err_t init_rmt_channel(int idx, int gpio)
+      |                  ^~~~~~~~~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/test_pulse_cmd.cpp:329:13: warning: 'void cleanup_mcpwm_axis(int)' defined but not used [-Wunused-function]
+  329 | static void cleanup_mcpwm_axis(int idx)
+      |             ^~~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/test_pulse_cmd.cpp:282:13: warning: 'void cleanup_move_axis(int)' defined but not used [-Wunused-function]
+  282 | static void cleanup_move_axis(int idx)
+      |             ^~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/test_pulse_cmd.cpp:86:16: warning: 's_mcpwm_start_us' defined but not used [-Wunused-variable]
+   86 | static int64_t s_mcpwm_start_us[2] = {0, 0};
+      |                ^~~~~~~~~~~~~~~~
+make[2]: *** [esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/test_pulse_cmd.cpp.obj] Error 1
+make[1]: *** [esp-idf/control/CMakeFiles/__idf_control.dir/all] Error 2
+make: *** [all] Error 2

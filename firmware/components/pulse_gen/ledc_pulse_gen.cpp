@@ -527,6 +527,22 @@ void LedcPulseGenerator::setPositionTracker(IPositionTracker* tracker)
 }
 
 // ============================================================================
+// IPositionTracker Implementation
+// ============================================================================
+
+esp_err_t LedcPulseGenerator::reset(int64_t position)
+{
+    // LEDC uses software pulse counting, no PCNT hardware to clear
+    pulse_count_.store(position, std::memory_order_relaxed);
+    return ESP_OK;
+}
+
+void LedcPulseGenerator::setDirection(bool forward)
+{
+    direction_ = forward;
+}
+
+// ============================================================================
 // Profile Calculation
 // ============================================================================
 

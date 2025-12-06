@@ -1,0 +1,117 @@
+CMake Deprecation Warning at /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/mbedtls/mbedtls/CMakeLists.txt:21 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/rmt_pulse_gen.cpp: In member function 'esp_err_t RmtPulseGenerator::initRmt()':
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/rmt_pulse_gen.cpp:137:5: error: missing initializer for member 'rmt_tx_channel_config_t::<unnamed struct>::allow_pd' [-Werror=missing-field-initializers]
+  137 |     };
+      |     ^
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/rmt_pulse_gen.cpp: In member function 'StepCommand RmtPulseGenerator::generateNextCommand()':
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/rmt_pulse_gen.cpp:393:55: error: no matching function for call to 'min(uint32_t&, unsigned int)'
+  393 |             cmd.ticks = static_cast<uint16_t>(std::min(current_ticks_, 65535u));
+      |                                               ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/hashtable_policy.h:36,
+                 from /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/hashtable.h:35,
+                 from /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/unordered_map.h:33,
+                 from /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/unordered_map:41,
+                 from /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/functional:63,
+                 from /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/include/i_pulse_generator.h:16,
+                 from /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/include/rmt_pulse_gen.h:21,
+                 from /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/rmt_pulse_gen.cpp:21:
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_algobase.h:233:5: note: candidate: 'template<class _Tp> constexpr const _Tp& std::min(const _Tp&, const _Tp&)'
+  233 |     min(const _Tp& __a, const _Tp& __b)
+      |     ^~~
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_algobase.h:233:5: note:   template argument deduction/substitution failed:
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/rmt_pulse_gen.cpp:393:55: note:   deduced conflicting types for parameter 'const _Tp' ('long unsigned int' and 'unsigned int')
+  393 |             cmd.ticks = static_cast<uint16_t>(std::min(current_ticks_, 65535u));
+      |                                               ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_algobase.h:281:5: note: candidate: 'template<class _Tp, class _Compare> constexpr const _Tp& std::min(const _Tp&, const _Tp&, _Compare)'
+  281 |     min(const _Tp& __a, const _Tp& __b, _Compare __comp)
+      |     ^~~
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_algobase.h:281:5: note:   candidate expects 3 arguments, 2 provided
+In file included from /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/algorithm:61,
+                 from /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/rmt_pulse_gen.cpp:24:
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_algo.h:5685:5: note: candidate: 'template<class _Tp> constexpr _Tp std::min(initializer_list<_Tp>)'
+ 5685 |     min(initializer_list<_Tp> __l)
+      |     ^~~
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_algo.h:5685:5: note:   candidate expects 1 argument, 2 provided
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_algo.h:5695:5: note: candidate: 'template<class _Tp, class _Compare> constexpr _Tp std::min(initializer_list<_Tp>, _Compare)'
+ 5695 |     min(initializer_list<_Tp> __l, _Compare __comp)
+      |     ^~~
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_algo.h:5695:5: note:   template argument deduction/substitution failed:
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/rmt_pulse_gen.cpp:393:55: note:   mismatched types 'std::initializer_list<_Tp>' and 'long unsigned int'
+  393 |             cmd.ticks = static_cast<uint16_t>(std::min(current_ticks_, 65535u));
+      |                                               ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/rmt_pulse_gen.cpp:414:55: error: no matching function for call to 'min(uint32_t&, unsigned int)'
+  414 |             cmd.ticks = static_cast<uint16_t>(std::min(current_ticks_, 65535u));
+      |                                               ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_algobase.h:233:5: note: candidate: 'template<class _Tp> constexpr const _Tp& std::min(const _Tp&, const _Tp&)'
+  233 |     min(const _Tp& __a, const _Tp& __b)
+      |     ^~~
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_algobase.h:233:5: note:   template argument deduction/substitution failed:
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/rmt_pulse_gen.cpp:414:55: note:   deduced conflicting types for parameter 'const _Tp' ('long unsigned int' and 'unsigned int')
+  414 |             cmd.ticks = static_cast<uint16_t>(std::min(current_ticks_, 65535u));
+      |                                               ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_algobase.h:281:5: note: candidate: 'template<class _Tp, class _Compare> constexpr const _Tp& std::min(const _Tp&, const _Tp&, _Compare)'
+  281 |     min(const _Tp& __a, const _Tp& __b, _Compare __comp)
+      |     ^~~
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_algobase.h:281:5: note:   candidate expects 3 arguments, 2 provided
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_algo.h:5685:5: note: candidate: 'template<class _Tp> constexpr _Tp std::min(initializer_list<_Tp>)'
+ 5685 |     min(initializer_list<_Tp> __l)
+      |     ^~~
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_algo.h:5685:5: note:   candidate expects 1 argument, 2 provided
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_algo.h:5695:5: note: candidate: 'template<class _Tp, class _Compare> constexpr _Tp std::min(initializer_list<_Tp>, _Compare)'
+ 5695 |     min(initializer_list<_Tp> __l, _Compare __comp)
+      |     ^~~
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_algo.h:5695:5: note:   template argument deduction/substitution failed:
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/rmt_pulse_gen.cpp:414:55: note:   mismatched types 'std::initializer_list<_Tp>' and 'long unsigned int'
+  414 |             cmd.ticks = static_cast<uint16_t>(std::min(current_ticks_, 65535u));
+      |                                               ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/rmt_pulse_gen.cpp:453:55: error: no matching function for call to 'min(uint32_t&, unsigned int)'
+  453 |             cmd.ticks = static_cast<uint16_t>(std::min(current_ticks_, 65535u));
+      |                                               ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_algobase.h:233:5: note: candidate: 'template<class _Tp> constexpr const _Tp& std::min(const _Tp&, const _Tp&)'
+  233 |     min(const _Tp& __a, const _Tp& __b)
+      |     ^~~
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_algobase.h:233:5: note:   template argument deduction/substitution failed:
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/rmt_pulse_gen.cpp:453:55: note:   deduced conflicting types for parameter 'const _Tp' ('long unsigned int' and 'unsigned int')
+  453 |             cmd.ticks = static_cast<uint16_t>(std::min(current_ticks_, 65535u));
+      |                                               ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_algobase.h:281:5: note: candidate: 'template<class _Tp, class _Compare> constexpr const _Tp& std::min(const _Tp&, const _Tp&, _Compare)'
+  281 |     min(const _Tp& __a, const _Tp& __b, _Compare __comp)
+      |     ^~~
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_algobase.h:281:5: note:   candidate expects 3 arguments, 2 provided
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_algo.h:5685:5: note: candidate: 'template<class _Tp> constexpr _Tp std::min(initializer_list<_Tp>)'
+ 5685 |     min(initializer_list<_Tp> __l)
+      |     ^~~
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_algo.h:5685:5: note:   candidate expects 1 argument, 2 provided
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_algo.h:5695:5: note: candidate: 'template<class _Tp, class _Compare> constexpr _Tp std::min(initializer_list<_Tp>, _Compare)'
+ 5695 |     min(initializer_list<_Tp> __l, _Compare __comp)
+      |     ^~~
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/stl_algo.h:5695:5: note:   template argument deduction/substitution failed:
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/rmt_pulse_gen.cpp:453:55: note:   mismatched types 'std::initializer_list<_Tp>' and 'long unsigned int'
+  453 |             cmd.ticks = static_cast<uint16_t>(std::min(current_ticks_, 65535u));
+      |                                               ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/rmt_pulse_gen.cpp: At global scope:
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/rmt_pulse_gen.cpp:580:93: error: ignoring attribute 'section (".iram1.5")' because it conflicts with previous 'section (".iram1.3")' [-Werror=attributes]
+  580 | size_t IRAM_ATTR RmtPulseGenerator::fillSymbols(rmt_symbol_word_t* symbols, StepCommand* cmd)
+      |                                                                                             ^
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/include/rmt_pulse_gen.h:209:22: note: previous declaration here
+  209 |     size_t IRAM_ATTR fillSymbols(rmt_symbol_word_t* symbols, StepCommand* cmd);
+      |                      ^~~~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/rmt_pulse_gen.cpp:702:48: error: ignoring attribute 'section (".iram1.6")' because it conflicts with previous 'section (".iram1.0")' [-Werror=attributes]
+  702 | void IRAM_ATTR RmtPulseGenerator::wakeRampTask()
+      |                                                ^
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/include/rmt_pulse_gen.h:182:20: note: previous declaration here
+  182 |     void IRAM_ATTR wakeRampTask();
+      |                    ^~~~~~~~~~~~
+cc1plus: all warnings being treated as errors
+make[2]: *** [esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/rmt_pulse_gen.cpp.obj] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/all] Error 2
+make: *** [all] Error 2

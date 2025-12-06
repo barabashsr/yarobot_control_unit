@@ -85,7 +85,7 @@ struct LedcTrapezoidalProfile {
  * - Trapezoidal velocity profile with acceleration/deceleration
  * - ISR-safe: completion callback runs in task context
  */
-class LedcPulseGenerator : public IPulseGenerator {
+class LedcPulseGenerator : public IPulseGenerator, public IPositionTracker {
 public:
     /**
      * @brief Construct LEDC pulse generator
@@ -109,6 +109,13 @@ public:
     float getCurrentVelocity() const override;
     void setCompletionCallback(MotionCompleteCallback cb) override;
     void setPositionTracker(IPositionTracker* tracker) override;
+
+    // IPositionTracker interface implementation
+    // Note: init() already declared in IPulseGenerator
+    esp_err_t reset(int64_t position = 0) override;
+    int64_t getPosition() const override { return getPulseCount(); }
+    void setDirection(bool forward) override;
+    // addPulses() uses default no-op (software counting via esp_timer)
 
     /**
      * @brief Get the LEDC timer
