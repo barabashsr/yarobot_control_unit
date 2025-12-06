@@ -1,0 +1,245 @@
+<story-context id="3-8-discrete-axis-implementation" v="1.0">
+  <metadata>
+    <epicId>3</epicId>
+    <storyId>8</storyId>
+    <title>Discrete Axis Implementation (E Axis)</title>
+    <status>ready-for-dev</status>
+    <generatedAt>2025-12-06</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/3-8-discrete-axis-implementation.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>a DiscreteAxis motor implementation for E axis</iWant>
+    <soThat>simple on/off actuators (pneumatic cylinders, solenoids) can be controlled through the unified IMotor interface</soThat>
+    <tasks>
+      <task id="1" ac="1,14">Create DiscreteAxis class declaration in discrete_axis.h</task>
+      <task id="2" ac="1,2">Implement constructor and init() with esp_timer for motion completion</task>
+      <task id="3" ac="2,3,4,12,13,14">Implement moveAbsolute() with limit validation and time-based motion</task>
+      <task id="4" ac="2,3,12">Implement moveRelative() delegating to moveAbsolute()</task>
+      <task id="5" ac="5">Implement moveVelocity() returning ESP_ERR_NOT_SUPPORTED</task>
+      <task id="6" ac="6,7">Implement stop() and stopImmediate()</task>
+      <task id="7" ac="8,9">Implement getPosition(), getVelocity(), isMoving(), isEnabled(), getState()</task>
+      <task id="8" ac="10,11">Implement enable()/disable() with shift register control</task>
+      <task id="9" ac="2,3">Implement motion completion timer callback</task>
+      <task id="10" ac="1">Implement getConfig(), setConfig(), setMotionCompleteCallback()</task>
+      <task id="11" ac="1">Update motor component CMakeLists.txt</task>
+      <task id="12" ac="1-14">Create unit tests in test_discrete_axis.cpp</task>
+      <task id="13" ac="14">Code review - verify NO magic numbers in implementation</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1">DiscreteAxis implements IMotor interface with TimeTracker*, ShiftRegisterController*, axis ID (7), AxisConfig</ac>
+    <ac id="2">moveAbsolute(1.0) sets SR_E_DIR forward, SR_E_EN active, calls TimeTracker.startMotion(), starts timer for TIMING_E_AXIS_TRAVEL_MS, state=MOVING, fires callback on completion</ac>
+    <ac id="3">moveAbsolute(0.0) sets direction reverse, starts TimeTracker, after travel time position=0.0</ac>
+    <ac id="4">Already at target position completes immediately without travel time wait</ac>
+    <ac id="5">moveVelocity() returns ESP_ERR_NOT_SUPPORTED (discrete actuator)</ac>
+    <ac id="6">stop() cancels motion timer, keeps interpolated position</ac>
+    <ac id="7">stopImmediate() cancels timer, clears EN, state=IDLE</ac>
+    <ac id="8">getPosition() returns interpolated position (0.0-1.0) during motion</ac>
+    <ac id="9">getVelocity() returns E_AXIS_MAX_VELOCITY if moving, 0.0 if idle</ac>
+    <ac id="10">enable(true) sets SR_E_EN, waits TIMING_ENABLE_DELAY_US, state=IDLE</ac>
+    <ac id="11">enable(false) while moving stops immediately, clears SR_E_EN, state=DISABLED</ac>
+    <ac id="12">Position outside [0.0, 1.0] returns ESP_ERR_INVALID_ARG</ac>
+    <ac id="13">Disabled axis returns ESP_ERR_INVALID_STATE on motion commands</ac>
+    <ac id="14" mandatory="true">NO hardcoded values; ALL config from headers (config_sr.h, config_timing.h, config_defaults.h)</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-3.md</path>
+        <title>Epic 3 Technical Specification</title>
+        <section>DiscreteAxis Module, MANDATORY Architecture Constraints</section>
+        <snippet>DiscreteAxis at motor/discrete_axis.cpp. Header-only configuration mandate: every configurable value MUST be defined in a header file.</snippet>
+      </doc>
+      <doc>
+        <path>docs/epics.md</path>
+        <title>Epic Definitions</title>
+        <section>Story 3.8: Discrete Axis Implementation</section>
+        <snippet>Implements E axis as discrete actuator with binary positions (0=retracted, 1=extended), time-based positioning, shift register control only.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/3-6-motor-base-class-servo-motor.md</path>
+        <title>Story 3.6 - Motor Base Class &amp; Servo Motor</title>
+        <section>Completion Notes, Dev Notes</section>
+        <snippet>IMotor interface, composition pattern, atomic state management, motion blending, unit test patterns with mocks. Reference for DiscreteAxis implementation.</snippet>
+      </doc>
+    </docs>
+
+    <code>
+      <artifact>
+        <path>firmware/components/motor/include/i_motor.h</path>
+        <kind>interface</kind>
+        <symbol>IMotor</symbol>
+        <lines>41-241</lines>
+        <reason>Base interface that DiscreteAxis must implement. Defines moveAbsolute(), moveRelative(), moveVelocity(), stop(), stopImmediate(), getPosition(), getVelocity(), enable(), getState(), etc.</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/motor/include/motor_types.h</path>
+        <kind>types</kind>
+        <symbol>AxisState, AxisConfig</symbol>
+        <lines>30-164</lines>
+        <reason>AxisState enum (DISABLED, IDLE, MOVING, ERROR, UNHOMED) and AxisConfig struct used by all IMotor implementations.</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/motor/include/servo_motor.h</path>
+        <kind>class</kind>
+        <symbol>ServoMotor</symbol>
+        <lines>all</lines>
+        <reason>Reference implementation of IMotor. DiscreteAxis follows same patterns but simpler (no pulse generator).</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/motor/servo_motor.cpp</path>
+        <kind>implementation</kind>
+        <symbol>ServoMotor</symbol>
+        <lines>all</lines>
+        <reason>Reference for state machine, enable/disable, shift register calls (sr_set_direction, sr_set_enable, sr_update), timing delays.</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/position/include/time_tracker.h</path>
+        <kind>class</kind>
+        <symbol>TimeTracker</symbol>
+        <lines>35-87</lines>
+        <reason>Time-based position tracker for E axis. Provides init(), reset(), getPosition(), setDirection(), startMotion(), isMotionComplete(). Constructor takes travel_time_ms (default TIMING_E_AXIS_TRAVEL_MS).</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/position/time_tracker.cpp</path>
+        <kind>implementation</kind>
+        <symbol>TimeTracker</symbol>
+        <lines>all</lines>
+        <reason>Implementation shows interpolation logic, startMotion() records start time, isMotionComplete() checks elapsed vs travel time.</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/drivers/tpic6b595/include/tpic6b595.h</path>
+        <kind>driver</kind>
+        <symbol>sr_set_direction, sr_set_enable, sr_update</symbol>
+        <lines>67-140</lines>
+        <reason>Shift register API for E axis control. sr_set_direction(axis, forward), sr_set_enable(axis, enable), sr_update() to latch. SR_AXIS_E = 7.</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/config/include/config_timing.h</path>
+        <kind>config</kind>
+        <symbol>TIMING_E_AXIS_TRAVEL_MS, TIMING_DIR_SETUP_US, TIMING_ENABLE_DELAY_US</symbol>
+        <lines>27-45</lines>
+        <reason>Timing constants: TIMING_E_AXIS_TRAVEL_MS=1000, TIMING_DIR_SETUP_US=20, TIMING_ENABLE_DELAY_US=50</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/config/include/config_defaults.h</path>
+        <kind>config</kind>
+        <symbol>E_AXIS_PULSES_PER_UNIT, E_AXIS_LIMIT_MIN, E_AXIS_LIMIT_MAX, E_AXIS_MAX_VELOCITY, E_AXIS_MAX_ACCELERATION</symbol>
+        <lines>136-158</lines>
+        <reason>E-axis defaults: E_AXIS_LIMIT_MIN=0.0f, E_AXIS_LIMIT_MAX=1.0f, E_AXIS_MAX_VELOCITY=1.0f</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/config/include/config_sr.h</path>
+        <kind>config</kind>
+        <symbol>SR_E_DIR, SR_E_EN, SR_E_BRAKE, SR_E_ALARM_CLR</symbol>
+        <lines>144-151</lines>
+        <reason>E-axis shift register bits: SR_E_DIR=28, SR_E_EN=29, SR_E_BRAKE=30, SR_E_ALARM_CLR=31</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/motor/test/test_servo_motor.cpp</path>
+        <kind>test</kind>
+        <symbol>MockPulseGenerator, MockPositionTracker</symbol>
+        <lines>41-100</lines>
+        <reason>Mock patterns for unit testing. DiscreteAxis tests should use similar MockTimeTracker approach.</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/motor/CMakeLists.txt</path>
+        <kind>build</kind>
+        <symbol>idf_component_register</symbol>
+        <lines>all</lines>
+        <reason>Must add discrete_axis.cpp to SRCS list.</reason>
+      </artifact>
+    </code>
+
+    <dependencies>
+      <ecosystem name="esp-idf">
+        <package name="esp_timer" reason="esp_timer_create, esp_timer_start_once for motion completion timing"/>
+        <package name="esp_log" reason="ESP_LOGI, ESP_LOGW, ESP_LOGE for debug logging"/>
+        <package name="freertos" reason="FreeRTOS types if needed for delays"/>
+      </ecosystem>
+      <ecosystem name="components">
+        <package name="config" reason="All timing, defaults, SR bit definitions"/>
+        <package name="position" reason="TimeTracker class"/>
+        <package name="tpic6b595" reason="Shift register driver (sr_set_direction, sr_set_enable, sr_update)"/>
+      </ecosystem>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint id="1" mandatory="true" source="tech-spec-epic-3.md">
+      HEADER-ONLY CONFIGURATION: Every configurable value MUST be defined in a header file. No magic numbers in source code. Use constants from config_timing.h, config_defaults.h, config_sr.h.
+    </constraint>
+    <constraint id="2" source="architecture.md">
+      SI UNITS CONVENTION: All external interfaces use SI units (meters for position, m/s for velocity). E-axis position is 0.0 (retracted) to 1.0 (extended).
+    </constraint>
+    <constraint id="3" source="tech-spec-epic-3.md">
+      COMPOSITION PATTERN: DiscreteAxis uses dependency injection - receives TimeTracker* and uses global sr_* functions (not a class instance).
+    </constraint>
+    <constraint id="4" source="story-3-6">
+      THREAD SAFETY: Use std::atomic for state_ and any shared variables. Methods may be called from multiple tasks.
+    </constraint>
+    <constraint id="5" source="epics.md">
+      NO PULSE GENERATION: E axis does NOT generate STEP pulses. Control is via DIR/EN shift register bits only. Position is time-based.
+    </constraint>
+    <constraint id="6" source="story-3-8">
+      VELOCITY MODE NOT SUPPORTED: moveVelocity() must return ESP_ERR_NOT_SUPPORTED - discrete actuators have fixed travel speed.
+    </constraint>
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>IMotor</name>
+      <kind>abstract class</kind>
+      <signature>class IMotor { virtual esp_err_t moveAbsolute(float position, float velocity) = 0; ... }</signature>
+      <path>firmware/components/motor/include/i_motor.h</path>
+    </interface>
+    <interface>
+      <name>TimeTracker</name>
+      <kind>class</kind>
+      <signature>TimeTracker(uint32_t travel_time_ms = TIMING_E_AXIS_TRAVEL_MS); void startMotion(); bool isMotionComplete() const; int64_t getPosition() const;</signature>
+      <path>firmware/components/position/include/time_tracker.h</path>
+    </interface>
+    <interface>
+      <name>Shift Register API</name>
+      <kind>C functions</kind>
+      <signature>esp_err_t sr_set_direction(uint8_t axis, bool forward); esp_err_t sr_set_enable(uint8_t axis, bool enable); esp_err_t sr_update(void);</signature>
+      <path>firmware/components/drivers/tpic6b595/include/tpic6b595.h</path>
+    </interface>
+    <interface>
+      <name>ESP Timer</name>
+      <kind>ESP-IDF API</kind>
+      <signature>esp_err_t esp_timer_create(const esp_timer_create_args_t* args, esp_timer_handle_t* out_handle); esp_err_t esp_timer_start_once(esp_timer_handle_t timer, uint64_t timeout_us);</signature>
+      <path>esp-idf/components/esp_timer</path>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+      Unit tests use Unity framework with mock implementations. Tests must use named constants from config headers (no magic numbers). Each acceptance criterion should have corresponding test case(s) tagged with [ACx]. Follow patterns from test_servo_motor.cpp.
+    </standards>
+    <locations>
+      <location>firmware/components/motor/test/test_discrete_axis.cpp</location>
+    </locations>
+    <ideas>
+      <idea ac="1">Test DiscreteAxis construction and init() validates dependencies</idea>
+      <idea ac="2">Test moveAbsolute(1.0) sets correct direction, enables, starts timer, transitions to MOVING</idea>
+      <idea ac="3">Test moveAbsolute(0.0) retracts correctly</idea>
+      <idea ac="4">Test already-at-position (1.0→1.0) completes immediately</idea>
+      <idea ac="5">Test moveVelocity() returns ESP_ERR_NOT_SUPPORTED</idea>
+      <idea ac="6">Test stop() during motion cancels timer, keeps interpolated position</idea>
+      <idea ac="7">Test stopImmediate() clears enable, transitions to IDLE</idea>
+      <idea ac="8">Test getPosition() during motion returns interpolated value (use MockTimeTracker)</idea>
+      <idea ac="9">Test getVelocity() returns E_AXIS_MAX_VELOCITY when moving, 0.0 when idle</idea>
+      <idea ac="10">Test enable(true) sets SR_E_EN and transitions state</idea>
+      <idea ac="11">Test enable(false) while moving stops motion and disables</idea>
+      <idea ac="12">Test position outside [0.0, 1.0] returns ESP_ERR_INVALID_ARG</idea>
+      <idea ac="13">Test disabled axis rejects motion commands with ESP_ERR_INVALID_STATE</idea>
+      <idea ac="14">Grep verification: no hardcoded numeric values in discrete_axis.cpp</idea>
+    </ideas>
+  </tests>
+</story-context>

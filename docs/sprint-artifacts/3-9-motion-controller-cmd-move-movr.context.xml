@@ -1,0 +1,263 @@
+<story-context id="3-9-motion-controller-cmd-move-movr" v="1.0">
+  <metadata>
+    <epicId>3</epicId>
+    <storyId>9</storyId>
+    <title>Motion Controller &amp; CMD_MOVE/CMD_MOVR Commands</title>
+    <status>drafted</status>
+    <generatedAt>2025-12-06</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/3-9-motion-controller-cmd-move-movr.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>user</asA>
+    <iWant>to control motors with CMD_MOVE and CMD_MOVR commands</iWant>
+    <soThat>I can position axes through simple text commands</soThat>
+    <tasks>
+      <task id="1" acs="8,11,14">Create MotionController class declaration</task>
+      <task id="2" acs="8">Implement MotionController::init()</task>
+      <task id="3" acs="11,12">Implement axis lookup methods</task>
+      <task id="4" acs="1,2,6,7,9,10">Implement moveAbsolute()</task>
+      <task id="5" acs="3,4">Implement moveRelative()</task>
+      <task id="6" acs="13">Implement motion complete handler</task>
+      <task id="7" acs="1,2,6,7,10,12">Create MoveHandler command handler</task>
+      <task id="8" acs="3,4,12">Create MovrHandler command handler</task>
+      <task id="9" acs="1,3">Register handlers with CommandDispatcher</task>
+      <task id="10" acs="13">Implement event formatting for motion complete</task>
+      <task id="11" acs="8">Update component CMakeLists.txt</task>
+      <task id="12" acs="1-14">Create unit tests</task>
+      <task id="13" acs="14">Code review - No Magic Numbers</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1">Given X axis enabled, MOVE X 100 → X moves to 100.0, OK response, EVENT DONE X 100.000</ac>
+    <ac id="2">MOVE X 200 50 → X moves to 200.0 at velocity 50.0 units/sec</ac>
+    <ac id="3">Given X at 100.0, MOVR X 25 → X moves to 125.0, OK response, EVENT DONE X 125.000</ac>
+    <ac id="4">MOVR Y -10 30 → Y moves -10 from current at 30 units/sec</ac>
+    <ac id="5">MOVE X 100 then MOVE Y 50 → both axes move simultaneously, each generates own event</ac>
+    <ac id="6">X disabled, MOVE X 100 → ERROR ERR_AXIS_NOT_ENABLED MSG_AXIS_NOT_ENABLED</ac>
+    <ac id="7">Target exceeds limits, MOVE X 9999 → ERROR ERR_POSITION_LIMIT MSG_POSITION_LIMIT</ac>
+    <ac id="8">MotionController holds IMotor* array for all LIMIT_NUM_AXES (8) axes</ac>
+    <ac id="9">Axis moving, new MOVE command → motion blends to new target (no axis busy error)</ac>
+    <ac id="10">MOVE without velocity → uses DEFAULT_MAX_VELOCITY</ac>
+    <ac id="11">getMotor('X'-'E') returns corresponding IMotor* pointer</ac>
+    <ac id="12">Invalid axis char → ERROR ERR_INVALID_AXIS MSG_INVALID_AXIS</ac>
+    <ac id="13">Motion complete → EVENT DONE sent within TIMING_CMD_RESPONSE_MS</ac>
+    <ac id="14" mandatory="true">NO hardcoded values; ALL config from config_*.h headers</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-3.md</path>
+        <title>Epic 3 Technical Specification: Motor Control Core</title>
+        <section>Services and Modules</section>
+        <snippet>MotionController at control/motion_controller/ handles motion coordination. MoveHandler at control/command_executor/ handles MOVE commands.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-3.md</path>
+        <title>Epic 3 Technical Specification</title>
+        <section>APIs and Interfaces - IMotor</section>
+        <snippet>IMotor interface: moveAbsolute(position, velocity), moveRelative(delta, velocity), moveVelocity(velocity), stop(), getPosition(), isEnabled(), getState()</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-3.md</path>
+        <title>Epic 3 Technical Specification</title>
+        <section>MANDATORY Architecture Constraints</section>
+        <snippet>Header-Only Configuration: Every configurable value MUST be defined in header. No magic numbers. Motion Blending: New MOVE during motion blends to new target.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-3.md</path>
+        <title>Epic 3 Technical Specification</title>
+        <section>Command Protocol</section>
+        <snippet>CMD_MOVE: MOVE axis position [velocity] → OK or ERROR. CMD_MOVR: MOVR axis delta [velocity] → OK or ERROR. EVT_MOTION_COMPLETE: EVENT DONE axis position.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-3.md</path>
+        <title>Epic 3 Technical Specification</title>
+        <section>Workflows and Sequencing</section>
+        <snippet>Motion flow: Host sends MOVE → CommandParser → MotionController::moveAbsolute() → Motor validates limits → PulseGen starts → OK response → Motion completes → EVENT DONE</snippet>
+      </doc>
+      <doc>
+        <path>docs/epics.md</path>
+        <title>Project Epics</title>
+        <section>Story 3.9</section>
+        <snippet>MotionController holds array of IMotor* for all LIMIT_NUM_AXES (8) axes. Default velocity from config if not specified (DEFAULT_MAX_VELOCITY).</snippet>
+      </doc>
+    </docs>
+
+    <code>
+      <file>
+        <path>firmware/components/motor/include/i_motor.h</path>
+        <kind>interface</kind>
+        <symbol>IMotor</symbol>
+        <reason>Core motor interface that MotionController coordinates. Contains moveAbsolute(), moveRelative(), isEnabled(), getPosition(), setMotionCompleteCallback().</reason>
+      </file>
+      <file>
+        <path>firmware/components/motor/include/motor_base.h</path>
+        <kind>class</kind>
+        <symbol>MotorBase</symbol>
+        <reason>Abstract base class implementing ~90% of IMotor. ServoMotor and StepperMotor inherit from this. Contains pulse_count_, state_ atomics.</reason>
+      </file>
+      <file>
+        <path>firmware/components/motor/include/motor_types.h</path>
+        <kind>types</kind>
+        <symbol>AxisState, AxisConfig</symbol>
+        <reason>Defines AxisState enum (DISABLED, IDLE, MOVING, ERROR, UNHOMED) and AxisConfig struct used by all motors.</reason>
+      </file>
+      <file>
+        <path>firmware/components/motor/include/servo_motor.h</path>
+        <kind>class</kind>
+        <symbol>ServoMotor</symbol>
+        <reason>Servo motor implementation for X,Y,Z,A,B axes. Uses IPulseGenerator and IPositionTracker. Pattern to follow for MotionController integration.</reason>
+      </file>
+      <file>
+        <path>firmware/components/motor/include/discrete_axis.h</path>
+        <kind>class</kind>
+        <symbol>DiscreteAxis</symbol>
+        <reason>E axis discrete actuator. Uses TimeTracker. Different pattern but same IMotor interface.</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_commands.h</path>
+        <kind>config</kind>
+        <symbol>CMD_MOVE, CMD_MOVR, ERR_*, MSG_*, RESP_*, EVT_*</symbol>
+        <reason>Command strings (CMD_MOVE, CMD_MOVR), error codes (ERR_AXIS_NOT_ENABLED, ERR_POSITION_LIMIT, ERR_INVALID_AXIS), response prefixes (RESP_OK, RESP_ERROR, RESP_EVENT), event types (EVT_MOTION_COMPLETE).</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_limits.h</path>
+        <kind>config</kind>
+        <symbol>LIMIT_NUM_AXES, LIMIT_*</symbol>
+        <reason>LIMIT_NUM_AXES=8, LIMIT_NUM_SERVOS=5, LIMIT_NUM_STEPPERS=2, LIMIT_NUM_DISCRETE=1, queue depths, stack sizes.</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_defaults.h</path>
+        <kind>config</kind>
+        <symbol>DEFAULT_MAX_VELOCITY, DEFAULT_*</symbol>
+        <reason>DEFAULT_MAX_VELOCITY=0.1f (m/s), DEFAULT_MAX_ACCELERATION=1.0f, DEFAULT_LIMIT_MIN/MAX, E_AXIS_* constants.</reason>
+      </file>
+      <file>
+        <path>firmware/components/events/event_manager/include/event_manager.h</path>
+        <kind>service</kind>
+        <symbol>event_publish, event_subscribe, EventCallback</symbol>
+        <reason>Event pub/sub system. MotionController publishes EVT_MOTION_COMPLETE via event_publish(). USB TX task subscribes.</reason>
+      </file>
+      <file>
+        <path>firmware/components/interface/command_parser/include/response_formatter.h</path>
+        <kind>utility</kind>
+        <symbol>format_ok, format_error, format_event, Event, EventType</symbol>
+        <reason>Response formatting functions. MoveHandler uses format_ok(), format_error(). Event struct with EVTTYPE_MOTION_COMPLETE.</reason>
+      </file>
+      <file>
+        <path>firmware/components/motor/test/test_servo_motor.cpp</path>
+        <kind>test</kind>
+        <symbol>MockPulseGenerator, MockPositionTracker</symbol>
+        <lines>1-100</lines>
+        <reason>Test pattern with mock implementations. Use similar mocks for MotionController tests.</reason>
+      </file>
+    </code>
+
+    <dependencies>
+      <framework>ESP-IDF 5.4</framework>
+      <component name="espressif/mcp23017" version="^0.1.1">I2C IO expander (Epic 4)</component>
+      <component name="espressif/esp_tinyusb" version="^1.0.0">USB CDC communication</component>
+      <internal>
+        <dep name="motor">IMotor interface and implementations</dep>
+        <dep name="config">All configuration headers (config_*.h)</dep>
+        <dep name="event_manager">Event publishing for motion complete</dep>
+        <dep name="command_parser">Response formatting, parsed command structure</dep>
+        <dep name="drivers/tpic6b595">Shift register for DIR/EN control</dep>
+      </internal>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <mandatory source="tech-spec-epic-3.md#MANDATORY-Architecture-Constraints">
+      Header-Only Configuration: Every configurable value MUST be defined in header file. No magic numbers in source code. Error codes from config_commands.h, limits from config_limits.h, timing from config_timing.h, axis IDs from config patterns, defaults from config_defaults.h.
+    </mandatory>
+    <mandatory source="tech-spec-epic-3.md#MANDATORY-Architecture-Constraints">
+      Motion Blending: New MOVE commands during active motion blend to new target. No "axis busy" errors. Profile generator recalculates on-the-fly.
+    </mandatory>
+    <mandatory source="tech-spec-epic-3.md#MANDATORY-Architecture-Constraints">
+      SI Units Convention: All external interfaces use SI units (meters, radians, seconds). Internal pulse domain uses pulses/pulses-per-second. Conversion happens in motor layer only.
+    </mandatory>
+    <mandatory source="tech-spec-epic-3.md">
+      Dual-Core Separation: Core 0 handles communication, Core 1 handles motion control.
+    </mandatory>
+    <pattern source="Story 3-8">
+      IMotor error returns: ESP_ERR_INVALID_STATE for disabled axis, ESP_ERR_INVALID_ARG for invalid position.
+    </pattern>
+    <pattern source="Story 3-8">
+      Motion completion callback: setMotionCompleteCallback() pattern. MotionController registers on all motors.
+    </pattern>
+    <pattern source="Story 3-8">
+      Thread safety: Motors use std::atomic&lt;AxisState&gt; for state. MotionController can safely query state from any thread.
+    </pattern>
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>IMotor</name>
+      <kind>C++ abstract class</kind>
+      <signature>virtual esp_err_t moveAbsolute(float position, float velocity) = 0;
+virtual esp_err_t moveRelative(float delta, float velocity) = 0;
+virtual float getPosition() const = 0;
+virtual bool isEnabled() const = 0;
+virtual AxisState getState() const = 0;
+virtual void setMotionCompleteCallback(MotionCompleteCallback cb) = 0;</signature>
+      <path>firmware/components/motor/include/i_motor.h</path>
+    </interface>
+    <interface>
+      <name>MotionCompleteCallback</name>
+      <kind>function pointer</kind>
+      <signature>using MotionCompleteCallback = std::function&lt;void(uint8_t axis, float position)&gt;;</signature>
+      <path>firmware/components/motor/include/i_motor.h</path>
+    </interface>
+    <interface>
+      <name>event_publish</name>
+      <kind>C function</kind>
+      <signature>esp_err_t event_publish(const Event* event);</signature>
+      <path>firmware/components/events/event_manager/include/event_manager.h</path>
+    </interface>
+    <interface>
+      <name>format_ok / format_error</name>
+      <kind>C functions</kind>
+      <signature>esp_err_t format_ok(char* buf, size_t len);
+esp_err_t format_error(char* buf, size_t len, const char* code, const char* msg);</signature>
+      <path>firmware/components/interface/command_parser/include/response_formatter.h</path>
+    </interface>
+    <interface>
+      <name>Command Protocol</name>
+      <kind>Text protocol</kind>
+      <signature>MOVE &lt;axis&gt; &lt;position&gt; [velocity] → OK | ERROR &lt;code&gt; &lt;msg&gt;
+MOVR &lt;axis&gt; &lt;delta&gt; [velocity] → OK | ERROR &lt;code&gt; &lt;msg&gt;
+EVENT DONE &lt;axis&gt; &lt;position:.3f&gt;</signature>
+      <path>docs/sprint-artifacts/tech-spec-epic-3.md#Command-Protocol</path>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+      Unity testing framework (ESP-IDF built-in). Tests use mock implementations of dependencies (MockPulseGenerator, MockPositionTracker). Tests verify interface contracts, edge cases, error handling, and thread safety. All test values must use named constants from config headers - no magic numbers.
+    </standards>
+    <locations>
+      <pattern>firmware/components/*/test/test_*.cpp</pattern>
+      <pattern>firmware/components/control/motion_controller/test/test_motion_controller.cpp</pattern>
+      <pattern>firmware/components/control/command_executor/test/test_move_handler.cpp</pattern>
+    </locations>
+    <ideas>
+      <idea ac="1,2">Test MOVE command with valid axis and position returns OK and calls motor->moveAbsolute()</idea>
+      <idea ac="3,4">Test MOVR command calculates target = current + delta and calls moveAbsolute</idea>
+      <idea ac="5">Test simultaneous MOVE X and MOVE Y both succeed and don't block</idea>
+      <idea ac="6">Test MOVE on disabled axis returns ESP_ERR_INVALID_STATE mapped to ERR_AXIS_NOT_ENABLED</idea>
+      <idea ac="7">Test MOVE beyond limits returns ESP_ERR_INVALID_ARG mapped to ERR_POSITION_LIMIT</idea>
+      <idea ac="8">Test MotionController::init() stores all motor pointers correctly</idea>
+      <idea ac="9">Test new MOVE during motion blends (mock returns ESP_OK, no error)</idea>
+      <idea ac="10">Test MOVE without velocity uses DEFAULT_MAX_VELOCITY</idea>
+      <idea ac="11">Test getMotor('X') returns motors_[AXIS_X], getMotor('E') returns motors_[AXIS_E]</idea>
+      <idea ac="12">Test getMotor('Z'+1) or invalid char returns nullptr, handler returns ERR_INVALID_AXIS</idea>
+      <idea ac="13">Test motion complete callback publishes EVT_MOTION_COMPLETE event</idea>
+      <idea ac="14">grep -rn "[0-9]" motion_controller.cpp move_handler.cpp should find only comments/logs</idea>
+    </ideas>
+  </tests>
+</story-context>

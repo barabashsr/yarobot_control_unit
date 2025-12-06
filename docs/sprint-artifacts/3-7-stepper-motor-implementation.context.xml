@@ -1,0 +1,250 @@
+<story-context id="3-7-stepper-motor-implementation" v="1.0">
+  <metadata>
+    <epicId>3</epicId>
+    <storyId>7</storyId>
+    <title>Stepper Motor Implementation</title>
+    <status>drafted</status>
+    <generatedAt>2025-12-06</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/3-7-stepper-motor-implementation.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>stepper motor implementation for C and D axes</iWant>
+    <soThat>stepper axes execute motion with hardware position counting through the unified IMotor interface</soThat>
+    <tasks>
+      <phase name="1-refactoring">
+        <task id="1">Create MotorBase class header - extract common members from ServoMotor</task>
+        <task id="2">Implement MotorBase common logic - moveAbsolute, moveRelative, moveVelocity, stop, enable</task>
+        <task id="3">Refactor ServoMotor to inherit from MotorBase - verify existing tests pass</task>
+      </phase>
+      <phase name="2-stepper">
+        <task id="4">Create StepperMotor class inheriting from MotorBase</task>
+        <task id="5">Implement stepper-specific position sync - PCNT is authority</task>
+      </phase>
+      <phase name="3-config">
+        <task id="6">Verify stepper config constants in headers</task>
+        <task id="7">Update motor component CMakeLists.txt</task>
+      </phase>
+      <phase name="4-testing">
+        <task id="8">Update ServoMotor tests for MotorBase refactoring</task>
+        <task id="9">Create StepperMotor unit tests</task>
+      </phase>
+      <phase name="5-verification">
+        <task id="10">Code Review - No Magic Numbers</task>
+        <task id="11">Build and integration verification</task>
+      </phase>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1">StepperMotor constructed with IPulseGenerator, IPositionTracker (PcntTracker), axis_id, AxisConfig - init() validates dependencies</ac>
+    <ac id="2">C axis: moveAbsolute uses MCPWM_TIMER_C pulses, PCNT_UNIT_C tracking, SR_C_DIR direction, state IDLE→MOVING→IDLE</ac>
+    <ac id="3">D axis: moveAbsolute uses LEDC_CHANNEL_D pulses, PCNT_UNIT_D via GPIO loopback, completion on pulse count match</ac>
+    <ac id="4">Stepper-specific: no brake control, position by pulse counting only, power loss = position lost (AXIS_STATE_UNHOMED)</ac>
+    <ac id="5">moveRelative(delta, velocity) behaves as moveAbsolute(current + delta, velocity)</ac>
+    <ac id="6">moveVelocity clamps to max_velocity, sets direction, calls startVelocity() for continuous motion</ac>
+    <ac id="7">stop() decelerates using configured acceleration, transitions to AXIS_STATE_IDLE</ac>
+    <ac id="8">stopImmediate() halts immediately without decel, transitions to AXIS_STATE_IDLE</ac>
+    <ac id="9">enable(true) sets SR EN bit, waits TIMING_ENABLE_DELAY_US, transitions to AXIS_STATE_UNHOMED</ac>
+    <ac id="10">enable(false) stops motion immediately, clears EN bit, transitions to AXIS_STATE_DISABLED</ac>
+    <ac id="11">getPosition() returns SI units from PcntTracker: pcnt_count / pulses_per_unit</ac>
+    <ac id="12">Motion completion: verify against PCNT, transition to IDLE, invoke callback with axis and position</ac>
+    <ac id="13" mandatory="true">NO hardcoded values - ALL config from headers (timing, limits, GPIO, peripherals)</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/sprint-artifacts/tech-spec-epic-3.md" title="Epic 3 Technical Specification">
+        <section>MANDATORY Architecture Constraints</section>
+        <snippet>Header-Only Configuration: Every configurable value MUST be defined in a header file. No magic numbers in source code. Pulse Count Authority for steppers: PCNT hardware counter is authoritative.</snippet>
+      </doc>
+      <doc path="docs/sprint-artifacts/3-6-motor-base-class-servo-motor.md" title="Story 3.6 - ServoMotor Implementation">
+        <section>Reference Implementation</section>
+        <snippet>Complete IMotor implementation with ServoMotor class. Use as template for MotorBase extraction and StepperMotor creation. Status: done.</snippet>
+      </doc>
+      <doc path="docs/epics.md" title="Epic Definitions">
+        <section>Story 3.7</section>
+        <snippet>StepperMotor implementation for C and D axes using MCPWM/LEDC pulse generators with PCNT position tracking.</snippet>
+      </doc>
+    </docs>
+
+    <code>
+      <!-- Motor component - TO MODIFY -->
+      <file path="firmware/components/motor/include/i_motor.h" kind="interface" symbol="IMotor">
+        <reason>Abstract motor interface - unchanged, implement in MotorBase</reason>
+      </file>
+      <file path="firmware/components/motor/include/motor_types.h" kind="types" symbol="AxisState, AxisConfig">
+        <reason>Shared types - unchanged, used by MotorBase and StepperMotor</reason>
+      </file>
+      <file path="firmware/components/motor/include/servo_motor.h" kind="class" symbol="ServoMotor">
+        <reason>TO REFACTOR: Change to inherit from MotorBase, remove duplicated members</reason>
+      </file>
+      <file path="firmware/components/motor/servo_motor.cpp" kind="implementation" symbol="ServoMotor" lines="1-443">
+        <reason>TO REFACTOR: Extract common logic to MotorBase, keep only servo-specific overrides</reason>
+      </file>
+      <file path="firmware/components/motor/CMakeLists.txt" kind="build">
+        <reason>TO MODIFY: Add motor_base.cpp, stepper_motor.cpp to SRCS</reason>
+      </file>
+
+      <!-- Pulse generators - USE AS DEPENDENCY -->
+      <file path="firmware/components/pulse_gen/include/i_pulse_generator.h" kind="interface" symbol="IPulseGenerator">
+        <reason>Pulse generator interface - inject McpwmPulseGenerator (C) or LedcPulseGenerator (D)</reason>
+      </file>
+      <file path="firmware/components/pulse_gen/include/mcpwm_pulse_gen.h" kind="class" symbol="McpwmPulseGenerator">
+        <reason>C axis uses MCPWM with internal PCNT routing</reason>
+      </file>
+      <file path="firmware/components/pulse_gen/include/ledc_pulse_gen.h" kind="class" symbol="LedcPulseGenerator">
+        <reason>D axis uses LEDC with GPIO loopback to PCNT</reason>
+      </file>
+
+      <!-- Position trackers - USE AS DEPENDENCY -->
+      <file path="firmware/components/position/include/i_position_tracker.h" kind="interface" symbol="IPositionTracker">
+        <reason>Position tracking interface - inject PcntTracker for both C and D axes</reason>
+      </file>
+      <file path="firmware/components/position/include/pcnt_tracker.h" kind="class" symbol="PcntTracker">
+        <reason>PCNT hardware counter - authoritative position source for steppers</reason>
+      </file>
+
+      <!-- Shift register - USE AS DEPENDENCY -->
+      <file path="firmware/components/drivers/tpic6b595/include/tpic6b595.h" kind="driver" symbol="sr_set_direction, sr_set_enable, sr_update">
+        <reason>Shift register API for direction and enable control (C linkage)</reason>
+      </file>
+
+      <!-- Config headers - USE CONSTANTS -->
+      <file path="firmware/components/config/include/config_peripherals.h" kind="config">
+        <reason>MCPWM_TIMER_C (1), PCNT_UNIT_C (1), PCNT_UNIT_D (2), LEDC_TIMER_D, LEDC_CHANNEL_D</reason>
+      </file>
+      <file path="firmware/components/config/include/config_sr.h" kind="config">
+        <reason>SR_C_DIR (20), SR_C_EN (21), SR_D_DIR (24), SR_D_EN (25), SR_DIR_BIT(), SR_EN_BIT()</reason>
+      </file>
+      <file path="firmware/components/config/include/config_timing.h" kind="config">
+        <reason>TIMING_DIR_SETUP_US (20), TIMING_ENABLE_DELAY_US (50)</reason>
+      </file>
+      <file path="firmware/components/config/include/config_defaults.h" kind="config">
+        <reason>DEFAULT_* values for axis configuration</reason>
+      </file>
+    </code>
+
+    <dependencies>
+      <esp-idf version="5.4">
+        <component>esp_timer</component>
+        <component>freertos</component>
+        <component>driver</component>
+      </esp-idf>
+      <internal>
+        <component>config</component>
+        <component>pulse_gen</component>
+        <component>position</component>
+        <component>tpic6b595</component>
+      </internal>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint type="mandatory" source="tech-spec-epic-3.md">
+      Header-Only Configuration: Every configurable value MUST be defined in a header file. No magic numbers in source code.
+    </constraint>
+    <constraint type="mandatory" source="tech-spec-epic-3.md">
+      Pulse Count Authority: For steppers, PCNT hardware counter is the authoritative position source. pulse_count_ should be synchronized FROM PCNT on motion completion.
+    </constraint>
+    <constraint type="mandatory" source="tech-spec-epic-3.md">
+      SI Units Convention: All external interfaces use SI units (meters, radians, seconds). Internal pulse domain uses pulses/pulses-per-second. Conversion happens in motor layer only.
+    </constraint>
+    <constraint type="architecture" source="story-decision">
+      MotorBase Extraction: Extract ~90% shared logic from ServoMotor into MotorBase abstract class. Both ServoMotor and StepperMotor inherit from MotorBase.
+    </constraint>
+    <constraint type="pattern" source="servo_motor.cpp">
+      Use std::atomic for pulse_count_ and state_ for thread safety. Use esp_rom_delay_us() for timing delays.
+    </constraint>
+    <constraint type="dependency" source="tpic6b595.h">
+      Shift register functions use C linkage - use extern "C" block when calling sr_set_direction(), sr_set_enable(), sr_update().
+    </constraint>
+  </constraints>
+
+  <interfaces>
+    <interface name="IMotor" kind="abstract-class" path="firmware/components/motor/include/i_motor.h">
+      <signature>
+        virtual esp_err_t init() = 0;
+        virtual esp_err_t moveAbsolute(float position, float velocity) = 0;
+        virtual esp_err_t moveRelative(float delta, float velocity) = 0;
+        virtual esp_err_t moveVelocity(float velocity) = 0;
+        virtual esp_err_t stop() = 0;
+        virtual void stopImmediate() = 0;
+        virtual float getPosition() const = 0;
+        virtual float getVelocity() const = 0;
+        virtual bool isMoving() const = 0;
+        virtual bool isEnabled() const = 0;
+        virtual esp_err_t enable(bool en) = 0;
+        virtual AxisState getState() const = 0;
+        virtual const AxisConfig& getConfig() const = 0;
+        virtual esp_err_t setConfig(const AxisConfig& config) = 0;
+        virtual void setMotionCompleteCallback(MotionCompleteCallback cb) = 0;
+      </signature>
+    </interface>
+    <interface name="IPulseGenerator" kind="abstract-class" path="firmware/components/pulse_gen/include/i_pulse_generator.h">
+      <signature>
+        virtual esp_err_t init() = 0;
+        virtual esp_err_t startMove(int32_t pulses, float max_velocity, float acceleration) = 0;
+        virtual esp_err_t startVelocity(float velocity, float acceleration) = 0;
+        virtual esp_err_t stop(float deceleration) = 0;
+        virtual void stopImmediate() = 0;
+        virtual bool isRunning() const = 0;
+        virtual int64_t getPulseCount() const = 0;
+        virtual float getCurrentVelocity() const = 0;
+        virtual void setCompletionCallback(MotionCompleteCallback cb) = 0;
+        virtual void setPositionTracker(IPositionTracker* tracker) = 0;
+      </signature>
+    </interface>
+    <interface name="IPositionTracker" kind="abstract-class" path="firmware/components/position/include/i_position_tracker.h">
+      <signature>
+        virtual esp_err_t init() = 0;
+        virtual esp_err_t reset(int64_t position = 0) = 0;
+        virtual int64_t getPosition() const = 0;
+        virtual void setDirection(bool forward) = 0;
+        virtual void addPulses(int64_t count) { }
+      </signature>
+    </interface>
+    <interface name="ShiftRegister" kind="c-api" path="firmware/components/drivers/tpic6b595/include/tpic6b595.h">
+      <signature>
+        esp_err_t sr_set_direction(uint8_t axis, bool forward);
+        esp_err_t sr_set_enable(uint8_t axis, bool enable);
+        esp_err_t sr_update(void);
+      </signature>
+    </interface>
+    <interface name="MotorBase (NEW)" kind="abstract-class" path="firmware/components/motor/include/motor_base.h">
+      <signature>
+        // Protected virtual hooks for subclass customization
+        virtual void onEnableHook(bool enabled) = 0;
+        virtual void syncPositionFromTracker() = 0;
+        virtual AxisState getInitialState() { return AXIS_STATE_UNHOMED; }
+      </signature>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+      Unity framework via ESP-IDF for unit tests. Tests located in component test/ directories.
+      Use mock implementations for IPulseGenerator and IPositionTracker.
+      All test values must use named constants from config headers - NO hardcoded numbers.
+    </standards>
+    <locations>
+      <pattern>firmware/components/motor/test/test_*.cpp</pattern>
+    </locations>
+    <ideas>
+      <test ac="1,2,3">Test StepperMotor construction and init() with mock dependencies</test>
+      <test ac="2">Test C axis moveAbsolute with McpwmPulseGenerator mock - verify startMove called with correct pulses</test>
+      <test ac="3">Test D axis moveAbsolute with LedcPulseGenerator mock - verify GPIO loopback PCNT counting</test>
+      <test ac="4">Test stepper has no brake hook called (onEnableHook is no-op)</test>
+      <test ac="5">Test moveRelative delegates to moveAbsolute correctly</test>
+      <test ac="6">Test moveVelocity clamps to max_velocity and calls startVelocity</test>
+      <test ac="7,8">Test stop() vs stopImmediate() state transitions</test>
+      <test ac="9,10">Test enable/disable state machine transitions</test>
+      <test ac="11">Test getPosition() returns correct SI value from PCNT</test>
+      <test ac="12">Test motion completion syncs position FROM PCNT to pulse_count_</test>
+      <test ac="13">Run grep -rn "[0-9]" to verify no magic numbers in implementation</test>
+      <test refactor="true">Verify all existing ServoMotor tests pass after MotorBase extraction</test>
+    </ideas>
+  </tests>
+</story-context>

@@ -199,6 +199,7 @@ yarobot_control_unit.elf: esp-idf/control/libcontrol.a
 yarobot_control_unit.elf: esp-idf/espressif__i2c_bus/libespressif__i2c_bus.a
 yarobot_control_unit.elf: esp-idf/espressif__mcp23017/libespressif__mcp23017.a
 yarobot_control_unit.elf: esp-idf/main/libmain.a
+yarobot_control_unit.elf: esp-idf/motor/libmotor.a
 yarobot_control_unit.elf: esp-idf/app_trace/libapp_trace.a
 yarobot_control_unit.elf: esp-idf/esp_https_server/libesp_https_server.a
 yarobot_control_unit.elf: esp-idf/protocomm/libprotocomm.a
@@ -215,13 +216,13 @@ yarobot_control_unit.elf: esp-idf/fatfs/libfatfs.a
 yarobot_control_unit.elf: esp-idf/wear_levelling/libwear_levelling.a
 yarobot_control_unit.elf: esp-idf/usb/libusb.a
 yarobot_control_unit.elf: esp-idf/espressif__tinyusb/libespressif__tinyusb.a
+yarobot_control_unit.elf: esp-idf/espressif__mcp23017/libespressif__mcp23017.a
+yarobot_control_unit.elf: esp-idf/espressif__i2c_bus/libespressif__i2c_bus.a
 yarobot_control_unit.elf: esp-idf/pulse_gen/libpulse_gen.a
 yarobot_control_unit.elf: esp-idf/tpic6b595/libtpic6b595.a
 yarobot_control_unit.elf: esp-idf/unity/libunity.a
 yarobot_control_unit.elf: esp-idf/yarobot_hal/libyarobot_hal.a
 yarobot_control_unit.elf: esp-idf/position/libposition.a
-yarobot_control_unit.elf: esp-idf/espressif__mcp23017/libespressif__mcp23017.a
-yarobot_control_unit.elf: esp-idf/espressif__i2c_bus/libespressif__i2c_bus.a
 yarobot_control_unit.elf: esp-idf/xtensa/libxtensa.a
 yarobot_control_unit.elf: esp-idf/esp_driver_gpio/libesp_driver_gpio.a
 yarobot_control_unit.elf: esp-idf/esp_pm/libesp_pm.a

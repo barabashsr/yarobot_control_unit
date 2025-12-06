@@ -1,3 +1,16 @@
 idf_component_register(
-    INCLUDE_DIRS "include"
+    SRCS
+        "motor_base.cpp"
+        "servo_motor.cpp"
+        "stepper_motor.cpp"
+        "discrete_axis.cpp"
+    INCLUDE_DIRS
+        "include"
+    REQUIRES
+        config
+        pulse_gen
+        position
+        tpic6b595
+        esp_timer
+        freertos
 )

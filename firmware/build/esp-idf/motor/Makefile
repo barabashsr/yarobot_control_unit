@@ -161,6 +161,116 @@ depend:
 	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
+# Convenience name for target.
+esp-idf/motor/CMakeFiles/__idf_motor.dir/rule:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 esp-idf/motor/CMakeFiles/__idf_motor.dir/rule
+.PHONY : esp-idf/motor/CMakeFiles/__idf_motor.dir/rule
+
+# Convenience name for target.
+__idf_motor: esp-idf/motor/CMakeFiles/__idf_motor.dir/rule
+.PHONY : __idf_motor
+
+# fast build rule for target.
+__idf_motor/fast:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/motor/CMakeFiles/__idf_motor.dir/build.make esp-idf/motor/CMakeFiles/__idf_motor.dir/build
+.PHONY : __idf_motor/fast
+
+discrete_axis.obj: discrete_axis.cpp.obj
+.PHONY : discrete_axis.obj
+
+# target to build an object file
+discrete_axis.cpp.obj:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/motor/CMakeFiles/__idf_motor.dir/build.make esp-idf/motor/CMakeFiles/__idf_motor.dir/discrete_axis.cpp.obj
+.PHONY : discrete_axis.cpp.obj
+
+discrete_axis.i: discrete_axis.cpp.i
+.PHONY : discrete_axis.i
+
+# target to preprocess a source file
+discrete_axis.cpp.i:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/motor/CMakeFiles/__idf_motor.dir/build.make esp-idf/motor/CMakeFiles/__idf_motor.dir/discrete_axis.cpp.i
+.PHONY : discrete_axis.cpp.i
+
+discrete_axis.s: discrete_axis.cpp.s
+.PHONY : discrete_axis.s
+
+# target to generate assembly for a file
+discrete_axis.cpp.s:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/motor/CMakeFiles/__idf_motor.dir/build.make esp-idf/motor/CMakeFiles/__idf_motor.dir/discrete_axis.cpp.s
+.PHONY : discrete_axis.cpp.s
+
+motor_base.obj: motor_base.cpp.obj
+.PHONY : motor_base.obj
+
+# target to build an object file
+motor_base.cpp.obj:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/motor/CMakeFiles/__idf_motor.dir/build.make esp-idf/motor/CMakeFiles/__idf_motor.dir/motor_base.cpp.obj
+.PHONY : motor_base.cpp.obj
+
+motor_base.i: motor_base.cpp.i
+.PHONY : motor_base.i
+
+# target to preprocess a source file
+motor_base.cpp.i:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/motor/CMakeFiles/__idf_motor.dir/build.make esp-idf/motor/CMakeFiles/__idf_motor.dir/motor_base.cpp.i
+.PHONY : motor_base.cpp.i
+
+motor_base.s: motor_base.cpp.s
+.PHONY : motor_base.s
+
+# target to generate assembly for a file
+motor_base.cpp.s:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/motor/CMakeFiles/__idf_motor.dir/build.make esp-idf/motor/CMakeFiles/__idf_motor.dir/motor_base.cpp.s
+.PHONY : motor_base.cpp.s
+
+servo_motor.obj: servo_motor.cpp.obj
+.PHONY : servo_motor.obj
+
+# target to build an object file
+servo_motor.cpp.obj:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/motor/CMakeFiles/__idf_motor.dir/build.make esp-idf/motor/CMakeFiles/__idf_motor.dir/servo_motor.cpp.obj
+.PHONY : servo_motor.cpp.obj
+
+servo_motor.i: servo_motor.cpp.i
+.PHONY : servo_motor.i
+
+# target to preprocess a source file
+servo_motor.cpp.i:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/motor/CMakeFiles/__idf_motor.dir/build.make esp-idf/motor/CMakeFiles/__idf_motor.dir/servo_motor.cpp.i
+.PHONY : servo_motor.cpp.i
+
+servo_motor.s: servo_motor.cpp.s
+.PHONY : servo_motor.s
+
+# target to generate assembly for a file
+servo_motor.cpp.s:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/motor/CMakeFiles/__idf_motor.dir/build.make esp-idf/motor/CMakeFiles/__idf_motor.dir/servo_motor.cpp.s
+.PHONY : servo_motor.cpp.s
+
+stepper_motor.obj: stepper_motor.cpp.obj
+.PHONY : stepper_motor.obj
+
+# target to build an object file
+stepper_motor.cpp.obj:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/motor/CMakeFiles/__idf_motor.dir/build.make esp-idf/motor/CMakeFiles/__idf_motor.dir/stepper_motor.cpp.obj
+.PHONY : stepper_motor.cpp.obj
+
+stepper_motor.i: stepper_motor.cpp.i
+.PHONY : stepper_motor.i
+
+# target to preprocess a source file
+stepper_motor.cpp.i:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/motor/CMakeFiles/__idf_motor.dir/build.make esp-idf/motor/CMakeFiles/__idf_motor.dir/stepper_motor.cpp.i
+.PHONY : stepper_motor.cpp.i
+
+stepper_motor.s: stepper_motor.cpp.s
+.PHONY : stepper_motor.s
+
+# target to generate assembly for a file
+stepper_motor.cpp.s:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/motor/CMakeFiles/__idf_motor.dir/build.make esp-idf/motor/CMakeFiles/__idf_motor.dir/stepper_motor.cpp.s
+.PHONY : stepper_motor.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -173,6 +283,19 @@ help:
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
+	@echo "... __idf_motor"
+	@echo "... discrete_axis.obj"
+	@echo "... discrete_axis.i"
+	@echo "... discrete_axis.s"
+	@echo "... motor_base.obj"
+	@echo "... motor_base.i"
+	@echo "... motor_base.s"
+	@echo "... servo_motor.obj"
+	@echo "... servo_motor.i"
+	@echo "... servo_motor.s"
+	@echo "... stepper_motor.obj"
+	@echo "... stepper_motor.i"
+	@echo "... stepper_motor.s"
 .PHONY : help
 
 
