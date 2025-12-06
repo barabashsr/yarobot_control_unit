@@ -2060,6 +2060,19 @@ __idf_pulse_gen/fast:
 .PHONY : __idf_pulse_gen/fast
 
 #=============================================================================
+# Target rules for targets named __idf_motor
+
+# Build rule for target.
+__idf_motor: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 __idf_motor
+.PHONY : __idf_motor
+
+# fast build rule for target.
+__idf_motor/fast:
+	$(MAKE) $(MAKESILENT) -f esp-idf/motor/CMakeFiles/__idf_motor.dir/build.make esp-idf/motor/CMakeFiles/__idf_motor.dir/build
+.PHONY : __idf_motor/fast
+
+#=============================================================================
 # Target rules for targets named __idf_control
 
 # Build rule for target.
@@ -2110,19 +2123,6 @@ __idf_main: cmake_check_build_system
 __idf_main/fast:
 	$(MAKE) $(MAKESILENT) -f esp-idf/main/CMakeFiles/__idf_main.dir/build.make esp-idf/main/CMakeFiles/__idf_main.dir/build
 .PHONY : __idf_main/fast
-
-#=============================================================================
-# Target rules for targets named __idf_motor
-
-# Build rule for target.
-__idf_motor: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 __idf_motor
-.PHONY : __idf_motor
-
-# fast build rule for target.
-__idf_motor/fast:
-	$(MAKE) $(MAKESILENT) -f esp-idf/motor/CMakeFiles/__idf_motor.dir/build.make esp-idf/motor/CMakeFiles/__idf_motor.dir/build
-.PHONY : __idf_motor/fast
 
 project_elf_src_esp32s3.obj: project_elf_src_esp32s3.c.obj
 .PHONY : project_elf_src_esp32s3.obj

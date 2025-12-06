@@ -100,35 +100,19 @@ esp-idf/esp_driver_usb_serial_jtag/CMakeFiles/__idf_esp_driver_usb_serial_jtag.d
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/src/usb_serial_jtag_connection_monitor.c.s"
 	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/esp_driver_usb_serial_jtag && /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/bin/xtensa-esp32s3-elf-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_usb_serial_jtag/src/usb_serial_jtag_connection_monitor.c -o CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/src/usb_serial_jtag_connection_monitor.c.s
 
-esp-idf/esp_driver_usb_serial_jtag/CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/src/usb_serial_jtag_vfs.c.obj: esp-idf/esp_driver_usb_serial_jtag/CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/flags.make
-esp-idf/esp_driver_usb_serial_jtag/CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/src/usb_serial_jtag_vfs.c.obj: /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_usb_serial_jtag/src/usb_serial_jtag_vfs.c
-esp-idf/esp_driver_usb_serial_jtag/CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/src/usb_serial_jtag_vfs.c.obj: esp-idf/esp_driver_usb_serial_jtag/CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object esp-idf/esp_driver_usb_serial_jtag/CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/src/usb_serial_jtag_vfs.c.obj"
-	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/esp_driver_usb_serial_jtag && /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/bin/xtensa-esp32s3-elf-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT esp-idf/esp_driver_usb_serial_jtag/CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/src/usb_serial_jtag_vfs.c.obj -MF CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/src/usb_serial_jtag_vfs.c.obj.d -o CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/src/usb_serial_jtag_vfs.c.obj -c /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_usb_serial_jtag/src/usb_serial_jtag_vfs.c
-
-esp-idf/esp_driver_usb_serial_jtag/CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/src/usb_serial_jtag_vfs.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/src/usb_serial_jtag_vfs.c.i"
-	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/esp_driver_usb_serial_jtag && /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/bin/xtensa-esp32s3-elf-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_usb_serial_jtag/src/usb_serial_jtag_vfs.c > CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/src/usb_serial_jtag_vfs.c.i
-
-esp-idf/esp_driver_usb_serial_jtag/CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/src/usb_serial_jtag_vfs.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/src/usb_serial_jtag_vfs.c.s"
-	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/esp_driver_usb_serial_jtag && /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/bin/xtensa-esp32s3-elf-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_usb_serial_jtag/src/usb_serial_jtag_vfs.c -o CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/src/usb_serial_jtag_vfs.c.s
-
 # Object files for target __idf_esp_driver_usb_serial_jtag
 __idf_esp_driver_usb_serial_jtag_OBJECTS = \
 "CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/src/usb_serial_jtag.c.obj" \
-"CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/src/usb_serial_jtag_connection_monitor.c.obj" \
-"CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/src/usb_serial_jtag_vfs.c.obj"
+"CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/src/usb_serial_jtag_connection_monitor.c.obj"
 
 # External object files for target __idf_esp_driver_usb_serial_jtag
 __idf_esp_driver_usb_serial_jtag_EXTERNAL_OBJECTS =
 
 esp-idf/esp_driver_usb_serial_jtag/libesp_driver_usb_serial_jtag.a: esp-idf/esp_driver_usb_serial_jtag/CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/src/usb_serial_jtag.c.obj
 esp-idf/esp_driver_usb_serial_jtag/libesp_driver_usb_serial_jtag.a: esp-idf/esp_driver_usb_serial_jtag/CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/src/usb_serial_jtag_connection_monitor.c.obj
-esp-idf/esp_driver_usb_serial_jtag/libesp_driver_usb_serial_jtag.a: esp-idf/esp_driver_usb_serial_jtag/CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/src/usb_serial_jtag_vfs.c.obj
 esp-idf/esp_driver_usb_serial_jtag/libesp_driver_usb_serial_jtag.a: esp-idf/esp_driver_usb_serial_jtag/CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/build.make
 esp-idf/esp_driver_usb_serial_jtag/libesp_driver_usb_serial_jtag.a: esp-idf/esp_driver_usb_serial_jtag/CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking C static library libesp_driver_usb_serial_jtag.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking C static library libesp_driver_usb_serial_jtag.a"
 	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/esp_driver_usb_serial_jtag && $(CMAKE_COMMAND) -P CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/cmake_clean_target.cmake
 	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/esp_driver_usb_serial_jtag && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/link.txt --verbose=$(VERBOSE)
 

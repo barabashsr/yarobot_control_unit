@@ -132,6 +132,15 @@
 /** @brief Idle timeout check period (ms) */
 #define PERIOD_IDLE_CHECK_MS        1000
 
+/**
+ * @brief Motion task update period (ms)
+ *
+ * How often each motion_task calls motor_system_update() for monitoring.
+ * Actual pulse streaming is handled by pulse generator internal tasks.
+ * This is for state monitoring and diagnostics only.
+ */
+#define PERIOD_MOTION_UPDATE_MS     10
+
 /** @} */ // end timing_periods
 
 /** @} */ // end config_timing

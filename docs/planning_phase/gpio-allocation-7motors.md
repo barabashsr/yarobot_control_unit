@@ -1,5 +1,10 @@
 # GPIO Allocation for 8-Axis System
 
+> **⚠️ SUPERSEDED** - This planning document has been superseded by the finalized GPIO assignments.
+> For current authoritative GPIO assignments, see `/docs/gpio-assignment.md`.
+>
+> **Key change (2025-12-06)**: MCP0 interrupts moved from GPIO3/46 (strapping pins) to GPIO47/48 to avoid boot mode conflicts.
+
 > **TODO - ARCHITECTURE SESSION**: This document contains GPIO assignments that need final verification during the dedicated GPIO allocation architecture session. All conflicts are marked with TODO.
 
 ## Overview

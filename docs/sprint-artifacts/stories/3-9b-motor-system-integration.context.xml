@@ -1,0 +1,393 @@
+<story-context id="bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>3</epicId>
+    <storyId>9b</storyId>
+    <title>Motor System Integration &amp; Initialization</title>
+    <status>drafted</status>
+    <generatedAt>2025-12-06</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/3-9b-motor-system-integration.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>the motor system fully wired and initialized at startup</iWant>
+    <soThat>MOVE/MOVR commands can control actual hardware and motion_tasks run real-time trajectory generation</soThat>
+    <tasks>
+      <task id="1" ac="1,14">Create motor_system module declaration
+        <subtask>Create firmware/components/control/motor_system/include/motor_system.h</subtask>
+        <subtask>Declare esp_err_t motor_system_init(void)</subtask>
+        <subtask>Declare MotionController* motor_system_get_controller(void)</subtask>
+        <subtask>Declare IMotor* motor_system_get_motor(uint8_t axis_id)</subtask>
+        <subtask>Declare void motor_system_notify_task(uint8_t axis_id)</subtask>
+      </task>
+      <task id="2" ac="4,5,6,7,12,14">Instantiate pulse generators
+        <subtask>Create firmware/components/control/motor_system/motor_system.cpp</subtask>
+        <subtask>Instantiate RmtPulseGenerator for X,Z,A,B using GPIO_X_STEP, GPIO_Z_STEP, GPIO_A_STEP, GPIO_B_STEP</subtask>
+        <subtask>Instantiate McpwmPulseGenerator for Y using GPIO_Y_STEP with MCPWM_TIMER_Y</subtask>
+        <subtask>Instantiate McpwmPulseGenerator for C using GPIO_C_STEP with MCPWM_TIMER_C</subtask>
+        <subtask>Instantiate LedcPulseGenerator for D using GPIO_D_STEP with LEDC_CHANNEL_D</subtask>
+      </task>
+      <task id="3" ac="5,7,13,14">Instantiate position trackers
+        <subtask>Instantiate PcntTracker for Y (PCNT_UNIT_Y)</subtask>
+        <subtask>Instantiate SoftwareTracker for X,Z,A,B (RMT callback)</subtask>
+        <subtask>Instantiate PcntTracker for C (PCNT_UNIT_C)</subtask>
+        <subtask>Instantiate PcntTracker for D (PCNT_UNIT_D via GPIO loopback)</subtask>
+        <subtask>Instantiate TimeTracker for E</subtask>
+      </task>
+      <task id="4" ac="1,14">Create axis configuration instances from config_defaults.h</task>
+      <task id="5" ac="1,4,5,6,7,8,14">Instantiate motor objects (ServoMotor, StepperMotor, DiscreteAxis)</task>
+      <task id="6" ac="2,9">Initialize MotionController with motor array</task>
+      <task id="7" ac="9">Register MoveHandler and MovrHandler with CommandDispatcher</task>
+      <task id="8" ac="3,10,11">Implement motion_task real-time loop (replace stub)</task>
+      <task id="9" ac="1,2">Wire motor_system_init() into app_main()</task>
+      <task id="10" ac="1">Create motor_system CMakeLists.txt</task>
+      <task id="11" ac="10,11,14">Add timing constants to config_timing.h</task>
+      <task id="12" ac="1-9">Create integration test</task>
+      <task id="13" ac="14">Code review - No Magic Numbers verification</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1">Given system boots, when motor_system_init() completes, then all 8 motors are instantiated and initialized</ac>
+    <ac id="2">Given motor system initialized, when MotionController receives moveAbsolute(), then correct motor's pulse generator executes move</ac>
+    <ac id="3">Given app_main() runs, when tasks start, then each motion_task(axis) has access to its corresponding IMotor instance</ac>
+    <ac id="4">Given X axis, when MoveHandler processes MOVE X 100, then ServoMotor[X] uses RmtPulseGenerator with GPIO_X_STEP</ac>
+    <ac id="5">Given Y axis, when motion executes, then ServoMotor[Y] uses McpwmPulseGenerator with GPIO_Y_STEP and PCNT feedback</ac>
+    <ac id="6">Given C axis (stepper), when motion executes, then StepperMotor[C] uses McpwmPulseGenerator with GPIO_C_STEP</ac>
+    <ac id="7">Given D axis (stepper), when motion executes, then StepperMotor[D] uses LedcPulseGenerator with GPIO_D_STEP and PCNT via GPIO loopback</ac>
+    <ac id="8">Given E axis (discrete), when motion executes, then DiscreteAxis uses shift register for DIR/EN control</ac>
+    <ac id="9">Given CommandDispatcher initialized, when system starts, then MoveHandler and MovrHandler are registered with CMD_MOVE and CMD_MOVR</ac>
+    <ac id="10">Given motion_task runs, when motor state is MOVING, then task executes trajectory profile updates at high frequency</ac>
+    <ac id="11">Given motion_task runs, when motor state is IDLE, then task blocks on notification queue (no CPU waste)</ac>
+    <ac id="12">Given all pulse generators, when instantiated, then they use GPIOs from config_gpio.h</ac>
+    <ac id="13">Given all position trackers, when instantiated, then they use PCNT units from config_peripherals.h</ac>
+    <ac id="14" mandatory="true">Given any implementation code, when reviewed, then NO hardcoded numeric values exist; ALL configuration values MUST come from config headers</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-3.md</path>
+        <title>Epic 3 Technical Specification: Motor Control Core</title>
+        <section>Services and Modules</section>
+        <snippet>Defines MotionController, all motor types, and pulse generators with their component locations and responsibilities.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-3.md</path>
+        <title>Epic 3 Technical Specification</title>
+        <section>APIs and Interfaces</section>
+        <snippet>IPulseGenerator interface (startMove, stopImmediate, setPositionTracker), IPositionTracker interface, IMotor interface (moveAbsolute, moveRelative, enable).</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-3.md</path>
+        <title>Epic 3 Technical Specification</title>
+        <section>MANDATORY Architecture Constraints</section>
+        <snippet>Header-Only Configuration: Every configurable value MUST be defined in a header file. No magic numbers. GPIO pins from config_gpio.h, timing from config_timing.h.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Architecture</title>
+        <section>Behavioral Decisions Summary</section>
+        <snippet>Dual-Core Separation: Core 0 handles communication and safety, Core 1 handles motion control. Motors disabled by default at power-on.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/3-9-motion-controller-cmd-move-movr.md</path>
+        <title>Story 3.9: Motion Controller and MOVE/MOVR Commands</title>
+        <section>Completion Notes</section>
+        <snippet>Integration gap identified: MotionController and handlers implemented but NOT wired to motor system. Files created: motion_controller.h/cpp, move_handler.h/cpp, movr_handler.h/cpp.</snippet>
+      </doc>
+    </docs>
+    <code>
+      <file>
+        <path>firmware/components/motor/include/i_motor.h</path>
+        <kind>interface</kind>
+        <symbol>IMotor</symbol>
+        <reason>Abstract motor interface for all motor types. All motors (servo, stepper, discrete) must implement this interface.</reason>
+      </file>
+      <file>
+        <path>firmware/components/motor/include/servo_motor.h</path>
+        <kind>class</kind>
+        <symbol>ServoMotor</symbol>
+        <reason>Servo motor implementation for X,Y,Z,A,B axes. Constructor takes IPulseGenerator*, IPositionTracker*, axis_id, AxisConfig.</reason>
+      </file>
+      <file>
+        <path>firmware/components/motor/servo_motor.cpp</path>
+        <kind>implementation</kind>
+        <symbol>ServoMotor</symbol>
+        <reason>Implementation of ServoMotor class with motion control logic.</reason>
+      </file>
+      <file>
+        <path>firmware/components/motor/include/stepper_motor.h</path>
+        <kind>class</kind>
+        <symbol>StepperMotor</symbol>
+        <reason>Stepper motor implementation for C,D axes. Similar interface to ServoMotor.</reason>
+      </file>
+      <file>
+        <path>firmware/components/motor/stepper_motor.cpp</path>
+        <kind>implementation</kind>
+        <symbol>StepperMotor</symbol>
+        <reason>Implementation of StepperMotor class for open-loop stepper control.</reason>
+      </file>
+      <file>
+        <path>firmware/components/motor/include/discrete_axis.h</path>
+        <kind>class</kind>
+        <symbol>DiscreteAxis</symbol>
+        <reason>Discrete axis implementation for E axis. Uses shift register for DIR/EN control.</reason>
+      </file>
+      <file>
+        <path>firmware/components/motor/discrete_axis.cpp</path>
+        <kind>implementation</kind>
+        <symbol>DiscreteAxis</symbol>
+        <reason>Implementation of DiscreteAxis with binary position (0.0/1.0).</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/motion_controller/include/motion_controller.h</path>
+        <kind>class</kind>
+        <symbol>MotionController</symbol>
+        <reason>Central coordinator for motor movements. Has init(IMotor*[LIMIT_NUM_AXES]), getMotor(), moveAbsolute(), moveRelative().</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/motion_controller/motion_controller.cpp</path>
+        <kind>implementation</kind>
+        <symbol>MotionController</symbol>
+        <reason>Implementation delegates to motor array. motor_system_init() must populate this array.</reason>
+      </file>
+      <file>
+        <path>firmware/components/pulse_gen/include/i_pulse_generator.h</path>
+        <kind>interface</kind>
+        <symbol>IPulseGenerator</symbol>
+        <reason>Abstract pulse generator interface. startMove(), stop(), setPositionTracker().</reason>
+      </file>
+      <file>
+        <path>firmware/components/pulse_gen/include/rmt_pulse_gen.h</path>
+        <kind>class</kind>
+        <symbol>RmtPulseGenerator</symbol>
+        <reason>RMT implementation for X,Z,A,B axes. Constructor takes gpio_num_t step_gpio, int channel.</reason>
+      </file>
+      <file>
+        <path>firmware/components/pulse_gen/rmt_pulse_gen.cpp</path>
+        <kind>implementation</kind>
+        <symbol>RmtPulseGenerator</symbol>
+        <reason>DMA-based pulse generation using ESP-IDF 5.4 RMT API.</reason>
+      </file>
+      <file>
+        <path>firmware/components/pulse_gen/include/mcpwm_pulse_gen.h</path>
+        <kind>class</kind>
+        <symbol>McpwmPulseGenerator</symbol>
+        <reason>MCPWM implementation for Y,C axes. Constructor takes gpio_num_t, timer_id.</reason>
+      </file>
+      <file>
+        <path>firmware/components/pulse_gen/mcpwm_pulse_gen.cpp</path>
+        <kind>implementation</kind>
+        <symbol>McpwmPulseGenerator</symbol>
+        <reason>Hardware PWM with internal PCNT routing for position feedback.</reason>
+      </file>
+      <file>
+        <path>firmware/components/pulse_gen/include/ledc_pulse_gen.h</path>
+        <kind>class</kind>
+        <symbol>LedcPulseGenerator</symbol>
+        <reason>LEDC implementation for D axis. Constructor takes gpio_num_t.</reason>
+      </file>
+      <file>
+        <path>firmware/components/pulse_gen/ledc_pulse_gen.cpp</path>
+        <kind>implementation</kind>
+        <symbol>LedcPulseGenerator</symbol>
+        <reason>LEDC timer-based pulse generation with PCNT via GPIO loopback.</reason>
+      </file>
+      <file>
+        <path>firmware/components/position/include/i_position_tracker.h</path>
+        <kind>interface</kind>
+        <symbol>IPositionTracker</symbol>
+        <reason>Position tracker interface: init(), reset(), getPosition(), setDirection(), addPulses().</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/command_executor/include/move_handler.h</path>
+        <kind>function</kind>
+        <symbol>move_handler_register</symbol>
+        <reason>Registers MOVE handler with command executor. Must be called after MotionController is initialized.</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/command_executor/move_handler.cpp</path>
+        <kind>implementation</kind>
+        <symbol>handle_move</symbol>
+        <reason>Parses MOVE command, calls MotionController::moveAbsolute().</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/command_executor/include/movr_handler.h</path>
+        <kind>function</kind>
+        <symbol>movr_handler_register</symbol>
+        <reason>Registers MOVR handler with command executor.</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/command_executor/movr_handler.cpp</path>
+        <kind>implementation</kind>
+        <symbol>handle_movr</symbol>
+        <reason>Parses MOVR command, calls MotionController::moveRelative().</reason>
+      </file>
+      <file>
+        <path>firmware/components/drivers/tpic6b595/include/tpic6b595.h</path>
+        <kind>api</kind>
+        <symbol>sr_set_direction, sr_set_enable</symbol>
+        <reason>Shift register control API for DIR/EN signals. DiscreteAxis uses this for E axis control.</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_gpio.h</path>
+        <kind>config</kind>
+        <symbol>GPIO_X_STEP through GPIO_D_STEP</symbol>
+        <reason>MANDATORY: All GPIO assignments for STEP outputs. Use these constants, not hardcoded numbers.</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_peripherals.h</path>
+        <kind>config</kind>
+        <symbol>RMT_CHANNEL_*, MCPWM_TIMER_*, PCNT_UNIT_*, LEDC_*</symbol>
+        <reason>MANDATORY: Peripheral assignments for pulse generators and position trackers.</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_axes.h</path>
+        <kind>config</kind>
+        <symbol>AXIS_X through AXIS_E</symbol>
+        <reason>MANDATORY: Axis ID constants (0-7) for motor array indexing.</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_limits.h</path>
+        <kind>config</kind>
+        <symbol>LIMIT_NUM_AXES</symbol>
+        <reason>Number of axes (8). Used to size motor array.</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_defaults.h</path>
+        <kind>config</kind>
+        <symbol>DEFAULT_PULSES_PER_REV, DEFAULT_MAX_VELOCITY, DEFAULT_MAX_ACCELERATION</symbol>
+        <reason>Default AxisConfig values for initialization.</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_timing.h</path>
+        <kind>config</kind>
+        <symbol>TIMING_*</symbol>
+        <reason>Timing constants. Add TIMING_MOTION_TASK_TICK_MS and TIMING_MOTION_TASK_IDLE_MS here.</reason>
+      </file>
+      <file>
+        <path>firmware/main/yarobot_control_unit.cpp</path>
+        <kind>entrypoint</kind>
+        <symbol>app_main</symbol>
+        <reason>Main entry point. Add motor_system_init() call here after hardware_init_and_verify().</reason>
+      </file>
+    </code>
+    <dependencies>
+      <esp-idf version="5.4">
+        <component>driver/rmt</component>
+        <component>driver/mcpwm</component>
+        <component>driver/ledc</component>
+        <component>driver/pcnt</component>
+        <component>driver/spi_master</component>
+        <component>freertos/FreeRTOS</component>
+      </esp-idf>
+      <managed-components>
+        <component name="espressif/mcp23017" version="^0.1.1">I2C GPIO expander for limits/inputs</component>
+        <component name="espressif/esp_tinyusb" version="^1.0.0">USB CDC serial interface</component>
+      </managed-components>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint type="mandatory" source="tech-spec-epic-3.md">
+      <name>Header-Only Configuration</name>
+      <description>Every configurable value MUST be defined in a header file. No magic numbers in source code. GPIO pins from config_gpio.h, timing from config_timing.h, limits from config_limits.h, commands from config_commands.h, shift register bits from config_sr.h, defaults from config_defaults.h.</description>
+    </constraint>
+    <constraint type="mandatory" source="architecture.md">
+      <name>Dual-Core Separation</name>
+      <description>Core 0 handles communication and safety, Core 1 handles motion control. motion_tasks run on Core 1 at priority 15.</description>
+    </constraint>
+    <constraint type="mandatory" source="tech-spec-epic-3.md">
+      <name>SI Units Convention</name>
+      <description>All external interfaces use SI units (meters, radians, seconds). Internal pulse domain uses pulses/pulses-per-second. Conversion happens in motor layer only.</description>
+    </constraint>
+    <constraint type="mandatory" source="tech-spec-epic-3.md">
+      <name>Pulse Count Authority</name>
+      <description>pulse_count_ is the single source of truth for position. current_position_ is derived from pulse_count_ / pulses_per_unit.</description>
+    </constraint>
+    <constraint type="pattern" source="architecture.md">
+      <name>Static Allocation</name>
+      <description>Use static allocation for motor instances and pulse generators to ensure lifetime management and avoid heap fragmentation.</description>
+    </constraint>
+    <constraint type="pattern" source="tech-spec-epic-3.md">
+      <name>Motion Blending</name>
+      <description>New MOVE commands during active motion blend to new target. No "axis busy" errors.</description>
+    </constraint>
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>motor_system_init</name>
+      <kind>function</kind>
+      <signature>esp_err_t motor_system_init(void)</signature>
+      <path>firmware/components/control/motor_system/include/motor_system.h</path>
+      <description>Master initialization - creates all pulse generators, trackers, motors, initializes MotionController, registers handlers</description>
+    </interface>
+    <interface>
+      <name>motor_system_get_controller</name>
+      <kind>function</kind>
+      <signature>MotionController* motor_system_get_controller(void)</signature>
+      <path>firmware/components/control/motor_system/include/motor_system.h</path>
+      <description>Returns initialized MotionController instance for command handlers</description>
+    </interface>
+    <interface>
+      <name>motor_system_get_motor</name>
+      <kind>function</kind>
+      <signature>IMotor* motor_system_get_motor(uint8_t axis_id)</signature>
+      <path>firmware/components/control/motor_system/include/motor_system.h</path>
+      <description>Returns motor instance by axis ID for motion_task access</description>
+    </interface>
+    <interface>
+      <name>motor_system_notify_task</name>
+      <kind>function</kind>
+      <signature>void motor_system_notify_task(uint8_t axis_id)</signature>
+      <path>firmware/components/control/motor_system/include/motor_system.h</path>
+      <description>Wake motion_task when motion starts (via xTaskNotify)</description>
+    </interface>
+    <interface>
+      <name>MotionController::init</name>
+      <kind>method</kind>
+      <signature>esp_err_t init(IMotor* motors[LIMIT_NUM_AXES])</signature>
+      <path>firmware/components/control/motion_controller/include/motion_controller.h</path>
+      <description>Initialize controller with array of 8 motor pointers</description>
+    </interface>
+    <interface>
+      <name>IPulseGenerator</name>
+      <kind>interface</kind>
+      <signature>startMove(int32_t pulses, float velocity, float accel), stop(), setPositionTracker(IPositionTracker*)</signature>
+      <path>firmware/components/pulse_gen/include/i_pulse_generator.h</path>
+      <description>Abstract pulse generator interface implemented by RMT, MCPWM, LEDC generators</description>
+    </interface>
+    <interface>
+      <name>IMotor</name>
+      <kind>interface</kind>
+      <signature>init(), moveAbsolute(), moveRelative(), enable(), getPosition(), getState()</signature>
+      <path>firmware/components/motor/include/i_motor.h</path>
+      <description>Abstract motor interface implemented by ServoMotor, StepperMotor, DiscreteAxis</description>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+      The project uses Unity test framework (ESP-IDF native). Tests are placed in component test/ subdirectories. Each component has its own test file (e.g., test_rmt_pulse_gen.cpp). Tests should be runnable via idf.py test. Integration tests verify end-to-end command flow from serial input to pulse output.
+    </standards>
+    <locations>
+      <location>firmware/components/control/motor_system/test/</location>
+      <location>firmware/components/motor/test/</location>
+      <location>firmware/components/pulse_gen/test/</location>
+      <location>firmware/components/control/command_executor/test/</location>
+    </locations>
+    <ideas>
+      <idea ac="1">Test motor_system_init() succeeds and all 8 motors are non-null</idea>
+      <idea ac="2">Test motor_system_get_motor(AXIS_X) returns valid ServoMotor pointer</idea>
+      <idea ac="3">Test motion_task can access motor via motor_system_get_motor()</idea>
+      <idea ac="4-7">Test each axis type uses correct pulse generator class</idea>
+      <idea ac="9">Test move_handler_register() and movr_handler_register() succeed after init</idea>
+      <idea ac="10,11">Test motion_task blocks when idle, runs when notified</idea>
+      <idea ac="12,13">Grep test for hardcoded GPIO/PCNT numbers in motor_system.cpp</idea>
+      <idea ac="14">Static analysis or grep for numeric literals (excluding 0,1 in booleans)</idea>
+    </ideas>
+  </tests>
+</story-context>

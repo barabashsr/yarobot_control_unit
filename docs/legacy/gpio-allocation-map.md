@@ -1,5 +1,8 @@
 # ESP32-S3 GPIO Allocation Map
 
+> **⚠️ LEGACY DOCUMENT** - This is an early design document and does NOT reflect the current implementation.
+> For current GPIO assignments, see `/docs/gpio-assignment.md` and `/firmware/components/config/include/config_gpio.h`.
+
 ## Overview
 This document defines the GPIO pin allocation for the yarobot_control_unit ESP32-S3 motor controller supporting 6 axes (4 servo drives, 2 steppers).
 

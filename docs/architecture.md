@@ -2488,11 +2488,11 @@ components/config/include/
 │   │   ├── GPIO_I2C_SCL              # Clock (400kHz)
 │   │   └── GPIO_I2C_SDA              # Data
 │   │
-│   ├── MCP23017 Interrupts (grouped: INTA left side, INTB right side)
-│   │   ├── GPIO_MCP0_INTA            # MCP #0 Port A (X-A limits) - J1-13
-│   │   ├── GPIO_MCP1_INTA            # MCP #1 Port A (ALARM_INPUT) - J1-14
-│   │   ├── GPIO_MCP0_INTB            # MCP #0 Port B (B-E limits) - J3-9
-│   │   └── GPIO_MCP1_INTB            # MCP #1 Port B (InPos signals) - J3-10
+│   ├── MCP23017 Interrupts (all on right side J3 - moved off strapping pins)
+│   │   ├── GPIO_MCP0_INTA            # MCP #0 Port A (X-A limits) - J3-17 (GPIO47)
+│   │   ├── GPIO_MCP0_INTB            # MCP #0 Port B (B-E limits) - J3-16 (GPIO48)
+│   │   ├── GPIO_MCP1_INTA            # MCP #1 Port A (ALARM_INPUT) - J3-9 (GPIO39)
+│   │   └── GPIO_MCP1_INTB            # MCP #1 Port B (InPos signals) - J3-10 (GPIO38)
 │   │
 │   ├── Safety
 │   │   └── GPIO_E_STOP               # Emergency stop input (J1-19)
@@ -2835,15 +2835,15 @@ components/config/include/
 // ============================================================================
 // MCP23017 INTERRUPT LINES (4 GPIOs for 2 MCPs × 2 interrupts each)
 // ============================================================================
-// Grouped by interrupt type: INTA on left side (J1), INTB on right side (J3)
-// Both MCPs are input-only, so all 4 interrupt lines are active
+// All MCP interrupts on RIGHT side (J3) to avoid strapping pin conflicts
+// MCP0 moved from GPIO3/46 (strapping) to GPIO47/48 (non-strapping)
 
-// INTA interrupts - grouped on LEFT side (J1-13, J1-14)
-#define GPIO_MCP0_INTA      GPIO_NUM_3      // MCP #0 Port A (X-A limits) - J1-13
-#define GPIO_MCP1_INTA      GPIO_NUM_46     // MCP #1 Port A (ALARM_INPUT) - J1-14
+// MCP0 interrupts - moved to RIGHT side (J3-17, J3-16) to avoid boot issues
+#define GPIO_MCP0_INTA      GPIO_NUM_47     // MCP #0 Port A (X-A limits) - J3-17
+#define GPIO_MCP0_INTB      GPIO_NUM_48     // MCP #0 Port B (B-E limits) - J3-16
 
-// INTB interrupts - grouped on RIGHT side (J3-9, J3-10)
-#define GPIO_MCP0_INTB      GPIO_NUM_39     // MCP #0 Port B (B-E limits) - J3-9
+// MCP1 interrupts - on RIGHT side (J3-9, J3-10)
+#define GPIO_MCP1_INTA      GPIO_NUM_39     // MCP #1 Port A (ALARM_INPUT) - J3-9
 #define GPIO_MCP1_INTB      GPIO_NUM_38     // MCP #1 Port B (InPos signals) - J3-10
 
 // ============================================================================

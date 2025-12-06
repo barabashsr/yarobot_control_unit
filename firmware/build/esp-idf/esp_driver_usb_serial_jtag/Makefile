@@ -223,30 +223,6 @@ src/usb_serial_jtag_connection_monitor.c.s:
 	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/esp_driver_usb_serial_jtag/CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/build.make esp-idf/esp_driver_usb_serial_jtag/CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/src/usb_serial_jtag_connection_monitor.c.s
 .PHONY : src/usb_serial_jtag_connection_monitor.c.s
 
-src/usb_serial_jtag_vfs.obj: src/usb_serial_jtag_vfs.c.obj
-.PHONY : src/usb_serial_jtag_vfs.obj
-
-# target to build an object file
-src/usb_serial_jtag_vfs.c.obj:
-	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/esp_driver_usb_serial_jtag/CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/build.make esp-idf/esp_driver_usb_serial_jtag/CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/src/usb_serial_jtag_vfs.c.obj
-.PHONY : src/usb_serial_jtag_vfs.c.obj
-
-src/usb_serial_jtag_vfs.i: src/usb_serial_jtag_vfs.c.i
-.PHONY : src/usb_serial_jtag_vfs.i
-
-# target to preprocess a source file
-src/usb_serial_jtag_vfs.c.i:
-	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/esp_driver_usb_serial_jtag/CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/build.make esp-idf/esp_driver_usb_serial_jtag/CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/src/usb_serial_jtag_vfs.c.i
-.PHONY : src/usb_serial_jtag_vfs.c.i
-
-src/usb_serial_jtag_vfs.s: src/usb_serial_jtag_vfs.c.s
-.PHONY : src/usb_serial_jtag_vfs.s
-
-# target to generate assembly for a file
-src/usb_serial_jtag_vfs.c.s:
-	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/esp_driver_usb_serial_jtag/CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/build.make esp-idf/esp_driver_usb_serial_jtag/CMakeFiles/__idf_esp_driver_usb_serial_jtag.dir/src/usb_serial_jtag_vfs.c.s
-.PHONY : src/usb_serial_jtag_vfs.c.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -266,9 +242,6 @@ help:
 	@echo "... src/usb_serial_jtag_connection_monitor.obj"
 	@echo "... src/usb_serial_jtag_connection_monitor.i"
 	@echo "... src/usb_serial_jtag_connection_monitor.s"
-	@echo "... src/usb_serial_jtag_vfs.obj"
-	@echo "... src/usb_serial_jtag_vfs.i"
-	@echo "... src/usb_serial_jtag_vfs.s"
 .PHONY : help
 
 

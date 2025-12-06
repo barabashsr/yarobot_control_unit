@@ -1,7 +1,7 @@
 {
     "version":            "1.1",
     "project_name":       "yarobot_control_unit",
-    "project_version":    "42d056e-dirty",
+    "project_version":    "95988a8-dirty",
     "project_path":       "/Users/sergeybarabash/robo/yarobot_control_unit/firmware",
     "idf_path":           "/Users/sergeybarabash/robo/esp/v5.4/esp-idf",
     "build_dir":          "/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build",
@@ -170,13 +170,13 @@
             "dir": "/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control",
             "type": "LIBRARY",
             "lib": "__idf_control",
-            "reqs": [ "config", "command_parser", "event_manager", "freertos", "test_utils", "usb_cdc", "pulse_gen", "position" ],
+            "reqs": [ "config", "command_parser", "event_manager", "freertos", "test_utils", "usb_cdc", "pulse_gen", "position", "motor" ],
             "priv_reqs": [ "espressif__esp_tinyusb", "esp_timer", "log", "driver" ],
             "managed_reqs": [],
             "managed_priv_reqs": [],
             "file": "/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/control/libcontrol.a",
-            "sources": [ "/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/tasks/task_stubs.c", "/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/command_executor.c", "/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/test_pulse_cmd.cpp" ],
-            "include_dirs": [ "tasks/include", "command_executor/include" ]
+            "sources": [ "/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/tasks/task_stubs.c", "/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/command_executor.c", "/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/test_pulse_cmd.cpp", "/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/move_handler.cpp", "/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/command_executor/movr_handler.cpp", "/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/motion_controller/motion_controller.cpp", "/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/motor_system/motor_system.cpp" ],
+            "include_dirs": [ "tasks/include", "command_executor/include", "motion_controller/include", "motor_system/include" ]
         },
         "cxx": {
             "alias": "idf::cxx",
@@ -685,7 +685,7 @@
             "managed_reqs": [],
             "managed_priv_reqs": [],
             "file": "/Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/esp_driver_usb_serial_jtag/libesp_driver_usb_serial_jtag.a",
-            "sources": [ "/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_usb_serial_jtag/src/usb_serial_jtag.c", "/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_usb_serial_jtag/src/usb_serial_jtag_connection_monitor.c", "/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_usb_serial_jtag/src/usb_serial_jtag_vfs.c" ],
+            "sources": [ "/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_usb_serial_jtag/src/usb_serial_jtag.c", "/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_usb_serial_jtag/src/usb_serial_jtag_connection_monitor.c" ],
             "include_dirs": [ "include" ]
         },
         "esp_eth": {
@@ -3306,11 +3306,11 @@
             "prefix": "idf",
             "dir": "/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control",
             "lib": "__idf_control",
-            "reqs": [ "config", "command_parser", "event_manager", "freertos", "test_utils", "usb_cdc", "pulse_gen", "position" ],
+            "reqs": [ "config", "command_parser", "event_manager", "freertos", "test_utils", "usb_cdc", "pulse_gen", "position", "motor" ],
             "priv_reqs": [ "espressif__esp_tinyusb", "esp_timer", "log", "driver" ],
             "managed_reqs": [],
             "managed_priv_reqs": [],
-            "include_dirs": [ "tasks/include", "command_executor/include" ]
+            "include_dirs": [ "tasks/include", "command_executor/include", "motion_controller/include", "motor_system/include" ]
         },
         "drivers": {
             "alias": "idf::drivers",

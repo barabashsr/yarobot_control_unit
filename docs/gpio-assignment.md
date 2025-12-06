@@ -92,12 +92,12 @@ View with USB connector at bottom.
    ───  ────  ────────────────────  ────  ║  │      │  ║  ────  ────────────────────  ────  ───
    11   18    I2C_SCL (I2C0)        I2C   ║  │N16R8 │  ║  RSVD  [PSRAM]              37    11
    12    8    I2C_SDA (I2C0)        I2C   ║  │      │  ║  RSVD  [PSRAM]              36    12
-   13    3    MCP0_INTA             INT   ║  └──────┘  ║  RSVD  [PSRAM]              35    13
-   14   46    MCP0_INTB             INT   ║            ║  BOOT  (Boot Mode)           0    14
+   13   --    (freed - strapping)   STRAP ║  └──────┘  ║  RSVD  [PSRAM]              35    13
+   14   --    (freed - strapping)   STRAP ║            ║  BOOT  (Boot Mode)           0    14
    ───  ────  ────────────────────  ────  ║            ║  ────  ────────────────────  ────  ───
    15    9    SR_OE                 SPI   ║            ║  SPARE (available)          45    15
-   16   10    SR_CS (Latch)         SPI   ║            ║  SPARE (available)          48    16
-   17   11    SR_MOSI               SPI   ║            ║  SPARE (available)          47    17
+   16   10    SR_CS (Latch)         SPI   ║            ║  INT   MCP0_INTB            48    16
+   17   11    SR_MOSI               SPI   ║            ║  INT   MCP0_INTA            47    17
    18   12    SR_SCLK               SPI   ║            ║  OLED  OLED_SCL (I2C1)      21    18
    ───  ────  ────────────────────  ────  ║            ║  ────  ────────────────────  ────  ───
    19   13    E_STOP                SAFE  ║            ║  USB   USB D+               20    19
@@ -152,18 +152,20 @@ OTHER SIGNAL GROUPS
 ┌─ I2C BUS 0 (MCP23017 Expanders) ────┐          ┌─ RESERVED (PSRAM) ───────────┐
 │  GPIO 18 → I2C_SCL   Pin 11        │          │  GPIO 37 → [PSRAM]     Pin 11│
 │  GPIO 8  → I2C_SDA   Pin 12        │          │  GPIO 36 → [PSRAM]     Pin 12│
-│  GPIO 3  → MCP0_INTA     Pin 13    │          │  GPIO 35 → [PSRAM]     Pin 13│
-│  GPIO 46 → MCP1_INTA     Pin 14    │          └──────────────────────────────┘
+│  (freed) → strapping Pin 13        │          │  GPIO 35 → [PSRAM]     Pin 13│
+│  (freed) → strapping Pin 14        │          └──────────────────────────────┘
 └────────────────────────────────────┘
 
 ┌─ SPI (SHIFT REGISTERS) ────────────┐          ┌─ MCP INT (Right Side) ───────┐
-│  GPIO 9  → SR_OE     Pin 15        │          │  GPIO 39 → MCP0_INTB   Pin 9 │
+│  GPIO 9  → SR_OE     Pin 15        │          │  GPIO 39 → MCP1_INTA   Pin 9 │
 │  GPIO 10 → SR_CS     Pin 16        │          │  GPIO 38 → MCP1_INTB   Pin 10│
-│  GPIO 11 → SR_MOSI   Pin 17        │          └──────────────────────────────┘
-│  GPIO 12 → SR_SCLK   Pin 18        │          ┌─ SPARE GPIOs ────────────────┐
-└────────────────────────────────────┘          │  GPIO 45 → SPARE       Pin 15│
-                                                │  GPIO 48 → SPARE       Pin 16│
-                                                │  GPIO 47 → SPARE       Pin 17│
+│  GPIO 11 → SR_MOSI   Pin 17        │          │  GPIO 48 → MCP0_INTB   Pin 16│
+│  GPIO 12 → SR_SCLK   Pin 18        │          │  GPIO 47 → MCP0_INTA   Pin 17│
+└────────────────────────────────────┘          └──────────────────────────────┘
+                                                ┌─ SPARE GPIOs ────────────────┐
+                                                │  GPIO 45 → SPARE       Pin 15│
+                                                │  GPIO 3  → (strapping) J1-13 │
+                                                │  GPIO 46 → (strapping) J1-14 │
                                                 └──────────────────────────────┘
 ┌─ OLED I2C1 (split across sides) ───┐
 │  GPIO 14 → OLED_SDA  Pin 20 (L)    │          ┌─ USB (FIXED) ────────────────┐
@@ -240,13 +242,14 @@ OTHER SIGNAL GROUPS
 | **Left (J1)** | 4-8 | Servo STEP | X, Y, Z, A, B step pulses |
 | **Left (J1)** | 9-10 | Stepper STEP | C, D step pulses |
 | **Left (J1)** | 11-12 | I2C Bus 0 | SCL, SDA |
-| **Left (J1)** | 13-14 | MCP INTA | MCP0_INTA, MCP1_INTA |
+| **Left (J1)** | 13-14 | (freed) | Strapping pins - now spare |
 | **Left (J1)** | 15-18 | SPI (Shift Reg) | OE, CS, MOSI, SCLK |
 | **Left (J1)** | 19 | Safety | E-stop input |
 | **Left (J1)** | 20 | OLED | I2C1 SDA |
 | **Right (J3)** | 4-8 | Z-Signals | X, Y, Z, A, B index pulses |
-| **Right (J3)** | 9-10 | MCP INTB | MCP0_INTB, MCP1_INTB |
-| **Right (J3)** | 15-17 | SPARE | 3 available GPIOs (45, 47, 48) |
+| **Right (J3)** | 9-10 | MCP1 INT | MCP1_INTA, MCP1_INTB |
+| **Right (J3)** | 15 | SPARE | GPIO45 (strapping, safe after boot) |
+| **Right (J3)** | 16-17 | MCP0 INT | MCP0_INTB (48), MCP0_INTA (47) |
 | **Right (J3)** | 18 | OLED | I2C1 SCL |
 
 ---
@@ -330,12 +333,12 @@ ALARM_CLEAR signals (outputs) are on **Shift Register chain** (bits 3, 7, 11, 15
 
 | Signal | GPIO | Side | Header Position | MCP Device | Port |
 |--------|------|------|-----------------|------------|------|
-| MCP0_INTA | GPIO3 | Left | J1-13 | MCP23017 #0 (0x20) | Port A (limits MIN/MAX X-A) |
-| MCP1_INTA | GPIO46 | Left | J1-14 | MCP23017 #1 (0x21) | Port A (ALARM_INPUT signals) |
-| MCP0_INTB | GPIO39 | Right | J3-9 | MCP23017 #0 (0x20) | Port B (limits MIN/MAX B-E) |
+| MCP0_INTA | GPIO47 | Right | J3-17 | MCP23017 #0 (0x20) | Port A (limits MIN/MAX X-A) |
+| MCP0_INTB | GPIO48 | Right | J3-16 | MCP23017 #0 (0x20) | Port B (limits MIN/MAX B-E) |
+| MCP1_INTA | GPIO39 | Right | J3-9 | MCP23017 #1 (0x21) | Port A (ALARM_INPUT signals) |
 | MCP1_INTB | GPIO38 | Right | J3-10 | MCP23017 #1 (0x21) | Port B (InPos signals) |
 
-> **Note:** MCP interrupts grouped by type: INTA lines on left side (J1-13, J1-14), INTB lines on right side (J3-9, J3-10). Both ports on both MCPs are inputs, so all 4 interrupt lines are active.
+> **Note:** MCP0 interrupts moved from GPIO3/GPIO46 (strapping pins) to GPIO47/GPIO48 to avoid boot mode conflicts. All 4 MCP interrupt lines are now on the right side (J3).
 
 ### I2C Bus 1 (OLED Display - Isolated)
 
@@ -363,13 +366,13 @@ ALARM_CLEAR signals (outputs) are on **Shift Register chain** (bits 3, 7, 11, 15
 
 | GPIO | Side | Header Position | Notes |
 |------|------|-----------------|-------|
-| GPIO43 | Right | J3-2 | UART0 TX (available if USB used for debug) |
-| GPIO44 | Right | J3-3 | UART0 RX (available if USB used for debug) |
+| GPIO43 | Right | J3-2 | UART0 TX (used for debug console output) |
+| GPIO44 | Right | J3-3 | UART0 RX (used for debug console input) |
 | GPIO45 | Right | J3-15 | Strapping pin (safe after boot) |
-| GPIO47 | Right | J3-17 | Previously MCP2_INTB - now spare |
-| GPIO48 | Right | J3-16 | Previously MCP2_INTA - now spare |
+| GPIO3 | Left | J1-13 | Strapping pin - freed from MCP0_INTA (use with caution) |
+| GPIO46 | Left | J1-14 | Strapping pin - freed from MCP0_INTB (input-only) |
 
-> **Note:** GPIO47 and GPIO48 were freed by consolidating from 3 MCPs to 2 MCPs. All outputs moved to shift registers.
+> **Note:** GPIO3 and GPIO46 were freed by moving MCP0 interrupts to GPIO47/GPIO48 to avoid boot mode conflicts caused by external pull-ups on strapping pins.
 
 ---
 
@@ -382,11 +385,11 @@ Available: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 21,
            38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48
 
 Reserved:  19, 20 (USB), 22-25 (N/A), 26-37 (Flash/PSRAM)
-Strapping: 0, 3, 45, 46 (use with caution)
+Strapping: 0, 3, 45, 46 (use with caution - GPIO3/46 now spare)
 
 Total Available: 30 GPIOs
-Total Used:      25 GPIOs
-Spare:           5 GPIOs (43, 44, 45, 47, 48)
+Total Used:      23 GPIOs (MCP0 INTs moved off strapping pins)
+Spare:           5 GPIOs (3, 45, 46 on left; 43, 44 for UART debug)
 ```
 
 ### Final GPIO Assignment Table
@@ -416,9 +419,9 @@ Spare:           5 GPIOs (43, 44, 45, 47, 48)
 | I2C_SCL | 18 | Left | J1-11 | I2C0_SCL | I2C Main |
 | I2C_SDA | 8 | Left | J1-12 | I2C0_SDA | I2C Main |
 | **MCP23017 Interrupts (4 lines)** |||||
-| MCP0_INTA | 3 | Left | J1-13 | GPIO Input | MCP #0 Port A |
-| MCP1_INTA | 46 | Left | J1-14 | GPIO Input | MCP #1 Port A |
-| MCP0_INTB | 39 | Right | J3-9 | GPIO Input | MCP #0 Port B |
+| MCP0_INTA | 47 | Right | J3-17 | GPIO Input | MCP #0 Port A |
+| MCP0_INTB | 48 | Right | J3-16 | GPIO Input | MCP #0 Port B |
+| MCP1_INTA | 39 | Right | J3-9 | GPIO Input | MCP #1 Port A |
 | MCP1_INTB | 38 | Right | J3-10 | GPIO Input | MCP #1 Port B |
 | **I2C Bus 1 (OLED)** |||||
 | OLED_SDA | 14 | Left | J1-20 | I2C1_SDA | I2C OLED |
@@ -753,14 +756,14 @@ All 5 servo axis InPos (In-Position) signals grouped on Port B, with spare input
 // ============================================================================
 // MCP23017 INTERRUPT LINES (4 GPIOs for 2 MCPs × 2 interrupts each)
 // ============================================================================
-// Grouped by MCP device: MCP0 on left side (J1), MCP1 on right side (J3)
-// Both MCPs are input-only, so all 4 interrupt lines are active
+// All MCP interrupts now on RIGHT side (J3) to avoid strapping pin conflicts
+// MCP0 moved from GPIO3/46 (strapping) to GPIO47/48 (non-strapping)
 
-// MCP0 interrupts - grouped on LEFT side (J1-13, J1-14)
-#define GPIO_MCP0_INTA      GPIO_NUM_3      // MCP #0 Port A (X-A limits) - J1-13
-#define GPIO_MCP0_INTB      GPIO_NUM_46     // MCP #0 Port B (B-E limits) - J1-14
+// MCP0 interrupts - moved to RIGHT side (J3-17, J3-16) to avoid boot issues
+#define GPIO_MCP0_INTA      GPIO_NUM_47     // MCP #0 Port A (X-A limits) - J3-17
+#define GPIO_MCP0_INTB      GPIO_NUM_48     // MCP #0 Port B (B-E limits) - J3-16
 
-// MCP1 interrupts - grouped on RIGHT side (J3-9, J3-10)
+// MCP1 interrupts - on RIGHT side (J3-9, J3-10)
 #define GPIO_MCP1_INTA      GPIO_NUM_39     // MCP #1 Port A (ALARM_INPUT) - J3-9
 #define GPIO_MCP1_INTB      GPIO_NUM_38     // MCP #1 Port B (InPos signals) - J3-10
 
@@ -784,11 +787,11 @@ All 5 servo axis InPos (In-Position) signals grouped on Port B, with spare input
 // ============================================================================
 // SPARE GPIOs (available for future use)
 // ============================================================================
-// GPIO43 - J3-2  (UART0 TX - available if USB used for debug)
-// GPIO44 - J3-3  (UART0 RX - available if USB used for debug)
+// GPIO43 - J3-2  (UART0 TX - used for debug console)
+// GPIO44 - J3-3  (UART0 RX - used for debug console)
 // GPIO45 - J3-15 (strapping pin, safe after boot)
-// GPIO47 - J3-17 (freed by consolidating to 2 MCPs)
-// GPIO48 - J3-16 (freed by consolidating to 2 MCPs)
+// GPIO3  - J1-13 (strapping pin - freed from MCP0_INTA, use with caution)
+// GPIO46 - J1-14 (strapping pin - freed from MCP0_INTB, input-only)
 
 #endif // CONFIG_GPIO_H
 ```
@@ -934,20 +937,21 @@ Pin 18:    OLED SCL → Display module
 
 - [x] All GPIO35-37 reserved for Octal PSRAM (not used)
 - [x] GPIO19-20 reserved for USB (not used for signals)
-- [x] Strapping pins (0, 3, 45, 46) used with caution
+- [x] Strapping pins (0, 3, 45, 46) NOT used for external signals (boot mode safe)
 - [x] JTAG pins (39-42) repurposed for signals
 - [x] Servo STEP outputs grouped (X,Y,Z,A,B on J1 pins 4-8)
 - [x] SPI signals grouped (J1 pins 15-18)
 - [x] I2C signals grouped (J1 pins 11-12)
-- [x] MCP INTA interrupts grouped (J1 pins 13-14)
-- [x] MCP INTB interrupts grouped (J3 pins 9-10)
+- [x] MCP0 interrupts on GPIO47/48 (moved off strapping pins GPIO3/46)
+- [x] MCP1 interrupts on GPIO39/38 (J3 pins 9-10)
+- [x] All 4 MCP interrupts now on right side (J3) for clean routing
 - [x] Z-signals grouped (J3 pins 4-8)
 - [x] Shift register bits organized by axis (4 bits each: DIR, EN, BRAKE, ALARM_CLR)
 - [x] 5x TPIC6B595N shift registers for all outputs (40 bits total)
 - [x] MCP23017 limit switches organized by axis pair
 - [x] MCP23017 consolidated to 2 devices (inputs only)
 - [x] Header defines match physical assignments
-- [x] Total GPIO usage within available count (23 used, 5 spare + 2 UART)
+- [x] Total GPIO usage within available count (23 used, 5 spare + 2 UART debug)
 
 ---
 
@@ -961,4 +965,4 @@ Pin 18:    OLED SCL → Display module
 ---
 
 _Document generated for YaRobot Control Unit architecture alignment_
-_Date: 2025-11-29_
+_Date: 2025-12-06 (Updated: MCP0 interrupts moved from GPIO3/46 to GPIO47/48)_

@@ -199,6 +199,54 @@ command_executor/command_executor.c.s:
 	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/control/CMakeFiles/__idf_control.dir/build.make esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/command_executor.c.s
 .PHONY : command_executor/command_executor.c.s
 
+command_executor/move_handler.obj: command_executor/move_handler.cpp.obj
+.PHONY : command_executor/move_handler.obj
+
+# target to build an object file
+command_executor/move_handler.cpp.obj:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/control/CMakeFiles/__idf_control.dir/build.make esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/move_handler.cpp.obj
+.PHONY : command_executor/move_handler.cpp.obj
+
+command_executor/move_handler.i: command_executor/move_handler.cpp.i
+.PHONY : command_executor/move_handler.i
+
+# target to preprocess a source file
+command_executor/move_handler.cpp.i:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/control/CMakeFiles/__idf_control.dir/build.make esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/move_handler.cpp.i
+.PHONY : command_executor/move_handler.cpp.i
+
+command_executor/move_handler.s: command_executor/move_handler.cpp.s
+.PHONY : command_executor/move_handler.s
+
+# target to generate assembly for a file
+command_executor/move_handler.cpp.s:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/control/CMakeFiles/__idf_control.dir/build.make esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/move_handler.cpp.s
+.PHONY : command_executor/move_handler.cpp.s
+
+command_executor/movr_handler.obj: command_executor/movr_handler.cpp.obj
+.PHONY : command_executor/movr_handler.obj
+
+# target to build an object file
+command_executor/movr_handler.cpp.obj:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/control/CMakeFiles/__idf_control.dir/build.make esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/movr_handler.cpp.obj
+.PHONY : command_executor/movr_handler.cpp.obj
+
+command_executor/movr_handler.i: command_executor/movr_handler.cpp.i
+.PHONY : command_executor/movr_handler.i
+
+# target to preprocess a source file
+command_executor/movr_handler.cpp.i:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/control/CMakeFiles/__idf_control.dir/build.make esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/movr_handler.cpp.i
+.PHONY : command_executor/movr_handler.cpp.i
+
+command_executor/movr_handler.s: command_executor/movr_handler.cpp.s
+.PHONY : command_executor/movr_handler.s
+
+# target to generate assembly for a file
+command_executor/movr_handler.cpp.s:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/control/CMakeFiles/__idf_control.dir/build.make esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/movr_handler.cpp.s
+.PHONY : command_executor/movr_handler.cpp.s
+
 command_executor/test_pulse_cmd.obj: command_executor/test_pulse_cmd.cpp.obj
 .PHONY : command_executor/test_pulse_cmd.obj
 
@@ -222,6 +270,54 @@ command_executor/test_pulse_cmd.s: command_executor/test_pulse_cmd.cpp.s
 command_executor/test_pulse_cmd.cpp.s:
 	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/control/CMakeFiles/__idf_control.dir/build.make esp-idf/control/CMakeFiles/__idf_control.dir/command_executor/test_pulse_cmd.cpp.s
 .PHONY : command_executor/test_pulse_cmd.cpp.s
+
+motion_controller/motion_controller.obj: motion_controller/motion_controller.cpp.obj
+.PHONY : motion_controller/motion_controller.obj
+
+# target to build an object file
+motion_controller/motion_controller.cpp.obj:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/control/CMakeFiles/__idf_control.dir/build.make esp-idf/control/CMakeFiles/__idf_control.dir/motion_controller/motion_controller.cpp.obj
+.PHONY : motion_controller/motion_controller.cpp.obj
+
+motion_controller/motion_controller.i: motion_controller/motion_controller.cpp.i
+.PHONY : motion_controller/motion_controller.i
+
+# target to preprocess a source file
+motion_controller/motion_controller.cpp.i:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/control/CMakeFiles/__idf_control.dir/build.make esp-idf/control/CMakeFiles/__idf_control.dir/motion_controller/motion_controller.cpp.i
+.PHONY : motion_controller/motion_controller.cpp.i
+
+motion_controller/motion_controller.s: motion_controller/motion_controller.cpp.s
+.PHONY : motion_controller/motion_controller.s
+
+# target to generate assembly for a file
+motion_controller/motion_controller.cpp.s:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/control/CMakeFiles/__idf_control.dir/build.make esp-idf/control/CMakeFiles/__idf_control.dir/motion_controller/motion_controller.cpp.s
+.PHONY : motion_controller/motion_controller.cpp.s
+
+motor_system/motor_system.obj: motor_system/motor_system.cpp.obj
+.PHONY : motor_system/motor_system.obj
+
+# target to build an object file
+motor_system/motor_system.cpp.obj:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/control/CMakeFiles/__idf_control.dir/build.make esp-idf/control/CMakeFiles/__idf_control.dir/motor_system/motor_system.cpp.obj
+.PHONY : motor_system/motor_system.cpp.obj
+
+motor_system/motor_system.i: motor_system/motor_system.cpp.i
+.PHONY : motor_system/motor_system.i
+
+# target to preprocess a source file
+motor_system/motor_system.cpp.i:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/control/CMakeFiles/__idf_control.dir/build.make esp-idf/control/CMakeFiles/__idf_control.dir/motor_system/motor_system.cpp.i
+.PHONY : motor_system/motor_system.cpp.i
+
+motor_system/motor_system.s: motor_system/motor_system.cpp.s
+.PHONY : motor_system/motor_system.s
+
+# target to generate assembly for a file
+motor_system/motor_system.cpp.s:
+	cd /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build && $(MAKE) $(MAKESILENT) -f esp-idf/control/CMakeFiles/__idf_control.dir/build.make esp-idf/control/CMakeFiles/__idf_control.dir/motor_system/motor_system.cpp.s
+.PHONY : motor_system/motor_system.cpp.s
 
 tasks/task_stubs.obj: tasks/task_stubs.c.obj
 .PHONY : tasks/task_stubs.obj
@@ -263,9 +359,21 @@ help:
 	@echo "... command_executor/command_executor.obj"
 	@echo "... command_executor/command_executor.i"
 	@echo "... command_executor/command_executor.s"
+	@echo "... command_executor/move_handler.obj"
+	@echo "... command_executor/move_handler.i"
+	@echo "... command_executor/move_handler.s"
+	@echo "... command_executor/movr_handler.obj"
+	@echo "... command_executor/movr_handler.i"
+	@echo "... command_executor/movr_handler.s"
 	@echo "... command_executor/test_pulse_cmd.obj"
 	@echo "... command_executor/test_pulse_cmd.i"
 	@echo "... command_executor/test_pulse_cmd.s"
+	@echo "... motion_controller/motion_controller.obj"
+	@echo "... motion_controller/motion_controller.i"
+	@echo "... motion_controller/motion_controller.s"
+	@echo "... motor_system/motor_system.obj"
+	@echo "... motor_system/motor_system.i"
+	@echo "... motor_system/motor_system.s"
 	@echo "... tasks/task_stubs.obj"
 	@echo "... tasks/task_stubs.i"
 	@echo "... tasks/task_stubs.s"

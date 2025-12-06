@@ -68,11 +68,11 @@ AC Input ──┬── 24V PSU ──┬── 24V Bus ──┬── Motor D
 ┌─────────────────────────────────────┐
 │ SERVO FEEDBACK INPUTS               │
 ├─────────────────────────────────────┤
-│ GPIO40 → X_Z_SIGNAL                │
-│ GPIO41 → Y_Z_SIGNAL                │
-│ GPIO42 → Z_Z_SIGNAL                │
-│ GPIO48 → A_Z_SIGNAL                │
-│ GPIO47 → B_Z_SIGNAL                │
+│ GPIO1  → X_Z_SIGNAL (J3-4)         │
+│ GPIO2  → Y_Z_SIGNAL (J3-5)         │
+│ GPIO42 → Z_Z_SIGNAL (J3-6)         │
+│ GPIO41 → A_Z_SIGNAL (J3-7)         │
+│ GPIO40 → B_Z_SIGNAL (J3-8)         │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
@@ -80,8 +80,11 @@ AC Input ──┬── 24V PSU ──┬── 24V Bus ──┬── Motor D
 ├─────────────────────────────────────┤
 │ GPIO8  → I2C_SDA                   │
 │ GPIO18 → I2C_SCL                   │
-│ GPIO3  → INT0 (MCP23017 #1)        │
-│ GPIO46 → INT1 (MCP23017 #2)        │
+│ GPIO47 → MCP0_INTA (MCP23017 #0)   │
+│ GPIO48 → MCP0_INTB (MCP23017 #0)   │
+│ GPIO39 → MCP1_INTA (MCP23017 #1)   │
+│ GPIO38 → MCP1_INTB (MCP23017 #1)   │
+│ NOTE: GPIO3/46 freed (strapping)   │
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐

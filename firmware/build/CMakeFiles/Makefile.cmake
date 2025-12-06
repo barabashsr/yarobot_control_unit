@@ -471,6 +471,7 @@ set(CMAKE_MAKEFILE_PRODUCTS
   "esp-idf/tpic6b595/CMakeFiles/CMakeDirectoryInformation.cmake"
   "esp-idf/position/CMakeFiles/CMakeDirectoryInformation.cmake"
   "esp-idf/pulse_gen/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "esp-idf/motor/CMakeFiles/CMakeDirectoryInformation.cmake"
   "esp-idf/control/CMakeFiles/CMakeDirectoryInformation.cmake"
   "esp-idf/espressif__cmake_utilities/CMakeFiles/CMakeDirectoryInformation.cmake"
   "esp-idf/espressif__i2c_bus/CMakeFiles/CMakeDirectoryInformation.cmake"
@@ -482,7 +483,6 @@ set(CMAKE_MAKEFILE_PRODUCTS
   "esp-idf/drivers/CMakeFiles/CMakeDirectoryInformation.cmake"
   "esp-idf/events/CMakeFiles/CMakeDirectoryInformation.cmake"
   "esp-idf/interface/CMakeFiles/CMakeDirectoryInformation.cmake"
-  "esp-idf/motor/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
@@ -633,9 +633,9 @@ set(CMAKE_DEPEND_INFO_FILES
   "esp-idf/tpic6b595/CMakeFiles/__idf_tpic6b595.dir/DependInfo.cmake"
   "esp-idf/position/CMakeFiles/__idf_position.dir/DependInfo.cmake"
   "esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/DependInfo.cmake"
+  "esp-idf/motor/CMakeFiles/__idf_motor.dir/DependInfo.cmake"
   "esp-idf/control/CMakeFiles/__idf_control.dir/DependInfo.cmake"
   "esp-idf/espressif__i2c_bus/CMakeFiles/__idf_espressif__i2c_bus.dir/DependInfo.cmake"
   "esp-idf/espressif__mcp23017/CMakeFiles/__idf_espressif__mcp23017.dir/DependInfo.cmake"
   "esp-idf/main/CMakeFiles/__idf_main.dir/DependInfo.cmake"
-  "esp-idf/motor/CMakeFiles/__idf_motor.dir/DependInfo.cmake"
   )

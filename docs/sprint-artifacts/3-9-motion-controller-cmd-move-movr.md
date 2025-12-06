@@ -1,6 +1,6 @@
 # Story 3.9: Motion Controller & CMD_MOVE/CMD_MOVR Commands
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -290,13 +290,46 @@ public:
 
 ### Agent Model Used
 
-{{agent_model_name_version}}
+Claude Opus 4.5 (claude-opus-4-5-20251101)
 
 ### Debug Log References
 
+- Build verification: `get_idf && idf.py build` - SUCCESS
+- Magic number grep check: No hardcoded values found in implementation files
+
 ### Completion Notes List
 
+1. **All Tasks 1-13 Completed**: MotionController class, MoveHandler, MovrHandler, and unit tests implemented
+2. **AC14 Verified**: Grep check confirms no magic numbers - all config values from headers
+3. **Build Successful**: Firmware compiles without errors
+
+**REVIEW FINDING - Integration Gap Identified:**
+
+The MotionController and command handlers are fully implemented and tested in isolation, but there is NO initialization/wiring code to connect them to the motor system. The following is missing and NOT covered by any existing story:
+
+- **Motor instantiation**: No code creates ServoMotor, StepperMotor, or DiscreteAxis instances in app_main()
+- **Pulse generator wiring**: Motors need IPulseGenerator implementations wired
+- **Position tracker wiring**: Motors need IPositionTracker implementations wired
+- **MotionController initialization**: `MotionController::init(motors)` never called
+- **Handler registration**: `move_handler_register()` and `movr_handler_register()` never called
+- **CommandDispatcher integration**: Handlers not registered with dispatcher
+
+**Recommendation**: Create a dedicated integration story (suggested: 3-12 or Epic 4 prerequisite) to wire all motor system components together in app_main() or a dedicated init module. This is required before hardware testing can occur.
+
 ### File List
+
+**Created:**
+- `firmware/components/control/motion_controller/include/motion_controller.h`
+- `firmware/components/control/motion_controller/motion_controller.cpp`
+- `firmware/components/control/command_executor/include/move_handler.h`
+- `firmware/components/control/command_executor/move_handler.cpp`
+- `firmware/components/control/command_executor/include/movr_handler.h`
+- `firmware/components/control/command_executor/movr_handler.cpp`
+- `firmware/components/control/motion_controller/test/test_motion_controller.cpp`
+- `firmware/components/control/command_executor/test/test_move_handler.cpp`
+
+**Modified:**
+- `firmware/components/control/CMakeLists.txt` - Added new source files
 
 ---
 
@@ -305,3 +338,4 @@ public:
 | Date | Author | Change |
 |------|--------|--------|
 | 2025-12-06 | SM Agent (Bob) | Initial story draft for motion controller and MOVE/MOVR commands |
+| 2025-12-06 | Dev Agent (Claude Opus 4.5) | Implementation complete, moved to review. Identified integration gap - motor system wiring not covered by any story |

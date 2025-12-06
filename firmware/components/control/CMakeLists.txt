@@ -8,9 +8,15 @@ idf_component_register(
         "tasks/task_stubs.c"
         "command_executor/command_executor.c"
         "command_executor/test_pulse_cmd.cpp"
+        "command_executor/move_handler.cpp"
+        "command_executor/movr_handler.cpp"
+        "motion_controller/motion_controller.cpp"
+        "motor_system/motor_system.cpp"
     INCLUDE_DIRS
         "tasks/include"
         "command_executor/include"
+        "motion_controller/include"
+        "motor_system/include"
     REQUIRES
         config
         command_parser
@@ -20,6 +26,7 @@ idf_component_register(
         usb_cdc
         pulse_gen
         position
+        motor
     PRIV_REQUIRES
         esp_tinyusb
         esp_timer

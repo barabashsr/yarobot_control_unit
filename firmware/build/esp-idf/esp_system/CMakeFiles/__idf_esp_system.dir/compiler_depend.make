@@ -654,11 +654,9 @@ esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/panic.c.obj: /Users/sergeybar
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/esp32s3/include/hal/mwdt_ll.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/esp32s3/include/hal/rwdt_ll.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/esp32s3/include/hal/uart_ll.h \
-  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/esp32s3/include/hal/usb_serial_jtag_ll.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/timer_hal.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/uart_hal.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/uart_types.h \
-  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/usb_serial_jtag_types.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/wdt_hal.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/wdt_types.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/platform_port/include/hal/assert.h \
@@ -685,8 +683,6 @@ esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/panic.c.obj: /Users/sergeybar
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/timer_group_struct.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/uart_reg.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/uart_struct.h \
-  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/usb_serial_jtag_reg.h \
-  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/usb_serial_jtag_struct.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/include/soc/regdma.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/include/soc/rtc_cntl_periph.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/include/soc/wdt_periph.h \
@@ -3179,9 +3175,15 @@ esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/xt_wdt.c.obj: /Users/sergeyba
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_system/port/soc/esp32s3/reset_reason.c:
 
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/usb_serial_jtag_reg.h:
+
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/i2s_reg.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/sys/select.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/usb_serial_jtag_struct.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/usb_serial_jtag_types.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/time.h:
 
@@ -3319,7 +3321,21 @@ esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/xt_wdt.c.obj: /Users/sergeyba
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_hw_support/include/esp_private/rtc_ctrl.h:
 
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_bit_defs.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_hw_support/include/esp_private/regi2c_ctrl.h:
+
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/bootloader_support/bootloader_flash/include/bootloader_flash_override.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/queue.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/regi2c_brownout.h:
+
+/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/lib/gcc/xtensa-esp-elf/14.2.0/include/stdint.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log_buffer.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/bootloader_support/bootloader_flash/include/bootloader_flash.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_system/port/brownout.c:
 
@@ -3372,12 +3388,6 @@ esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/xt_wdt.c.obj: /Users/sergeyba
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/include/soc/efuse_periph.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_system/port/arch/xtensa/debug_helpers.c:
-
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/usb_serial_jtag_reg.h:
-
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_system/freertos_hooks.c:
-
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/esp32s3/include/hal/usb_serial_jtag_ll.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/timespec.h:
 
@@ -3441,16 +3451,6 @@ esp-idf/esp_system/CMakeFiles/__idf_esp_system.dir/xt_wdt.c.obj: /Users/sergeyba
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_system/port/include/port/panic_funcs.h:
 
-/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/queue.h:
-
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/regi2c_brownout.h:
-
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/bootloader_support/bootloader_flash/include/bootloader_flash.h:
-
-/Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/lib/gcc/xtensa-esp-elf/14.2.0/include/stdint.h:
-
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log_buffer.h:
-
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_system/include/esp_ipc_isr.h:
@@ -3492,10 +3492,6 @@ config/sdkconfig.h:
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa_context.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_system/port/arch/xtensa/expression_with_stack.c:
-
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/usb_serial_jtag_struct.h:
-
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/usb_serial_jtag_types.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/include/xtensa_config.h:
 
@@ -3671,6 +3667,10 @@ config/sdkconfig.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_hw_support/include/esp_intr_alloc.h:
 
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/esp32s3/include/hal/usb_serial_jtag_ll.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_system/freertos_hooks.c:
+
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/strings.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/_stdint.h:
@@ -3686,10 +3686,6 @@ config/sdkconfig.h:
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/setjmp.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/wdt_types.h:
-
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_hw_support/include/esp_private/regi2c_ctrl.h:
-
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_bit_defs.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_hw_support/include/soc/esp32s3/soc_memprot_types.h:
 

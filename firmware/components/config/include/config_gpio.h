@@ -131,11 +131,13 @@
  * @{
  */
 
-/** @brief MCP23017 #0 Port A interrupt (X-A limits) - J1 pin 13 */
-#define GPIO_MCP0_INTA      GPIO_NUM_3
+/** @brief MCP23017 #0 Port A interrupt (X-A limits) - J3 pin 17
+ *  @note Moved from GPIO3 (strapping pin) to avoid boot mode conflicts */
+#define GPIO_MCP0_INTA      GPIO_NUM_47
 
-/** @brief MCP23017 #0 Port B interrupt (B-E limits) - J1 pin 14 */
-#define GPIO_MCP0_INTB      GPIO_NUM_46
+/** @brief MCP23017 #0 Port B interrupt (B-E limits) - J3 pin 16
+ *  @note Moved from GPIO46 (strapping pin) to avoid boot mode conflicts */
+#define GPIO_MCP0_INTB      GPIO_NUM_48
 
 /** @brief MCP23017 #1 Port A interrupt (ALARM_INPUT) - J3 pin 9 */
 #define GPIO_MCP1_INTA      GPIO_NUM_39

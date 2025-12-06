@@ -12,6 +12,7 @@
 #include "task_defs.h"
 #include "usb_cdc.h"
 #include "config_limits.h"
+#include "config_timing.h"
 #include "command_executor.h"
 #include "command_parser.h"
 #include "freertos/FreeRTOS.h"
@@ -28,6 +29,9 @@
 
 // STORY-3-2-TEST: Remove this include and registration call after hardware verification
 #include "test_pulse_cmd.h"
+
+// Motor system integration (Story 3-9b)
+#include "motor_system.h"
 
 static const char* TAG = "tasks";
 
@@ -176,6 +180,15 @@ static void process_command(char* cmd)
 
             // STORY-3-2-TEST: Register PULSE test command - remove after hardware verification
             register_pulse_test_command();
+
+            // Initialize motor system (Story 3-9b)
+            // This creates all pulse generators, trackers, motors, and registers MOVE/MOVR handlers
+            esp_err_t motor_ret = motor_system_init();
+            if (motor_ret != ESP_OK) {
+                ESP_LOGW(TAG, "Motor system init failed: %s - motion commands unavailable",
+                         esp_err_to_name(motor_ret));
+                // Continue in degraded mode - basic commands still work
+            }
         } else {
             ESP_LOGE(TAG, "Failed to initialize command executor");
             send_response("ERROR E010 Configuration error");
@@ -301,8 +314,13 @@ void motion_task(void* arg)
              pcTaskGetName(NULL), axis, xPortGetCoreID());
 
     for (;;) {
-        // Placeholder - real implementation in Epic 3
-        vTaskDelay(pdMS_TO_TICKS(1000));
+        // Call motor system update for this axis
+        // This handles streaming buffer refills and profile updates
+        motor_system_update((uint8_t)axis);
+
+        // Yield to other motion tasks - motion updates are handled by
+        // pulse generator internal tasks, this task monitors state
+        vTaskDelay(pdMS_TO_TICKS(PERIOD_MOTION_UPDATE_MS));
     }
 }
 
