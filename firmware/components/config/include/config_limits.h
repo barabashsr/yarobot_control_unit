@@ -250,6 +250,14 @@
 #define LIMIT_RMT_DIR_SETUP_US          20
 
 /**
+ * @brief Minimum commands to keep in queue
+ *
+ * At low frequencies (250Hz), each command takes ~4ms.
+ * Keep at least 10 commands queued to prevent underrun.
+ */
+#define LIMIT_RMT_MIN_QUEUE_CMDS        10
+
+/**
  * @brief PCNT high limit for overflow detection
  *
  * ESP32-S3 PCNT is 16-bit signed (-32768 to +32767).

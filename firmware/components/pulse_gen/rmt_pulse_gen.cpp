@@ -303,10 +303,17 @@ void RmtPulseGenerator::fillQueue()
 
     int cmds_added = 0;
 
+    // Calculate current queue depth
+    uint8_t rp = read_idx_.load(std::memory_order_acquire);
+    uint8_t wp = write_idx_.load(std::memory_order_acquire);
+    uint8_t queue_depth = (wp - rp) & LIMIT_RMT_QUEUE_LEN_MASK;
+
     // Fill queue while space available and motion not complete
     while (queueSpace() > 0 && ramp_state_ != RampState::IDLE) {
-        // Check forward planning limit
-        if (ticksInQueue() >= LIMIT_RMT_FORWARD_PLANNING_TICKS) {
+        // Only apply ticks limit if we have minimum commands queued
+        // This prevents underrun at low frequencies where each command has many ticks
+        if (queue_depth >= LIMIT_RMT_MIN_QUEUE_CMDS &&
+            ticksInQueue() >= LIMIT_RMT_FORWARD_PLANNING_TICKS) {
             break;
         }
 
@@ -320,6 +327,7 @@ void RmtPulseGenerator::fillQueue()
 
         pushCommand(cmd);
         cmds_added++;
+        queue_depth++;  // Track queue depth as we add
 
         if (cmds_added <= 3) {
             ESP_LOGW(TAG, "DEBUG fillQueue cmd[%d]: ticks=%u, steps=%u, flags=0x%02X",
@@ -386,12 +394,14 @@ StepCommand RmtPulseGenerator::generateNextCommand()
             }
 
             // Convert to ticks
-            current_velocity_ = velocity;
-            if (velocity > 0) {
-                current_ticks_ = LIMIT_RMT_RESOLUTION_HZ / static_cast<uint32_t>(velocity);
-            } else {
-                current_ticks_ = LIMIT_RMT_MIN_CMD_TICKS;
+            // Clamp velocity to minimum starting frequency to avoid zero-velocity burst
+            // Min freq = 16MHz / 65535 = 244 Hz (uint16_t ticks limit)
+            static constexpr float MIN_START_FREQ_HZ = 250.0f;
+            if (velocity < MIN_START_FREQ_HZ) {
+                velocity = MIN_START_FREQ_HZ;
             }
+            current_velocity_ = velocity;
+            current_ticks_ = LIMIT_RMT_RESOLUTION_HZ / static_cast<uint32_t>(velocity);
 
             // Calculate steps for this command
             uint8_t steps = calculateStepsForLatency(current_ticks_);
@@ -696,6 +706,15 @@ size_t RmtPulseGenerator::fillSymbols(rmt_symbol_word_t* symbols, StepCommand* c
 
     // Update command or advance to next
     uint8_t remaining = steps - steps_to_do;
+
+    // Decrement ticks_queued for consumed steps (ISR context - simple decrement OK)
+    uint32_t consumed_ticks = static_cast<uint32_t>(ticks) * steps_to_do;
+    if (queue_end_.ticks_queued >= consumed_ticks) {
+        queue_end_.ticks_queued -= consumed_ticks;
+    } else {
+        queue_end_.ticks_queued = 0;
+    }
+
     if (remaining == 0) {
         // Command fully consumed - advance read index
         read_idx_.store((read_idx_.load(std::memory_order_relaxed) + 1) & LIMIT_RMT_QUEUE_LEN_MASK,

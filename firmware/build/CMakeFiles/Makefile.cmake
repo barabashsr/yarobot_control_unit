@@ -207,6 +207,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/Users/sergeybarabash/robo/esp/v5.4/esp-idf/tools/kconfig_new/confgen.py"
   "/Users/sergeybarabash/robo/esp/v5.4/esp-idf/tools/kconfig_new/config.env.in"
   "/Users/sergeybarabash/robo/yarobot_control_unit/.git/HEAD"
+  "/Users/sergeybarabash/robo/yarobot_control_unit/.git/refs/heads/main"
   "/Users/sergeybarabash/robo/yarobot_control_unit/firmware/CMakeLists.txt"
   "CMakeFiles/4.1.0/CMakeASMCompiler.cmake"
   "CMakeFiles/4.1.0/CMakeCCompiler.cmake"
