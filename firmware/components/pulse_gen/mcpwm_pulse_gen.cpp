@@ -460,11 +460,13 @@ void McpwmPulseGenerator::updateProfile()
 esp_err_t McpwmPulseGenerator::startMove(int32_t pulses, float max_velocity, float acceleration)
 {
     if (!initialized_) {
+        ESP_LOGE(TAG, "DEBUG startMove: NOT INITIALIZED!");
         return ESP_ERR_INVALID_STATE;
     }
 
     // Validate parameters
     if (pulses == 0) {
+        ESP_LOGW(TAG, "DEBUG startMove: pulses=0, nothing to do");
         return ESP_OK;  // Nothing to do
     }
     if (max_velocity <= 0 || max_velocity > LIMIT_MAX_PULSE_FREQ_HZ) {
@@ -481,7 +483,7 @@ esp_err_t McpwmPulseGenerator::startMove(int32_t pulses, float max_velocity, flo
     direction_ = (pulses > 0);
     int32_t abs_pulses = std::abs(pulses);
 
-    ESP_LOGD(TAG, "startMove: pulses=%ld, max_vel=%.1f, accel=%.1f, dir=%s",
+    ESP_LOGW(TAG, "DEBUG startMove: pulses=%ld, max_vel=%.1f Hz, accel=%.1f, dir=%s",
              (long)pulses, max_velocity, acceleration, direction_ ? "FWD" : "REV");
 
     // Set direction via shift register if direction changed
@@ -499,6 +501,9 @@ esp_err_t McpwmPulseGenerator::startMove(int32_t pulses, float max_velocity, flo
     // Calculate trapezoidal profile
     mode_ = McpwmMotionMode::POSITION;
     calculateTrapezoidalProfile(abs_pulses, max_velocity, acceleration);
+    ESP_LOGW(TAG, "DEBUG startMove: profile calculated: accel=%ld, cruise=%ld, decel=%ld, cruise_vel=%.1f",
+             (long)profile_.accel_pulses, (long)profile_.cruise_pulses,
+             (long)profile_.decel_pulses, profile_.cruise_velocity);
 
     // Reset counters
     pulse_count_.store(0, std::memory_order_relaxed);
@@ -508,10 +513,12 @@ esp_err_t McpwmPulseGenerator::startMove(int32_t pulses, float max_velocity, flo
     profile_.current_velocity = LIMIT_MIN_PULSE_FREQ_HZ;
 
     // Clear and restart PCNT
+    ESP_LOGW(TAG, "DEBUG startMove: stopping and clearing PCNT");
     pcnt_unit_stop(pcnt_unit_);
     pcnt_unit_clear_count(pcnt_unit_);
 
     // Configure PCNT watch point for target pulse count
+    ESP_LOGW(TAG, "DEBUG startMove: configuring PCNT watch point for %ld pulses", (long)abs_pulses);
     esp_err_t ret = configurePcntWatchPoint(abs_pulses);
     if (ret != ESP_OK) {
         ESP_LOGE(TAG, "Failed to configure PCNT watch point: %s", esp_err_to_name(ret));
@@ -521,10 +528,16 @@ esp_err_t McpwmPulseGenerator::startMove(int32_t pulses, float max_velocity, flo
     pcnt_unit_start(pcnt_unit_);
 
     // Set initial frequency (low for ramp-up)
-    setFrequency(LIMIT_MIN_PULSE_FREQ_HZ);
+    ESP_LOGW(TAG, "DEBUG startMove: setting initial freq=%d Hz", LIMIT_MIN_PULSE_FREQ_HZ);
+    ret = setFrequency(LIMIT_MIN_PULSE_FREQ_HZ);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "DEBUG startMove: setFrequency FAILED: %s", esp_err_to_name(ret));
+        return ret;
+    }
 
     // Start MCPWM timer
     state_.store(McpwmProfileState::ACCELERATING, std::memory_order_release);
+    ESP_LOGW(TAG, "DEBUG startMove: starting MCPWM timer");
     ret = mcpwm_timer_start_stop(timer_handle_, MCPWM_TIMER_START_NO_STOP);
     if (ret != ESP_OK) {
         state_.store(McpwmProfileState::IDLE, std::memory_order_release);
@@ -532,6 +545,7 @@ esp_err_t McpwmPulseGenerator::startMove(int32_t pulses, float max_velocity, flo
         return ret;
     }
 
+    ESP_LOGW(TAG, "DEBUG startMove: completed successfully");
     return ESP_OK;
 }
 
@@ -820,23 +834,36 @@ float McpwmPulseGenerator::velocityAtPosition(int64_t position) const
 
 esp_err_t McpwmPulseGenerator::setFrequency(float frequency)
 {
+    ESP_LOGW(TAG, "DEBUG setFrequency: input freq=%.1f Hz", frequency);
+
     if (frequency < LIMIT_MIN_PULSE_FREQ_HZ) {
+        ESP_LOGW(TAG, "DEBUG setFrequency: clamping from %.1f to %d (min)", frequency, LIMIT_MIN_PULSE_FREQ_HZ);
         frequency = LIMIT_MIN_PULSE_FREQ_HZ;
     }
     if (frequency > LIMIT_MAX_PULSE_FREQ_HZ) {
+        ESP_LOGW(TAG, "DEBUG setFrequency: clamping from %.1f to %d (max)", frequency, LIMIT_MAX_PULSE_FREQ_HZ);
         frequency = LIMIT_MAX_PULSE_FREQ_HZ;
     }
 
     uint32_t period_ticks = velocityToPeriodTicks(frequency);
+    ESP_LOGW(TAG, "DEBUG setFrequency: freq=%.1f Hz -> period_ticks=%lu (resolution=%d Hz)",
+             frequency, (unsigned long)period_ticks, MCPWM_RESOLUTION_HZ);
+
+    if (period_ticks == 0) {
+        ESP_LOGE(TAG, "DEBUG setFrequency: period_ticks=0 is INVALID!");
+        return ESP_ERR_INVALID_ARG;
+    }
 
     // Update timer period
     esp_err_t ret = mcpwm_timer_set_period(timer_handle_, period_ticks);
     if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "DEBUG setFrequency: mcpwm_timer_set_period FAILED: %s", esp_err_to_name(ret));
         return ret;
     }
 
     // Update comparator for 50% duty cycle
     uint32_t compare_value = (period_ticks * MCPWM_DUTY_CYCLE_PERCENT) / 100;
+    ESP_LOGW(TAG, "DEBUG setFrequency: compare_value=%lu (for %d%% duty)", (unsigned long)compare_value, MCPWM_DUTY_CYCLE_PERCENT);
     return mcpwm_comparator_set_compare_value(cmpr_handle_, compare_value);
 }
 
@@ -855,17 +882,34 @@ uint32_t McpwmPulseGenerator::velocityToPeriodTicks(float velocity) const
 
 esp_err_t McpwmPulseGenerator::configurePcntWatchPoint(int32_t target_pulses)
 {
-    // Remove existing watch points
-    pcnt_unit_remove_watch_point(pcnt_unit_, PCNT_HIGH_LIMIT);
+    ESP_LOGW(TAG, "DEBUG configurePcntWatchPoint: target=%ld, HIGH_LIMIT=%d",
+             (long)target_pulses, PCNT_HIGH_LIMIT);
+
+    // Remove existing watch points (ignore errors - may not exist)
+    esp_err_t ret = pcnt_unit_remove_watch_point(pcnt_unit_, PCNT_HIGH_LIMIT);
+    if (ret != ESP_OK && ret != ESP_ERR_INVALID_STATE) {
+        ESP_LOGW(TAG, "DEBUG configurePcntWatchPoint: remove old watch point returned: %s (ignoring)",
+                 esp_err_to_name(ret));
+    }
 
     // For targets <= PCNT_HIGH_LIMIT, set watch point directly
     if (target_pulses <= PCNT_HIGH_LIMIT) {
-        return pcnt_unit_add_watch_point(pcnt_unit_, static_cast<int>(target_pulses));
+        ESP_LOGW(TAG, "DEBUG configurePcntWatchPoint: adding direct watch point at %ld", (long)target_pulses);
+        ret = pcnt_unit_add_watch_point(pcnt_unit_, static_cast<int>(target_pulses));
+        if (ret != ESP_OK) {
+            ESP_LOGE(TAG, "DEBUG configurePcntWatchPoint: add_watch_point FAILED: %s", esp_err_to_name(ret));
+        }
+        return ret;
     }
 
     // For larger targets, use overflow tracking + final watch point
     // Set watch point at max limit; callback will handle overflow and final count
-    return pcnt_unit_add_watch_point(pcnt_unit_, PCNT_HIGH_LIMIT);
+    ESP_LOGW(TAG, "DEBUG configurePcntWatchPoint: adding overflow watch point at %d", PCNT_HIGH_LIMIT);
+    ret = pcnt_unit_add_watch_point(pcnt_unit_, PCNT_HIGH_LIMIT);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "DEBUG configurePcntWatchPoint: add_watch_point FAILED: %s", esp_err_to_name(ret));
+    }
+    return ret;
 }
 
 int64_t McpwmPulseGenerator::readPcntCount() const

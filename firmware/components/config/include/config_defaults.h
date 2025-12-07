@@ -72,12 +72,13 @@
 /**
  * @brief Default maximum velocity (deg/s)
  *
- * 3600 deg/s = 10 rev/s = 600 RPM
+ * 1080 deg/s = 3 rev/s = 180 RPM = 600 Hz pulse output
+ * (with 200 pulses/rev: 1080 * 200/360 = 600 Hz)
  */
-#define DEFAULT_MAX_VELOCITY        3600.0f
+#define DEFAULT_MAX_VELOCITY        1080.0f
 
 /** @brief Default maximum acceleration (deg/s^2) - reaches max velocity in 0.1s */
-#define DEFAULT_MAX_ACCELERATION    36000.0f
+#define DEFAULT_MAX_ACCELERATION    10800.0f
 
 /** @brief Default backlash compensation (meters) */
 #define DEFAULT_BACKLASH            0.0f

@@ -329,9 +329,14 @@ static bool hardware_init_and_verify(void)
         ESP_LOGW(TAG, "SPI init failed - continuing in degraded mode");
         all_ok = false;
     } else {
-        // Run TPIC6B595 visual blink test (500ms delay between patterns)
-        // This also initializes the SR driver and leaves it in safe state
-        tpic_blink_test(500);
+        // Initialize SR driver without running blink test
+        ret = sr_init();
+        if (ret != ESP_OK) {
+            ESP_LOGW(TAG, "SR init failed - continuing in degraded mode");
+            all_ok = false;
+        } else {
+            ESP_LOGI(TAG, "TPIC6B595 shift register initialized (test skipped)");
+        }
     }
 
     ESP_LOGI(TAG, "========================================");

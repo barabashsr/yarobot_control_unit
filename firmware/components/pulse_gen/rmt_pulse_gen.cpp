@@ -301,6 +301,8 @@ void RmtPulseGenerator::fillQueue()
         recalculateRamp();
     }
 
+    int cmds_added = 0;
+
     // Fill queue while space available and motion not complete
     while (queueSpace() > 0 && ramp_state_ != RampState::IDLE) {
         // Check forward planning limit
@@ -312,15 +314,28 @@ void RmtPulseGenerator::fillQueue()
 
         if (cmd.ticks == 0 && cmd.steps == 0) {
             // Motion complete
+            ESP_LOGW(TAG, "DEBUG fillQueue: motion complete, cmds_added=%d", cmds_added);
             break;
         }
 
         pushCommand(cmd);
+        cmds_added++;
+
+        if (cmds_added <= 3) {
+            ESP_LOGW(TAG, "DEBUG fillQueue cmd[%d]: ticks=%u, steps=%u, flags=0x%02X",
+                     cmds_added, cmd.ticks, cmd.steps, cmd.flags);
+        }
 
         if (cmd.flags & CMD_FLAG_LAST) {
+            ESP_LOGW(TAG, "DEBUG fillQueue: LAST flag set, total cmds=%d", cmds_added);
             ramp_state_ = RampState::IDLE;
             break;
         }
+    }
+
+    if (cmds_added > 0) {
+        ESP_LOGW(TAG, "DEBUG fillQueue: added %d cmds, queue_space=%u, ticks_in_queue=%lu",
+                 cmds_added, queueSpace(), (unsigned long)ticksInQueue());
     }
 }
 
@@ -333,6 +348,13 @@ StepCommand RmtPulseGenerator::generateNextCommand()
     float accel = params_.acceleration.load(std::memory_order_acquire);
     int32_t target_pos = params_.target_position.load(std::memory_order_acquire);
     bool position_mode = params_.position_mode.load(std::memory_order_acquire);
+
+    static int gen_call_count = 0;
+    gen_call_count++;
+    if (gen_call_count <= 5) {
+        ESP_LOGW(TAG, "DEBUG genCmd[%d]: target_vel=%.1f, accel=%.1f, target_pos=%ld, pos_mode=%d, ramp_state=%d",
+                 gen_call_count, target_vel, accel, (long)target_pos, position_mode, (int)ramp_state_);
+    }
 
     // Set direction flag
     if (direction_.load(std::memory_order_relaxed)) {
@@ -714,15 +736,17 @@ bool IRAM_ATTR RmtPulseGenerator::onTransmitDone(
 esp_err_t RmtPulseGenerator::startMove(int32_t pulses, float max_velocity, float acceleration)
 {
     if (!initialized_.load()) {
+        ESP_LOGE(TAG, "DEBUG startMove: NOT INITIALIZED!");
         return ESP_ERR_INVALID_STATE;
     }
 
     // Validate parameters
     if (pulses == 0) {
+        ESP_LOGW(TAG, "DEBUG startMove: pulses=0, nothing to do");
         return ESP_OK;  // Nothing to do
     }
     if (max_velocity <= 0 || max_velocity > LIMIT_MAX_PULSE_FREQ_HZ) {
-        ESP_LOGE(TAG, "Invalid velocity: %.1f", max_velocity);
+        ESP_LOGE(TAG, "Invalid velocity: %.1f (limit=%d)", max_velocity, LIMIT_MAX_PULSE_FREQ_HZ);
         return ESP_ERR_INVALID_ARG;
     }
     if (acceleration <= 0) {
@@ -730,7 +754,7 @@ esp_err_t RmtPulseGenerator::startMove(int32_t pulses, float max_velocity, float
         return ESP_ERR_INVALID_ARG;
     }
 
-    ESP_LOGD(TAG, "startMove: pulses=%ld, vel=%.1f, accel=%.1f",
+    ESP_LOGW(TAG, "DEBUG startMove: pulses=%ld, vel=%.1f Hz, accel=%.1f pulses/s^2",
              (long)pulses, max_velocity, acceleration);
 
     // Atomic profile replacement - works whether running or not
@@ -749,9 +773,12 @@ esp_err_t RmtPulseGenerator::startMove(int32_t pulses, float max_velocity, float
     // Determine ramp state
     if (running_.load(std::memory_order_acquire)) {
         // Already running - blend from current velocity
+        ESP_LOGW(TAG, "DEBUG startMove: blending into running motion");
         params_.params_changed.store(true, std::memory_order_release);
     } else {
         // Starting fresh
+        ESP_LOGW(TAG, "DEBUG startMove: starting fresh, dir=%s, abs_pulses=%ld",
+                 new_direction ? "FWD" : "REV", (long)abs_pulses);
         clearQueue();
         pulse_count_.store(0, std::memory_order_relaxed);
         current_velocity_ = 0.0f;
@@ -766,17 +793,22 @@ esp_err_t RmtPulseGenerator::startMove(int32_t pulses, float max_velocity, float
         // Set direction on position tracker before motion
         if (position_tracker_) {
             position_tracker_->setDirection(new_direction);
+            ESP_LOGW(TAG, "DEBUG startMove: position_tracker set direction=%s", new_direction ? "FWD" : "REV");
+        } else {
+            ESP_LOGW(TAG, "DEBUG startMove: NO position_tracker!");
         }
 
         // Start motion
         running_.store(true, std::memory_order_release);
         rmt_stopped_.store(false, std::memory_order_release);
+        ESP_LOGW(TAG, "DEBUG startMove: calling startRmtTransmission()");
         startRmtTransmission();
     }
 
     // Wake ramp task to process new profile immediately
     xSemaphoreGive(ramp_semaphore_);
 
+    ESP_LOGW(TAG, "DEBUG startMove: completed, running=%d", running_.load());
     return ESP_OK;
 }
 
@@ -896,8 +928,11 @@ void RmtPulseGenerator::stopImmediate()
 
 void RmtPulseGenerator::startRmtTransmission()
 {
+    ESP_LOGW(TAG, "DEBUG startRmtTransmission: filling initial queue");
     // Fill initial commands
     fillQueue();
+
+    ESP_LOGW(TAG, "DEBUG startRmtTransmission: queue filled, starting RMT transmit");
 
     // Start transmission with a dummy payload (encoder callback provides actual data)
     rmt_transmit_config_t tx_config = {
@@ -915,6 +950,8 @@ void RmtPulseGenerator::startRmtTransmission()
         ESP_LOGE(TAG, "Failed to start RMT transmission: %s", esp_err_to_name(ret));
         running_.store(false, std::memory_order_release);
         ramp_state_ = RampState::IDLE;
+    } else {
+        ESP_LOGW(TAG, "DEBUG startRmtTransmission: rmt_transmit() returned OK");
     }
 }
 

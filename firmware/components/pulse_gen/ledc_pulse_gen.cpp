@@ -316,11 +316,13 @@ void LedcPulseGenerator::handleProfileUpdate()
 esp_err_t LedcPulseGenerator::startMove(int32_t pulses, float max_velocity, float acceleration)
 {
     if (!initialized_) {
+        ESP_LOGE(TAG, "DEBUG startMove: NOT INITIALIZED!");
         return ESP_ERR_INVALID_STATE;
     }
 
     // Validate parameters
     if (pulses == 0) {
+        ESP_LOGW(TAG, "DEBUG startMove: pulses=0, nothing to do");
         return ESP_OK;  // Nothing to do
     }
     if (max_velocity <= 0 || max_velocity > LIMIT_LEDC_MAX_FREQ_HZ) {
@@ -337,7 +339,7 @@ esp_err_t LedcPulseGenerator::startMove(int32_t pulses, float max_velocity, floa
     direction_ = (pulses > 0);
     int32_t abs_pulses = std::abs(pulses);
 
-    ESP_LOGD(TAG, "startMove: pulses=%ld, max_vel=%.1f, accel=%.1f, dir=%s",
+    ESP_LOGW(TAG, "DEBUG startMove: pulses=%ld, max_vel=%.1f Hz, accel=%.1f, dir=%s",
              (long)pulses, max_velocity, acceleration, direction_ ? "FWD" : "REV");
 
     // Set direction via shift register if direction changed
@@ -364,22 +366,29 @@ esp_err_t LedcPulseGenerator::startMove(int32_t pulses, float max_velocity, floa
     // Set direction on PcntTracker before motion (hardware PCNT handles position)
     if (position_tracker_) {
         position_tracker_->setDirection(direction_);
+        ESP_LOGW(TAG, "DEBUG startMove: position_tracker set direction=%s", direction_ ? "FWD" : "REV");
+    } else {
+        ESP_LOGW(TAG, "DEBUG startMove: NO position_tracker!");
     }
 
     // Start output
     state_.store(LedcProfileState::ACCELERATING, std::memory_order_release);
+    ESP_LOGW(TAG, "DEBUG startMove: calling startPulseOutput()");
     esp_err_t ret = startPulseOutput();
     if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "DEBUG startMove: startPulseOutput() FAILED: %s", esp_err_to_name(ret));
         state_.store(LedcProfileState::IDLE, std::memory_order_release);
         return ret;
     }
 
+    ESP_LOGW(TAG, "DEBUG startMove: completed successfully");
     return ESP_OK;
 }
 
 esp_err_t LedcPulseGenerator::startVelocity(float velocity, float acceleration)
 {
     if (!initialized_) {
+        ESP_LOGE(TAG, "DEBUG startVelocity: NOT INITIALIZED!");
         return ESP_ERR_INVALID_STATE;
     }
 
@@ -663,6 +672,7 @@ esp_err_t LedcPulseGenerator::setFrequency(uint32_t frequency)
 
 esp_err_t LedcPulseGenerator::startPulseOutput()
 {
+    ESP_LOGW(TAG, "DEBUG startPulseOutput: setting initial freq=%d Hz", LIMIT_LEDC_MIN_FREQ_HZ);
     // Set initial frequency
     esp_err_t ret = setFrequency(LIMIT_LEDC_MIN_FREQ_HZ);
     if (ret != ESP_OK) {
@@ -672,6 +682,7 @@ esp_err_t LedcPulseGenerator::startPulseOutput()
 
     // Calculate 50% duty cycle value
     uint32_t duty = (1 << LEDC_RESOLUTION_BITS) * LEDC_DUTY_CYCLE_PERCENT / 100;
+    ESP_LOGW(TAG, "DEBUG startPulseOutput: setting duty=%lu (50%%)", (unsigned long)duty);
 
     // Set duty cycle
     ret = ledc_set_duty(LEDC_MODE_D, channel_, duty);
@@ -686,8 +697,13 @@ esp_err_t LedcPulseGenerator::startPulseOutput()
         return ret;
     }
 
+    // Check if profile timer is already running and stop it first
+    esp_timer_stop(profile_timer_);  // Ignore return code - may not be running
+
     // Start profile update timer (for velocity control and profile tracking)
     // Note: Actual position counting is done by hardware PCNT via internal loopback
+    ESP_LOGW(TAG, "DEBUG startPulseOutput: starting profile_timer (interval=%llu us)",
+             (unsigned long long)PROFILE_UPDATE_INTERVAL_US);
     ret = esp_timer_start_periodic(profile_timer_, PROFILE_UPDATE_INTERVAL_US);
     if (ret != ESP_OK) {
         ESP_LOGE(TAG, "Failed to start profile timer: %s", esp_err_to_name(ret));
@@ -696,6 +712,7 @@ esp_err_t LedcPulseGenerator::startPulseOutput()
         return ret;
     }
 
+    ESP_LOGW(TAG, "DEBUG startPulseOutput: completed successfully");
     return ESP_OK;
 }
 

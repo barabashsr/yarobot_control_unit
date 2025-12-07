@@ -103,10 +103,12 @@ esp_err_t MotorBase::init()
 
 esp_err_t MotorBase::moveAbsolute(float position, float velocity)
 {
+    ESP_LOGW(TAG, "DEBUG Axis %d: moveAbsolute(pos=%.4f, vel=%.4f)", axis_id_, position, velocity);
+
     // Check state
     AxisState current_state = state_.load(std::memory_order_acquire);
     if (current_state == AXIS_STATE_DISABLED) {
-        ESP_LOGW(TAG, "Axis %d: moveAbsolute rejected - axis disabled", axis_id_);
+        ESP_LOGW(TAG, "Axis %d: moveAbsolute rejected - axis disabled (state=%d)", axis_id_, current_state);
         return ESP_ERR_INVALID_STATE;
     }
 
@@ -120,9 +122,11 @@ esp_err_t MotorBase::moveAbsolute(float position, float velocity)
     // Clamp velocity to max
     velocity = std::fabs(velocity);
     velocity = std::min(velocity, config_.max_velocity);
+    ESP_LOGW(TAG, "DEBUG Axis %d: clamped velocity=%.4f (max=%.4f)", axis_id_, velocity, config_.max_velocity);
 
     // Get current position in SI units
     float current_pos = getPosition();
+    ESP_LOGW(TAG, "DEBUG Axis %d: current_pos=%.4f, target_pos=%.4f", axis_id_, current_pos, position);
 
     // Calculate delta and direction
     float delta = position - current_pos;
@@ -130,14 +134,15 @@ esp_err_t MotorBase::moveAbsolute(float position, float velocity)
 
     // Handle zero-distance move
     if (std::fabs(delta) < (1.0f / config_.getPulsesPerUnit())) {
-        ESP_LOGD(TAG, "Axis %d: target position already reached", axis_id_);
+        ESP_LOGW(TAG, "DEBUG Axis %d: target position already reached (delta=%.6f)", axis_id_, delta);
         return ESP_OK;
     }
 
     // Set direction via shift register
+    ESP_LOGW(TAG, "DEBUG Axis %d: setting direction=%s", axis_id_, forward ? "FWD" : "REV");
     esp_err_t err = setDirection(forward);
     if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Axis %d: failed to set direction", axis_id_);
+        ESP_LOGE(TAG, "Axis %d: failed to set direction: %s", axis_id_, esp_err_to_name(err));
         return err;
     }
 
@@ -150,21 +155,25 @@ esp_err_t MotorBase::moveAbsolute(float position, float velocity)
     float freq_hz = velocityToFrequency(velocity);
     float accel_pulses = accelerationToPulses(config_.max_acceleration);
 
+    ESP_LOGW(TAG, "DEBUG Axis %d: pulses_per_unit=%.2f, pulses=%ld, freq_hz=%.1f, accel=%.1f",
+             axis_id_, pulses_per_unit, (long)pulses, freq_hz, accel_pulses);
+
     // Set position tracker direction
     position_tracker_->setDirection(forward);
 
     // Start motion (blending handled by pulse generator)
+    ESP_LOGW(TAG, "DEBUG Axis %d: calling pulse_gen_->startMove(pulses=%ld, freq=%.1f, accel=%.1f)",
+             axis_id_, (long)(forward ? pulses : -pulses), freq_hz, accel_pulses);
     err = pulse_gen_->startMove(forward ? pulses : -pulses, freq_hz, accel_pulses);
     if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Axis %d: startMove failed", axis_id_);
+        ESP_LOGE(TAG, "Axis %d: startMove failed: %s", axis_id_, esp_err_to_name(err));
         return err;
     }
 
     // Update state
     state_.store(AXIS_STATE_MOVING, std::memory_order_release);
 
-    ESP_LOGD(TAG, "Axis %d: moveAbsolute to %.4f at %.3f m/s (%" PRId32 " pulses @ %.0f Hz)",
-             axis_id_, position, velocity, pulses, freq_hz);
+    ESP_LOGW(TAG, "DEBUG Axis %d: moveAbsolute completed, state=MOVING", axis_id_);
 
     return ESP_OK;
 }
@@ -178,23 +187,27 @@ esp_err_t MotorBase::moveRelative(float delta, float velocity)
 
 esp_err_t MotorBase::moveVelocity(float velocity)
 {
+    ESP_LOGW(TAG, "DEBUG Axis %d: moveVelocity(vel=%.4f)", axis_id_, velocity);
+
     // Check state
     AxisState current_state = state_.load(std::memory_order_acquire);
     if (current_state == AXIS_STATE_DISABLED) {
-        ESP_LOGW(TAG, "Axis %d: moveVelocity rejected - axis disabled", axis_id_);
+        ESP_LOGW(TAG, "Axis %d: moveVelocity rejected - axis disabled (state=%d)", axis_id_, current_state);
         return ESP_ERR_INVALID_STATE;
     }
 
     // Clamp velocity to +-max_velocity
     float sign = (velocity >= 0) ? 1.0f : -1.0f;
     velocity = std::min(std::fabs(velocity), config_.max_velocity) * sign;
+    ESP_LOGW(TAG, "DEBUG Axis %d: clamped velocity=%.4f (max=%.4f)", axis_id_, velocity, config_.max_velocity);
 
     bool forward = (velocity >= 0);
 
     // Set direction via shift register
+    ESP_LOGW(TAG, "DEBUG Axis %d: setting direction=%s", axis_id_, forward ? "FWD" : "REV");
     esp_err_t err = setDirection(forward);
     if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Axis %d: failed to set direction for velocity mode", axis_id_);
+        ESP_LOGE(TAG, "Axis %d: failed to set direction for velocity mode: %s", axis_id_, esp_err_to_name(err));
         return err;
     }
 
@@ -205,21 +218,24 @@ esp_err_t MotorBase::moveVelocity(float velocity)
     float freq_hz = velocityToFrequency(std::fabs(velocity));
     float accel_pulses = accelerationToPulses(config_.max_acceleration);
 
+    ESP_LOGW(TAG, "DEBUG Axis %d: freq_hz=%.1f, accel=%.1f", axis_id_, freq_hz, accel_pulses);
+
     // Set position tracker direction
     position_tracker_->setDirection(forward);
 
     // Start velocity mode
+    ESP_LOGW(TAG, "DEBUG Axis %d: calling pulse_gen_->startVelocity(freq=%.1f, accel=%.1f)",
+             axis_id_, forward ? freq_hz : -freq_hz, accel_pulses);
     err = pulse_gen_->startVelocity(forward ? freq_hz : -freq_hz, accel_pulses);
     if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Axis %d: startVelocity failed", axis_id_);
+        ESP_LOGE(TAG, "Axis %d: startVelocity failed: %s", axis_id_, esp_err_to_name(err));
         return err;
     }
 
     // Update state
     state_.store(AXIS_STATE_MOVING, std::memory_order_release);
 
-    ESP_LOGD(TAG, "Axis %d: moveVelocity at %.3f (%.0f Hz)",
-             axis_id_, velocity, freq_hz);
+    ESP_LOGW(TAG, "DEBUG Axis %d: moveVelocity completed, state=MOVING", axis_id_);
 
     return ESP_OK;
 }
