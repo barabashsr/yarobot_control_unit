@@ -1,0 +1,1246 @@
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x2b (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x15a0
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xd20
+load:0x403cb700,len:0x2ee4
+entry 0x403c8928
+[0;32mI (27) boot: ESP-IDF v5.4-dirty 2nd stage bootloader[0m
+[0;32mI (27) boot: compile time Dec  6 2025 20:10:08[0m
+[0;32mI (27) boot: Multicore bootloader[0m
+[0;32mI (27) boot: chip revision: v0.2[0m
+[0;32mI (30) boot: efuse block revision: v1.3[0m
+[0;32mI (34) boot.esp32s3: Boot SPI Speed : 80MHz[0m
+[0;32mI (38) boot.esp32s3: SPI Mode       : DIO[0m
+[0;32mI (41) boot.esp32s3: SPI Flash Size : 16MB[0m
+[0;32mI (45) boot: Enabling RNG early entropy source...[0m
+[0;32mI (50) boot: Partition Table:[0m
+[0;32mI (52) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (59) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (65) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (72) boot:  2 factory          factory app      00 00 00010000 00300000[0m
+[0;32mI (78) boot:  3 storage          Unknown data     01 82 00310000 00100000[0m
+[0;32mI (85) boot: End of partition table[0m
+[0;32mI (88) esp_image: segment 0: paddr=00010020 vaddr=3c040020 size=16dd8h ( 93656) map[0m
+[0;32mI (112) esp_image: segment 1: paddr=00026e00 vaddr=3fc97000 size=03738h ( 14136) load[0m
+[0;32mI (115) esp_image: segment 2: paddr=0002a540 vaddr=40374000 size=05ad8h ( 23256) load[0m
+[0;32mI (121) esp_image: segment 3: paddr=00030020 vaddr=42000020 size=3ccf0h (249072) map[0m
+[0;32mI (167) esp_image: segment 4: paddr=0006cd18 vaddr=40379ad8 size=0d500h ( 54528) load[0m
+[0;32mI (179) esp_image: segment 5: paddr=0007a220 vaddr=600fe100 size=0001ch (    28) load[0m
+[0;32mI (187) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (187) boot: Disabling RNG early entropy source...[0m
+[0;32mI (197) octal_psram: vendor id    : 0x0d (AP)[0m
+[0;32mI (197) octal_psram: dev id       : 0x02 (generation 3)[0m
+[0;32mI (198) octal_psram: density      : 0x03 (64 Mbit)[0m
+[0;32mI (200) octal_psram: good-die     : 0x01 (Pass)[0m
+[0;32mI (204) octal_psram: Latency      : 0x01 (Fixed)[0m
+[0;32mI (208) octal_psram: VCC          : 0x01 (3V)[0m
+[0;32mI (212) octal_psram: SRF          : 0x01 (Fast Refresh)[0m
+[0;32mI (217) octal_psram: BurstType    : 0x01 (Hybrid Wrap)[0m
+[0;32mI (222) octal_psram: BurstLen     : 0x01 (32 Byte)[0m
+[0;32mI (227) octal_psram: Readlatency  : 0x02 (10 cycles@Fixed)[0m
+[0;32mI (232) octal_psram: DriveStrength: 0x00 (1/1)[0m
+[0;32mI (236) esp_psram: Found 8MB PSRAM device[0m
+[0;32mI (240) esp_psram: Speed: 40MHz[0m
+[0;32mI (243) cpu_start: Multicore app[0m
+[0;32mI (977) esp_psram: SPI SRAM memory test OK[0m
+[0;32mI (985) cpu_start: Pro cpu start user code[0m
+[0;32mI (990) cpu_start: cpu freq: 240000000 Hz[0m
+[0;32mI (991) app_init: Application information:[0m
+[0;32mI (991) app_init: Project name:     yarobot_control_unit[0m
+[0;32mI (996) app_init: App version:      d7bc423-dirty[0m
+[0;32mI (1000) app_init: Compile time:     Dec  7 2025 20:02:39[0m
+[0;32mI (1005) app_init: ELF file SHA256:  6719bdc1c...[0m
+[0;32mI (1010) app_init: ESP-IDF:          v5.4-dirty[0m
+[0;32mI (1014) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (1018) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (1022) efuse_init: Chip rev:         v0.2[0m
+[0;32mI (1026) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (1032) heap_init: At 3FC9C978 len 0004CD98 (307 KiB): RAM[0m
+[0;32mI (1037) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM[0m
+[0;32mI (1043) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM[0m
+[0;32mI (1048) heap_init: At 600FE11C len 00001ECC (7 KiB): RTCRAM[0m
+[0;32mI (1053) esp_psram: Adding pool of 8192K of PSRAM memory to heap allocator[0m
+[0;32mI (1061) spi_flash: detected chip: boya[0m
+[0;32mI (1063) spi_flash: flash io: dio[0m
+[0;32mI (1067) sleep_gpio: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (1073) sleep_gpio: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (1080) main_task: Started on CPU0[0m
+[0;32mI (1083) esp_psram: Reserving pool of 32K of internal memory for DMA/internal allocations[0m
+[0;32mI (1091) main_task: Calling app_main()[0m
+[0;32mI (3094) main: Hello from app_main[0m
+[0;32mI (3094) main: PSRAM detected: 8388608 bytes (8.0 MB)[0m
+[0;32mI (3094) main: Firmware: YAROBOT_CONTROL_UNIT v1.0.0[0m
+[0;32mI (3095) main: Axes: 8 (Servos:5, Steppers:2, Discrete:1)[0m
+[0;32mI (3100) main: GPIO X_STEP: 4, I2C MCP0: 0x20[0m
+[0;32mI (3104) main: Initializing USB CDC interface...[0m
+[0;32mI (3109) usb_cdc: Initializing USB CDC interface[0m
+[0;33mW (3113) tusb_desc: No Device descriptor provided, using default.[0m
+[0;33mW (3119) tusb_desc: No FullSpeed configuration descriptor provided, using default.[0m
+[0;33mW (3126) tusb_desc: No String descriptors provided, using default.[0m
+[0;32mI (3132) tusb_desc: [0m
+┌─────────────────────────────────┐
+│  USB Device Descriptor Summary  │
+├───────────────────┬─────────────┤
+│bDeviceClass       │ 239         │
+├───────────────────┼─────────────┤
+│bDeviceSubClass    │ 2           │
+├───────────────────┼─────────────┤
+│bDeviceProtocol    │ 1           │
+├───────────────────┼─────────────┤
+│bMaxPacketSize0    │ 64          │
+├───────────────────┼─────────────┤
+│idVendor           │ 0x303a      │
+├───────────────────┼─────────────┤
+│idProduct          │ 0x4001      │
+├───────────────────┼─────────────┤
+│bcdDevice          │ 0x100       │
+├───────────────────┼─────────────┤
+│iManufacturer      │ 0x1         │
+├───────────────────┼─────────────┤
+│iProduct           │ 0x2         │
+├───────────────────┼─────────────┤
+│iSerialNumber      │ 0x3         │
+├───────────────────┼─────────────┤
+│bNumConfigurations │ 0x1         │
+└───────────────────┴─────────────┘
+[0;32mI (3300) TinyUSB: TinyUSB Driver installed[0m
+[0;32mI (3303) usb_cdc: USB CDC initialized successfully[0m
+[0;32mI (3307) main: USB CDC initialized successfully[0m
+[0;32mI (3312) main: ========================================[0m
+[0;32mI (3317) main: Hardware Initialization Starting[0m
+[0;32mI (3321) main: ========================================[0m
+[0;32mI (3326) gpio_hal: Initializing GPIO HAL[0m
+[0;32mI (3330) gpio: GPIO[4]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3338) gpio: GPIO[5]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3346) gpio: GPIO[6]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3355) gpio: GPIO[7]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3363) gpio: GPIO[15]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3371) gpio: GPIO[16]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3380) gpio: GPIO[17]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3388) gpio: GPIO[13]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3397) gpio: GPIO[1]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3405) gpio: GPIO[2]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3413) gpio: GPIO[40]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3422) gpio: GPIO[41]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3430) gpio: GPIO[42]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3438) gpio: GPIO[38]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3447) gpio: GPIO[39]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3455) gpio: GPIO[47]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3464) gpio: GPIO[48]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3472) gpio_hal: GPIO HAL initialized successfully[0m
+[0;32mI (3477) i2c_hal: Initializing I2C0: SDA=8, SCL=18, freq=400000 Hz[0m
+[0;32mI (3483) i2c_hal: I2C0 initialized successfully[0m
+[0;32mI (3487) main: MCP23017 #0 (0x20) IODIR_A=0xFF[0m
+[0;32mI (3491) main: MCP23017 #1 (0x21) IODIR_A=0xFF[0m
+[0;32mI (3495) i2c_hal: Initializing I2C1: SDA=14, SCL=21, freq=400000 Hz[0m
+[0;32mI (3502) i2c_hal: I2C1 initialized successfully[0m
+[0;32mI (3533) main: OLED initialized with test pattern[0m
+[0;32mI (3533) i2c_hal: Scanning I2C0 bus...[0m
+[0;32mI (3537) i2c_hal: I2C0: Found device at 0x20[0m
+[0;32mI (3537) i2c_hal: I2C0: Found device at 0x21[0m
+[0;32mI (3550) i2c_hal: I2C0 scan complete: 2 device(s) found[0m
+[0;32mI (3550) main: I2C bus isolation verified: I2C0 still operational[0m
+[0;32mI (3550) spi_hal: Initializing SPI1: MOSI=11, SCLK=12, CS=10[0m
+[0;32mI (3556) gpio: GPIO[9]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3563) spi_hal: SPI initialized successfully, OE pin=9 (disabled)[0m
+[0;32mI (3569) tpic6b595: Initializing TPIC6B595 driver[0m
+[0;32mI (3574) spi_hal: SR outputs ENABLED[0m
+[0;32mI (3577) tpic6b595: TPIC6B595 driver initialized, 40-bit chain ready[0m
+[0;32mI (3583) main: TPIC6B595 shift register initialized (test skipped)[0m
+[0;32mI (3589) main: ========================================[0m
+[0;32mI (3594) main: Hardware Initialization: ALL PASSED[0m
+[0;32mI (3598) main: ========================================[0m
+[0;32mI (3603) main: Creating FreeRTOS tasks...[0m
+[0;32mI (3607) tasks: Task safety started on core 0[0m
+[0;32mI (3611) tasks: Task usb_rx started on core 0[0m
+[0;32mI (3615) tasks: Task usb_tx started on core 0[0m
+[0;32mI (3619) tasks: Task cmd_exec started on core 0[0m
+[0;32mI (3624) tasks: Task i2c_mon started on core 0[0m
+[0;32mI (3628) tasks: Task idle_mon started on core 0[0m
+[0;32mI (3632) tasks: Task motion_X (axis 0) started on core 1[0m
+[0;32mI (3633) tasks: Task motion_B (axis 4) started on core 1[0m
+[0;32mI (3632) tasks: Task motion_Z (axis 2) started on core 1[0m
+[0;32mI (3633) tasks: Task motion_C (axis 5) started on core 1[0m
+[0;32mI (3632) tasks: Task motion_Y (axis 1) started on core 1[0m
+[0;32mI (3633) tasks: Task motion_D (axis 6) started on core 1[0m
+[0;32mI (3632) tasks: Task motion_A (axis 3) started on core 1[0m
+[0;32mI (3633) tasks: Task motion_E (axis 7) started on core 1[0m
+[0;32mI (3632) main: YaRobot Control Unit - All tasks started[0m
+[0;32mI (3672) tasks: Task display started on core 1[0m
+[0;32mI (3677) main_task: Returned from app_main()[0m
+[0;32mI (10789) usb_cdc: USB CDC connected (DTR=1, RTS=1)[0m
+[0;32mI (10815) tasks: USB CDC connection state: connected[0m
+[0;32mI (17654) CMD_EXEC: Initialized with 4 built-in commands[0m
+[0;32mI (17654) EVENT_MGR: Event processor task started[0m
+[0;32mI (17654) EVENT_MGR: Initialized (queue=32, max_subs=8)[0m
+[0;32mI (17657) tasks: Command executor initialized[0m
+[0;32mI (17661) motor_system: ========================================[0m
+[0;32mI (17667) motor_system: Motor System Initialization Starting[0m
+[0;32mI (17672) motor_system: ========================================[0m
+[0;33mW (17678) tpic6b595: Already initialized[0m
+[0;32mI (17682) motor_system: Axis configurations initialized[0m
+[0;32mI (17687) RMT_PULSE: Initializing RMT channel 0 on GPIO 4 (step)[0m
+[0;32mI (17693) RMT_PULSE: RMT channel 0 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (17700) RMT_PULSE: Initializing RMT channel 1 on GPIO 6 (step)[0m
+[0;32mI (17706) RMT_PULSE: RMT channel 1 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (17713) RMT_PULSE: Initializing RMT channel 2 on GPIO 7 (step)[0m
+[0;32mI (17719) RMT_PULSE: RMT channel 2 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (17727) RMT_PULSE: Initializing RMT channel 3 on GPIO 15 (step)[0m
+[0;32mI (17733) RMT_PULSE: RMT channel 3 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (17740) MCPWM_PULSE: Initializing MCPWM timer 0 on GPIO 5 with PCNT unit 0[0m
+[0;32mI (17747) gpio: GPIO[5]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (17757) MCPWM_PULSE: MCPWM timer 0 with PCNT unit 0 initialized successfully[0m
+[0;32mI (17757) MCPWM_PULSE: Profile task started for timer 0[0m
+[0;32mI (17762) MCPWM_PULSE: Initializing MCPWM timer 1 on GPIO 16 with PCNT unit 1[0m
+[0;32mI (17774) gpio: GPIO[16]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (17720) RMT_PULSE: Ramp task started for channel 2[0m
+[0;32mI (17784) MCPWM_PULSE: Profile task started for timer 1[0m
+[0;32mI (17784) MCPWM_PULSE: MCPWM timer 1 with PCNT unit 1 initialized successfully[0m
+[0;32mI (17799) LEDC_PULSE: Initializing LEDC timer 2, channel 2 on GPIO 17[0m
+[0;32mI (17805) gpio: GPIO[17]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (17814) LEDC_PULSE: Configured GPIO 17 for PCNT internal loopback[0m
+[0;32mI (17694) RMT_PULSE: Ramp task started for channel 0[0m
+[0;32mI (17820) LEDC_PULSE: Completion task started for LEDC timer 2[0m
+[0;32mI (17820) LEDC_PULSE: LEDC timer 2 initialized successfully[0m
+[0;32mI (17835) motor_system: All pulse generators initialized[0m
+[0;32mI (17840) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (17845) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (17849) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (17854) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (17858) TIME_TRACKER: Time tracker initialized with travel time 1000 ms[0m
+[0;32mI (17865) motor_system: All position trackers initialized[0m
+[0;32mI (17870) motor_system: Pulse generators wired to position trackers[0m
+[0;32mI (17876) motor_system: Motor objects created[0m
+[0;32mI (17880) motor_base: Axis 0 initialized (0.556 pulses/unit)[0m
+[0;32mI (17886) motor_base: Axis 1 initialized (0.556 pulses/unit)[0m
+[0;32mI (17891) motor_base: Axis 2 initialized (0.556 pulses/unit)[0m
+[0;32mI (17896) motor_base: Axis 3 initialized (0.556 pulses/unit)[0m
+[0;32mI (17902) motor_base: Axis 4 initialized (0.556 pulses/unit)[0m
+[0;32mI (17907) motor_base: Axis 5 initialized (0.556 pulses/unit)[0m
+[0;32mI (17912) LEDC_PULSE: setPositionTracker: tracker=0x3fc9b834 (PcntTracker for hardware PCNT)[0m
+[0;32mI (17921) motor_base: Axis 6 initialized (0.556 pulses/unit)[0m
+[0;33mW (17926) TIME_TRACKER: Time tracker already initialized[0m
+[0;32mI (17931) discrete_axis: Axis 7 initialized (discrete actuator, travel time 1000 ms)[0m
+[0;32mI (17938) motor_system: All motor objects initialized[0m
+[0;32mI (17943) MOTION_CTRL: Initialized with 8 axes[0m
+[0;32mI (17947) motor_system: Motion controller initialized with 8 axes[0m
+[0;32mI (17953) MOVE_HDL: Registered MOVE handler[0m
+[0;32mI (17957) MOVR_HDL: Registered MOVR handler[0m
+[0;32mI (17961) EN_HDL: Registered EN handler[0m
+[0;32mI (17965) POS_HDL: Registered POS handler[0m
+[0;32mI (17968) VEL_HDL: Registered VEL handler[0m
+[0;32mI (17972) STOP_HDL: Registered STOP handler[0m
+[0;32mI (17976) motor_system: Command handlers registered (MOVE, MOVR, EN, POS, VEL, STOP)[0m
+[0;32mI (17983) motor_system: ========================================[0m
+[0;32mI (17989) motor_system: Motor System Initialization: SUCCESS[0m
+[0;32mI (17995) motor_system:   Servos: 5 (X, Y, Z, A, B)[0m
+[0;32mI (17999) motor_system:   Steppers: 2 (C, D)[0m
+[0;32mI (18003) motor_system:   Discrete: 1 (E)[0m
+[0;32mI (18007) motor_system: ========================================[0m
+[0;32mI (17733) RMT_PULSE: Ramp task started for channel 3[0m
+OK READY
+[0;32mI (17707) RMT_PULSE: Ramp task started for channel 1[0m
+[0;32mI (22928) motor_base: Axis 0 enabled[0m
+OK
+[0;33mW (29009) motor_base: DEBUG Axis 0: moveAbsolute(pos=200.0000, vel=1080.0000)[0m
+[0;33mW (29009) motor_base: DEBUG Axis 0: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (29012) motor_base: DEBUG Axis 0: current_pos=0.0000, target_pos=200.0000[0m
+[0;33mW (29019) motor_base: DEBUG Axis 0: setting direction=FWD[0m
+[0;33mW (29024) motor_base: DEBUG Axis 0: pulses_per_unit=0.56, pulses=111, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (29032) motor_base: DEBUG Axis 0: calling pulse_gen_->startMove(pulses=111, freq=600.0, accel=6000.0)[0m
+[0;33mW (29042) RMT_PULSE: DEBUG startMove: pulses=111, vel=600.0 Hz, accel=6000.0 pulses/s^2[0m
+[0;33mW (29049) RMT_PULSE: DEBUG startMove: starting fresh, dir=FWD, abs_pulses=111[0m
+[0;33mW (29056) RMT_PULSE: DEBUG startMove: position_tracker set direction=FWD[0m
+[0;33mW (29062) RMT_PULSE: DEBUG startMove: calling startRmtTransmission()[0m
+[0;33mW (29069) RMT_PULSE: DEBUG startRmtTransmission: filling initial queue[0m
+[0;33mW (29075) RMT_PULSE: DEBUG genCmd[2]: target_vel=600.0, accel=6000.0, target_pos=111, pos_mode=1, ramp_state=1[0m
+[0;33mW (29085) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=64000, steps=2, flags=0x01[0m
+[0;33mW (29091) RMT_PULSE: DEBUG genCmd[3]: target_vel=600.0, accel=6000.0, target_pos=111, pos_mode=1, ramp_state=1[0m
+[0;33mW (29101) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=64000, steps=2, flags=0x01[0m
+[0;33mW (29108) RMT_PULSE: DEBUG genCmd[4]: target_vel=600.0, accel=6000.0, target_pos=111, pos_mode=1, ramp_state=1[0m
+[0;33mW (29118) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=64000, steps=2, flags=0x01[0m
+[0;33mW (29125) RMT_PULSE: DEBUG genCmd[5]: target_vel=600.0, accel=6000.0, target_pos=111, pos_mode=1, ramp_state=1[0m
+[0;33mW (29134) RMT_PULSE: DEBUG fillQueue: added 10 cmds, queue_space=21, ticks_in_queue=1381914[0m
+[0;33mW (29142) RMT_PULSE: DEBUG startRmtTransmission: queue filled, starting RMT transmit[0m
+[0;33mW (29150) RMT_PULSE: DEBUG startRmtTransmission: rmt_transmit() returned OK[0m
+[0;33mW (29156) RMT_PULSE: DEBUG startMove: completed, running=1[0m
+[0;33mW (29162) motor_base: DEBUG Axis 0: moveAbsolute completed, state=MOVING[0m
+OK
+[0;33mW (29061) RMT_PULSE: DEBUG genCmd[1]: target_vel=600.0, accel=6000.0, target_pos=111, pos_mode=1, ramp_state=1[0m
+[0;33mW (29178) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x01[0m
+[0;33mW (29186) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x01[0m
+[0;33mW (29192) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x01[0m
+[0;33mW (29199) RMT_PULSE: DEBUG fillQueue: added 10 cmds, queue_space=19, ticks_in_queue=1896500[0m
+[0;33mW (29227) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=27164, steps=5, flags=0x01[0m
+[0;33mW (29227) RMT_PULSE: DEBUG fillQueue: added 1 cmds, queue_space=21, ticks_in_queue=1575784[0m
+[0;33mW (29236) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=29850, steps=5, flags=0x01[0m
+[0;33mW (29238) RMT_PULSE: DEBUG fillQueue: added 1 cmds, queue_space=21, ticks_in_queue=1565038[0m
+[0;33mW (29251) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=39119, steps=4, flags=0x01[0m
+[0;33mW (29253) RMT_PULSE: DEBUG fillQueue: added 1 cmds, queue_space=21, ticks_in_queue=1561518[0m
+[0;33mW (29266) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (29271) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (29278) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (29283) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (29285) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (29295) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (29302) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (29305) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (29314) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (29319) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (29325) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (29332) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (29335) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (29344) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (29349) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (29356) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37479) motor_base: DEBUG Axis 0: moveAbsolute(pos=200.0000, vel=1080.0000)[0m
+[0;33mW (37479) motor_base: DEBUG Axis 0: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (37482) motor_base: DEBUG Axis 0: current_pos=190.8000, target_pos=200.0000[0m
+[0;33mW (37489) motor_base: DEBUG Axis 0: setting direction=FWD[0m
+[0;33mW (37494) motor_base: DEBUG Axis 0: pulses_per_unit=0.56, pulses=5, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (37502) motor_base: DEBUG Axis 0: calling pulse_gen_->startMove(pulses=5, freq=600.0, accel=6000.0)[0m
+[0;33mW (37511) RMT_PULSE: DEBUG startMove: pulses=5, vel=600.0 Hz, accel=6000.0 pulses/s^2[0m
+[0;33mW (37519) RMT_PULSE: DEBUG startMove: starting fresh, dir=FWD, abs_pulses=5[0m
+[0;33mW (37526) RMT_PULSE: DEBUG startMove: position_tracker set direction=FWD[0m
+[0;33mW (37532) RMT_PULSE: DEBUG startMove: calling startRmtTransmission()[0m
+[0;33mW (37538) RMT_PULSE: DEBUG startRmtTransmission: filling initial queue[0m
+[0;33mW (37544) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=64000, steps=2, flags=0x01[0m
+[0;33mW (37551) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=64000, steps=2, flags=0x01[0m
+[0;33mW (37558) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=65535, steps=2, flags=0x01[0m
+[0;33mW (37565) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=4[0m
+[0;33mW (37571) RMT_PULSE: DEBUG fillQueue: added 4 cmds, queue_space=26, ticks_in_queue=580605[0m
+[0;33mW (37579) RMT_PULSE: DEBUG startRmtTransmission: queue filled, starting RMT transmit[0m
+[0;33mW (37586) RMT_PULSE: DEBUG startRmtTransmission: rmt_transmit() returned OK[0m
+[0;33mW (37593) RMT_PULSE: DEBUG startMove: completed, running=1[0m
+[0;33mW (37598) motor_base: DEBUG Axis 0: moveAbsolute completed, state=MOVING[0m
+OK
+[0;33mW (37530) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=64000, steps=2, flags=0x01[0m
+[0;33mW (37612) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=1[0m
+[0;33mW (37618) RMT_PULSE: DEBUG fillQueue: added 1 cmds, queue_space=31, ticks_in_queue=0[0m
+[0;33mW (37625) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37636) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37643) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37648) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37655) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37660) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37667) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37672) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37679) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37684) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37691) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37696) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37703) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37708) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37715) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37720) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37727) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37732) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37739) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37744) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37751) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37756) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37763) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37768) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37775) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37780) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37786) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37792) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37798) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37804) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37810) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37816) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37822) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37828) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37834) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37840) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37846) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37852) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37858) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37864) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37870) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37876) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37882) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37888) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37894) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37900) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37906) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37912) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37918) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37924) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37930) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37936) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37942) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37948) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37954) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37960) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37966) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37972) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37978) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37984) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37990) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (37996) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38002) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38008) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38014) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38020) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38026) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38032) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38038) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38044) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38050) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38056) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38061) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38068) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38073) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38080) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38085) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38092) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38097) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38104) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38109) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38116) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38121) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38128) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38133) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38140) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38145) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38152) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38157) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38164) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38169) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38176) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38181) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38188) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38193) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38200) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38205) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38212) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38217) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38224) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38229) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38236) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38241) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38248) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38253) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38260) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38265) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38272) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38277) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38284) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38289) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38296) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38301) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38308) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38313) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38320) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38325) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38331) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38337) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38343) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38349) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38355) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38361) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38367) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38373) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38379) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38385) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38391) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38397) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38403) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38409) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38415) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38421) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38427) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38433) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38439) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38445) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38451) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38457) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38463) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38469) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38475) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38481) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38487) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38493) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38499) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38505) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38511) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38517) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38523) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38529) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38535) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38541) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38547) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38553) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38559) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38565) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38571) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38577) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38583) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38589) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38595) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38600) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38607) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38612) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38619) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38624) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38631) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38636) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38643) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38648) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38655) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38660) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38667) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38672) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38679) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38684) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38691) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38696) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38703) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38708) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38715) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38720) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38727) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38732) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38739) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38744) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38751) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38756) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38763) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38768) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38775) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38780) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38787) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38792) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38799) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38804) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38811) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38816) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38823) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38828) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38835) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38840) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38847) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38852) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38859) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38864) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38871) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38876) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38882) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38888) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38894) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38900) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38906) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38912) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38918) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38924) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38930) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38936) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38942) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38948) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38954) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38960) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38966) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38972) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38978) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38984) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38990) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (38996) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39002) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39008) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39014) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39020) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39026) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39032) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39038) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39044) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39050) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39056) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39062) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39068) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39074) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39080) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39086) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39092) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39098) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39104) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39110) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39116) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39122) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39128) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39134) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39140) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39145) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39152) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39157) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39164) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39169) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39176) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39181) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39188) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39193) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39200) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39205) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39212) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39217) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39224) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39229) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39236) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39241) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39248) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39253) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39260) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39265) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39272) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39277) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39284) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39289) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39296) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39301) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39308) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39313) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39320) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39325) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39332) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39337) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39344) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39349) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39356) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39361) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39368) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39373) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39380) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39385) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39392) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39397) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39404) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39409) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39416) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39421) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39427) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39433) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39439) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39445) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39451) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39457) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39463) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39469) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39475) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39481) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39487) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39493) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39499) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39505) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39511) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39517) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39523) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39529) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39535) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39541) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39547) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39553) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39559) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39565) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39571) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39577) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39583) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39589) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39595) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39601) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39607) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39613) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39619) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39625) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39631) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39637) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39643) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39649) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39655) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39661) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39667) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39673) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39679) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39685) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39690) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39697) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39702) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39709) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39714) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39721) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39726) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39733) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39738) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39745) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39750) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39757) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39762) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39769) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39774) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39781) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39786) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39793) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39798) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39805) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39810) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39817) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39822) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39829) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39834) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39841) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39846) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39853) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39858) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39865) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39870) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39877) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39882) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39889) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39894) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39901) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39906) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39913) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39918) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39925) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39930) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39937) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39942) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39949) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39954) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39961) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39966) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39972) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39978) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39984) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39990) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (39996) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40002) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40008) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40014) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40020) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40026) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40032) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40038) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40044) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40050) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40056) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40062) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40068) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40074) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40080) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40086) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40092) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40098) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40104) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40110) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40116) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40122) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40128) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40134) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40140) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40146) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40152) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40158) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40164) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40170) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40176) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40182) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40188) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40194) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40200) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40206) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40212) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40218) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40224) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40230) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40235) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40242) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40247) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40254) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40259) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40266) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40271) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40278) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40283) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40290) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40295) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40302) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40307) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40314) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40319) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40326) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40331) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40338) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40343) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40350) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40355) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40362) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40367) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40374) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40379) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40386) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40391) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40398) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40403) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40410) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40415) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40422) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40427) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40434) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40439) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40446) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40451) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40458) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40463) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40470) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40475) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40482) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40487) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40494) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40499) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40505) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40511) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40517) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40523) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40529) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40535) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40541) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40547) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40553) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40559) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40565) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40571) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40577) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40583) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40589) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40595) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40601) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40607) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40613) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40619) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40625) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40631) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40637) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40643) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40649) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40655) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40661) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40667) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40673) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40679) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40685) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40691) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40697) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40703) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40709) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40715) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40721) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40727) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40733) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40739) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40745) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40751) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40757) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40763) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40769) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40775) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40780) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40787) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40792) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40799) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40804) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40811) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40816) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40823) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40828) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40835) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40840) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40847) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40852) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40859) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40864) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40871) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40876) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40883) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40888) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40895) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40900) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40907) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40912) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40919) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40924) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40931) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40936) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40943) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40948) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40955) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40960) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40967) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40972) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40979) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40984) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40991) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (40996) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41003) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41008) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41015) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41020) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41027) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41032) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41039) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41044) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41050) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41056) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41062) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41068) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41074) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41080) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41086) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41092) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41098) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41104) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41110) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41116) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41122) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41128) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41134) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41140) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41146) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41152) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41158) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41164) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41170) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41176) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41182) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41188) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41194) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41200) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41206) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41212) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41218) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41224) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41230) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41236) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41242) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41248) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41254) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41260) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41266) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41272) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41278) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41284) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41290) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41296) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41302) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41308) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41314) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41319) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41326) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41331) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41338) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41343) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41350) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41355) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41362) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41367) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41374) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41379) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41386) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41391) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41398) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41403) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41410) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41415) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41422) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41427) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41434) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41439) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41446) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41451) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41458) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41463) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41470) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41475) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41482) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41487) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41494) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41499) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41506) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41511) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41518) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41523) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41530) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41535) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41542) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41547) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41554) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41559) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41566) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41571) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41578) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41583) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41590) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41595) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41601) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41607) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41613) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41619) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41625) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41631) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41637) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41643) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41649) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41655) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41661) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41667) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41673) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41679) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41685) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41691) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41697) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41703) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41709) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41715) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41721) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41727) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41733) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41739) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41745) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41751) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41757) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41763) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41769) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41775) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41781) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41787) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41793) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41799) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41805) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41811) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41817) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41823) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41829) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41835) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41841) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41847) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41853) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41859) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41864) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41871) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41876) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41883) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41888) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41895) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41900) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41907) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41912) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41919) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41924) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41931) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41936) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41943) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41948) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41955) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41960) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41967) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41972) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41979) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41984) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41991) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (41996) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42003) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42008) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42015) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42020) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42027) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42032) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42039) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42044) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42051) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42056) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42063) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42068) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42075) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42080) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42087) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42092) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42099) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42104) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42111) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42116) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42123) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42128) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42135) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42140) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42146) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42152) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42158) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42164) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42170) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42176) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42182) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42188) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42194) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42200) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42206) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42212) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42218) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42224) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42230) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42236) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42242) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42248) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42254) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42260) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42266) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42272) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42278) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42284) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42290) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42296) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42302) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42308) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42314) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42320) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42326) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42332) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42338) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42344) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42350) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42356) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42362) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42368) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42374) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42380) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42386) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42392) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42398) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42404) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42409) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42416) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42421) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42428) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42433) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42440) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42445) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42452) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42457) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42464) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42469) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42476) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42481) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42488) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42493) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42500) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42505) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42512) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42517) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42524) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42529) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42536) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42541) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42548) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42553) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42560) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42565) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42572) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42577) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42584) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42589) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42596) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42601) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42608) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42613) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42620) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42625) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42632) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42637) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42644) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42649) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42656) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42661) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42668) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42673) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42679) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42685) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42691) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42697) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42703) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42709) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42715) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42721) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42727) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42733) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42739) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42745) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42751) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42757) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42763) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42769) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42775) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42781) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42787) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42793) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42799) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42805) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42811) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42817) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42823) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42829) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42835) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42841) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42847) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42853) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42859) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42865) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42871) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42877) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42883) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42889) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42895) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42901) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42907) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42913) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42919) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42925) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42931) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42937) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42943) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42949) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42954) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42961) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42966) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42973) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42978) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42985) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42990) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (42997) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (43002) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (43009) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (43014) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (43021) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (43026) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (43033) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (43038) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (43045) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (43050) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (43057) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (43062) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (43069) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (43074) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (43081) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (43086) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (43093) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (43098) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (43105) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (43110) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (43117) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (43122) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (43129) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (43134) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (43141) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (43146) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m
+[0;33mW (43153) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0[0m

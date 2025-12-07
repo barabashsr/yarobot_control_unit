@@ -411,8 +411,20 @@ void MotorBase::setMotionCompleteCallback(MotionCompleteCallback cb)
 
 void MotorBase::onMotionComplete(int64_t total_pulses)
 {
+    ESP_LOGW(TAG, "DEBUG Axis %d: onMotionComplete(total_pulses=%lld)", axis_id_, (long long)total_pulses);
+
+    // Debug: position before sync
+    int64_t pulses_before = pulse_count_.load(std::memory_order_acquire);
+    int64_t tracker_pos = position_tracker_->getPosition();
+    ESP_LOGW(TAG, "DEBUG Axis %d: before sync: pulse_count=%lld, tracker_pos=%lld",
+             axis_id_, (long long)pulses_before, (long long)tracker_pos);
+
     // Sync position (subclass-specific strategy)
     syncPositionFromTracker();
+
+    // Debug: position after sync
+    int64_t pulses_after = pulse_count_.load(std::memory_order_acquire);
+    ESP_LOGW(TAG, "DEBUG Axis %d: after sync: pulse_count=%lld", axis_id_, (long long)pulses_after);
 
     // Transition to IDLE
     state_.store(AXIS_STATE_IDLE, std::memory_order_release);
@@ -423,7 +435,7 @@ void MotorBase::onMotionComplete(int64_t total_pulses)
         motion_complete_cb_(axis_id_, position_si);
     }
 
-    ESP_LOGD(TAG, "Axis %d: motion complete at position %.4f",
+    ESP_LOGW(TAG, "Axis %d: motion complete at position %.4f",
              axis_id_, getPosition());
 }
 

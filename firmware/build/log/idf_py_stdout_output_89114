@@ -1,0 +1,1319 @@
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x9 (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x15a0
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xd20
+load:0x403cb700,len:0x2ee4
+entry 0x403c8928
+[0;32mI (27) boot: ESP-IDF v5.4-dirty 2nd stage bootloader[0m
+[0;32mI (27) boot: compile time Dec  6 2025 20:10:08[0m
+[0;32mI (27) boot: Multicore bootloader[0m
+[0;32mI (27) boot: chip revision: v0.2[0m
+[0;32mI (30) boot: efuse block revision: v1.3[0m
+[0;32mI (34) boot.esp32s3: Boot SPI Speed : 80MHz[0m
+[0;32mI (38) boot.esp32s3: SPI Mode       : DIO[0m
+[0;32mI (41) boot.esp32s3: SPI Flash Size : 16MB[0m
+[0;32mI (45) boot: Enabling RNG early entropy source...[0m
+[0;32mI (50) boot: Partition Table:[0m
+[0;32mI (52) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (59) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (65) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (72) boot:  2 factory          factory app      00 00 00010000 00300000[0m
+[0;32mI (78) boot:  3 storage          Unknown data     01 82 00310000 00100000[0m
+[0;32mI (85) boot: End of partition table[0m
+[0;32mI (88) esp_image: segment 0: paddr=00010020 vaddr=3c040020 size=16e38h ( 93752) map[0m
+[0;32mI (112) esp_image: segment 1: paddr=00026e60 vaddr=3fc97000 size=03738h ( 14136) load[0m
+[0;32mI (115) esp_image: segment 2: paddr=0002a5a0 vaddr=40374000 size=05a78h ( 23160) load[0m
+[0;32mI (121) esp_image: segment 3: paddr=00030020 vaddr=42000020 size=3cd2ch (249132) map[0m
+[0;32mI (167) esp_image: segment 4: paddr=0006cd54 vaddr=40379a78 size=0d560h ( 54624) load[0m
+[0;32mI (179) esp_image: segment 5: paddr=0007a2bc vaddr=600fe100 size=0001ch (    28) load[0m
+[0;32mI (187) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (187) boot: Disabling RNG early entropy source...[0m
+[0;32mI (197) octal_psram: vendor id    : 0x0d (AP)[0m
+[0;32mI (197) octal_psram: dev id       : 0x02 (generation 3)[0m
+[0;32mI (198) octal_psram: density      : 0x03 (64 Mbit)[0m
+[0;32mI (200) octal_psram: good-die     : 0x01 (Pass)[0m
+[0;32mI (204) octal_psram: Latency      : 0x01 (Fixed)[0m
+[0;32mI (208) octal_psram: VCC          : 0x01 (3V)[0m
+[0;32mI (212) octal_psram: SRF          : 0x01 (Fast Refresh)[0m
+[0;32mI (217) octal_psram: BurstType    : 0x01 (Hybrid Wrap)[0m
+[0;32mI (222) octal_psram: BurstLen     : 0x01 (32 Byte)[0m
+[0;32mI (227) octal_psram: Readlatency  : 0x02 (10 cycles@Fixed)[0m
+[0;32mI (232) octal_psram: DriveStrength: 0x00 (1/1)[0m
+[0;32mI (236) esp_psram: Found 8MB PSRAM device[0m
+[0;32mI (240) esp_psram: Speed: 40MHz[0m
+[0;32mI (243) cpu_start: Multicore app[0m
+[0;32mI (976) esp_psram: SPI SRAM memory test OK[0m
+[0;32mI (985) cpu_start: Pro cpu start user code[0m
+[0;32mI (990) cpu_start: cpu freq: 240000000 Hz[0m
+[0;32mI (990) app_init: Application information:[0m
+[0;32mI (991) app_init: Project name:     yarobot_control_unit[0m
+[0;32mI (996) app_init: App version:      374442d-dirty[0m
+[0;32mI (1000) app_init: Compile time:     Dec  7 2025 20:41:30[0m
+[0;32mI (1005) app_init: ELF file SHA256:  dfbca3260...[0m
+[0;32mI (1010) app_init: ESP-IDF:          v5.4-dirty[0m
+[0;32mI (1014) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (1018) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (1022) efuse_init: Chip rev:         v0.2[0m
+[0;32mI (1026) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (1032) heap_init: At 3FC9C978 len 0004CD98 (307 KiB): RAM[0m
+[0;32mI (1037) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM[0m
+[0;32mI (1043) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM[0m
+[0;32mI (1048) heap_init: At 600FE11C len 00001ECC (7 KiB): RTCRAM[0m
+[0;32mI (1053) esp_psram: Adding pool of 8192K of PSRAM memory to heap allocator[0m
+[0;32mI (1061) spi_flash: detected chip: boya[0m
+[0;32mI (1063) spi_flash: flash io: dio[0m
+[0;32mI (1067) sleep_gpio: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (1073) sleep_gpio: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (1080) main_task: Started on CPU0[0m
+[0;32mI (1083) esp_psram: Reserving pool of 32K of internal memory for DMA/internal allocations[0m
+[0;32mI (1091) main_task: Calling app_main()[0m
+[0;32mI (3094) main: Hello from app_main[0m
+[0;32mI (3094) main: PSRAM detected: 8388608 bytes (8.0 MB)[0m
+[0;32mI (3094) main: Firmware: YAROBOT_CONTROL_UNIT v1.0.0[0m
+[0;32mI (3095) main: Axes: 8 (Servos:5, Steppers:2, Discrete:1)[0m
+[0;32mI (3100) main: GPIO X_STEP: 4, I2C MCP0: 0x20[0m
+[0;32mI (3104) main: Initializing USB CDC interface...[0m
+[0;32mI (3109) usb_cdc: Initializing USB CDC interface[0m
+[0;33mW (3113) tusb_desc: No Device descriptor provided, using default.[0m
+[0;33mW (3119) tusb_desc: No FullSpeed configuration descriptor provided, using default.[0m
+[0;33mW (3126) tusb_desc: No String descriptors provided, using default.[0m
+[0;32mI (3132) tusb_desc: [0m
+┌─────────────────────────────────┐
+│  USB Device Descriptor Summary  │
+├───────────────────┬─────────────┤
+│bDeviceClass       │ 239         │
+├───────────────────┼─────────────┤
+│bDeviceSubClass    │ 2           │
+├───────────────────┼─────────────┤
+│bDeviceProtocol    │ 1           │
+├───────────────────┼─────────────┤
+│bMaxPacketSize0    │ 64          │
+├───────────────────┼─────────────┤
+│idVendor           │ 0x303a      │
+├───────────────────┼─────────────┤
+│idProduct          │ 0x4001      │
+├───────────────────┼─────────────┤
+│bcdDevice          │ 0x100       │
+├───────────────────┼─────────────┤
+│iManufacturer      │ 0x1         │
+├───────────────────┼─────────────┤
+│iProduct           │ 0x2         │
+├───────────────────┼─────────────┤
+│iSerialNumber      │ 0x3         │
+├───────────────────┼─────────────┤
+│bNumConfigurations │ 0x1         │
+└───────────────────┴─────────────┘
+[0;32mI (3300) TinyUSB: TinyUSB Driver installed[0m
+[0;32mI (3303) usb_cdc: USB CDC initialized successfully[0m
+[0;32mI (3307) main: USB CDC initialized successfully[0m
+[0;32mI (3312) main: ========================================[0m
+[0;32mI (3317) main: Hardware Initialization Starting[0m
+[0;32mI (3321) main: ========================================[0m
+[0;32mI (3326) gpio_hal: Initializing GPIO HAL[0m
+[0;32mI (3330) gpio: GPIO[4]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3338) gpio: GPIO[5]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3346) gpio: GPIO[6]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3355) gpio: GPIO[7]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3363) gpio: GPIO[15]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3371) gpio: GPIO[16]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3380) gpio: GPIO[17]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3388) gpio: GPIO[13]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3397) gpio: GPIO[1]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3405) gpio: GPIO[2]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3413) gpio: GPIO[40]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3422) gpio: GPIO[41]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3430) gpio: GPIO[42]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3438) gpio: GPIO[38]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3447) gpio: GPIO[39]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3455) gpio: GPIO[47]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3464) gpio: GPIO[48]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3472) gpio_hal: GPIO HAL initialized successfully[0m
+[0;32mI (3477) i2c_hal: Initializing I2C0: SDA=8, SCL=18, freq=400000 Hz[0m
+[0;32mI (3483) i2c_hal: I2C0 initialized successfully[0m
+[0;32mI (3487) main: MCP23017 #0 (0x20) IODIR_A=0xFF[0m
+[0;32mI (3491) main: MCP23017 #1 (0x21) IODIR_A=0xFF[0m
+[0;32mI (3495) i2c_hal: Initializing I2C1: SDA=14, SCL=21, freq=400000 Hz[0m
+[0;32mI (3502) i2c_hal: I2C1 initialized successfully[0m
+[0;32mI (3533) main: OLED initialized with test pattern[0m
+[0;32mI (3533) i2c_hal: Scanning I2C0 bus...[0m
+[0;32mI (3537) i2c_hal: I2C0: Found device at 0x20[0m
+[0;32mI (3537) i2c_hal: I2C0: Found device at 0x21[0m
+[0;32mI (3550) i2c_hal: I2C0 scan complete: 2 device(s) found[0m
+[0;32mI (3550) main: I2C bus isolation verified: I2C0 still operational[0m
+[0;32mI (3550) spi_hal: Initializing SPI1: MOSI=11, SCLK=12, CS=10[0m
+[0;32mI (3556) gpio: GPIO[9]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3563) spi_hal: SPI initialized successfully, OE pin=9 (disabled)[0m
+[0;32mI (3569) tpic6b595: Initializing TPIC6B595 driver[0m
+[0;32mI (3574) spi_hal: SR outputs ENABLED[0m
+[0;32mI (3577) tpic6b595: TPIC6B595 driver initialized, 40-bit chain ready[0m
+[0;32mI (3583) main: TPIC6B595 shift register initialized (test skipped)[0m
+[0;32mI (3589) main: ========================================[0m
+[0;32mI (3594) main: Hardware Initialization: ALL PASSED[0m
+[0;32mI (3598) main: ========================================[0m
+[0;32mI (3603) main: Creating FreeRTOS tasks...[0m
+[0;32mI (3607) tasks: Task safety started on core 0[0m
+[0;32mI (3611) tasks: Task usb_rx started on core 0[0m
+[0;32mI (3615) tasks: Task usb_tx started on core 0[0m
+[0;32mI (3619) tasks: Task cmd_exec started on core 0[0m
+[0;32mI (3624) tasks: Task i2c_mon started on core 0[0m
+[0;32mI (3628) tasks: Task idle_mon started on core 0[0m
+[0;32mI (3632) tasks: Task motion_Z (axis 2) started on core 1[0m
+[0;32mI (3633) tasks: Task motion_B (axis 4) started on core 1[0m
+[0;32mI (3632) tasks: Task motion_X (axis 0) started on core 1[0m
+[0;32mI (3633) tasks: Task motion_C (axis 5) started on core 1[0m
+[0;32mI (3632) tasks: Task motion_A (axis 3) started on core 1[0m
+[0;32mI (3633) tasks: Task motion_D (axis 6) started on core 1[0m
+[0;32mI (3632) tasks: Task motion_Y (axis 1) started on core 1[0m
+[0;32mI (3633) tasks: Task motion_E (axis 7) started on core 1[0m
+[0;32mI (3632) main: YaRobot Control Unit - All tasks started[0m
+[0;32mI (3672) tasks: Task display started on core 1[0m
+[0;32mI (3677) main_task: Returned from app_main()[0m
+[0;32mI (4832) usb_cdc: USB CDC connected (DTR=1, RTS=1)[0m
+[0;32mI (4915) tasks: USB CDC connection state: connected[0m
+[0;32mI (9104) CMD_EXEC: Initialized with 4 built-in commands[0m
+[0;32mI (9104) EVENT_MGR: Initialized (queue=32, max_subs=8)[0m
+[0;32mI (9104) EVENT_MGR: Event processor task started[0m
+[0;32mI (9104) tasks: Command executor initialized[0m
+[0;32mI (9111) motor_system: ========================================[0m
+[0;32mI (9116) motor_system: Motor System Initialization Starting[0m
+[0;32mI (9122) motor_system: ========================================[0m
+[0;33mW (9127) tpic6b595: Already initialized[0m
+[0;32mI (9131) motor_system: Axis configurations initialized[0m
+[0;32mI (9136) RMT_PULSE: Initializing RMT channel 0 on GPIO 4 (step)[0m
+[0;32mI (9142) RMT_PULSE: RMT channel 0 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (9149) RMT_PULSE: Initializing RMT channel 1 on GPIO 6 (step)[0m
+[0;32mI (9143) RMT_PULSE: Ramp task started for channel 0[0m
+[0;32mI (9155) RMT_PULSE: RMT channel 1 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (9167) RMT_PULSE: Initializing RMT channel 2 on GPIO 7 (step)[0m
+[0;32mI (9160) RMT_PULSE: Ramp task started for channel 1[0m
+[0;32mI (9173) RMT_PULSE: RMT channel 2 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (9185) RMT_PULSE: Initializing RMT channel 3 on GPIO 15 (step)[0m
+[0;32mI (9191) RMT_PULSE: RMT channel 3 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (9198) MCPWM_PULSE: Initializing MCPWM timer 0 on GPIO 5 with PCNT unit 0[0m
+[0;32mI (9205) gpio: GPIO[5]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (9178) RMT_PULSE: Ramp task started for channel 2[0m
+[0;32mI (9214) MCPWM_PULSE: Profile task started for timer 0[0m
+[0;32mI (9214) MCPWM_PULSE: MCPWM timer 0 with PCNT unit 0 initialized successfully[0m
+[0;32mI (9229) MCPWM_PULSE: Initializing MCPWM timer 1 on GPIO 16 with PCNT unit 1[0m
+[0;32mI (9236) gpio: GPIO[16]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (9191) RMT_PULSE: Ramp task started for channel 3[0m
+[0;32mI (9246) MCPWM_PULSE: Profile task started for timer 1[0m
+[0;32mI (9246) MCPWM_PULSE: MCPWM timer 1 with PCNT unit 1 initialized successfully[0m
+[0;32mI (9261) LEDC_PULSE: Initializing LEDC timer 2, channel 2 on GPIO 17[0m
+[0;32mI (9267) gpio: GPIO[17]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (9275) LEDC_PULSE: Configured GPIO 17 for PCNT internal loopback[0m
+[0;32mI (9282) LEDC_PULSE: Completion task started for LEDC timer 2[0m
+[0;32mI (9282) LEDC_PULSE: LEDC timer 2 initialized successfully[0m
+[0;32mI (9292) motor_system: All pulse generators initialized[0m
+[0;32mI (9297) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (9301) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (9306) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (9310) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (9314) TIME_TRACKER: Time tracker initialized with travel time 1000 ms[0m
+[0;32mI (9321) motor_system: All position trackers initialized[0m
+[0;32mI (9326) motor_system: Pulse generators wired to position trackers[0m
+[0;32mI (9332) motor_system: Motor objects created[0m
+[0;32mI (9336) motor_base: Axis 0 initialized (0.556 pulses/unit)[0m
+[0;32mI (9341) motor_base: Axis 1 initialized (0.556 pulses/unit)[0m
+[0;32mI (9346) motor_base: Axis 2 initialized (0.556 pulses/unit)[0m
+[0;32mI (9352) motor_base: Axis 3 initialized (0.556 pulses/unit)[0m
+[0;32mI (9357) motor_base: Axis 4 initialized (0.556 pulses/unit)[0m
+[0;32mI (9362) motor_base: Axis 5 initialized (0.556 pulses/unit)[0m
+[0;32mI (9368) LEDC_PULSE: setPositionTracker: tracker=0x3fc9b834 (PcntTracker for hardware PCNT)[0m
+[0;32mI (9376) motor_base: Axis 6 initialized (0.556 pulses/unit)[0m
+[0;33mW (9381) TIME_TRACKER: Time tracker already initialized[0m
+[0;32mI (9386) discrete_axis: Axis 7 initialized (discrete actuator, travel time 1000 ms)[0m
+[0;32mI (9393) motor_system: All motor objects initialized[0m
+[0;32mI (9398) MOTION_CTRL: Initialized with 8 axes[0m
+[0;32mI (9402) motor_system: Motion controller initialized with 8 axes[0m
+[0;32mI (9408) MOVE_HDL: Registered MOVE handler[0m
+[0;32mI (9412) MOVR_HDL: Registered MOVR handler[0m
+[0;32mI (9415) EN_HDL: Registered EN handler[0m
+[0;32mI (9419) POS_HDL: Registered POS handler[0m
+[0;32mI (9423) VEL_HDL: Registered VEL handler[0m
+[0;32mI (9426) STOP_HDL: Registered STOP handler[0m
+[0;32mI (9430) motor_system: Command handlers registered (MOVE, MOVR, EN, POS, VEL, STOP)[0m
+[0;32mI (9437) motor_system: ========================================[0m
+[0;32mI (9443) motor_system: Motor System Initialization: SUCCESS[0m
+[0;32mI (9448) motor_system:   Servos: 5 (X, Y, Z, A, B)[0m
+[0;32mI (9453) motor_system:   Steppers: 2 (C, D)[0m
+[0;32mI (9457) motor_system:   Discrete: 1 (E)[0m
+[0;32mI (9460) motor_system: ========================================[0m
+ERROR E001 Invalid command
+OK READY
+[0;32mI (16599) motor_base: Axis 0 enabled[0m
+OK
+[0;33mW (21319) motor_base: DEBUG Axis 0: moveAbsolute(pos=180.0000, vel=1080.0000)[0m
+[0;33mW (21319) motor_base: DEBUG Axis 0: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (21322) motor_base: DEBUG Axis 0: current_pos=0.0000, target_pos=180.0000[0m
+[0;33mW (21329) motor_base: DEBUG Axis 0: setting direction=FWD[0m
+[0;33mW (21334) motor_base: DEBUG Axis 0: pulses_per_unit=0.56, pulses=100, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (21342) motor_base: DEBUG Axis 0: calling pulse_gen_->startMove(pulses=100, freq=600.0, accel=6000.0)[0m
+[0;33mW (21351) RMT_PULSE: DEBUG startMove: pulses=100, vel=600.0 Hz, accel=6000.0 pulses/s^2[0m
+[0;33mW (21359) RMT_PULSE: DEBUG startMove: was_running=0, ramp_state=0[0m
+[0;33mW (21365) RMT_PULSE: DEBUG startMove: starting fresh, dir=FWD, abs_pulses=100[0m
+[0;33mW (21372) RMT_PULSE: DEBUG startMove: position_tracker set direction=FWD[0m
+[0;33mW (21378) RMT_PULSE: DEBUG startMove: calling startRmtTransmission()[0m
+[0;33mW (21384) RMT_PULSE: DEBUG startRmtTransmission: filling initial queue[0m
+[0;33mW (21391) RMT_PULSE: DEBUG genCmd[2]: target_vel=600.0, accel=6000.0, target_pos=100, pos_mode=1, ramp_state=1[0m
+[0;33mW (21400) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=64000, steps=2, flags=0x01[0m
+[0;33mW (21407) RMT_PULSE: DEBUG genCmd[3]: target_vel=600.0, accel=6000.0, target_pos=100, pos_mode=1, ramp_state=1[0m
+[0;33mW (21417) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=64000, steps=2, flags=0x01[0m
+[0;33mW (21424) RMT_PULSE: DEBUG genCmd[4]: target_vel=600.0, accel=6000.0, target_pos=100, pos_mode=1, ramp_state=1[0m
+[0;33mW (21433) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=64000, steps=2, flags=0x01[0m
+[0;33mW (21440) RMT_PULSE: DEBUG genCmd[5]: target_vel=600.0, accel=6000.0, target_pos=100, pos_mode=1, ramp_state=1[0m
+[0;33mW (21450) RMT_PULSE: DEBUG fillQueue: added 10 cmds, queue_space=21, ticks_in_queue=1381914[0m
+[0;33mW (21458) RMT_PULSE: DEBUG startRmtTransmission: queue filled, starting RMT transmit[0m
+[0;33mW (21466) RMT_PULSE: DEBUG startRmtTransmission: rmt_transmit() returned OK[0m
+[0;33mW (21472) RMT_PULSE: DEBUG startMove: completed, running=1[0m
+[0;33mW (21478) motor_base: DEBUG Axis 0: moveAbsolute completed, state=MOVING[0m
+OK
+[0;33mW (21374) RMT_PULSE: DEBUG genCmd[1]: target_vel=600.0, accel=6000.0, target_pos=100, pos_mode=1, ramp_state=1[0m
+[0;33mW (21494) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x01[0m
+[0;33mW (21501) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x01[0m
+[0;33mW (21508) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x01[0m
+[0;33mW (21515) RMT_PULSE: DEBUG fillQueue: added 10 cmds, queue_space=19, ticks_in_queue=1861578[0m
+[0;33mW (21543) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=39119, steps=4, flags=0x01[0m
+[0;33mW (21543) RMT_PULSE: DEBUG fillQueue: added 1 cmds, queue_space=21, ticks_in_queue=1561518[0m
+[0;33mW (21552) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0, ramp_state=3, queue_end_pos=94, target=100[0m
+[0;33mW (21562) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0, ramp_state=3, queue_end_pos=94, target=100[0m
+[0;33mW (21571) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0, ramp_state=3, queue_end_pos=94, target=100[0m
+[0;33mW (21581) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0, ramp_state=3, queue_end_pos=94, target=100[0m
+[0;33mW (21591) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0, ramp_state=3, queue_end_pos=94, target=100[0m
+[0;33mW (21601) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0, ramp_state=3, queue_end_pos=94, target=100[0m
+[0;33mW (21611) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0, ramp_state=3, queue_end_pos=94, target=100[0m
+[0;33mW (21620) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0, ramp_state=3, queue_end_pos=94, target=100[0m
+[0;33mW (21631) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0, ramp_state=3, queue_end_pos=94, target=100[0m
+[0;33mW (21640) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0, ramp_state=3, queue_end_pos=94, target=100[0m
+[0;33mW (28094) motor_base: DEBUG Axis 0: moveAbsolute(pos=0.0000, vel=1080.0000)[0m
+[0;33mW (28094) motor_base: DEBUG Axis 0: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (28097) motor_base: DEBUG Axis 0: current_pos=169.2000, target_pos=0.0000[0m
+[0;33mW (28104) motor_base: DEBUG Axis 0: setting direction=REV[0m
+[0;33mW (28109) motor_base: DEBUG Axis 0: pulses_per_unit=0.56, pulses=94, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (28117) motor_base: DEBUG Axis 0: calling pulse_gen_->startMove(pulses=-94, freq=600.0, accel=6000.0)[0m
+[0;33mW (28126) RMT_PULSE: DEBUG startMove: pulses=-94, vel=600.0 Hz, accel=6000.0 pulses/s^2[0m
+[0;33mW (28134) RMT_PULSE: DEBUG startMove: was_running=0, ramp_state=0[0m
+[0;33mW (28140) RMT_PULSE: DEBUG startMove: starting fresh, dir=REV, abs_pulses=94[0m
+[0;33mW (28147) RMT_PULSE: DEBUG startMove: position_tracker set direction=REV[0m
+[0;33mW (28153) RMT_PULSE: DEBUG startMove: calling startRmtTransmission()[0m
+[0;33mW (28159) RMT_PULSE: DEBUG startRmtTransmission: filling initial queue[0m
+[0;33mW (28165) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=64000, steps=2, flags=0x00[0m
+[0;33mW (28172) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=64000, steps=2, flags=0x00[0m
+[0;33mW (28179) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=59701, steps=2, flags=0x00[0m
+[0;33mW (28186) RMT_PULSE: DEBUG fillQueue: added 9 cmds, queue_space=21, ticks_in_queue=1381914[0m
+[0;33mW (28194) RMT_PULSE: DEBUG startRmtTransmission: queue filled, starting RMT transmit[0m
+[0;33mW (28201) RMT_PULSE: DEBUG startRmtTransmission: rmt_transmit() returned OK[0m
+[0;33mW (28208) RMT_PULSE: DEBUG startMove: completed, running=1[0m
+[0;33mW (28213) motor_base: DEBUG Axis 0: moveAbsolute completed, state=MOVING[0m
+OK
+[0;33mW (28150) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=64000, steps=2, flags=0x00[0m
+[0;33mW (28227) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28234) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28241) RMT_PULSE: DEBUG fillQueue: added 10 cmds, queue_space=19, ticks_in_queue=1874432[0m
+[0;33mW (28269) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28269) RMT_PULSE: DEBUG fillQueue: added 1 cmds, queue_space=21, ticks_in_queue=1599960[0m
+[0;33mW (28278) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28280) RMT_PULSE: DEBUG fillQueue: added 1 cmds, queue_space=21, ticks_in_queue=1599960[0m
+[0;33mW (28293) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28295) RMT_PULSE: DEBUG fillQueue: added 1 cmds, queue_space=21, ticks_in_queue=1599960[0m
+[0;33mW (28308) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28310) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28316) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (28329) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28331) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28338) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (28351) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28353) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28360) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (28373) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28375) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28381) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (28394) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28396) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28404) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (28417) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28418) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28425) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28432) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (28445) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28447) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28453) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (28466) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28468) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28475) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28482) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (28495) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28497) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28504) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (28517) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28519) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28525) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28533) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (28546) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28547) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28554) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28561) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (28574) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28576) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28582) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (28595) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28597) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28605) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (28618) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28619) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28626) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28633) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (28646) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28648) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28654) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28662) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (28675) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28677) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28683) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (28696) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28698) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28705) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28712) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (28725) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28727) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28733) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (28746) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28748) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28755) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28762) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (28775) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28777) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28783) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (28796) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28798) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28806) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28812) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (28825) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28827) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28834) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (28847) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28849) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28855) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28863) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (28876) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28878) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28884) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28891) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (28904) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28906) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28912) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (28925) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28927) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28935) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (28948) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28949) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28956) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28963) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (28976) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28978) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28984) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (28992) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29005) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29007) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29013) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29026) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29028) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29035) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29042) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29055) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29057) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29063) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29076) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29078) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29085) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29092) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29105) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29107) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29113) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29126) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29128) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29136) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29142) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29155) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29157) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29164) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29177) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29179) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29185) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29193) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29206) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29208) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29214) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29221) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29234) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29236) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29243) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29256) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29258) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29264) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29272) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29285) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29286) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29293) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29306) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29308) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29314) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29322) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29335) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29337) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29343) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29356) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29358) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29365) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29372) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29385) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29387) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29393) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29406) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29408) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29415) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29422) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29435) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29437) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29444) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29457) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29459) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29465) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29473) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29486) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29487) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29494) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29501) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29514) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29516) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29522) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29535) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29537) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29545) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29558) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29559) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29566) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29573) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29586) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29588) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29594) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29602) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29615) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29617) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29623) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29636) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29638) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29645) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29652) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29665) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29667) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29673) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29686) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29688) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29695) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29702) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29715) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29717) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29723) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29736) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29738) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29746) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29752) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29765) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29767) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29774) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29787) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29789) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29795) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29803) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29816) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29818) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29824) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29831) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29844) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29846) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29852) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29865) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29867) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29875) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29888) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29889) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29896) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29903) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29916) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29918) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29924) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29932) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29945) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29947) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29953) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29966) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29968) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29975) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29982) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (29995) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (29997) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30003) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30016) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30018) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30025) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30038) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30040) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30047) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30054) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30067) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30069) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30075) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30083) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30096) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30097) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30104) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30117) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30119) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30125) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30133) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30146) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30148) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30154) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30167) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30169) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30176) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30183) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30196) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30198) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30204) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30217) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30219) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30226) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30233) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30246) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30248) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30254) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30267) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30269) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30277) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30283) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30296) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30298) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30305) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30318) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30320) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30326) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30334) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30347) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30349) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30355) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30362) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30375) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30377) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30384) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30397) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30399) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30405) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30413) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30426) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30427) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30434) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30447) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30449) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30456) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30463) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30476) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30478) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30484) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30497) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30499) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30506) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30513) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30526) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30528) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30534) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30547) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30549) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30557) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30563) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30576) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30578) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30585) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30598) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30600) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30606) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30614) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30627) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30628) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30635) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30642) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30655) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30657) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30663) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30676) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30678) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30686) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30699) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30700) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30707) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30714) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30727) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30729) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30735) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30743) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30756) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30758) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30764) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30777) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30779) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30786) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30793) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30806) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30808) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30814) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30827) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30829) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30836) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30843) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30856) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30858) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+W (30865) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964
+[0;33mW (30878) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30880) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30886) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30894) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30907) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30908) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30915) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30922) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30935) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30937) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30943) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30956) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30958) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30966) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (30978) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30980) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30987) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (30994) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31007) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31009) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31015) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31023) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31036) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31037) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31044) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31057) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31059) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31066) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31073) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31086) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31088) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31094) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31107) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31109) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31116) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31123) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31136) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31138) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31144) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31157) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31159) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31167) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31173) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31186) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31188) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31195) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31208) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31210) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31216) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31224) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31237) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31238) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31245) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31252) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31265) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31267) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31273) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31286) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31288) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31296) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31309) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31310) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31317) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31324) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31337) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31339) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31345) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31353) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31366) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31368) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31374) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31387) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31389) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31396) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31403) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31416) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31418) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31424) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31437) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31439) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31446) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31453) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31466) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31468) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31474) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31487) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31489) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31497) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31503) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31516) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31518) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31525) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31538) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31540) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31546) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31554) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31567) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31569) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31575) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31582) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31595) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31597) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31603) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31616) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31618) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31626) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31639) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31641) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31647) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31654) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31667) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31669) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31675) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31683) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31696) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31698) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31704) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31717) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31719) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31726) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31733) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31746) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31748) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31754) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31767) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31769) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31776) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31783) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31796) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31798) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31805) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31817) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31819) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31827) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31833) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31846) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31848) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31855) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31868) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31870) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31876) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31884) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31897) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31899) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31905) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31912) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31925) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31927) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31934) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31947) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31949) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31955) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31963) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31976) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31977) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31984) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (31997) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (31999) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32006) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32013) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32026) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32028) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32034) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32047) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32049) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32056) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32063) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32076) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32078) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32084) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32097) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32099) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32107) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32113) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32126) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32128) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32135) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32148) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32150) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32156) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32164) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32177) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32178) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32185) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32192) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32205) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32207) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32213) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32226) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32228) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32236) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32249) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32250) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32257) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32264) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32277) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32279) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32285) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32293) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32306) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32308) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32314) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32327) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32329) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32336) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32343) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32356) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32358) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32364) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32377) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32379) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32386) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32393) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32406) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32408) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32414) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32427) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32429) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32437) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32443) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32456) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32458) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32465) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32478) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32480) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32486) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32494) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32507) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32509) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32515) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32528) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32530) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32537) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32544) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32557) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32559) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32565) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32578) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32580) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32587) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32594) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32607) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32609) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32615) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32628) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32630) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32638) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32644) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32657) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32659) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32666) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32679) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32681) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32687) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32695) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32708) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32710) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32716) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32723) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32736) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32738) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32745) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32758) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32760) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32766) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32774) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32787) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32788) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32795) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32808) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32810) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32816) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32824) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32837) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32839) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32845) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32858) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32860) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32867) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32874) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32887) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32889) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32895) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32908) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32910) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32917) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32924) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32937) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32939) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32946) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32959) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32961) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32967) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32975) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (32988) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32989) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (32996) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33003) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33016) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33018) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33024) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33037) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33039) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33047) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33060) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33061) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33068) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33075) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33088) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33090) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33096) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33104) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33117) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33119) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33125) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33138) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33140) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33147) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33154) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33167) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33169) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33175) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33188) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33190) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33197) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33204) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33217) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33219) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33225) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33238) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33240) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33248) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33254) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33267) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33269) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33276) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33289) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33291) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33297) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33305) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33318) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33320) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33326) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33333) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33346) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33348) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33354) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33367) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33369) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33377) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33390) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33391) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33398) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33405) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33418) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33420) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33426) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33434) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33447) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33449) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33455) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33468) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33470) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33477) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33484) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33497) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33499) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33505) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33518) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33520) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33527) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33534) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33547) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33549) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33555) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33568) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33570) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33578) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33584) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33597) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33599) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33606) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33619) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33621) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33627) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33635) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33648) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33650) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33656) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33663) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33676) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33678) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33685) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33698) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33700) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33706) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33714) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33727) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33728) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33735) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33748) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33750) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33756) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33764) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33777) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33779) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33785) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33798) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33800) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33807) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33814) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33827) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33829) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33835) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33848) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33850) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33857) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33864) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33877) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33879) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33886) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33899) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33901) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33907) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33915) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33928) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33929) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33936) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33943) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (33956) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33958) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33964) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+‘W (33977) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00
+[0;33mW (33979) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (33987) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34000) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34002) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34008) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34015) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34028) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34030) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34037) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34044) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34057) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34059) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34065) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34078) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34080) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34087) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34094) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34107) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34109) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34115) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34128) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34130) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34138) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34144) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34157) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34159) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34166) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34179) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34181) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34187) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34195) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34208) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34210) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34216) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34223) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34236) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34238) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34244) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34257) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34259) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34267) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34280) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34281) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34288) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34295) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34308) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34310) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34316) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34324) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34337) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34339) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34345) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34358) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34360) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34367) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34374) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34387) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34389) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34395) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34408) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34410) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34417) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34424) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34437) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34439) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34445) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34458) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34460) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34468) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34474) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34487) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34489) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34496) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34509) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34511) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34517) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34525) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34538) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34540) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34546) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34553) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34566) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34568) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34575) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34588) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34590) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34596) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34604) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34617) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34618) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34625) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34638) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34640) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34646) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34654) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34667) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34669) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34675) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34688) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34690) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34697) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34710) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34712) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34718) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34726) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34739) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34741) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34747) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34754) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34767) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34769) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34776) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34789) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34791) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34797) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34805) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34818) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34819) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34826) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34839) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34841) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34848) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34855) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34868) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34870) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34876) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34889) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34891) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34898) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34905) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34918) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34920) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34926) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34939) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34941) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34949) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34955) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34968) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34970) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34977) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (34990) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34992) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (34998) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35006) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (35019) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35020) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35027) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35034) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (35047) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35049) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35055) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (35068) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35070) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35078) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (35091) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35092) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35099) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35106) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (35119) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35121) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35127) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35135) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (35148) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35150) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35156) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (35169) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35171) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35178) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35185) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (35198) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35200) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35206) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (35219) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35221) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35228) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35235) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (35248) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35250) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35256) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (35269) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35271) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35279) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35285) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (35298) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35300) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35307) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (35320) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35322) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35328) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35336) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (35349) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35351) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35357) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35364) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (35377) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35379) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35385) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (35398) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35400) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35408) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (35421) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35423) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35429) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35436) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (35449) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (35451) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m

@@ -1,0 +1,701 @@
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x8 (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x15a0
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xd20
+load:0x403cb700,len:0x2ee4
+entry 0x403c8928
+[0;32mI (27) boot: ESP-IDF v5.4-dirty 2nd stage bootloader[0m
+[0;32mI (27) boot: compile time Dec  6 2025 20:10:08[0m
+[0;32mI (27) boot: Multicore bootloader[0m
+[0;32mI (27) boot: chip revision: v0.2[0m
+[0;32mI (30) boot: efuse block revision: v1.3[0m
+[0;32mI (34) boot.esp32s3: Boot SPI Speed : 80MHz[0m
+[0;32mI (38) boot.esp32s3: SPI Mode       : DIO[0m
+[0;32mI (41) boot.esp32s3: SPI Flash Size : 16MB[0m
+[0;32mI (45) boot: Enabling RNG early entropy source...[0m
+[0;32mI (50) boot: Partition Table:[0m
+[0;32mI (52) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (59) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (65) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (72) boot:  2 factory          factory app      00 00 00010000 00300000[0m
+[0;32mI (78) boot:  3 storage          Unknown data     01 82 00310000 00100000[0m
+[0;32mI (85) boot: End of partition table[0m
+[0;32mI (88) esp_image: segment 0: paddr=00010020 vaddr=3c040020 size=170a8h ( 94376) map[0m
+[0;32mI (112) esp_image: segment 1: paddr=000270d0 vaddr=3fc97100 size=03738h ( 14136) load[0m
+[0;32mI (115) esp_image: segment 2: paddr=0002a810 vaddr=40374000 size=05808h ( 22536) load[0m
+[0;32mI (121) esp_image: segment 3: paddr=00030020 vaddr=42000020 size=3cf6ch (249708) map[0m
+[0;32mI (167) esp_image: segment 4: paddr=0006cf94 vaddr=40379808 size=0d824h ( 55332) load[0m
+[0;32mI (180) esp_image: segment 5: paddr=0007a7c0 vaddr=600fe100 size=0001ch (    28) load[0m
+[0;32mI (187) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (187) boot: Disabling RNG early entropy source...[0m
+[0;32mI (198) octal_psram: vendor id    : 0x0d (AP)[0m
+[0;32mI (198) octal_psram: dev id       : 0x02 (generation 3)[0m
+[0;32mI (198) octal_psram: density      : 0x03 (64 Mbit)[0m
+[0;32mI (200) octal_psram: good-die     : 0x01 (Pass)[0m
+[0;32mI (204) octal_psram: Latency      : 0x01 (Fixed)[0m
+[0;32mI (209) octal_psram: VCC          : 0x01 (3V)[0m
+[0;32mI (213) octal_psram: SRF          : 0x01 (Fast Refresh)[0m
+[0;32mI (218) octal_psram: BurstType    : 0x01 (Hybrid Wrap)[0m
+[0;32mI (222) octal_psram: BurstLen     : 0x01 (32 Byte)[0m
+[0;32mI (227) octal_psram: Readlatency  : 0x02 (10 cycles@Fixed)[0m
+[0;32mI (232) octal_psram: DriveStrength: 0x00 (1/1)[0m
+[0;32mI (236) esp_psram: Found 8MB PSRAM device[0m
+[0;32mI (240) esp_psram: Speed: 40MHz[0m
+[0;32mI (243) cpu_start: Multicore app[0m
+[0;32mI (977) esp_psram: SPI SRAM memory test OK[0m
+[0;32mI (986) cpu_start: Pro cpu start user code[0m
+[0;32mI (991) cpu_start: cpu freq: 240000000 Hz[0m
+[0;32mI (991) app_init: Application information:[0m
+[0;32mI (991) app_init: Project name:     yarobot_control_unit[0m
+[0;32mI (996) app_init: App version:      374442d-dirty[0m
+[0;32mI (1000) app_init: Compile time:     Dec  7 2025 20:41:30[0m
+[0;32mI (1005) app_init: ELF file SHA256:  e29cd71ce...[0m
+[0;32mI (1010) app_init: ESP-IDF:          v5.4-dirty[0m
+[0;32mI (1014) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (1018) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (1022) efuse_init: Chip rev:         v0.2[0m
+[0;32mI (1026) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (1032) heap_init: At 3FC9CA78 len 0004CC98 (307 KiB): RAM[0m
+[0;32mI (1038) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM[0m
+[0;32mI (1043) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM[0m
+[0;32mI (1048) heap_init: At 600FE11C len 00001ECC (7 KiB): RTCRAM[0m
+[0;32mI (1054) esp_psram: Adding pool of 8192K of PSRAM memory to heap allocator[0m
+[0;32mI (1061) spi_flash: detected chip: boya[0m
+[0;32mI (1064) spi_flash: flash io: dio[0m
+[0;32mI (1067) sleep_gpio: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (1073) sleep_gpio: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (1080) main_task: Started on CPU0[0m
+[0;32mI (1083) esp_psram: Reserving pool of 32K of internal memory for DMA/internal allocations[0m
+[0;32mI (1091) main_task: Calling app_main()[0m
+[0;32mI (3094) main: Hello from app_main[0m
+[0;32mI (3094) main: PSRAM detected: 8388608 bytes (8.0 MB)[0m
+[0;32mI (3094) main: Firmware: YAROBOT_CONTROL_UNIT v1.0.0[0m
+[0;32mI (3095) main: Axes: 8 (Servos:5, Steppers:2, Discrete:1)[0m
+[0;32mI (3100) main: GPIO X_STEP: 4, I2C MCP0: 0x20[0m
+[0;32mI (3104) main: Initializing USB CDC interface...[0m
+[0;32mI (3109) usb_cdc: Initializing USB CDC interface[0m
+[0;33mW (3113) tusb_desc: No Device descriptor provided, using default.[0m
+[0;33mW (3119) tusb_desc: No FullSpeed configuration descriptor provided, using default.[0m
+[0;33mW (3126) tusb_desc: No String descriptors provided, using default.[0m
+[0;32mI (3132) tusb_desc: [0m
+┌─────────────────────────────────┐
+│  USB Device Descriptor Summary  │
+├───────────────────┬─────────────┤
+│bDeviceClass       │ 239         │
+├───────────────────┼─────────────┤
+│bDeviceSubClass    │ 2           │
+├───────────────────┼─────────────┤
+│bDeviceProtocol    │ 1           │
+├───────────────────┼─────────────┤
+│bMaxPacketSize0    │ 64          │
+├───────────────────┼─────────────┤
+│idVendor           │ 0x303a      │
+├───────────────────┼─────────────┤
+│idProduct          │ 0x4001      │
+├───────────────────┼─────────────┤
+│bcdDevice          │ 0x100       │
+├───────────────────┼─────────────┤
+│iManufacturer      │ 0x1         │
+├───────────────────┼─────────────┤
+│iProduct           │ 0x2         │
+├───────────────────┼─────────────┤
+│iSerialNumber      │ 0x3         │
+├───────────────────┼─────────────┤
+│bNumConfigurations │ 0x1         │
+└───────────────────┴─────────────┘
+[0;32mI (3300) TinyUSB: TinyUSB Driver installed[0m
+[0;32mI (3303) usb_cdc: USB CDC initialized successfully[0m
+[0;32mI (3307) main: USB CDC initialized successfully[0m
+[0;32mI (3312) main: ========================================[0m
+[0;32mI (3317) main: Hardware Initialization Starting[0m
+[0;32mI (3321) main: ========================================[0m
+[0;32mI (3326) gpio_hal: Initializing GPIO HAL[0m
+[0;32mI (3330) gpio: GPIO[4]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3338) gpio: GPIO[5]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3346) gpio: GPIO[6]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3355) gpio: GPIO[7]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3363) gpio: GPIO[15]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3371) gpio: GPIO[16]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3380) gpio: GPIO[17]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3388) gpio: GPIO[13]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3397) gpio: GPIO[1]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3405) gpio: GPIO[2]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3413) gpio: GPIO[40]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3422) gpio: GPIO[41]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3430) gpio: GPIO[42]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3438) gpio: GPIO[38]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3447) gpio: GPIO[39]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3455) gpio: GPIO[47]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3464) gpio: GPIO[48]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3472) gpio_hal: GPIO HAL initialized successfully[0m
+[0;32mI (3477) i2c_hal: Initializing I2C0: SDA=8, SCL=18, freq=400000 Hz[0m
+[0;32mI (3483) i2c_hal: I2C0 initialized successfully[0m
+[0;32mI (3487) main: MCP23017 #0 (0x20) IODIR_A=0xFF[0m
+[0;32mI (3491) main: MCP23017 #1 (0x21) IODIR_A=0xFF[0m
+[0;32mI (3495) i2c_hal: Initializing I2C1: SDA=14, SCL=21, freq=400000 Hz[0m
+[0;32mI (3502) i2c_hal: I2C1 initialized successfully[0m
+[0;32mI (3533) main: OLED initialized with test pattern[0m
+[0;32mI (3533) i2c_hal: Scanning I2C0 bus...[0m
+[0;32mI (3537) i2c_hal: I2C0: Found device at 0x20[0m
+[0;32mI (3537) i2c_hal: I2C0: Found device at 0x21[0m
+[0;32mI (3550) i2c_hal: I2C0 scan complete: 2 device(s) found[0m
+[0;32mI (3550) main: I2C bus isolation verified: I2C0 still operational[0m
+[0;32mI (3550) spi_hal: Initializing SPI1: MOSI=11, SCLK=12, CS=10[0m
+[0;32mI (3556) gpio: GPIO[9]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3563) spi_hal: SPI initialized successfully, OE pin=9 (disabled)[0m
+[0;32mI (3569) tpic6b595: Initializing TPIC6B595 driver[0m
+[0;32mI (3574) spi_hal: SR outputs ENABLED[0m
+[0;32mI (3577) tpic6b595: TPIC6B595 driver initialized, 40-bit chain ready[0m
+[0;32mI (3583) main: TPIC6B595 shift register initialized (test skipped)[0m
+[0;32mI (3589) main: ========================================[0m
+[0;32mI (3594) main: Hardware Initialization: ALL PASSED[0m
+[0;32mI (3598) main: ========================================[0m
+[0;32mI (3603) main: Creating FreeRTOS tasks...[0m
+[0;32mI (3607) tasks: Task safety started on core 0[0m
+[0;32mI (3611) tasks: Task usb_rx started on core 0[0m
+[0;32mI (3615) tasks: Task usb_tx started on core 0[0m
+[0;32mI (3619) tasks: Task cmd_exec started on core 0[0m
+[0;32mI (3624) tasks: Task i2c_mon started on core 0[0m
+[0;32mI (3628) tasks: Task idle_mon started on core 0[0m
+[0;32mI (3632) tasks: Task motion_X (axis 0) started on core 1[0m
+[0;32mI (3633) tasks: Task motion_B (axis 4) started on core 1[0m
+[0;32mI (3632) tasks: Task motion_Z (axis 2) started on core 1[0m
+[0;32mI (3633) tasks: Task motion_C (axis 5) started on core 1[0m
+[0;32mI (3632) tasks: Task motion_Y (axis 1) started on core 1[0m
+[0;32mI (3633) tasks: Task motion_D (axis 6) started on core 1[0m
+[0;32mI (3632) tasks: Task motion_A (axis 3) started on core 1[0m
+[0;32mI (3633) tasks: Task motion_E (axis 7) started on core 1[0m
+[0;32mI (3632) main: YaRobot Control Unit - All tasks started[0m
+[0;32mI (3672) tasks: Task display started on core 1[0m
+[0;32mI (3677) main_task: Returned from app_main()[0m
+[0;32mI (10911) usb_cdc: USB CDC connected (DTR=1, RTS=1)[0m
+[0;32mI (10915) tasks: USB CDC connection state: connected[0m
+[0;32mI (23514) CMD_EXEC: Initialized with 4 built-in commands[0m
+[0;32mI (23514) EVENT_MGR: Initialized (queue=32, max_subs=8)[0m
+[0;32mI (23514) EVENT_MGR: Event processor task started[0m
+[0;32mI (23514) tasks: Command executor initialized[0m
+[0;32mI (23521) motor_system: ========================================[0m
+[0;32mI (23527) motor_system: Motor System Initialization Starting[0m
+[0;32mI (23532) motor_system: ========================================[0m
+[0;33mW (23538) tpic6b595: Already initialized[0m
+[0;32mI (23542) motor_system: Axis configurations initialized[0m
+[0;32mI (23547) RMT_PULSE: Initializing RMT channel 0 on GPIO 4 (step)[0m
+[0;32mI (23553) RMT_PULSE: RMT channel 0 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (23560) RMT_PULSE: Initializing RMT channel 1 on GPIO 6 (step)[0m
+[0;32mI (23554) RMT_PULSE: Ramp task started for channel 0[0m
+[0;32mI (23566) RMT_PULSE: RMT channel 1 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (23578) RMT_PULSE: Initializing RMT channel 2 on GPIO 7 (step)[0m
+[0;32mI (23571) RMT_PULSE: Ramp task started for channel 1[0m
+[0;32mI (23584) RMT_PULSE: RMT channel 2 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (23596) RMT_PULSE: Initializing RMT channel 3 on GPIO 15 (step)[0m
+[0;32mI (23589) RMT_PULSE: Ramp task started for channel 2[0m
+[0;32mI (23602) RMT_PULSE: RMT channel 3 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (23614) MCPWM_PULSE: Initializing MCPWM timer 0 on GPIO 5 with PCNT unit 0[0m
+[0;32mI (23621) gpio: GPIO[5]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (23607) RMT_PULSE: Ramp task started for channel 3[0m
+[0;32mI (23631) MCPWM_PULSE: Profile task started for timer 0[0m
+[0;32mI (23631) MCPWM_PULSE: MCPWM timer 0 with PCNT unit 0 initialized successfully[0m
+[0;32mI (23646) MCPWM_PULSE: Initializing MCPWM timer 1 on GPIO 16 with PCNT unit 1[0m
+[0;32mI (23653) gpio: GPIO[16]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (23662) MCPWM_PULSE: Profile task started for timer 1[0m
+[0;32mI (23662) MCPWM_PULSE: MCPWM timer 1 with PCNT unit 1 initialized successfully[0m
+[0;32mI (23673) LEDC_PULSE: Initializing LEDC timer 2, channel 2 on GPIO 17[0m
+[0;32mI (23679) gpio: GPIO[17]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (23688) LEDC_PULSE: Configured GPIO 17 for PCNT internal loopback[0m
+[0;32mI (23694) LEDC_PULSE: LEDC timer 2 initialized successfully[0m
+[0;32mI (23694) LEDC_PULSE: Completion task started for LEDC timer 2[0m
+[0;32mI (23699) motor_system: All pulse generators initialized[0m
+[0;32mI (23710) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (23714) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (23719) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (23723) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (23728) TIME_TRACKER: Time tracker initialized with travel time 1000 ms[0m
+[0;32mI (23734) motor_system: All position trackers initialized[0m
+[0;32mI (23739) motor_system: Pulse generators wired to position trackers[0m
+[0;32mI (23745) motor_system: Motor objects created[0m
+[0;32mI (23750) motor_base: Axis 0 initialized (0.556 pulses/unit)[0m
+[0;32mI (23755) motor_base: Axis 1 initialized (0.556 pulses/unit)[0m
+[0;32mI (23760) motor_base: Axis 2 initialized (0.556 pulses/unit)[0m
+[0;32mI (23766) motor_base: Axis 3 initialized (0.556 pulses/unit)[0m
+[0;32mI (23771) motor_base: Axis 4 initialized (0.556 pulses/unit)[0m
+[0;32mI (23776) motor_base: Axis 5 initialized (0.556 pulses/unit)[0m
+[0;32mI (23782) LEDC_PULSE: setPositionTracker: tracker=0x3fc9b934 (PcntTracker for hardware PCNT)[0m
+[0;32mI (23790) motor_base: Axis 6 initialized (0.556 pulses/unit)[0m
+[0;33mW (23795) TIME_TRACKER: Time tracker already initialized[0m
+[0;32mI (23800) discrete_axis: Axis 7 initialized (discrete actuator, travel time 1000 ms)[0m
+[0;32mI (23808) motor_system: All motor objects initialized[0m
+[0;32mI (23813) MOTION_CTRL: Initialized with 8 axes[0m
+[0;32mI (23817) motor_system: Motion controller initialized with 8 axes[0m
+[0;32mI (23823) MOVE_HDL: Registered MOVE handler[0m
+[0;32mI (23827) MOVR_HDL: Registered MOVR handler[0m
+[0;32mI (23830) EN_HDL: Registered EN handler[0m
+[0;32mI (23834) POS_HDL: Registered POS handler[0m
+[0;32mI (23838) VEL_HDL: Registered VEL handler[0m
+[0;32mI (23841) STOP_HDL: Registered STOP handler[0m
+[0;32mI (23845) motor_system: Command handlers registered (MOVE, MOVR, EN, POS, VEL, STOP)[0m
+[0;32mI (23853) motor_system: ========================================[0m
+[0;32mI (23859) motor_system: Motor System Initialization: SUCCESS[0m
+[0;32mI (23864) motor_system:   Servos: 5 (X, Y, Z, A, B)[0m
+[0;32mI (23868) motor_system:   Steppers: 2 (C, D)[0m
+[0;32mI (23872) motor_system:   Discrete: 1 (E)[0m
+[0;32mI (23876) motor_system: ========================================[0m
+OK READY
+[0;32mI (27233) motor_base: Axis 0 enabled[0m
+OK
+[0;33mW (30684) motor_base: DEBUG Axis 0: moveAbsolute(pos=3.0000, vel=1080.0000)[0m
+[0;33mW (30684) motor_base: DEBUG Axis 0: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (30687) motor_base: DEBUG Axis 0: current_pos=0.0000, target_pos=3.0000[0m
+[0;33mW (30693) motor_base: DEBUG Axis 0: setting direction=FWD[0m
+[0;33mW (30699) motor_base: DEBUG Axis 0: pulses_per_unit=0.56, pulses=1, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (30707) motor_base: DEBUG Axis 0: calling pulse_gen_->startMove(pulses=1, freq=600.0, accel=6000.0)[0m
+[0;33mW (30716) RMT_PULSE: DEBUG startMove: pulses=1, vel=600.0 Hz, accel=6000.0 pulses/s^2[0m
+[0;33mW (30723) RMT_PULSE: DEBUG startMove: was_running=0, ramp_state=0[0m
+[0;33mW (30729) RMT_PULSE: DEBUG startMove: starting fresh, dir=FWD, abs_pulses=1[0m
+[0;33mW (30736) RMT_PULSE: DEBUG startMove: position_tracker set direction=FWD[0m
+[0;33mW (30742) RMT_PULSE: DEBUG startMove: calling startRmtTransmission()[0m
+[0;33mW (30748) RMT_PULSE: DEBUG startRmtTransmission: filling initial queue[0m
+[0;33mW (30755) RMT_PULSE: DEBUG genCmd[2]: target_vel=600.0, accel=6000.0, target_pos=1, pos_mode=1, ramp_state=1[0m
+[0;33mW (30764) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=64000, steps=2, flags=0x01[0m
+[0;33mW (30771) RMT_PULSE: DEBUG genCmd[3]: target_vel=600.0, accel=6000.0, target_pos=1, pos_mode=1, ramp_state=1[0m
+[0;33mW (30781) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=64000, steps=2, flags=0x01[0m
+[0;33mW (30787) RMT_PULSE: DEBUG genCmd[4]: target_vel=600.0, accel=6000.0, target_pos=1, pos_mode=1, ramp_state=3[0m
+[0;33mW (30797) RMT_PULSE: DEBUG DECEL: motion complete, remaining_to_target=-3, queue_pos=4, target=1[0m
+[0;33mW (30805) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=2, ramp_state=3, queue_end_pos=4, target=1[0m
+[0;33mW (30815) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=29, ticks_in_queue=256000[0m
+[0;33mW (30823) RMT_PULSE: DEBUG startRmtTransmission: queue filled, starting RMT transmit[0m
+[0;33mW (30830) RMT_PULSE: DEBUG startRmtTransmission: rmt_transmit() returned OK[0m
+[0;33mW (30837) RMT_PULSE: DEBUG startMove: completed, running=1[0m
+[0;33mW (30842) motor_base: DEBUG Axis 0: moveAbsolute completed, state=MOVING[0m
+OK
+[0;33mW (30737) RMT_PULSE: DEBUG genCmd[1]: target_vel=600.0, accel=6000.0, target_pos=1, pos_mode=1, ramp_state=1[0m
+[0;33mW (30859) RMT_PULSE: DEBUG DECEL: motion complete, remaining_to_target=-3, queue_pos=4, target=1[0m
+[0;33mW (30867) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0, ramp_state=3, queue_end_pos=4, target=1[0m
+[0;33mW (30877) RMT_PULSE: DEBUG rampTask: completion_pending=true, calling callback[0m
+[0;33mW (30884) RMT_PULSE: DEBUG rampTask: calling completion_callback with pulses=4[0m
+[0;33mW (30891) motor_base: DEBUG Axis 0: onMotionComplete(total_pulses=4)[0m
+[0;33mW (30897) motor_base: DEBUG Axis 0: before sync: pulse_count=0, tracker_pos=4[0m
+[0;33mW (30904) motor_base: DEBUG Axis 0: after sync: pulse_count=4[0m
+[0;33mW (30910) motor_base: Axis 0: motion complete at position 7.2000[0m
+[0;33mW (64339) motor_base: DEBUG Axis 0: moveAbsolute(pos=10.0000, vel=1080.0000)[0m
+[0;33mW (64339) motor_base: DEBUG Axis 0: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (64342) motor_base: DEBUG Axis 0: current_pos=7.2000, target_pos=10.0000[0m
+[0;33mW (64348) motor_base: DEBUG Axis 0: setting direction=FWD[0m
+[0;33mW (64354) motor_base: DEBUG Axis 0: pulses_per_unit=0.56, pulses=1, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (64362) motor_base: DEBUG Axis 0: calling pulse_gen_->startMove(pulses=1, freq=600.0, accel=6000.0)[0m
+[0;33mW (64371) RMT_PULSE: DEBUG startMove: pulses=1, vel=600.0 Hz, accel=6000.0 pulses/s^2[0m
+[0;33mW (64378) RMT_PULSE: DEBUG startMove: was_running=0, ramp_state=0[0m
+[0;33mW (64384) RMT_PULSE: DEBUG startMove: starting fresh, dir=FWD, abs_pulses=1[0m
+[0;33mW (64391) RMT_PULSE: DEBUG startMove: position_tracker set direction=FWD[0m
+[0;33mW (64397) RMT_PULSE: DEBUG startMove: calling startRmtTransmission()[0m
+[0;33mW (64403) RMT_PULSE: DEBUG startRmtTransmission: filling initial queue[0m
+[0;33mW (64410) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=64000, steps=2, flags=0x01[0m
+[0;33mW (64417) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=64000, steps=2, flags=0x01[0m
+[0;33mW (64423) RMT_PULSE: DEBUG DECEL: motion complete, remaining_to_target=-3, queue_pos=4, target=1[0m
+[0;33mW (64432) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=2, ramp_state=3, queue_end_pos=4, target=1[0m
+[0;33mW (64441) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=29, ticks_in_queue=256000[0m
+[0;33mW (64449) RMT_PULSE: DEBUG startRmtTransmission: queue filled, starting RMT transmit[0m
+[0;33mW (64457) RMT_PULSE: DEBUG startRmtTransmission: rmt_transmit() returned OK[0m
+[0;33mW (64464) RMT_PULSE: DEBUG startMove: completed, running=1[0m
+[0;33mW (64469) motor_base: DEBUG Axis 0: moveAbsolute completed, state=MOVING[0m
+OK
+[0;33mW (64394) RMT_PULSE: DEBUG genCmd[5]: target_vel=600.0, accel=6000.0, target_pos=1, pos_mode=1, ramp_state=1[0m
+[0;33mW (64485) RMT_PULSE: DEBUG DECEL: motion complete, remaining_to_target=-3, queue_pos=4, target=1[0m
+[0;33mW (64494) RMT_PULSE: DEBUG fillQueue: motion complete, cmds_added=0, ramp_state=3, queue_end_pos=4, target=1[0m
+[0;33mW (64503) RMT_PULSE: DEBUG rampTask: completion_pending=true, calling callback[0m
+[0;33mW (64511) RMT_PULSE: DEBUG rampTask: calling completion_callback with pulses=4[0m
+[0;33mW (64517) motor_base: DEBUG Axis 0: onMotionComplete(total_pulses=4)[0m
+[0;33mW (64523) motor_base: DEBUG Axis 0: before sync: pulse_count=4, tracker_pos=8[0m
+[0;33mW (64531) motor_base: DEBUG Axis 0: after sync: pulse_count=8[0m
+[0;33mW (64536) motor_base: Axis 0: motion complete at position 14.4000[0m
+[0;33mW (81346) motor_base: DEBUG Axis 0: moveAbsolute(pos=180.0000, vel=1080.0000)[0m
+[0;33mW (81346) motor_base: DEBUG Axis 0: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (81349) motor_base: DEBUG Axis 0: current_pos=14.4000, target_pos=180.0000[0m
+[0;33mW (81356) motor_base: DEBUG Axis 0: setting direction=FWD[0m
+[0;33mW (81361) motor_base: DEBUG Axis 0: pulses_per_unit=0.56, pulses=92, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (81369) motor_base: DEBUG Axis 0: calling pulse_gen_->startMove(pulses=92, freq=600.0, accel=6000.0)[0m
+[0;33mW (81378) RMT_PULSE: DEBUG startMove: pulses=92, vel=600.0 Hz, accel=6000.0 pulses/s^2[0m
+[0;33mW (81386) RMT_PULSE: DEBUG startMove: was_running=0, ramp_state=0[0m
+[0;33mW (81392) RMT_PULSE: DEBUG startMove: starting fresh, dir=FWD, abs_pulses=92[0m
+[0;33mW (81399) RMT_PULSE: DEBUG startMove: position_tracker set direction=FWD[0m
+[0;33mW (81405) RMT_PULSE: DEBUG startMove: calling startRmtTransmission()[0m
+[0;33mW (81411) RMT_PULSE: DEBUG startRmtTransmission: filling initial queue[0m
+[0;33mW (81417) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=64000, steps=2, flags=0x01[0m
+[0;33mW (81424) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=64000, steps=2, flags=0x01[0m
+[0;33mW (81431) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=59701, steps=2, flags=0x01[0m
+[0;33mW (81438) RMT_PULSE: DEBUG fillQueue: added 9 cmds, queue_space=21, ticks_in_queue=1381914[0m
+[0;33mW (81446) RMT_PULSE: DEBUG startRmtTransmission: queue filled, starting RMT transmit[0m
+[0;33mW (81453) RMT_PULSE: DEBUG startRmtTransmission: rmt_transmit() returned OK[0m
+[0;33mW (81460) RMT_PULSE: DEBUG startMove: completed, running=1[0m
+[0;33mW (81465) motor_base: DEBUG Axis 0: moveAbsolute completed, state=MOVING[0m
+OK
+[0;33mW (81401) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=64000, steps=2, flags=0x01[0m
+[0;33mW (81480) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x01[0m
+[0;33mW (81486) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x01[0m
+[0;33mW (81493) RMT_PULSE: DEBUG fillQueue: added 10 cmds, queue_space=19, ticks_in_queue=1848844[0m
+[0;33mW (81521) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=46242, steps=3, flags=0x01[0m
+[0;33mW (81521) RMT_PULSE: DEBUG fillQueue: added 1 cmds, queue_space=21, ticks_in_queue=1553102[0m
+[0;33mW (81530) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=55363, steps=2, flags=0x01[0m
+[0;33mW (81532) RMT_PULSE: DEBUG fillQueue: added 1 cmds, queue_space=21, ticks_in_queue=1503832[0m
+[0;33mW (81545) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=65535, steps=2, flags=0x01[0m
+[0;33mW (81547) RMT_PULSE: DEBUG fillQueue: added 1 cmds, queue_space=21, ticks_in_queue=1474906[0m
+[0;33mW (81560) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=65535, steps=1, flags=0x01[0m
+[0;33mW (81562) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=65535, steps=1, flags=0x01[0m
+[0;33mW (81568) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1125988[0m
+[0;33mW (81581) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=65535, steps=1, flags=0x05[0m
+[0;33mW (81583) RMT_PULSE: DEBUG fillQueue: LAST flag set, total cmds=1[0m
+[0;33mW (81589) RMT_PULSE: DEBUG fillQueue: added 1 cmds, queue_space=23, ticks_in_queue=871531[0m
+[0;33mW (81644) RMT_PULSE: DEBUG rampTask: completion_pending=true, calling callback[0m
+[0;33mW (81644) RMT_PULSE: DEBUG rampTask: calling completion_callback with pulses=90[0m
+[0;33mW (81647) motor_base: DEBUG Axis 0: onMotionComplete(total_pulses=90)[0m
+[0;33mW (81654) motor_base: DEBUG Axis 0: before sync: pulse_count=8, tracker_pos=100[0m
+[0;33mW (81660) motor_base: DEBUG Axis 0: after sync: pulse_count=100[0m
+[0;33mW (81667) motor_base: Axis 0: motion complete at position 180.0000[0m
+[0;33mW (100812) motor_base: DEBUG Axis 0: moveAbsolute(pos=360.0000, vel=1080.0000)[0m
+[0;33mW (100812) motor_base: DEBUG Axis 0: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (100815) motor_base: DEBUG Axis 0: current_pos=180.0000, target_pos=360.0000[0m
+[0;33mW (100822) motor_base: DEBUG Axis 0: setting direction=FWD[0m
+[0;33mW (100827) motor_base: DEBUG Axis 0: pulses_per_unit=0.56, pulses=100, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (100836) motor_base: DEBUG Axis 0: calling pulse_gen_->startMove(pulses=100, freq=600.0, accel=6000.0)[0m
+[0;33mW (100845) RMT_PULSE: DEBUG startMove: pulses=100, vel=600.0 Hz, accel=6000.0 pulses/s^2[0m
+[0;33mW (100853) RMT_PULSE: DEBUG startMove: was_running=0, ramp_state=0[0m
+[0;33mW (100859) RMT_PULSE: DEBUG startMove: starting fresh, dir=FWD, abs_pulses=100[0m
+[0;33mW (100866) RMT_PULSE: DEBUG startMove: position_tracker set direction=FWD[0m
+[0;33mW (100872) RMT_PULSE: DEBUG startMove: calling startRmtTransmission()[0m
+[0;33mW (100878) RMT_PULSE: DEBUG startRmtTransmission: filling initial queue[0m
+[0;33mW (100885) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=64000, steps=2, flags=0x01[0m
+[0;33mW (100892) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=64000, steps=2, flags=0x01[0m
+[0;33mW (100899) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=59701, steps=2, flags=0x01[0m
+[0;33mW (100906) RMT_PULSE: DEBUG fillQueue: added 9 cmds, queue_space=21, ticks_in_queue=1381914[0m
+[0;33mW (100914) RMT_PULSE: DEBUG startRmtTransmission: queue filled, starting RMT transmit[0m
+[0;33mW (100921) RMT_PULSE: DEBUG startRmtTransmission: rmt_transmit() returned OK[0m
+[0;33mW (100928) RMT_PULSE: DEBUG startMove: completed, running=1[0m
+[0;33mW (100933) motor_base: DEBUG Axis 0: moveAbsolute completed, state=MOVING[0m
+OK
+[0;33mW (100866) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=64000, steps=2, flags=0x01[0m
+[0;33mW (100948) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x01[0m
+[0;33mW (100954) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x01[0m
+[0;33mW (100962) RMT_PULSE: DEBUG fillQueue: added 10 cmds, queue_space=19, ticks_in_queue=1845312[0m
+[0;33mW (100990) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=36529, steps=4, flags=0x01[0m
+[0;33mW (100990) RMT_PULSE: DEBUG fillQueue: added 1 cmds, queue_space=21, ticks_in_queue=1556960[0m
+[0;33mW (100999) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=42216, steps=3, flags=0x01[0m
+[0;33mW (101001) RMT_PULSE: DEBUG fillQueue: added 1 cmds, queue_space=21, ticks_in_queue=1523612[0m
+[0;33mW (101014) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=48780, steps=3, flags=0x01[0m
+[0;33mW (101016) RMT_PULSE: DEBUG fillQueue: added 1 cmds, queue_space=22, ticks_in_queue=1349960[0m
+[0;33mW (101029) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=59701, steps=2, flags=0x01[0m
+[0;33mW (101031) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=65535, steps=2, flags=0x01[0m
+[0;33mW (101038) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1280440[0m
+[0;33mW (101051) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=65535, steps=1, flags=0x01[0m
+[0;33mW (101053) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=65535, steps=1, flags=0x05[0m
+[0;33mW (101060) RMT_PULSE: DEBUG fillQueue: LAST flag set, total cmds=2[0m
+[0;33mW (101066) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=23, ticks_in_queue=931522[0m
+[0;33mW (101131) RMT_PULSE: DEBUG rampTask: completion_pending=true, calling callback[0m
+[0;33mW (101131) RMT_PULSE: DEBUG rampTask: calling completion_callback with pulses=99[0m
+[0;33mW (101135) motor_base: DEBUG Axis 0: onMotionComplete(total_pulses=99)[0m
+[0;33mW (101141) motor_base: DEBUG Axis 0: before sync: pulse_count=100, tracker_pos=200[0m
+[0;33mW (101148) motor_base: DEBUG Axis 0: after sync: pulse_count=200[0m
+[0;33mW (101154) motor_base: Axis 0: motion complete at position 360.0000[0m
+[0;33mW (123280) motor_base: DEBUG Axis 0: moveAbsolute(pos=180.0000, vel=1080.0000)[0m
+[0;33mW (123280) motor_base: DEBUG Axis 0: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (123283) motor_base: DEBUG Axis 0: current_pos=360.0000, target_pos=180.0000[0m
+[0;33mW (123290) motor_base: DEBUG Axis 0: setting direction=REV[0m
+[0;33mW (123295) motor_base: DEBUG Axis 0: pulses_per_unit=0.56, pulses=99, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (123304) motor_base: DEBUG Axis 0: calling pulse_gen_->startMove(pulses=-99, freq=600.0, accel=6000.0)[0m
+[0;33mW (123313) RMT_PULSE: DEBUG startMove: pulses=-99, vel=600.0 Hz, accel=6000.0 pulses/s^2[0m
+[0;33mW (123321) RMT_PULSE: DEBUG startMove: was_running=0, ramp_state=0[0m
+[0;33mW (123327) RMT_PULSE: DEBUG startMove: starting fresh, dir=REV, abs_pulses=99[0m
+[0;33mW (123334) RMT_PULSE: DEBUG startMove: position_tracker set direction=REV[0m
+[0;33mW (123340) RMT_PULSE: DEBUG startMove: calling startRmtTransmission()[0m
+[0;33mW (123346) RMT_PULSE: DEBUG startRmtTransmission: filling initial queue[0m
+[0;33mW (123353) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=64000, steps=2, flags=0x00[0m
+[0;33mW (123360) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=64000, steps=2, flags=0x00[0m
+[0;33mW (123366) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=59701, steps=2, flags=0x00[0m
+[0;33mW (123373) RMT_PULSE: DEBUG fillQueue: added 9 cmds, queue_space=21, ticks_in_queue=1381914[0m
+[0;33mW (123381) RMT_PULSE: DEBUG startRmtTransmission: queue filled, starting RMT transmit[0m
+[0;33mW (123389) RMT_PULSE: DEBUG startRmtTransmission: rmt_transmit() returned OK[0m
+[0;33mW (123396) RMT_PULSE: DEBUG startMove: completed, running=1[0m
+[0;33mW (123401) motor_base: DEBUG Axis 0: moveAbsolute completed, state=MOVING[0m
+OK
+[0;33mW (123337) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=64000, steps=2, flags=0x00[0m
+[0;33mW (123416) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123422) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123429) RMT_PULSE: DEBUG fillQueue: added 10 cmds, queue_space=19, ticks_in_queue=1874432[0m
+[0;33mW (123458) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123458) RMT_PULSE: DEBUG fillQueue: added 1 cmds, queue_space=21, ticks_in_queue=1599960[0m
+[0;33mW (123467) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123469) RMT_PULSE: DEBUG fillQueue: added 1 cmds, queue_space=21, ticks_in_queue=1599960[0m
+[0;33mW (123482) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123484) RMT_PULSE: DEBUG fillQueue: added 1 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (123497) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123499) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123506) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (123519) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123521) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123528) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (123541) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123543) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123550) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (123563) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123565) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123572) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (123585) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123587) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123594) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123601) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (123614) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123616) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123623) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123630) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (123643) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123645) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123652) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (123665) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123667) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123674) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123681) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (123694) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123696) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123702) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123710) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (123723) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123725) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123731) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (123744) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123746) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123754) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123760) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (123773) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123775) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123783) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (123796) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123798) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123804) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123812) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (123825) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123827) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123833) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123841) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (123854) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123856) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123862) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123869) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (123882) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123884) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123891) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (123904) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123906) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123913) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123920) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (123933) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123935) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123942) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (123955) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123957) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123964) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123971) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (123984) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123986) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (123993) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124000) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124013) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124015) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124021) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124035) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124037) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124043) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124051) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124064) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124066) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124072) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124080) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124093) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124095) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124101) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124114) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124116) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124124) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124130) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124143) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124145) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124153) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124166) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124168) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124174) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124182) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124195) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124197) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124203) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124210) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124224) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124225) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124232) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124239) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124252) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124254) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124261) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124274) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124276) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124283) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124290) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124303) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124305) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124312) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124325) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124327) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124334) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124341) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124354) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124356) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124363) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124370) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124383) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124385) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124391) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124404) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124406) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124414) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124420) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124433) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124435) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124443) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124456) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124458) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124464) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124472) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124485) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124487) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124493) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124501) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124514) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124516) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124522) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124530) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124543) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124545) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124551) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124564) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124566) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124573) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124580) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124593) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124595) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124602) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124615) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124617) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124624) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124631) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124644) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124646) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124653) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124660) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124673) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124675) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124682) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124695) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124697) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124704) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124711) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124724) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124726) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124732) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124740) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124753) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124755) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124761) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124774) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124776) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124784) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124790) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124803) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124805) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124813) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124826) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124828) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124834) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124842) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124855) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124857) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124863) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124871) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124884) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124886) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124892) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124899) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124913) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124914) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124921) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124934) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124936) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124943) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124950) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124963) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124965) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124972) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (124985) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124987) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (124994) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125001) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (125014) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125016) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125023) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125030) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (125043) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125045) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125052) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (125065) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125067) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125073) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125081) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (125094) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125096) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125102) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125110) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (125123) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125125) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125131) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (125144) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125146) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125154) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125160) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (125173) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125175) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125183) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (125196) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125198) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125204) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125212) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (125225) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125227) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125233) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125240) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (125254) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125255) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125262) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125269) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (125282) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125284) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125291) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (125304) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125306) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125313) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125320) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (125333) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125335) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125342) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (125355) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125357) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125364) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125371) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (125384) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125386) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125393) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125400) RMT_PULSE: DEBUG fillQueue: added 3 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (125413) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125415) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125421) RMT_PULSE: DEBUG fillQueue: added 2 cmds, queue_space=22, ticks_in_queue=1439964[0m
+[0;33mW (125435) RMT_PULSE: DEBUG fillQueue cmd[1]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125437) RMT_PULSE: DEBUG fillQueue cmd[2]: ticks=26666, steps=6, flags=0x00[0m
+[0;33mW (125443) RMT_PULSE: DEBUG fillQueue cmd[3]: ticks=26666, steps=6, flags=0x00[0m
