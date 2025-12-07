@@ -249,12 +249,9 @@ bool RmtPulseGenerator::pushCommand(const StepCommand& cmd)
     }
     queue_end_.ticks_queued += static_cast<uint32_t>(cmd.ticks) * cmd.steps;
 
-    // Update position tracker when queuing (not in ISR)
-    // Position represents where we'll be after this command executes
-    // Note: addPulses() uses direction_ stored in tracker, so always pass positive count
-    if (position_tracker_ && cmd.steps > 0) {
-        position_tracker_->addPulses(cmd.steps);
-    }
+    // Note: Position tracking moved to encodeCallback() - track when pulses
+    // are actually generated, not when commands are queued. This ensures
+    // accurate position in all modes (MOVE, VEL, STOP).
 
     return true;
 }
@@ -660,16 +657,21 @@ size_t IRAM_ATTR RmtPulseGenerator::encodeCallback(
     size_t steps_generated = self->fillSymbols(symbols, cmd);
 
     // ============================================================
-    // PULSE COUNT TRACKING (ISR context - atomic operations only)
-    // Note: Position tracker is updated when commands are QUEUED,
-    // not here. This pulse_count_ is just for internal tracking.
+    // POSITION TRACKING (ISR context - atomic operations only)
+    // Track position when pulses are ACTUALLY GENERATED, not when
+    // commands are queued. This ensures accurate position for all
+    // modes (MOVE, VEL, STOP) regardless of queue state.
     // ============================================================
     if (steps_generated > 0) {
         bool dir = self->direction_.load(std::memory_order_relaxed);
         int64_t delta = dir ? static_cast<int64_t>(steps_generated)
                             : -static_cast<int64_t>(steps_generated);
         self->pulse_count_.fetch_add(delta, std::memory_order_relaxed);
-        // Position tracker updated in pushCommand(), not here
+
+        // Update position tracker - addPulses() is ISR-safe (atomic only)
+        if (self->position_tracker_) {
+            self->position_tracker_->addPulses(steps_generated);
+        }
     }
 
     // Wake ramp task if queue running low (< 8 entries)

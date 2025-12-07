@@ -10,6 +10,7 @@
 
 #include "software_tracker.h"
 #include "esp_log.h"
+#include "esp_attr.h"  // For IRAM_ATTR
 
 static const char* TAG = "SW_TRACKER";
 
@@ -73,8 +74,11 @@ void SoftwareTracker::setDirection(bool forward)
 // Pulse Addition (called from pulse generator callback)
 // ============================================================================
 
-void SoftwareTracker::addPulses(int64_t count)
+void IRAM_ATTR SoftwareTracker::addPulses(int64_t count)
 {
+    // NOTE: This function is called from ISR context (RMT encoder callback)
+    // Must use only atomic operations - NO logging, NO locks!
+
     if (!initialized_ || count == 0) {
         return;
     }
@@ -83,12 +87,6 @@ void SoftwareTracker::addPulses(int64_t count)
     bool forward = direction_.load(std::memory_order_relaxed);
     int64_t delta = forward ? count : -count;
 
-    int64_t old_pos = position_.load(std::memory_order_relaxed);
-
-    // Atomic add
-    int64_t new_pos = position_.fetch_add(delta, std::memory_order_acq_rel) + delta;
-
-    ESP_LOGW(TAG, "addPulses: count=%lld, dir=%s, delta=%lld, pos: %lld -> %lld",
-             (long long)count, forward ? "FWD" : "REV", (long long)delta,
-             (long long)old_pos, (long long)new_pos);
+    // Atomic add - ISR safe
+    position_.fetch_add(delta, std::memory_order_acq_rel);
 }
