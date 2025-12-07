@@ -11,6 +11,8 @@
 #include "config_gpio.h"
 #include "config_i2c.h"
 #include "config_oled.h"
+#include "config_sr.h"
+#include "tpic6b595.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -136,6 +138,130 @@ static esp_err_t verify_mcp23017(void)
 }
 
 /**
+ * @brief TPIC6B595 visual blink test
+ *
+ * Tests shift register outputs by blinking different patterns:
+ * 1. All ENABLEs on/off
+ * 2. All DIRECTIONs on/off
+ * 3. Walking pattern across all axes
+ *
+ * @param delay_ms Delay in milliseconds between pattern changes
+ */
+static void tpic_blink_test(uint32_t delay_ms)
+{
+    ESP_LOGI(TAG, "========================================");
+    ESP_LOGI(TAG, "TPIC6B595 Blink Test Starting");
+    ESP_LOGI(TAG, "========================================");
+    ESP_LOGI(TAG, "SPI pins: MOSI=GPIO%d, SCLK=GPIO%d, CS=GPIO%d, OE=GPIO%d",
+             GPIO_SR_MOSI, GPIO_SR_SCLK, GPIO_SR_CS, GPIO_SR_OE);
+
+    // Initialize shift register driver
+    esp_err_t ret = sr_init();
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "SR init failed: %s", esp_err_to_name(ret));
+        return;
+    }
+    ESP_LOGI(TAG, "SR initialized, OE should be LOW (outputs enabled)");
+
+    // Verify OE pin level
+    int oe_level = gpio_get_level(GPIO_SR_OE);
+    ESP_LOGI(TAG, "OE pin (GPIO%d) current level: %d (should be 0 for outputs enabled)",
+             GPIO_SR_OE, oe_level);
+    if (oe_level != 0) {
+        ESP_LOGW(TAG, "WARNING: OE pin is HIGH - outputs are DISABLED!");
+        // Force OE low
+        gpio_set_level(GPIO_SR_OE, 0);
+        ESP_LOGI(TAG, "Forced OE LOW, level now: %d", gpio_get_level(GPIO_SR_OE));
+    }
+
+    // Test 1: Blink all ENABLE pins (3 cycles)
+    ESP_LOGI(TAG, "Test 1: Blinking all ENABLE pins...");
+    for (int cycle = 0; cycle < 3; cycle++) {
+        // All enables ON
+        for (uint8_t axis = 0; axis < SR_NUM_AXES; axis++) {
+            sr_set_enable(axis, true);
+        }
+        sr_update();
+        ESP_LOGI(TAG, "  ENABLEs ON  (state=0x%010llX)", (unsigned long long)sr_get_state());
+        vTaskDelay(pdMS_TO_TICKS(delay_ms));
+
+        // All enables OFF
+        for (uint8_t axis = 0; axis < SR_NUM_AXES; axis++) {
+            sr_set_enable(axis, false);
+        }
+        sr_update();
+        ESP_LOGI(TAG, "  ENABLEs OFF (state=0x%010llX)", (unsigned long long)sr_get_state());
+        vTaskDelay(pdMS_TO_TICKS(delay_ms));
+    }
+
+    // Test 2: Blink all DIRECTION pins (3 cycles)
+    ESP_LOGI(TAG, "Test 2: Blinking all DIRECTION pins...");
+    for (int cycle = 0; cycle < 3; cycle++) {
+        // All directions ON (forward)
+        for (uint8_t axis = 0; axis < SR_NUM_AXES; axis++) {
+            sr_set_direction(axis, true);
+        }
+        sr_update();
+        ESP_LOGI(TAG, "  DIRs ON  (state=0x%010llX)", (unsigned long long)sr_get_state());
+        vTaskDelay(pdMS_TO_TICKS(delay_ms));
+
+        // All directions OFF (reverse)
+        for (uint8_t axis = 0; axis < SR_NUM_AXES; axis++) {
+            sr_set_direction(axis, false);
+        }
+        sr_update();
+        ESP_LOGI(TAG, "  DIRs OFF (state=0x%010llX)", (unsigned long long)sr_get_state());
+        vTaskDelay(pdMS_TO_TICKS(delay_ms));
+    }
+
+    // Test 3: Walking enable pattern (one axis at a time)
+    ESP_LOGI(TAG, "Test 3: Walking ENABLE pattern...");
+    for (uint8_t axis = 0; axis < SR_NUM_AXES; axis++) {
+        sr_set_enable(axis, true);
+        sr_update();
+        ESP_LOGI(TAG, "  Axis %d EN ON (state=0x%010llX)", axis, (unsigned long long)sr_get_state());
+        vTaskDelay(pdMS_TO_TICKS(delay_ms));
+        sr_set_enable(axis, false);
+        sr_update();
+    }
+
+    // Test 4: All GP outputs blink (3 cycles)
+    ESP_LOGI(TAG, "Test 4: Blinking all GP outputs...");
+    for (int cycle = 0; cycle < 3; cycle++) {
+        // All GP outputs ON
+        for (uint8_t pin = 0; pin < SR_NUM_GP_OUTPUTS; pin++) {
+            sr_set_gp_output(pin, true);
+        }
+        sr_update();
+        ESP_LOGI(TAG, "  GP ON  (state=0x%010llX)", (unsigned long long)sr_get_state());
+        vTaskDelay(pdMS_TO_TICKS(delay_ms));
+
+        // All GP outputs OFF
+        for (uint8_t pin = 0; pin < SR_NUM_GP_OUTPUTS; pin++) {
+            sr_set_gp_output(pin, false);
+        }
+        sr_update();
+        ESP_LOGI(TAG, "  GP OFF (state=0x%010llX)", (unsigned long long)sr_get_state());
+        vTaskDelay(pdMS_TO_TICKS(delay_ms));
+    }
+
+    // Return to safe state
+    for (uint8_t axis = 0; axis < SR_NUM_AXES; axis++) {
+        sr_set_enable(axis, false);
+        sr_set_direction(axis, false);
+    }
+    for (uint8_t pin = 0; pin < SR_NUM_GP_OUTPUTS; pin++) {
+        sr_set_gp_output(pin, false);
+    }
+    sr_update();
+
+    ESP_LOGI(TAG, "========================================");
+    ESP_LOGI(TAG, "TPIC6B595 Blink Test Complete");
+    ESP_LOGI(TAG, "Final state=0x%010llX (should be 0)", (unsigned long long)sr_get_state());
+    ESP_LOGI(TAG, "========================================");
+}
+
+/**
  * @brief Initialize all hardware and run verification
  *
  * @return true if all hardware initialized successfully
@@ -203,9 +329,9 @@ static bool hardware_init_and_verify(void)
         ESP_LOGW(TAG, "SPI init failed - continuing in degraded mode");
         all_ok = false;
     } else {
-        // Write safe state to shift registers
-        spi_hal_sr_write(0x000000, 24);  // All zeros = safe state
-        ESP_LOGI(TAG, "Shift registers initialized with safe state");
+        // Run TPIC6B595 visual blink test (500ms delay between patterns)
+        // This also initializes the SR driver and leaves it in safe state
+        tpic_blink_test(500);
     }
 
     ESP_LOGI(TAG, "========================================");

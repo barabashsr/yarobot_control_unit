@@ -123,14 +123,14 @@ struct AxisConfig {
     }
 
     /**
-     * @brief Create default linear axis configuration
+     * @brief Create default axis configuration
      *
-     * @return AxisConfig with DEFAULT_* values for linear axis
+     * @return AxisConfig with DEFAULT_* values (200 pulses/rev, 360 deg/rev)
      */
-    static AxisConfig createDefaultLinear() {
+    static AxisConfig createDefault() {
         AxisConfig cfg{};
-        cfg.pulses_per_rev = DEFAULT_PULSES_PER_UNIT;  // Using as direct pulses/unit
-        cfg.units_per_rev = 1.0f;  // 1:1 mapping when using pulses_per_unit directly
+        cfg.pulses_per_rev = DEFAULT_PULSES_PER_REV;
+        cfg.units_per_rev = DEFAULT_UNITS_PER_REV;
         cfg.is_rotary = DEFAULT_IS_ROTARY;
         cfg.limit_min = DEFAULT_LIMIT_MIN;
         cfg.limit_max = DEFAULT_LIMIT_MAX;
@@ -143,22 +143,22 @@ struct AxisConfig {
     }
 
     /**
-     * @brief Create default rotary axis configuration
+     * @brief Create default linear axis configuration (alias for createDefault)
      *
-     * @return AxisConfig with DEFAULT_ROTARY_* values for rotary axis
+     * @return AxisConfig with DEFAULT_* values
+     */
+    static AxisConfig createDefaultLinear() {
+        return createDefault();
+    }
+
+    /**
+     * @brief Create default rotary axis configuration (same as linear for unified config)
+     *
+     * @return AxisConfig with DEFAULT_* values, is_rotary = true
      */
     static AxisConfig createDefaultRotary() {
-        AxisConfig cfg{};
-        cfg.pulses_per_rev = DEFAULT_ROTARY_PULSES_PER_UNIT * CONST_2PI;  // Convert to pulses/rev
-        cfg.units_per_rev = CONST_2PI;  // One revolution = 2*PI radians
+        AxisConfig cfg = createDefault();
         cfg.is_rotary = true;
-        cfg.limit_min = DEFAULT_ROTARY_LIMIT_MIN;
-        cfg.limit_max = DEFAULT_ROTARY_LIMIT_MAX;
-        cfg.max_velocity = DEFAULT_ROTARY_MAX_VEL;
-        cfg.max_acceleration = DEFAULT_ROTARY_MAX_ACCEL;
-        cfg.backlash = DEFAULT_BACKLASH;
-        cfg.home_offset = DEFAULT_HOME_OFFSET;
-        cfg.alias[0] = '\0';
         return cfg;
     }
 };

@@ -141,6 +141,7 @@ esp-idf/main/CMakeFiles/__idf_main.dir/yarobot_control_unit.cpp.obj: /Users/serg
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_timing.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/config/include/config_yaml_schema.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/control/tasks/include/task_defs.h \
+  /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/drivers/tpic6b595/include/tpic6b595.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/interface/usb_cdc/include/usb_cdc.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/yarobot_hal/gpio_hal/include/gpio_hal.h \
   /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/yarobot_hal/i2c_hal/include/i2c_hal.h \
@@ -410,6 +411,8 @@ config/sdkconfig.h:
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/freertos/config/xtensa/include/freertos/FreeRTOSConfig_arch.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_common/include/esp_attr.h:
+
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/drivers/tpic6b595/include/tpic6b595.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/reent.h:
 

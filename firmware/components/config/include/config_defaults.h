@@ -38,40 +38,46 @@
 /** @} */ // end math_constants
 
 /**
- * @defgroup linear_defaults Default Linear Axis Configuration
- * @brief Default parameters for linear (translation) axes in meters
+ * @defgroup linear_defaults Default Axis Configuration
+ * @brief Default parameters for all axes in degrees
  *
- * These defaults provide 1 micrometer resolution with reasonable
- * velocity and acceleration limits.
+ * Configuration for servo/stepper axes with 200 pulses/rev drivers.
+ * Units are degrees for human-readable position values.
  * @{
  */
 
 /**
- * @brief Default pulses per unit (meter)
+ * @brief Default pulses per revolution
  *
- * 1,000,000 pulses/meter = 1 micrometer resolution.
- * Adjust based on motor steps/rev, gear ratio, and lead screw pitch.
+ * 200 pulses/rev matches common servo driver PA14 settings.
  */
-#define DEFAULT_PULSES_PER_UNIT     1000000.0f
+#define DEFAULT_PULSES_PER_REV      200.0f
+
+/**
+ * @brief Default units per revolution (degrees)
+ *
+ * 360 degrees per revolution for human-readable positions.
+ */
+#define DEFAULT_UNITS_PER_REV       360.0f
 
 /** @brief Default axis type (false = linear, true = rotary) */
 #define DEFAULT_IS_ROTARY           false
 
-/** @brief Default minimum position limit (meters) */
-#define DEFAULT_LIMIT_MIN           -1.0f
+/** @brief Default minimum position limit (degrees) - 100 revolutions negative */
+#define DEFAULT_LIMIT_MIN           -360000.0f
 
-/** @brief Default maximum position limit (meters) */
-#define DEFAULT_LIMIT_MAX           1.0f
+/** @brief Default maximum position limit (degrees) - 100 revolutions positive */
+#define DEFAULT_LIMIT_MAX           360000.0f
 
 /**
- * @brief Default maximum velocity (m/s)
+ * @brief Default maximum velocity (deg/s)
  *
- * 0.1 m/s = 100 mm/s - a conservative default.
+ * 3600 deg/s = 10 rev/s = 600 RPM
  */
-#define DEFAULT_MAX_VELOCITY        0.1f
+#define DEFAULT_MAX_VELOCITY        3600.0f
 
-/** @brief Default maximum acceleration (m/s^2) */
-#define DEFAULT_MAX_ACCELERATION    1.0f
+/** @brief Default maximum acceleration (deg/s^2) - reaches max velocity in 0.1s */
+#define DEFAULT_MAX_ACCELERATION    36000.0f
 
 /** @brief Default backlash compensation (meters) */
 #define DEFAULT_BACKLASH            0.0f
@@ -83,38 +89,29 @@
 
 /**
  * @defgroup rotary_defaults Default Rotary Axis Configuration
- * @brief Default parameters for rotary (angular) axes in radians
+ * @brief Default parameters for rotary axes (same as linear for unified config)
  *
- * Rotary axes use radians for position and rad/s for velocity.
+ * All axes use degrees for position. Rotary axes share the same defaults.
  * @{
  */
 
-/**
- * @brief Default rotary pulses per unit (pulses/radian)
- *
- * 10,000 pulses/radian provides good angular resolution.
- */
-#define DEFAULT_ROTARY_PULSES_PER_UNIT  10000.0f
+/** @brief Default rotary pulses per revolution (same as linear) */
+#define DEFAULT_ROTARY_PULSES_PER_REV   DEFAULT_PULSES_PER_REV
 
-/** @brief Default rotary minimum position limit (radians) */
-#define DEFAULT_ROTARY_LIMIT_MIN        0.0f
+/** @brief Default rotary units per revolution (degrees) */
+#define DEFAULT_ROTARY_UNITS_PER_REV    DEFAULT_UNITS_PER_REV
 
-/**
- * @brief Default rotary maximum position limit (radians)
- *
- * 2*Pi radians = 360 degrees (full rotation).
- */
-#define DEFAULT_ROTARY_LIMIT_MAX        CONST_2PI
+/** @brief Default rotary minimum position limit (degrees) */
+#define DEFAULT_ROTARY_LIMIT_MIN        DEFAULT_LIMIT_MIN
 
-/**
- * @brief Default rotary maximum velocity (rad/s)
- *
- * Pi rad/s = 180 degrees/second.
- */
-#define DEFAULT_ROTARY_MAX_VEL          CONST_PI
+/** @brief Default rotary maximum position limit (degrees) */
+#define DEFAULT_ROTARY_LIMIT_MAX        DEFAULT_LIMIT_MAX
 
-/** @brief Default rotary maximum acceleration (rad/s^2) */
-#define DEFAULT_ROTARY_MAX_ACCEL        10.0f
+/** @brief Default rotary maximum velocity (deg/s) */
+#define DEFAULT_ROTARY_MAX_VEL          DEFAULT_MAX_VELOCITY
+
+/** @brief Default rotary maximum acceleration (deg/s^2) */
+#define DEFAULT_ROTARY_MAX_ACCEL        DEFAULT_MAX_ACCELERATION
 
 /** @} */ // end rotary_defaults
 
@@ -201,6 +198,27 @@
 #define DEFAULT_ZSIG_ENABLED            true
 
 /** @} */ // end zsignal_defaults
+
+/**
+ * @defgroup format_defaults Position Display Format Constants
+ * @brief Formatting for position output in POS command
+ * @{
+ */
+
+/**
+ * @brief Number of decimal places for position output
+ *
+ * 6 decimal places provides micrometer (linear) or microradian (rotary) precision.
+ * Used in POS command response formatting.
+ */
+#define DEFAULT_POSITION_DECIMALS       6
+
+/**
+ * @brief Printf format string for single position value
+ */
+#define DEFAULT_POSITION_FMT            "%0.6f"
+
+/** @} */ // end format_defaults
 
 /** @} */ // end config_defaults
 

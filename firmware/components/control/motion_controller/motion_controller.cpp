@@ -190,6 +190,148 @@ esp_err_t MotionController::moveRelative(uint8_t axis, float delta, float veloci
     return moveAbsolute(axis, target, velocity);
 }
 
+esp_err_t MotionController::setAxisEnabled(uint8_t axis, bool enable)
+{
+    if (!initialized_) {
+        ESP_LOGE(TAG, "Not initialized");
+        return ESP_ERR_INVALID_STATE;
+    }
+
+    if (axis >= LIMIT_NUM_AXES) {
+        ESP_LOGE(TAG, "Invalid axis: %d", axis);
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    IMotor* motor = motors_[axis];
+    if (motor == nullptr) {
+        ESP_LOGE(TAG, "Motor %d is null", axis);
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    return motor->enable(enable);
+}
+
+esp_err_t MotionController::getAxisPosition(uint8_t axis, float* position)
+{
+    if (!initialized_) {
+        ESP_LOGE(TAG, "Not initialized");
+        return ESP_ERR_INVALID_STATE;
+    }
+
+    if (axis >= LIMIT_NUM_AXES || position == nullptr) {
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    IMotor* motor = motors_[axis];
+    if (motor == nullptr) {
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    *position = motor->getPosition();
+    return ESP_OK;
+}
+
+esp_err_t MotionController::getAllAxisPositions(float positions[LIMIT_NUM_AXES])
+{
+    if (!initialized_) {
+        ESP_LOGE(TAG, "Not initialized");
+        return ESP_ERR_INVALID_STATE;
+    }
+
+    if (positions == nullptr) {
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    for (uint8_t i = 0; i < LIMIT_NUM_AXES; i++) {
+        if (motors_[i] != nullptr) {
+            positions[i] = motors_[i]->getPosition();
+        } else {
+            positions[i] = 0.0f;
+        }
+    }
+
+    return ESP_OK;
+}
+
+esp_err_t MotionController::moveAxisVelocity(uint8_t axis, float velocity)
+{
+    if (!initialized_) {
+        ESP_LOGE(TAG, "Not initialized");
+        return ESP_ERR_INVALID_STATE;
+    }
+
+    if (axis >= LIMIT_NUM_AXES) {
+        ESP_LOGE(TAG, "Invalid axis: %d", axis);
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    IMotor* motor = motors_[axis];
+    if (motor == nullptr) {
+        ESP_LOGE(TAG, "Motor %d is null", axis);
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    if (!motor->isEnabled()) {
+        ESP_LOGD(TAG, "Axis %d not enabled", axis);
+        return ESP_ERR_INVALID_STATE;
+    }
+
+    return motor->moveVelocity(velocity);
+}
+
+esp_err_t MotionController::stopAxis(uint8_t axis)
+{
+    if (!initialized_) {
+        ESP_LOGE(TAG, "Not initialized");
+        return ESP_ERR_INVALID_STATE;
+    }
+
+    if (axis >= LIMIT_NUM_AXES) {
+        ESP_LOGE(TAG, "Invalid axis: %d", axis);
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    IMotor* motor = motors_[axis];
+    if (motor == nullptr) {
+        ESP_LOGE(TAG, "Motor %d is null", axis);
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    // Stop returns ESP_ERR_INVALID_STATE if not moving, which is OK
+    esp_err_t ret = motor->stop();
+    if (ret == ESP_ERR_INVALID_STATE) {
+        return ESP_OK;  // Not moving is not an error for STOP
+    }
+    return ret;
+}
+
+esp_err_t MotionController::stopAllAxes()
+{
+    if (!initialized_) {
+        ESP_LOGE(TAG, "Not initialized");
+        return ESP_ERR_INVALID_STATE;
+    }
+
+    esp_err_t result = ESP_OK;
+
+    for (uint8_t i = 0; i < LIMIT_NUM_AXES; i++) {
+        IMotor* motor = motors_[i];
+        if (motor == nullptr) {
+            continue;
+        }
+
+        if (motor->isMoving()) {
+            esp_err_t ret = motor->stop();
+            if (ret != ESP_OK && ret != ESP_ERR_INVALID_STATE) {
+                ESP_LOGW(TAG, "Failed to stop axis %d: 0x%x", i, ret);
+                result = ret;  // Track last error but continue
+            }
+        }
+    }
+
+    return result;
+}
+
 void MotionController::onMotionComplete(uint8_t axis, float position)
 {
     ESP_LOGD(TAG, "Motion complete: axis=%d pos=%.3f", axis, position);

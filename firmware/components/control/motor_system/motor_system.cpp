@@ -37,9 +37,16 @@
 // Motion controller
 #include "motion_controller.h"
 
+// Shift register driver (required for motor EN/DIR signals)
+#include "tpic6b595.h"
+
 // Command handlers
 #include "move_handler.h"
 #include "movr_handler.h"
+#include "enable_handler.h"
+#include "position_handler.h"
+#include "velocity_handler.h"
+#include "stop_handler.h"
 
 static const char* TAG = "motor_system";
 
@@ -464,7 +471,31 @@ static esp_err_t register_command_handlers(void)
         return ret;
     }
 
-    ESP_LOGI(TAG, "Command handlers registered (MOVE, MOVR)");
+    ret = enable_handler_register();
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to register EN handler: %s", esp_err_to_name(ret));
+        return ret;
+    }
+
+    ret = position_handler_register();
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to register POS handler: %s", esp_err_to_name(ret));
+        return ret;
+    }
+
+    ret = velocity_handler_register();
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to register VEL handler: %s", esp_err_to_name(ret));
+        return ret;
+    }
+
+    ret = stop_handler_register();
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to register STOP handler: %s", esp_err_to_name(ret));
+        return ret;
+    }
+
+    ESP_LOGI(TAG, "Command handlers registered (MOVE, MOVR, EN, POS, VEL, STOP)");
     return ESP_OK;
 }
 
@@ -485,43 +516,51 @@ esp_err_t motor_system_init(void)
 
     esp_err_t ret;
 
-    // Step 1: Initialize axis configurations
+    // Step 1: Initialize shift register (required for motor EN/DIR signals)
+    // sr_init() is idempotent - safe to call if already initialized
+    ret = sr_init();
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to init shift register: %s", esp_err_to_name(ret));
+        return ret;
+    }
+
+    // Step 2: Initialize axis configurations
     init_axis_configs();
 
-    // Step 2: Initialize pulse generators
+    // Step 3: Initialize pulse generators
     ret = init_pulse_generators();
     if (ret != ESP_OK) {
         return ret;
     }
 
-    // Step 3: Initialize position trackers
+    // Step 4: Initialize position trackers
     ret = init_position_trackers();
     if (ret != ESP_OK) {
         return ret;
     }
 
-    // Step 4: Wire pulse generators to position trackers
+    // Step 5: Wire pulse generators to position trackers
     wire_generators_to_trackers();
 
-    // Step 5: Create motor objects
+    // Step 6: Create motor objects
     ret = create_motor_objects();
     if (ret != ESP_OK) {
         return ret;
     }
 
-    // Step 6: Initialize motor objects
+    // Step 7: Initialize motor objects
     ret = init_motor_objects();
     if (ret != ESP_OK) {
         return ret;
     }
 
-    // Step 7: Initialize motion controller
+    // Step 8: Initialize motion controller
     ret = init_motion_controller();
     if (ret != ESP_OK) {
         return ret;
     }
 
-    // Step 8: Register command handlers
+    // Step 9: Register command handlers
     ret = register_command_handlers();
     if (ret != ESP_OK) {
         return ret;

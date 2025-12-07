@@ -57,7 +57,7 @@ This epic represents the core product value—after completion, users can contro
 
 1. **Header-Only Configuration** — Every configurable value MUST be defined in a header file. No magic numbers in source code. GPIO pins from `config_gpio.h`, timing from `config_timing.h`, limits from `config_limits.h`, commands from `config_commands.h`, shift register bits from `config_sr.h`, defaults from `config_defaults.h`.
 
-2. **Streaming Double-Buffer Pulse Generation** — All pulse generation uses streaming double-buffer architecture. Short moves, long moves, and continuous jogging use the same infrastructure. No special-case code paths.
+2. **RMT Callback Encoder Pulse Generation** — RMT axes (X, Z, A, B) use FastAccelStepper-inspired callback encoder pattern with `with_dma=false`. This enables all 4 RMT channels simultaneously and provides bounded-latency position tracking. MCPWM and LEDC retain their original implementations. *(Updated in Story 3-9c - replaced DMA streaming double-buffer)*
 
 3. **SI Units Convention** — All external interfaces use SI units (meters, radians, seconds). Internal pulse domain uses pulses/pulses-per-second. Conversion happens in motor layer only.
 
@@ -74,7 +74,7 @@ This epic represents the core product value—after completion, users can contro
 | Module | Location | Inputs | Outputs | Owner Story |
 |--------|----------|--------|---------|-------------|
 | ShiftRegisterController | `drivers/tpic6b595/` | Axis ID, signal type, value | 40-bit SPI chain update | 3.1 |
-| RmtPulseGenerator | `pulse_gen/rmt_pulse_gen.cpp` | Pulse count, velocity, accel | GPIO STEP pulses (X,Z,A,B) | 3.2 |
+| RmtPulseGenerator | `pulse_gen/rmt_pulse_gen.cpp` | Pulse count, velocity, accel | GPIO STEP pulses (X,Z,A,B) | 3.2, 3-9c |
 | McpwmPulseGenerator | `pulse_gen/mcpwm_pulse_gen.cpp` | Pulse count, velocity, accel | GPIO STEP pulses + PCNT (Y,C) | 3.3 |
 | LedcPulseGenerator | `pulse_gen/ledc_pulse_gen.cpp` | Pulse count, velocity, accel | GPIO STEP pulses (D) | 3.4 |
 | PcntTracker | `position/pcnt_tracker.cpp` | PCNT events | Position in pulses | 3.5 |

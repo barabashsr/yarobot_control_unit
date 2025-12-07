@@ -6,7 +6,7 @@ The YaRobot Control Unit architecture is designed around a real-time FreeRTOS-ba
 
 Key architectural principles:
 - **Dual-core separation**: Core 0 handles communication and safety, Core 1 handles motion control
-- **Hardware-first timing**: RMT+DMA, MCPWM, and LEDC peripherals for jitter-free pulse generation
+- **Hardware-first timing**: RMT (callback encoder), MCPWM, and LEDC peripherals for jitter-free pulse generation
 - **Fail-safe design**: Brakes engage on power loss, E-stop bypasses software entirely
 - **Unified abstraction**: All motor types expose identical command interface
 
@@ -144,8 +144,9 @@ yarobot_control_unit/
     │   ├── pulse_gen/             # Pulse generation interfaces [IMPLEMENTED: Story 3.2]
     │   │   ├── include/
     │   │   │   ├── i_pulse_generator.h   # IPulseGenerator interface
-    │   │   │   └── rmt_pulse_gen.h       # RMT implementation header
-    │   │   ├── rmt_pulse_gen.cpp     # RMT+DMA implementation (X,Z,A,B)
+    │   │   │   ├── rmt_pulse_gen.h       # RMT implementation header
+    │   │   │   └── rmt_pulse_gen_types.h # RMT data structures [NEW: 3-9c]
+    │   │   ├── rmt_pulse_gen.cpp     # RMT callback encoder implementation (X,Z,A,B) [UPDATED: 3-9c]
     │   │   ├── mcpwm_pulse_gen.cpp   # MCPWM implementation (Y,C) [DONE]
     │   │   ├── ledc_pulse_gen.cpp    # LEDC implementation (D) [DONE]
     │   │   └── test/
@@ -270,35 +271,98 @@ The following features are explicitly deferred to post-MVP development:
 
 These patterns ensure consistent implementation across all components:
 
-### Streaming Double-Buffer Pulse Generation
+### RMT Pulse Generation Architecture
 
-> **⚠️ ARCHITECTURE CONSTRAINT - APPLIES TO ALL MOTION**
+> **⚠️ ARCHITECTURE UPDATE (2025-12-06)**
 >
-> **All pulse generation uses streaming double-buffer architecture.** This is non-negotiable.
+> The RMT pulse generation has been **migrated from DMA streaming to FastAccelStepper callback encoder pattern** in Story 3-9c. This resolves DMA channel exhaustion and enables all 4 RMT axes (X, Z, A, B) to operate simultaneously.
 >
-> - Short moves, long moves, and continuous jogging use the **same streaming infrastructure**
-> - No special-case code paths for "small" vs "large" motions
-> - Buffer swap happens via DMA callback - zero CPU involvement during transmission
-> - Motion length is **unlimited** - profile generator streams pulses on-demand
+> See: `docs/architecture-changes/fastaccelstepper-migration-strategy.md`
 
-**Why Double-Buffer Everywhere:**
+#### Current Implementation: FastAccelStepper Callback Encoder [IMPLEMENTED: 3-9c]
 
-1. **Consistency** - One code path to test, debug, and maintain
-2. **Unlimited motion** - No buffer size limits on travel distance
-3. **Smooth continuous motion** - VEL (jog) command works seamlessly
-4. **Predictable timing** - DMA handles transmission, CPU handles profile math
-5. **Clean abort** - Stop command just stops refilling buffers
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| DMA Mode | `with_dma = false` | Enables all 4 RMT channels simultaneously |
+| RMT Resolution | 16 MHz | FastAccelStepper proven; 62.5ns adequate for 500 kHz |
+| Position Tracking | Encoder callback | ESP32-S3 has only 4 PCNT units; 3 already used |
+| Mid-Motion Blending | Full support | `startMove()` works while running |
 
-#### Buffer Architecture
+**Hardware Verification (2025-12-06):** All 5 GDMA pairs confirmed free - previous implementation had redundant initialization.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│                     RMT DMA Double-Buffer                           │
+│     CURRENT: CALLBACK ENCODER + SOFTWARE POSITION TRACKING          │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│   startMove() / startVelocity()                                     │
+│       │                                                             │
+│       ▼                                                             │
+│   ┌────────────────────────────────────────────────┐               │
+│   │ Ramp Generator (per-axis FreeRTOS task)        │               │
+│   │ - Trapezoidal profile calculation (FPU OK)     │               │
+│   │ - Fills command queue on demand                │               │
+│   └──────────────────────┬─────────────────────────┘               │
+│                          │                                          │
+│                          ▼                                          │
+│   ┌────────────────────────────────────────────────┐               │
+│   │ Command Queue (32 entries, ring buffer)        │               │
+│   │ Entry: { ticks_per_step, step_count, flags }   │               │
+│   └──────────────────────┬─────────────────────────┘               │
+│                          │ RMT requests symbols on-demand          │
+│                          ▼                                          │
+│   ┌────────────────────────────────────────────────┐               │
+│   │ RMT Callback Encoder (ISR context)             │               │
+│   │ - Generates 24 symbols per callback            │               │
+│   │ - Position tracked via atomic pulse_count_     │               │
+│   │ - Integer math only (no FPU in ISR)            │               │
+│   └──────────────────────┬─────────────────────────┘               │
+│                          │                                          │
+│                          ▼                                          │
+│   ┌────────────────────────────────────────────────┐               │
+│   │ RMT Hardware (NO DMA)                          │               │
+│   │ mem_block_symbols=48, resolution_hz=16MHz      │               │
+│   │ with_dma=false, trans_queue_depth=1            │               │
+│   └────────────────────────────────────────────────┘               │
+│                                                                     │
+│   Position Latency: 200kHz→0.16ms | 50kHz→0.64ms | 1kHz→10ms      │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+**Benefits:**
+1. **All 4 RMT channels usable simultaneously** (resolved channel exhaustion)
+2. **Bounded-latency position tracking** (<10ms at all frequencies)
+3. **Mid-motion blending** with smooth velocity transitions
+4. **Reduced CPU overhead** (callback-based vs continuous DMA refill)
+
+---
+
+### [LEGACY] DMA Streaming Double-Buffer Architecture
+
+> **⚠️ LEGACY - Preserved for reference. Replaced by FastAccelStepper pattern in Story 3-9c.**
+
+<details>
+<summary>Click to expand legacy DMA architecture</summary>
+
+> **ORIGINAL ARCHITECTURE CONSTRAINT**
+>
+> **All pulse generation uses streaming double-buffer architecture.** This was non-negotiable.
+>
+> - Short moves, long moves, and continuous jogging use the **same streaming infrastructure**
+> - Buffer swap happens via DMA callback - zero CPU involvement during transmission
+
+**Why It Was Replaced:** DMA streaming caused `no free tx channels` errors when using all 4 RMT channels. Investigation revealed redundant initialization consuming DMA channel slots.
+
+#### Legacy Buffer Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                     RMT DMA Double-Buffer [LEGACY]                  │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
 │   ┌──────────────┐         ┌──────────────┐                        │
 │   │  Buffer A    │         │  Buffer B    │                        │
-│   │  (512 sym)   │         │  (512 sym)   │  [IMPLEMENTED: 3.2]    │
+│   │  (512 sym)   │         │  (512 sym)   │  [REPLACED: 3-9c]      │
 │   └──────┬───────┘         └──────┬───────┘                        │
 │          │                        │                                 │
 │          ▼                        ▼                                 │
@@ -324,7 +388,7 @@ These patterns ensure consistent implementation across all components:
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-#### Streaming State Machine
+#### Legacy Streaming State Machine
 
 ```
                     ┌─────────────┐
@@ -358,6 +422,8 @@ These patterns ensure consistent implementation across all components:
                     │    IDLE     │
                     └─────────────┘
 ```
+
+</details>
 
 #### IPulseGenerator Interface (Streaming)
 
@@ -4537,16 +4603,26 @@ idf.py coredump-info
 **Decision:** Human-readable text commands over USB CDC.
 **Rationale:** Works with any serial terminal, easy debugging, no special tooling needed.
 
-### ADR-006: Streaming Double-Buffer Pulse Generation
-**Context:** Need to support both short point-to-point moves and unlimited-length continuous motion (jogging) without code path divergence. Single pre-computed buffers limit maximum travel distance and require different handling for VEL commands.
-**Decision:** All pulse generation (RMT, MCPWM, LEDC) uses streaming double-buffer architecture with DMA callback-driven buffer swap.
-**Rationale:**
-- **One code path** - Short moves, long moves, and continuous jog all use identical streaming infrastructure
-- **Unlimited motion length** - Profile generator streams pulses on-demand; no buffer size limits travel
-- **Zero-copy DMA** - CPU fills buffer B while DMA transmits buffer A; no timing jitter
-- **Clean abort** - Stop command switches profile to DECEL phase; buffers drain naturally
-- **Testability** - Single streaming state machine easier to unit test than conditional paths
-**Trade-offs:** Slightly more complex initial implementation; ~4KB RAM per RMT channel for double buffers (acceptable given 8MB PSRAM).
+### ADR-006: RMT Pulse Generation Architecture
+
+> **⚠️ UPDATED 2025-12-06** - Migrated from DMA streaming to FastAccelStepper callback encoder pattern in Story 3-9c.
+
+**Original Context:** Need to support both short point-to-point moves and unlimited-length continuous motion (jogging) without code path divergence.
+
+**Original Decision (Story 3.2):** All RMT pulse generation uses streaming double-buffer architecture with DMA callback-driven buffer swap.
+
+**Updated Decision (Story 3-9c):** RMT pulse generation uses FastAccelStepper callback encoder pattern with `with_dma=false`.
+
+**Rationale for Update:**
+- **DMA channel exhaustion** - Original DMA approach caused `no free tx channels` errors with 4 simultaneous RMT channels
+- **Callback encoder pattern** - Proven by FastAccelStepper library; generates symbols on-demand via ISR callback
+- **16 MHz resolution** - Adequate for 500 kHz max frequency (62.5ns resolution)
+- **Position tracking** - Encoder callback updates atomic pulse counter directly in ISR
+- **Mid-motion blending** - Full support for `startMove()` during active motion
+
+**Trade-offs:** Slightly higher ISR CPU load compared to DMA, but enables all 4 RMT channels simultaneously.
+
+**Note:** MCPWM and LEDC retain their original implementations (PCNT hardware counting).
 
 ### ADR-007: SI Units Convention (ROS2 REP-103 Compatible)
 **Context:** Need consistent unit system across all axes (linear and rotary), host API, configuration, and internal calculations. Must support future ros2_control integration without unit conversion at integration boundary.

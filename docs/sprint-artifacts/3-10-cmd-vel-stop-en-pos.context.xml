@@ -1,0 +1,211 @@
+<story-context id="3-10-cmd-vel-stop-en-pos" v="1.0">
+  <metadata>
+    <epicId>3</epicId>
+    <storyId>10</storyId>
+    <title>Motion Control Commands (VEL, STOP, EN, POS)</title>
+    <status>ready-for-dev</status>
+    <generatedAt>2025-12-06</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/3-10-cmd-vel-stop-en-pos.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>system integrator</asA>
+    <iWant>VEL, STOP, EN, and POS commands implemented</iWant>
+    <soThat>I can jog axes at constant velocity, stop motion controllably, enable/disable motors, and query positions for complete motor control testing</soThat>
+    <tasks>
+      <task id="1" acs="1-4">Implement EnableHandler - Create enable_handler.cpp, register CMD_EN, parse axis and state, call MotionController::setAxisEnabled()</task>
+      <task id="2" acs="5-7">Implement PositionHandler - Create position_handler.cpp, register CMD_POS, query motor positions, format SI values (6 decimals)</task>
+      <task id="3" acs="8-12">Implement VelocityHandler - Create velocity_handler.cpp, register CMD_VEL, validate enabled state, clamp velocity, call motor->moveVelocity()</task>
+      <task id="4" acs="13-16">Implement StopHandler - Create stop_handler.cpp, register CMD_STOP, parse optional axis, call motor->stop() or iterate all axes</task>
+      <task id="5" acs="1,2,8,13">MotionController integration - Add setAxisEnabled(), getAxisPosition(), getAllAxisPositions(), moveAxisVelocity(), stopAxis(), stopAllAxes() methods</task>
+      <task id="6" acs="8,9,12">Motor velocity mode support - Verify moveVelocity() in MotorBase, verify infinite profile, test blend</task>
+      <task id="7" acs="all">Integration tests - Full sequence EN->MOVE->POS->VEL->STOP->EN, multi-axis, error cases</task>
+      <task id="8" acs="17">Code review - No magic numbers - all values from config headers</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <criterion id="AC1">EN X 1 enables axis, state DISABLED->IDLE</criterion>
+    <criterion id="AC2">EN X 0 while moving stops immediately, state->DISABLED</criterion>
+    <criterion id="AC3">EN X 0 while idle disables, state->DISABLED</criterion>
+    <criterion id="AC4">EN invalid axis returns ERROR E002 Invalid axis</criterion>
+    <criterion id="AC5">POS returns all 8 axis positions as OK X:0.001000 Y:0.000000 Z:...</criterion>
+    <criterion id="AC6">POS X returns single axis position as OK 0.001000</criterion>
+    <criterion id="AC7">POS invalid axis returns ERROR E002 Invalid axis</criterion>
+    <criterion id="AC8">VEL X 0.050 moves at 0.050 m/s continuously until STOP</criterion>
+    <criterion id="AC9">VEL X -0.025 moves in negative direction at 0.025 m/s</criterion>
+    <criterion id="AC10">VEL on disabled motor returns ERROR E004 Axis not enabled</criterion>
+    <criterion id="AC11">VEL exceeding max velocity is clamped to config max</criterion>
+    <criterion id="AC12">VEL during VEL motion blends to new velocity</criterion>
+    <criterion id="AC13">STOP X decelerates motor to rest at configured deceleration</criterion>
+    <criterion id="AC14">STOP (no axis) decelerates all moving motors</criterion>
+    <criterion id="AC15">STOP while idle returns OK (no error)</criterion>
+    <criterion id="AC16">STOP invalid axis returns ERROR E002 Invalid axis</criterion>
+    <criterion id="AC17">MANDATORY: No hardcoded numeric values - all from config headers</criterion>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/sprint-artifacts/tech-spec-epic-3.md" title="Epic 3 Tech Spec" section="APIs and Interfaces">
+        IPulseGenerator::startVelocity(velocity, acceleration), stop(deceleration). IMotor::enable(), moveVelocity(), stop(), getPosition(). Command protocol table.
+      </doc>
+      <doc path="docs/sprint-artifacts/tech-spec-epic-3.md" title="Epic 3 Tech Spec" section="Data Models and Contracts">
+        AxisState enum (DISABLED, IDLE, MOVING, ERROR, UNHOMED). Enable/disable sequence diagrams.
+      </doc>
+    </docs>
+
+    <code>
+      <!-- Motor Interface -->
+      <file path="firmware/components/motor/include/i_motor.h" kind="interface" symbol="IMotor" reason="Primary motor interface - enable(), moveVelocity(), stop(), getPosition() signatures to implement/call"/>
+      <file path="firmware/components/motor/include/motor_base.h" kind="class" symbol="MotorBase" reason="Base implementation - provides enable(), moveVelocity(), stop(), getPosition() implementations"/>
+      <file path="firmware/components/motor/motor_base.cpp" kind="implementation" symbol="MotorBase::enable, MotorBase::moveVelocity, MotorBase::stop" reason="Reference implementation for motor methods"/>
+
+      <!-- Pulse Generator Interface -->
+      <file path="firmware/components/pulse_gen/include/i_pulse_generator.h" kind="interface" symbol="IPulseGenerator" reason="startVelocity(velocity, acceleration), stop(deceleration) signatures for velocity mode"/>
+      <file path="firmware/components/pulse_gen/rmt_pulse_gen.cpp" kind="implementation" symbol="RmtPulseGenerator::startVelocity, RmtPulseGenerator::stop" reason="RMT velocity mode implementation for X/Z/A/B"/>
+
+      <!-- Motion Controller -->
+      <file path="firmware/components/control/motion_controller/include/motion_controller.h" kind="class" symbol="MotionController" reason="Central coordinator - needs new methods: setAxisEnabled(), moveAxisVelocity(), stopAxis(), stopAllAxes(), getAxisPosition()"/>
+      <file path="firmware/components/control/motion_controller/motion_controller.cpp" kind="implementation" symbol="MotionController::getMotor" reason="Existing axis lookup pattern to reuse"/>
+
+      <!-- Existing Handler Pattern (copy this structure) -->
+      <file path="firmware/components/control/command_executor/include/move_handler.h" kind="header" symbol="handle_move, move_handler_register" reason="Template pattern for new handlers - same signature and registration"/>
+      <file path="firmware/components/control/command_executor/move_handler.cpp" kind="implementation" symbol="handle_move" reason="Reference implementation - axis parsing, validation, error formatting"/>
+
+      <!-- Shift Register for Enable -->
+      <file path="firmware/components/drivers/tpic6b595/include/tpic6b595.h" kind="interface" symbol="sr_set_enable, sr_update" reason="EN command calls sr_set_enable() then sr_update() to toggle hardware enable signal"/>
+
+      <!-- Config Headers -->
+      <file path="firmware/components/config/include/config_commands.h" kind="config" symbol="CMD_VEL, CMD_STOP, CMD_EN, CMD_POS, ERR_*, MSG_*" reason="Command strings and error codes - must use these"/>
+      <file path="firmware/components/config/include/config_axes.h" kind="config" symbol="AXIS_X..AXIS_E, AXIS_CHAR_X..AXIS_CHAR_E" reason="Axis identifiers - use instead of magic numbers"/>
+      <file path="firmware/components/config/include/config_limits.h" kind="config" symbol="LIMIT_NUM_AXES" reason="Number of axes constant"/>
+    </code>
+
+    <dependencies>
+      <esp-idf version="5.4+">
+        <component>driver/rmt</component>
+        <component>driver/mcpwm</component>
+        <component>driver/ledc</component>
+        <component>driver/pcnt</component>
+        <component>driver/spi_master</component>
+      </esp-idf>
+      <internal>
+        <component>motor (motor_base, servo_motor, stepper_motor, discrete_axis)</component>
+        <component>pulse_gen (rmt_pulse_gen, mcpwm_pulse_gen, ledc_pulse_gen)</component>
+        <component>position (pcnt_tracker, software_tracker, time_tracker)</component>
+        <component>control/motion_controller</component>
+        <component>control/command_executor</component>
+        <component>drivers/tpic6b595</component>
+        <component>interface/command_parser</component>
+        <component>interface/response_formatter</component>
+      </internal>
+    </dependencies>
+  </artifacts>
+
+  <interfaces>
+    <interface name="IMotor::enable" kind="method">
+      <signature>virtual esp_err_t enable(bool en) = 0;</signature>
+      <path>firmware/components/motor/include/i_motor.h:196</path>
+      <notes>EN 1: sr_set_enable(axis, true), wait TIMING_ENABLE_DELAY_US, state->IDLE. EN 0: stopImmediate(), sr_set_enable(axis, false), state->DISABLED</notes>
+    </interface>
+    <interface name="IMotor::moveVelocity" kind="method">
+      <signature>virtual esp_err_t moveVelocity(float velocity) = 0;</signature>
+      <path>firmware/components/motor/include/i_motor.h:116</path>
+      <notes>Continuous motion at signed velocity until stop(). Returns ESP_ERR_INVALID_STATE if disabled.</notes>
+    </interface>
+    <interface name="IMotor::stop" kind="method">
+      <signature>virtual esp_err_t stop() = 0;</signature>
+      <path>firmware/components/motor/include/i_motor.h:128</path>
+      <notes>Controlled deceleration using config.max_acceleration. State->IDLE when stopped. Fires completion callback.</notes>
+    </interface>
+    <interface name="IMotor::getPosition" kind="method">
+      <signature>virtual float getPosition() const = 0;</signature>
+      <path>firmware/components/motor/include/i_motor.h:151</path>
+      <notes>Returns position in SI units (meters or radians). Thread-safe.</notes>
+    </interface>
+    <interface name="IPulseGenerator::startVelocity" kind="method">
+      <signature>virtual esp_err_t startVelocity(float velocity, float acceleration) = 0;</signature>
+      <path>firmware/components/pulse_gen/include/i_pulse_generator.h:70</path>
+      <notes>Continuous pulse generation until stop(). Velocity in pulses/sec (signed), acceleration in pulses/sec^2.</notes>
+    </interface>
+    <interface name="IPulseGenerator::stop" kind="method">
+      <signature>virtual esp_err_t stop(float deceleration) = 0;</signature>
+      <path>firmware/components/pulse_gen/include/i_pulse_generator.h:82</path>
+      <notes>Controlled deceleration to zero. Fires completion callback when stopped.</notes>
+    </interface>
+    <interface name="sr_set_enable" kind="function">
+      <signature>esp_err_t sr_set_enable(uint8_t axis, bool enable);</signature>
+      <path>firmware/components/drivers/tpic6b595/include/tpic6b595.h:91</path>
+      <notes>Updates shadow register. Must call sr_update() to latch to hardware.</notes>
+    </interface>
+    <interface name="CommandHandler" kind="function-pointer">
+      <signature>typedef esp_err_t (*CommandHandler)(const ParsedCommand* cmd, char* response, size_t resp_len);</signature>
+      <path>firmware/components/control/command_executor/include/command_executor.h</path>
+      <notes>All handlers follow this signature. See move_handler.cpp for reference pattern.</notes>
+    </interface>
+  </interfaces>
+
+  <constraints>
+    <constraint type="mandatory" priority="CRITICAL">
+      NO MAGIC NUMBERS - ZERO tolerance for hardcoded numeric values in code.
+      ALL configuration MUST come from config header files:
+      - config_commands.h: Command strings (CMD_*), error codes (ERR_*), messages (MSG_*)
+      - config_axes.h: Axis identifiers (AXIS_X..AXIS_E), axis chars (AXIS_CHAR_*)
+      - config_limits.h: System limits (LIMIT_NUM_AXES, etc.)
+      - config_timing.h: All timing values (TIMING_*)
+      - config_defaults.h: Default axis parameters
+      - config_peripherals.h: Peripheral configurations
+      Even simple values like "8" for number of axes MUST use LIMIT_NUM_AXES.
+      Even "0" and "1" for enable state should use named constants if ambiguous.
+    </constraint>
+    <constraint type="mandatory">SI UNITS CONVENTION - External interfaces use meters/radians/seconds. Internal pulse domain uses pulses/pulses-per-second.</constraint>
+    <constraint type="mandatory">HEADER-ONLY CONFIGURATION - All timing from config_timing.h, all error codes from config_commands.h</constraint>
+    <constraint type="pattern">HANDLER PATTERN - Copy move_handler.cpp structure: validate inputs, get MotionController, delegate to motor, format response</constraint>
+    <constraint type="pattern">ERROR RESPONSE - Use format_error(response, resp_len, ERR_code, MSG_message) from response_formatter.h</constraint>
+    <constraint type="pattern">STATE VALIDATION - Check motor->isEnabled() before motion commands, return ERR_AXIS_NOT_ENABLED</constraint>
+    <constraint type="thread-safety">Motor methods are thread-safe. Handlers may be called from comms task (Core 0).</constraint>
+  </constraints>
+
+  <axisConfiguration>
+    <description>
+      Axis configuration from config_defaults.h.
+      All axes configured identically.
+      Units are DEGREES for human-readable position values.
+    </description>
+    <configFile>firmware/components/config/include/config_defaults.h</configFile>
+    <parameters>
+      <param name="DEFAULT_PULSES_PER_REV" value="200.0f" notes="Driver PA14 setting"/>
+      <param name="DEFAULT_UNITS_PER_REV" value="360.0f" notes="Degrees per revolution"/>
+      <param name="DEFAULT_LIMIT_MIN" value="-360000.0f" notes="100 revolutions negative"/>
+      <param name="DEFAULT_LIMIT_MAX" value="360000.0f" notes="100 revolutions positive"/>
+      <param name="DEFAULT_MAX_VELOCITY" value="3600.0f" notes="deg/s = 10 rev/s = 600 RPM"/>
+      <param name="DEFAULT_MAX_ACCELERATION" value="36000.0f" notes="deg/s^2 = 0.1s to max velocity"/>
+    </parameters>
+    <derived>
+      <param name="pulses_per_unit" value="0.5556" notes="200/360 pulses per degree"/>
+    </derived>
+  </axisConfiguration>
+
+  <tests>
+    <standards>
+      Unity test framework via ESP-IDF. Tests in component/test/ directories.
+      Hardware tests require oscilloscope for pulse verification.
+      Integration tests via serial terminal commands.
+    </standards>
+    <locations>
+      <location>firmware/components/control/command_executor/test/</location>
+      <location>firmware/components/control/motion_controller/test/</location>
+      <location>firmware/components/motor/test/</location>
+    </locations>
+    <ideas>
+      <test ac="1-4">test_enable_handler: EN X 1 -> verify state IDLE, EN X 0 -> verify state DISABLED, EN during motion -> verify immediate stop</test>
+      <test ac="5-7">test_position_handler: POS all -> verify 8 positions, POS X -> verify single value, POS INVALID -> verify error</test>
+      <test ac="8-12">test_velocity_handler: VEL X 0.05 -> verify continuous pulses, VEL X -0.025 -> verify direction, VEL while disabled -> verify error</test>
+      <test ac="13-16">test_stop_handler: STOP X while moving -> verify decel, STOP all -> verify all stop, STOP while idle -> verify OK</test>
+      <test ac="17">code_review: grep for hardcoded numbers, verify all values from config_*.h</test>
+      <test>integration: EN X 1 -> MOVE X 0.001 -> POS X -> VEL X 0.01 -> STOP X -> POS X -> EN X 0 (full sequence)</test>
+      <test>oscilloscope: VEL X at 10000 pulses/sec -> verify continuous 10kHz pulses -> STOP -> verify decel ramp</test>
+    </ideas>
+  </tests>
+</story-context>

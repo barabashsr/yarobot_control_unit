@@ -123,6 +123,87 @@ public:
     esp_err_t moveRelative(uint8_t axis, float delta, float velocity);
 
     /**
+     * @brief Enable or disable an axis
+     *
+     * Delegates to motor->enable(). When enabling, state changes from
+     * DISABLED to IDLE. When disabling while moving, stops immediately.
+     *
+     * @param[in] axis Axis index (0 to LIMIT_NUM_AXES-1)
+     * @param[in] enable true to enable, false to disable
+     *
+     * @return ESP_OK on success
+     * @return ESP_ERR_INVALID_ARG if axis is invalid
+     * @return ESP_ERR_TIMEOUT if shift register update fails
+     *
+     * @note Story 3-10: AC1 (enable), AC2/AC3 (disable)
+     */
+    esp_err_t setAxisEnabled(uint8_t axis, bool enable);
+
+    /**
+     * @brief Get position of a single axis
+     *
+     * @param[in] axis Axis index (0 to LIMIT_NUM_AXES-1)
+     * @param[out] position Pointer to store position value
+     *
+     * @return ESP_OK on success
+     * @return ESP_ERR_INVALID_ARG if axis is invalid or position is nullptr
+     *
+     * @note Story 3-10: AC6
+     */
+    esp_err_t getAxisPosition(uint8_t axis, float* position);
+
+    /**
+     * @brief Get positions of all axes
+     *
+     * @param[out] positions Array of LIMIT_NUM_AXES floats to store positions
+     *
+     * @return ESP_OK on success
+     * @return ESP_ERR_INVALID_ARG if positions is nullptr
+     *
+     * @note Story 3-10: AC5
+     */
+    esp_err_t getAllAxisPositions(float positions[LIMIT_NUM_AXES]);
+
+    /**
+     * @brief Start velocity mode on an axis
+     *
+     * Starts continuous motion at the specified velocity until stop is called.
+     *
+     * @param[in] axis Axis index (0 to LIMIT_NUM_AXES-1)
+     * @param[in] velocity Target velocity in SI units (signed for direction)
+     *
+     * @return ESP_OK if velocity mode started
+     * @return ESP_ERR_INVALID_ARG if axis is invalid
+     * @return ESP_ERR_INVALID_STATE if axis is disabled
+     *
+     * @note Story 3-10: AC8, AC9, AC11, AC12
+     */
+    esp_err_t moveAxisVelocity(uint8_t axis, float velocity);
+
+    /**
+     * @brief Stop motion on a single axis with controlled deceleration
+     *
+     * @param[in] axis Axis index (0 to LIMIT_NUM_AXES-1)
+     *
+     * @return ESP_OK on success (even if already stopped)
+     * @return ESP_ERR_INVALID_ARG if axis is invalid
+     *
+     * @note Story 3-10: AC13
+     */
+    esp_err_t stopAxis(uint8_t axis);
+
+    /**
+     * @brief Stop all moving axes with controlled deceleration
+     *
+     * Iterates all axes and stops those that are currently moving.
+     *
+     * @return ESP_OK on success
+     *
+     * @note Story 3-10: AC14
+     */
+    esp_err_t stopAllAxes();
+
+    /**
      * @brief Check if controller is initialized
      *
      * @return true if init() was called successfully

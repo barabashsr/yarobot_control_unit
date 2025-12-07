@@ -7,6 +7,10 @@ idf_component_register(
         "command_executor/command_executor.c"
         "command_executor/move_handler.cpp"
         "command_executor/movr_handler.cpp"
+        "command_executor/enable_handler.cpp"
+        "command_executor/position_handler.cpp"
+        "command_executor/velocity_handler.cpp"
+        "command_executor/stop_handler.cpp"
         "motion_controller/motion_controller.cpp"
         "motor_system/motor_system.cpp"
     # NOTE: test_pulse_cmd.cpp removed - was creating duplicate RMT/MCPWM/LEDC instances
