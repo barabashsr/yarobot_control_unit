@@ -157,10 +157,12 @@ private:
     bool last_direction_;  // For tracking direction changes
 
     // Pulse counting (PCNT hardware-based)
-    std::atomic<int64_t> pulse_count_;      ///< Total pulses from PCNT + overflow tracking
+    std::atomic<int64_t> pulse_count_;      ///< Relative pulses for current move (from PCNT)
+    std::atomic<int64_t> absolute_position_; ///< Absolute position in pulses (accumulated)
     std::atomic<int32_t> overflow_count_;   ///< Number of PCNT overflows
     std::atomic<float> current_velocity_;
     int32_t last_watch_point_;              ///< Last configured watch point (for removal)
+    int64_t move_start_position_;           ///< Absolute position at start of current move
 
     // Profile update task
     TaskHandle_t profile_task_handle_;

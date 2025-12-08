@@ -72,9 +72,11 @@ McpwmPulseGenerator::McpwmPulseGenerator(int timer_id, int gpio_num, int pcnt_un
     , direction_(true)
     , last_direction_(true)
     , pulse_count_(0)
+    , absolute_position_(0)
     , overflow_count_(0)
     , current_velocity_(0.0f)
     , last_watch_point_(0)
+    , move_start_position_(0)
     , profile_task_handle_(nullptr)
     , task_should_exit_(false)
     , completion_callback_(nullptr)
@@ -267,7 +269,10 @@ esp_err_t McpwmPulseGenerator::init()
     pcnt_unit_config_t pcnt_unit_config = {};
     pcnt_unit_config.high_limit = PCNT_HIGH_LIMIT;
     pcnt_unit_config.low_limit = PCNT_LOW_LIMIT;
-    pcnt_unit_config.flags.accum_count = true;  // Enable accumulation for overflow tracking
+    // NOTE: Do NOT use accum_count=true - it prevents pcnt_unit_clear_count() from
+    // actually resetting the counter, causing stale counts to persist between moves.
+    // We handle overflow tracking manually with overflow_count_.
+    pcnt_unit_config.flags.accum_count = false;
 
     ret = pcnt_new_unit(&pcnt_unit_config, &pcnt_unit_);
     if (ret != ESP_OK) {
@@ -326,13 +331,15 @@ esp_err_t McpwmPulseGenerator::init()
         ESP_LOGE(TAG, "Failed to set PCNT level action: %s", esp_err_to_name(ret));
     }
 
-    // Register PCNT watch point callback
-    pcnt_event_callbacks_t pcnt_cbs = {};
-    pcnt_cbs.on_reach = onPcntReach;
-    ret = pcnt_unit_register_event_callbacks(pcnt_unit_, &pcnt_cbs, this);
-    if (ret != ESP_OK) {
-        ESP_LOGE(TAG, "Failed to register PCNT callbacks: %s", esp_err_to_name(ret));
-    }
+    // DISABLED: Watch point ISR was causing stale watch point bugs that led to
+    // premature motion stopping and position corruption (180° instead of 360°).
+    // Task-based polling in updateProfile() is now the sole stop mechanism.
+    // pcnt_event_callbacks_t pcnt_cbs = {};
+    // pcnt_cbs.on_reach = onPcntReach;
+    // ret = pcnt_unit_register_event_callbacks(pcnt_unit_, &pcnt_cbs, this);
+    // if (ret != ESP_OK) {
+    //     ESP_LOGE(TAG, "Failed to register PCNT callbacks: %s", esp_err_to_name(ret));
+    // }
 
     // Enable PCNT unit
     ret = pcnt_unit_enable(pcnt_unit_);
@@ -479,8 +486,18 @@ void McpwmPulseGenerator::updateProfile()
         // Stop PCNT
         pcnt_unit_stop(pcnt_unit_);
 
-        // Update state with actual count (use target for consistency)
-        pulse_count_.store(profile_.target_pulses, std::memory_order_relaxed);
+        // Calculate new absolute position based on ACTUAL PCNT count (not target!)
+        // PCNT is the sole source of truth for position.
+        // current_count is the actual hardware PCNT value read at line 460.
+        int64_t actual_pulses = current_count;
+        int64_t delta = direction_ ? actual_pulses : -actual_pulses;
+        int64_t new_abs_pos = move_start_position_ + delta;
+        absolute_position_.store(new_abs_pos, std::memory_order_relaxed);
+        pulse_count_.store(actual_pulses, std::memory_order_relaxed);
+
+        ESP_LOGW(TAG, "updateProfile: COMPLETED - actual_pcnt=%lld, start=%lld, new_abs=%lld",
+                 (long long)actual_pulses, (long long)move_start_position_, (long long)new_abs_pos);
+
         state_.store(McpwmProfileState::IDLE, std::memory_order_release);
         current_velocity_.store(0.0f, std::memory_order_relaxed);
 
@@ -628,6 +645,11 @@ esp_err_t McpwmPulseGenerator::startMove(int32_t pulses, float max_velocity, flo
              (long)profile_.accel_pulses, (long)profile_.cruise_pulses,
              (long)profile_.decel_pulses, profile_.cruise_velocity);
 
+    // Save starting position for absolute position tracking
+    move_start_position_ = absolute_position_.load(std::memory_order_relaxed);
+    ESP_LOGW(TAG, "DEBUG startMove: move_start_position=%lld, direction=%s",
+             (long long)move_start_position_, direction_ ? "FWD" : "REV");
+
     // Reset counters and flags for new motion
     pulse_count_.store(0, std::memory_order_relaxed);
     overflow_count_.store(0, std::memory_order_relaxed);
@@ -641,6 +663,9 @@ esp_err_t McpwmPulseGenerator::startMove(int32_t pulses, float max_velocity, flo
     ESP_LOGW(TAG, "DEBUG startMove: stopping and clearing PCNT");
     pcnt_unit_stop(pcnt_unit_);
     pcnt_unit_clear_count(pcnt_unit_);
+
+    // Re-enable GPIO input for PCNT loopback (may be lost after MCPWM stop/start)
+    PIN_INPUT_ENABLE(GPIO_PIN_MUX_REG[gpio_num_]);
 
     // Configure PCNT watch point (optional - task polling is primary stop mechanism)
     // Watch point ISR provides backup but we don't rely on it
@@ -817,11 +842,15 @@ bool McpwmPulseGenerator::isRunning() const
 
 int64_t McpwmPulseGenerator::getPulseCount() const
 {
-    // Read current PCNT count for live value
+    // Return absolute position for IPositionTracker interface
+    // During motion, calculate current absolute position from start + PCNT (with direction)
     if (state_.load(std::memory_order_acquire) != McpwmProfileState::IDLE) {
-        return readPcntCount();
+        int64_t pcnt = readPcntCount();
+        int64_t delta = direction_ ? pcnt : -pcnt;
+        return move_start_position_ + delta;
     }
-    return pulse_count_.load(std::memory_order_relaxed);
+    // When idle, return stored absolute position
+    return absolute_position_.load(std::memory_order_relaxed);
 }
 
 float McpwmPulseGenerator::getCurrentVelocity() const
@@ -856,9 +885,11 @@ esp_err_t McpwmPulseGenerator::reset(int64_t position)
     if (pcnt_unit_) {
         pcnt_unit_clear_count(pcnt_unit_);
     }
-    // Set software accumulator
+    // Set software accumulators
     overflow_count_.store(0, std::memory_order_relaxed);
-    pulse_count_.store(position, std::memory_order_relaxed);
+    pulse_count_.store(0, std::memory_order_relaxed);
+    absolute_position_.store(position, std::memory_order_relaxed);
+    move_start_position_ = position;
     return ESP_OK;
 }
 
@@ -961,36 +992,29 @@ float McpwmPulseGenerator::velocityAtPosition(int64_t position) const
 
 esp_err_t McpwmPulseGenerator::setFrequency(float frequency)
 {
-    ESP_LOGW(TAG, "DEBUG setFrequency: input freq=%.1f Hz", frequency);
-
     if (frequency < LIMIT_MIN_PULSE_FREQ_HZ) {
-        ESP_LOGW(TAG, "DEBUG setFrequency: clamping from %.1f to %d (min)", frequency, LIMIT_MIN_PULSE_FREQ_HZ);
         frequency = LIMIT_MIN_PULSE_FREQ_HZ;
     }
     if (frequency > LIMIT_MAX_PULSE_FREQ_HZ) {
-        ESP_LOGW(TAG, "DEBUG setFrequency: clamping from %.1f to %d (max)", frequency, LIMIT_MAX_PULSE_FREQ_HZ);
         frequency = LIMIT_MAX_PULSE_FREQ_HZ;
     }
 
     uint32_t period_ticks = velocityToPeriodTicks(frequency);
-    ESP_LOGW(TAG, "DEBUG setFrequency: freq=%.1f Hz -> period_ticks=%lu (resolution=%d Hz)",
-             frequency, (unsigned long)period_ticks, MCPWM_RESOLUTION_HZ);
 
     if (period_ticks == 0) {
-        ESP_LOGE(TAG, "DEBUG setFrequency: period_ticks=0 is INVALID!");
+        ESP_LOGE(TAG, "setFrequency: period_ticks=0 is INVALID for freq=%.1f", frequency);
         return ESP_ERR_INVALID_ARG;
     }
 
     // Update timer period
     esp_err_t ret = mcpwm_timer_set_period(timer_handle_, period_ticks);
     if (ret != ESP_OK) {
-        ESP_LOGE(TAG, "DEBUG setFrequency: mcpwm_timer_set_period FAILED: %s", esp_err_to_name(ret));
+        ESP_LOGE(TAG, "setFrequency: mcpwm_timer_set_period FAILED: %s", esp_err_to_name(ret));
         return ret;
     }
 
     // Update comparator for 50% duty cycle
     uint32_t compare_value = (period_ticks * MCPWM_DUTY_CYCLE_PERCENT) / 100;
-    ESP_LOGW(TAG, "DEBUG setFrequency: compare_value=%lu (for %d%% duty)", (unsigned long)compare_value, MCPWM_DUTY_CYCLE_PERCENT);
     return mcpwm_comparator_set_compare_value(cmpr_handle_, compare_value);
 }
 
@@ -1009,43 +1033,12 @@ uint32_t McpwmPulseGenerator::velocityToPeriodTicks(float velocity) const
 
 esp_err_t McpwmPulseGenerator::configurePcntWatchPoint(int32_t target_pulses)
 {
-    ESP_LOGW(TAG, "DEBUG configurePcntWatchPoint: target=%ld, HIGH_LIMIT=%d, last_target=%ld",
-             (long)target_pulses, PCNT_HIGH_LIMIT, (long)last_watch_point_);
-
-    // Remove ALL possible existing watch points
-    // Try to remove previous target watch point
-    if (last_watch_point_ != 0) {
-        esp_err_t rm_ret = pcnt_unit_remove_watch_point(pcnt_unit_, last_watch_point_);
-        ESP_LOGW(TAG, "DEBUG configurePcntWatchPoint: remove last watch point %ld: %s",
-                 (long)last_watch_point_, esp_err_to_name(rm_ret));
-    }
-
-    // Try to remove HIGH_LIMIT watch point
-    esp_err_t ret = pcnt_unit_remove_watch_point(pcnt_unit_, PCNT_HIGH_LIMIT);
-    if (ret == ESP_OK) {
-        ESP_LOGW(TAG, "DEBUG configurePcntWatchPoint: removed HIGH_LIMIT watch point");
-    }
-
-    // For targets <= PCNT_HIGH_LIMIT, set watch point directly
-    if (target_pulses <= PCNT_HIGH_LIMIT) {
-        ESP_LOGW(TAG, "DEBUG configurePcntWatchPoint: adding direct watch point at %ld", (long)target_pulses);
-        ret = pcnt_unit_add_watch_point(pcnt_unit_, static_cast<int>(target_pulses));
-        if (ret != ESP_OK) {
-            ESP_LOGE(TAG, "DEBUG configurePcntWatchPoint: add_watch_point FAILED: %s", esp_err_to_name(ret));
-        } else {
-            last_watch_point_ = target_pulses;  // Remember for next removal
-        }
-        return ret;
-    }
-
-    // For larger targets, use overflow tracking + final watch point
-    // Set watch point at max limit; callback will handle overflow and final count
-    ESP_LOGW(TAG, "DEBUG configurePcntWatchPoint: adding overflow watch point at %d", PCNT_HIGH_LIMIT);
-    ret = pcnt_unit_add_watch_point(pcnt_unit_, PCNT_HIGH_LIMIT);
-    if (ret != ESP_OK) {
-        ESP_LOGE(TAG, "DEBUG configurePcntWatchPoint: add_watch_point FAILED: %s", esp_err_to_name(ret));
-    }
-    return ret;
+    // DISABLED: Watch point ISR was causing stale watch point bugs.
+    // Task-based polling in updateProfile() is now the sole stop mechanism.
+    // PCNT is used only for counting, not for triggering stop via watch points.
+    (void)target_pulses;
+    last_watch_point_ = 0;
+    return ESP_OK;
 }
 
 int64_t McpwmPulseGenerator::readPcntCount() const
@@ -1083,44 +1076,42 @@ bool McpwmPulseGenerator::handlePcntReachISR(const pcnt_watch_event_data_t* even
     // Check if this is an overflow event (watch point at PCNT_HIGH_LIMIT)
     if (watch_point == PCNT_HIGH_LIMIT && target > PCNT_HIGH_LIMIT) {
         // Increment overflow counter
-        overflow_count_.fetch_add(1, std::memory_order_relaxed);
+        int32_t new_overflow = overflow_count_.fetch_add(1, std::memory_order_relaxed) + 1;
 
         // Clear PCNT count and continue
         pcnt_unit_clear_count(pcnt_unit_);
 
-        // Check if we've reached the target with overflows
-        int64_t total_count = readPcntCount();
-        if (total_count >= target) {
-            // Stop MCPWM
-            mcpwm_timer_start_stop(timer_handle_, MCPWM_TIMER_STOP_FULL);
+        // Calculate remaining pulses after this overflow
+        int64_t total_counted = static_cast<int64_t>(new_overflow) * PCNT_HIGH_LIMIT;
+        int64_t remaining = target - total_counted;
 
-            // Update final count
-            pulse_count_.store(total_count, std::memory_order_relaxed);
-            state_.store(McpwmProfileState::IDLE, std::memory_order_release);
-            current_velocity_.store(0.0f, std::memory_order_relaxed);
+        ets_printf("PCNT overflow: count=%ld, remaining=%lld\n", (long)new_overflow, (long long)remaining);
 
-            // Signal completion to task
-            if (profile_task_handle_) {
-                BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-                xTaskNotifyFromISR(profile_task_handle_, NOTIFY_COMPLETE_BIT,
-                                   eSetBits, &xHigherPriorityTaskWoken);
-                return xHigherPriorityTaskWoken == pdTRUE;
-            }
+        // If remaining is less than HIGH_LIMIT, set watch point for final count
+        if (remaining > 0 && remaining < PCNT_HIGH_LIMIT) {
+            // Remove overflow watch point
+            pcnt_unit_remove_watch_point(pcnt_unit_, PCNT_HIGH_LIMIT);
+            // Add final watch point
+            pcnt_unit_add_watch_point(pcnt_unit_, static_cast<int>(remaining));
         }
+        // Otherwise, keep the HIGH_LIMIT watch point for next overflow
+
         return false;
     }
 
-    // Target reached - stop MCPWM
+    // Target watch point reached - stop MCPWM immediately
+    // NOTE: Do NOT stop PCNT here - calling pcnt_unit_stop() from ISR context
+    // causes issues with subsequent moves. MCPWM stop is enough since no more
+    // pulses will be generated. Task will stop PCNT when it handles completion.
     mcpwm_timer_start_stop(timer_handle_, MCPWM_TIMER_STOP_FULL);
 
-    // Read final count
-    int64_t final_count = readPcntCount();
-    pulse_count_.store(final_count, std::memory_order_relaxed);
+    // Calculate position using TARGET (commanded value), not PCNT read
+    // Watch point fired at target, so we know we reached exactly target pulses
+    int64_t delta = direction_ ? target : -target;
+    absolute_position_.store(move_start_position_ + delta, std::memory_order_relaxed);
+    pulse_count_.store(target, std::memory_order_relaxed);
 
-    // Stop PCNT
-    pcnt_unit_stop(pcnt_unit_);
-
-    // Update state
+    // Update state to IDLE so task loop stops
     state_.store(McpwmProfileState::IDLE, std::memory_order_release);
     current_velocity_.store(0.0f, std::memory_order_relaxed);
 
@@ -1145,8 +1136,9 @@ void McpwmPulseGenerator::notifyCompletion()
 
     if (xSemaphoreTake(callback_mutex_, pdMS_TO_TICKS(10)) == pdTRUE) {
         if (completion_callback_) {
-            int64_t total = pulse_count_.load(std::memory_order_relaxed);
-            completion_callback_(total);
+            // Pass absolute position (not relative PCNT count) to callback
+            int64_t abs_pos = absolute_position_.load(std::memory_order_relaxed);
+            completion_callback_(abs_pos);
         }
         xSemaphoreGive(callback_mutex_);
     }
