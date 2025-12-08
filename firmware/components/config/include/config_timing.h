@@ -36,6 +36,16 @@
 #define TIMING_BRAKE_RELEASE_MS     30
 
 /**
+ * @brief GPIO loopback settling time (µs)
+ *
+ * Time required for GPIO input buffer to stabilize after PIN_INPUT_ENABLE
+ * for internal MCPWM→PCNT loopback connection. Empirically measured at ~650ms.
+ * Applied once during initialization to ensure PCNT can detect pulses immediately
+ * on first motion.
+ */
+#define TIMING_GPIO_LOOPBACK_SETTLE_US  700000  // 700ms (650ms observed + 50ms margin)
+
+/**
  * @brief E-axis discrete actuator travel time (ms)
  *
  * Time for E-axis pneumatic cylinder or solenoid to complete

@@ -248,7 +248,14 @@ esp_err_t McpwmPulseGenerator::init()
     // This fixes the issue where MCPWM configures the pin as output-only
     // Reference: https://github.com/ataboo/esp-mcpwm-pcnt-combined
     PIN_INPUT_ENABLE(GPIO_PIN_MUX_REG[gpio_num_]);
-    ESP_LOGW(TAG, "DEBUG init: PIN_INPUT_ENABLE called for GPIO %d", gpio_num_);
+    ESP_LOGI(TAG, "GPIO %d input enabled for PCNT loopback, settling for %d µs",
+             gpio_num_, TIMING_GPIO_LOOPBACK_SETTLE_US);
+
+    // CRITICAL: Wait for GPIO input buffer to stabilize for loopback connection.
+    // Without this delay, PCNT cannot detect MCPWM pulses on first move (650ms stall).
+    // By settling during init(), first startMove() has zero latency.
+    ets_delay_us(TIMING_GPIO_LOOPBACK_SETTLE_US);
+    ESP_LOGI(TAG, "GPIO %d loopback settled and ready", gpio_num_);
 
     // Set generator actions: HIGH on timer zero, LOW on compare match
     ret = mcpwm_generator_set_action_on_timer_event(gen_handle_,
@@ -664,8 +671,9 @@ esp_err_t McpwmPulseGenerator::startMove(int32_t pulses, float max_velocity, flo
     pcnt_unit_stop(pcnt_unit_);
     pcnt_unit_clear_count(pcnt_unit_);
 
-    // Re-enable GPIO input for PCNT loopback (may be lost after MCPWM stop/start)
-    PIN_INPUT_ENABLE(GPIO_PIN_MUX_REG[gpio_num_]);
+    // GPIO input is permanently enabled during init() - no need to re-enable here.
+    // MCPWM timer start/stop does NOT affect GPIO input buffer state (verified ESP-IDF behavior).
+    // Removing redundant PIN_INPUT_ENABLE() call to avoid unnecessary 650ms settling delays.
 
     // Configure PCNT watch point (optional - task polling is primary stop mechanism)
     // Watch point ISR provides backup but we don't rely on it
