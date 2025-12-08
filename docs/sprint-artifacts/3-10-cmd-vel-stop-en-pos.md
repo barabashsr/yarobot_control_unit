@@ -333,6 +333,7 @@ OK 245.000000      # Stopped at ~245 degrees
 | 2025-12-07 | Dev Agent | Hardware testing session 2 - position tracking strategy, two-phase completion, onTransmitDone callback |
 | 2025-12-07 | Dev Agent | Hardware testing session 3 - reverse direction remaining distance calculation, position tracker double-signing fix |
 | 2025-12-07 | Dev Agent | All tests passing - MOVE, VEL, STOP, POS working in both directions |
+| 2025-12-08 | Dev Agent | Hardware testing session 4 - fixed pulse_count_ cumulative tracking, fixed uint8_t overflow in steps clamping |
 
 ---
 
@@ -755,3 +756,118 @@ if (position_tracker_ && cmd.steps > 0) {
 4. **Don't Double-Sign** - When passing values to functions that apply direction internally, pass unsigned values.
 
 5. **Test Both Directions** - Forward moves can work perfectly while reverse moves are completely broken due to sign handling bugs.
+
+---
+
+## Hardware Testing Session 4 (2025-12-08)
+
+### Issue: Position Drift After Velocity Mode
+
+**Observed behavior:**
+After running velocity mode (`vel x 100`) and stopping (`stop`), subsequent `move x 0` commands moved relative to the post-velocity position instead of absolute position 0.
+
+Example:
+```
+vel x 100        # Run velocity mode
+stop             # Stop gracefully
+move x 0         # Should go to position 0
+# Instead: motor moves a small distance, position shows ~2500°
+```
+
+### Root Cause Analysis: Multiple Issues Found
+
+#### Issue 1: Queue-Based vs ISR-Based Position Tracking Conflict
+
+**Problem:** Two position tracking mechanisms were conflicting:
+1. `position_tracker_->addPulses()` called from `pushCommand()` (queue-based, cumulative)
+2. `pulse_count_` reset to 0 in `startMove()` and `startVelocity()` (ISR-based, per-move)
+
+When `stopImmediate()` synced position from `pulse_count_`, it got only the current move's pulses, not the cumulative position.
+
+**Fix:** Removed `pulse_count_.store(0)` from `startMove()` and `startVelocity()`. Now `pulse_count_` stays cumulative like `position_tracker_`.
+
+**File:** `rmt_pulse_gen.cpp` lines 945 and 1014
+```cpp
+// Starting fresh
+clearQueue();
+// NOTE: Do NOT reset pulse_count_ - it must stay cumulative for stopImmediate() sync
+// pulse_count_ tracks absolute position like position_tracker_
+current_velocity_ = 0.0f;
+```
+
+#### Issue 2: Integer Overflow in Steps Clamping
+
+**Problem:** In `generateNextCommand()`, the remaining distance clamping had an integer overflow:
+```cpp
+if (cmd.steps > static_cast<uint8_t>(remaining)) {  // WRONG!
+```
+
+When `remaining = 2820` (int32_t):
+- `static_cast<uint8_t>(2820)` = 2820 % 256 = **252**
+- Comparison became `cmd.steps > 252` instead of `cmd.steps > 2820`
+- This caused premature LAST flag and motion terminated after ~30 steps
+
+**Fix:** Cast `cmd.steps` to int32_t instead:
+```cpp
+if (static_cast<int32_t>(cmd.steps) > remaining) {  // CORRECT
+```
+
+**File:** `rmt_pulse_gen.cpp` line 601-602
+```cpp
+// Cast cmd.steps to int32_t to avoid uint8_t overflow in comparison
+if (static_cast<int32_t>(cmd.steps) > remaining) {
+    cmd.steps = static_cast<uint8_t>(remaining);
+    cmd.flags |= CMD_FLAG_LAST;
+}
+```
+
+### Position Tracking Architecture (Final)
+
+After all fixes, the position tracking architecture is:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    POSITION TRACKING                             │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  pushCommand() ─────► position_tracker_->addPulses()            │
+│  (Task context)        (Cumulative, queue-based)                 │
+│                                                                  │
+│  encodeCallback() ──► pulse_count_.fetch_add()                  │
+│  (ISR context)         (Cumulative, ISR-based, for stopImmediate)│
+│                                                                  │
+│  onMotionComplete() ► syncPositionFromTracker()                 │
+│  (Normal stop)         (Tracker → motor pulse_count_)            │
+│                                                                  │
+│  stopImmediate() ───► position_tracker_->reset(pulse_count_)    │
+│  (Emergency stop)      (ISR pulse_count_ → Tracker)              │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Key principles:**
+1. **MOVE mode**: Position = queued steps (queue drains completely)
+2. **VEL + stop()**: Position = queued steps (decel runs to completion, queue drains)
+3. **stopImmediate()**: Sync from ISR `pulse_count_` (queue aborted, not all pulses generated)
+
+### Test Results
+
+| Test | Expected | Actual | Status |
+|------|----------|--------|--------|
+| `vel x 100` + `stop` + `move x 0` | Returns to 0° | Returns to 0° | ✅ PASS |
+| `vel x -100` + `stop` + `move x 180` | Goes to 180° | Goes to 180° | ✅ PASS |
+| Long move (>255 pulses) | Completes fully | Completes fully | ✅ PASS |
+| Consecutive velocity + move cycles | Correct position | Correct position | ✅ PASS |
+
+### Files Modified
+
+1. **`firmware/components/pulse_gen/rmt_pulse_gen.cpp`**
+   - Removed `pulse_count_.store(0)` from `startMove()` (line 945)
+   - Removed `pulse_count_.store(0)` from `startVelocity()` (line 1014)
+   - Fixed integer overflow in steps clamping (line 601-602)
+
+### Change Log Update
+
+| Date | Author | Change |
+|------|--------|--------|
+| 2025-12-08 | Dev Agent | Fixed pulse_count_ cumulative tracking, fixed uint8_t overflow in clamping |

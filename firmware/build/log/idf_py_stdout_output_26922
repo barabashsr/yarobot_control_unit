@@ -1,0 +1,1449 @@
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x8 (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x15a0
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xd20
+load:0x403cb700,len:0x2ee4
+entry 0x403c8928
+[0;32mI (27) boot: ESP-IDF v5.4-dirty 2nd stage bootloader[0m
+[0;32mI (27) boot: compile time Dec  6 2025 20:10:08[0m
+[0;32mI (27) boot: Multicore bootloader[0m
+[0;32mI (27) boot: chip revision: v0.2[0m
+[0;32mI (30) boot: efuse block revision: v1.3[0m
+[0;32mI (34) boot.esp32s3: Boot SPI Speed : 80MHz[0m
+[0;32mI (38) boot.esp32s3: SPI Mode       : DIO[0m
+[0;32mI (41) boot.esp32s3: SPI Flash Size : 16MB[0m
+[0;32mI (45) boot: Enabling RNG early entropy source...[0m
+[0;32mI (50) boot: Partition Table:[0m
+[0;32mI (52) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (59) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (65) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (72) boot:  2 factory          factory app      00 00 00010000 00300000[0m
+[0;32mI (78) boot:  3 storage          Unknown data     01 82 00310000 00100000[0m
+[0;32mI (85) boot: End of partition table[0m
+[0;32mI (88) esp_image: segment 0: paddr=00010020 vaddr=3c040020 size=174b8h ( 95416) map[0m
+[0;32mI (112) esp_image: segment 1: paddr=000274e0 vaddr=3fc97100 size=03738h ( 14136) load[0m
+[0;32mI (115) esp_image: segment 2: paddr=0002ac20 vaddr=40374000 size=053f8h ( 21496) load[0m
+[0;32mI (121) esp_image: segment 3: paddr=00030020 vaddr=42000020 size=3d378h (250744) map[0m
+[0;32mI (168) esp_image: segment 4: paddr=0006d3a0 vaddr=403793f8 size=0dc34h ( 56372) load[0m
+[0;32mI (185) esp_image: segment 5: paddr=0007afdc vaddr=600fe100 size=0001ch (    28) load[0m
+[0;32mI (193) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (193) boot: Disabling RNG early entropy source...[0m
+[0;32mI (203) octal_psram: vendor id    : 0x0d (AP)[0m
+[0;32mI (203) octal_psram: dev id       : 0x02 (generation 3)[0m
+[0;32mI (204) octal_psram: density      : 0x03 (64 Mbit)[0m
+[0;32mI (206) octal_psram: good-die     : 0x01 (Pass)[0m
+[0;32mI (210) octal_psram: Latency      : 0x01 (Fixed)[0m
+[0;32mI (214) octal_psram: VCC          : 0x01 (3V)[0m
+[0;32mI (218) octal_psram: SRF          : 0x01 (Fast Refresh)[0m
+[0;32mI (223) octal_psram: BurstType    : 0x01 (Hybrid Wrap)[0m
+[0;32mI (228) octal_psram: BurstLen     : 0x01 (32 Byte)[0m
+[0;32mI (233) octal_psram: Readlatency  : 0x02 (10 cycles@Fixed)[0m
+[0;32mI (238) octal_psram: DriveStrength: 0x00 (1/1)[0m
+[0;32mI (242) esp_psram: Found 8MB PSRAM device[0m
+[0;32mI (246) esp_psram: Speed: 40MHz[0m
+[0;32mI (249) cpu_start: Multicore app[0m
+[0;32mI (982) esp_psram: SPI SRAM memory test OK[0m
+[0;32mI (991) cpu_start: Pro cpu start user code[0m
+[0;32mI (991) cpu_start: cpu freq: 240000000 Hz[0m
+[0;32mI (991) app_init: Application information:[0m
+[0;32mI (992) app_init: Project name:     yarobot_control_unit[0m
+[0;32mI (997) app_init: App version:      0fd5c63-dirty[0m
+[0;32mI (1001) app_init: Compile time:     Dec  8 2025 12:47:02[0m
+[0;32mI (1006) app_init: ELF file SHA256:  e7ec95325...[0m
+[0;32mI (1010) app_init: ESP-IDF:          v5.4-dirty[0m
+[0;32mI (1015) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (1019) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (1023) efuse_init: Chip rev:         v0.2[0m
+[0;32mI (1027) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (1033) heap_init: At 3FC9CA88 len 0004CC88 (307 KiB): RAM[0m
+[0;32mI (1038) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM[0m
+[0;32mI (1043) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM[0m
+[0;32mI (1049) heap_init: At 600FE11C len 00001ECC (7 KiB): RTCRAM[0m
+[0;32mI (1054) esp_psram: Adding pool of 8192K of PSRAM memory to heap allocator[0m
+[0;32mI (1062) spi_flash: detected chip: boya[0m
+[0;32mI (1064) spi_flash: flash io: dio[0m
+[0;32mI (1068) sleep_gpio: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (1074) sleep_gpio: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (1081) main_task: Started on CPU0[0m
+[0;32mI (1084) esp_psram: Reserving pool of 32K of internal memory for DMA/internal allocations[0m
+[0;32mI (1092) main_task: Calling app_main()[0m
+[0;32mI (3095) main: Hello from app_main[0m
+[0;32mI (3095) main: PSRAM detected: 8388608 bytes (8.0 MB)[0m
+[0;32mI (3095) main: Firmware: YAROBOT_CONTROL_UNIT v1.0.0[0m
+[0;32mI (3096) main: Axes: 8 (Servos:5, Steppers:2, Discrete:1)[0m
+[0;32mI (3101) main: GPIO X_STEP: 4, I2C MCP0: 0x20[0m
+[0;32mI (3105) main: Initializing USB CDC interface...[0m
+[0;32mI (3110) usb_cdc: Initializing USB CDC interface[0m
+[0;33mW (3114) tusb_desc: No Device descriptor provided, using default.[0m
+[0;33mW (3120) tusb_desc: No FullSpeed configuration descriptor provided, using default.[0m
+[0;33mW (3127) tusb_desc: No String descriptors provided, using default.[0m
+[0;32mI (3133) tusb_desc: [0m
+┌─────────────────────────────────┐
+│  USB Device Descriptor Summary  │
+├───────────────────┬─────────────┤
+│bDeviceClass       │ 239         │
+├───────────────────┼─────────────┤
+│bDeviceSubClass    │ 2           │
+├───────────────────┼─────────────┤
+│bDeviceProtocol    │ 1           │
+├───────────────────┼─────────────┤
+│bMaxPacketSize0    │ 64          │
+├───────────────────┼─────────────┤
+│idVendor           │ 0x303a      │
+├───────────────────┼─────────────┤
+│idProduct          │ 0x4001      │
+├───────────────────┼─────────────┤
+│bcdDevice          │ 0x100       │
+├───────────────────┼─────────────┤
+│iManufacturer      │ 0x1         │
+├───────────────────┼─────────────┤
+│iProduct           │ 0x2         │
+├───────────────────┼─────────────┤
+│iSerialNumber      │ 0x3         │
+├───────────────────┼─────────────┤
+│bNumConfigurations │ 0x1         │
+└───────────────────┴─────────────┘
+[0;32mI (3300) TinyUSB: TinyUSB Driver installed[0m
+[0;32mI (3304) usb_cdc: USB CDC initialized successfully[0m
+[0;32mI (3308) main: USB CDC initialized successfully[0m
+[0;32mI (3313) main: ========================================[0m
+[0;32mI (3318) main: Hardware Initialization Starting[0m
+[0;32mI (3322) main: ========================================[0m
+[0;32mI (3327) gpio_hal: Initializing GPIO HAL[0m
+[0;32mI (3331) gpio: GPIO[4]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3339) gpio: GPIO[5]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3347) gpio: GPIO[6]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3356) gpio: GPIO[7]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3364) gpio: GPIO[15]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3372) gpio: GPIO[16]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3381) gpio: GPIO[17]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3389) gpio: GPIO[13]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3398) gpio: GPIO[1]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3406) gpio: GPIO[2]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3414) gpio: GPIO[40]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3423) gpio: GPIO[41]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3431) gpio: GPIO[42]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3439) gpio: GPIO[38]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3448) gpio: GPIO[39]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3456) gpio: GPIO[47]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3465) gpio: GPIO[48]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3473) gpio_hal: GPIO HAL initialized successfully[0m
+[0;32mI (3478) i2c_hal: Initializing I2C0: SDA=8, SCL=18, freq=400000 Hz[0m
+[0;32mI (3484) i2c_hal: I2C0 initialized successfully[0m
+[0;32mI (3488) main: MCP23017 #0 (0x20) IODIR_A=0xFF[0m
+[0;32mI (3492) main: MCP23017 #1 (0x21) IODIR_A=0xFF[0m
+[0;32mI (3496) i2c_hal: Initializing I2C1: SDA=14, SCL=21, freq=400000 Hz[0m
+[0;32mI (3503) i2c_hal: I2C1 initialized successfully[0m
+[0;32mI (3534) main: OLED initialized with test pattern[0m
+[0;32mI (3535) i2c_hal: Scanning I2C0 bus...[0m
+[0;32mI (3538) i2c_hal: I2C0: Found device at 0x20[0m
+[0;32mI (3539) i2c_hal: I2C0: Found device at 0x21[0m
+[0;32mI (3551) i2c_hal: I2C0 scan complete: 2 device(s) found[0m
+[0;32mI (3551) main: I2C bus isolation verified: I2C0 still operational[0m
+[0;32mI (3551) spi_hal: Initializing SPI1: MOSI=11, SCLK=12, CS=10[0m
+[0;32mI (3557) gpio: GPIO[9]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3565) spi_hal: SPI initialized successfully, OE pin=9 (disabled)[0m
+[0;32mI (3571) tpic6b595: Initializing TPIC6B595 driver[0m
+[0;32mI (3575) spi_hal: SR outputs ENABLED[0m
+[0;32mI (3578) tpic6b595: TPIC6B595 driver initialized, 40-bit chain ready[0m
+[0;32mI (3584) main: TPIC6B595 shift register initialized (test skipped)[0m
+[0;32mI (3590) main: ========================================[0m
+[0;32mI (3595) main: Hardware Initialization: ALL PASSED[0m
+[0;32mI (3600) main: ========================================[0m
+[0;32mI (3605) main: Creating FreeRTOS tasks...[0m
+[0;32mI (3608) tasks: Task safety started on core 0[0m
+[0;32mI (3612) tasks: Task usb_rx started on core 0[0m
+[0;32mI (3617) tasks: Task usb_tx started on core 0[0m
+[0;32mI (3621) tasks: Task cmd_exec started on core 0[0m
+[0;32mI (3625) tasks: Task i2c_mon started on core 0[0m
+[0;32mI (3629) tasks: Task idle_mon started on core 0[0m
+[0;32mI (3633) tasks: Task motion_X (axis 0) started on core 1[0m
+[0;32mI (3634) tasks: Task motion_B (axis 4) started on core 1[0m
+[0;32mI (3634) tasks: Task motion_Z (axis 2) started on core 1[0m
+[0;32mI (3634) tasks: Task motion_C (axis 5) started on core 1[0m
+[0;32mI (3633) tasks: Task motion_Y (axis 1) started on core 1[0m
+[0;32mI (3634) tasks: Task motion_D (axis 6) started on core 1[0m
+[0;32mI (3634) tasks: Task motion_A (axis 3) started on core 1[0m
+[0;32mI (3634) tasks: Task motion_E (axis 7) started on core 1[0m
+[0;32mI (3634) main: YaRobot Control Unit - All tasks started[0m
+[0;32mI (3674) tasks: Task display started on core 1[0m
+[0;32mI (3679) main_task: Returned from app_main()[0m
+[0;32mI (40940) usb_cdc: USB CDC connected (DTR=1, RTS=1)[0m
+[0;32mI (41017) tasks: USB CDC connection state: connected[0m
+[0;32mI (46245) CMD_EXEC: Initialized with 4 built-in commands[0m
+[0;32mI (46245) EVENT_MGR: Event processor task started[0m
+[0;32mI (46245) EVENT_MGR: Initialized (queue=32, max_subs=8)[0m
+[0;32mI (46248) tasks: Command executor initialized[0m
+[0;32mI (46252) motor_system: ========================================[0m
+[0;32mI (46258) motor_system: Motor System Initialization Starting[0m
+[0;32mI (46263) motor_system: ========================================[0m
+[0;33mW (46269) tpic6b595: Already initialized[0m
+[0;32mI (46273) motor_system: Axis configurations initialized[0m
+[0;32mI (46278) RMT_PULSE: Initializing RMT channel 0 on GPIO 4 (step)[0m
+[0;32mI (46284) RMT_PULSE: RMT channel 0 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (46291) RMT_PULSE: Initializing RMT channel 1 on GPIO 6 (step)[0m
+[0;32mI (46285) RMT_PULSE: Ramp task started for channel 0[0m
+[0;32mI (46297) RMT_PULSE: RMT channel 1 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (46309) RMT_PULSE: Initializing RMT channel 2 on GPIO 7 (step)[0m
+[0;32mI (46302) RMT_PULSE: Ramp task started for channel 1[0m
+[0;32mI (46315) RMT_PULSE: RMT channel 2 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (46327) RMT_PULSE: Initializing RMT channel 3 on GPIO 15 (step)[0m
+[0;32mI (46320) RMT_PULSE: Ramp task started for channel 2[0m
+[0;32mI (46333) RMT_PULSE: RMT channel 3 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (46345) MCPWM_PULSE: Initializing MCPWM timer 0 on GPIO 5 with PCNT unit 0[0m
+[0;32mI (46352) gpio: GPIO[5]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (46338) RMT_PULSE: Ramp task started for channel 3[0m
+[0;32mI (46362) MCPWM_PULSE: Profile task started for timer 0[0m
+[0;32mI (46362) MCPWM_PULSE: MCPWM timer 0 with PCNT unit 0 initialized successfully[0m
+[0;32mI (46377) MCPWM_PULSE: Initializing MCPWM timer 1 on GPIO 16 with PCNT unit 1[0m
+[0;32mI (46384) gpio: GPIO[16]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (46393) MCPWM_PULSE: MCPWM timer 1 with PCNT unit 1 initialized successfully[0m
+[0;32mI (46393) MCPWM_PULSE: Profile task started for timer 1[0m
+[0;32mI (46399) LEDC_PULSE: Initializing LEDC timer 2, channel 2 on GPIO 17[0m
+[0;32mI (46410) gpio: GPIO[17]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (46419) LEDC_PULSE: Configured GPIO 17 for PCNT internal loopback[0m
+[0;32mI (46425) LEDC_PULSE: LEDC timer 2 initialized successfully[0m
+[0;32mI (46425) LEDC_PULSE: Completion task started for LEDC timer 2[0m
+[0;32mI (46430) motor_system: All pulse generators initialized[0m
+[0;32mI (46441) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (46445) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (46450) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (46454) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (46459) TIME_TRACKER: Time tracker initialized with travel time 1000 ms[0m
+[0;32mI (46465) motor_system: All position trackers initialized[0m
+[0;32mI (46470) motor_system: Pulse generators wired to position trackers[0m
+[0;32mI (46476) motor_system: Motor objects created[0m
+[0;32mI (46481) motor_base: Axis 0 initialized (0.556 pulses/unit)[0m
+[0;32mI (46486) motor_base: Axis 1 initialized (0.556 pulses/unit)[0m
+[0;32mI (46491) motor_base: Axis 2 initialized (0.556 pulses/unit)[0m
+[0;32mI (46497) motor_base: Axis 3 initialized (0.556 pulses/unit)[0m
+[0;32mI (46502) motor_base: Axis 4 initialized (0.556 pulses/unit)[0m
+[0;32mI (46507) motor_base: Axis 5 initialized (0.556 pulses/unit)[0m
+[0;32mI (46513) LEDC_PULSE: setPositionTracker: tracker=0x3fc9b934 (PcntTracker for hardware PCNT)[0m
+[0;32mI (46521) motor_base: Axis 6 initialized (0.556 pulses/unit)[0m
+[0;33mW (46526) TIME_TRACKER: Time tracker already initialized[0m
+[0;32mI (46531) discrete_axis: Axis 7 initialized (discrete actuator, travel time 1000 ms)[0m
+[0;32mI (46539) motor_system: All motor objects initialized[0m
+[0;32mI (46544) MOTION_CTRL: Initialized with 8 axes[0m
+[0;32mI (46548) motor_system: Motion controller initialized with 8 axes[0m
+[0;32mI (46554) MOVE_HDL: Registered MOVE handler[0m
+[0;32mI (46557) MOVR_HDL: Registered MOVR handler[0m
+[0;32mI (46561) EN_HDL: Registered EN handler[0m
+[0;32mI (46565) POS_HDL: Registered POS handler[0m
+[0;32mI (46569) VEL_HDL: Registered VEL handler[0m
+[0;32mI (46572) STOP_HDL: Registered STOP handler[0m
+[0;32mI (46576) motor_system: Command handlers registered (MOVE, MOVR, EN, POS, VEL, STOP)[0m
+[0;32mI (46584) motor_system: ========================================[0m
+[0;32mI (46589) motor_system: Motor System Initialization: SUCCESS[0m
+[0;32mI (46595) motor_system:   Servos: 5 (X, Y, Z, A, B)[0m
+[0;32mI (46599) motor_system:   Steppers: 2 (C, D)[0m
+[0;32mI (46603) motor_system:   Discrete: 1 (E)[0m
+[0;32mI (46607) motor_system: ========================================[0m
+[0;32mI (46613) CMD_EXEC: CMD: MODE -[0m
+OK READY
+[0;32mI (50817) CMD_EXEC: CMD: EN Y 1.0000[0m
+[0;32mI (50818) motor_base: Axis 1 enabled[0m
+OK
+[0;32mI (55628) CMD_EXEC: CMD: MOVE Y 180.0000[0m
+[0;33mW (55628) motor_base: DEBUG Axis 1: moveAbsolute(pos=180.0000, vel=1080.0000)[0m
+[0;33mW (55629) motor_base: DEBUG Axis 1: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (55635) motor_base: DEBUG Axis 1: current_pos=0.0000, target_pos=180.0000[0m
+[0;33mW (55641) motor_base: DEBUG Axis 1: setting direction=FWD[0m
+[0;33mW (55647) motor_base: DEBUG Axis 1: pulses_per_unit=0.56, pulses=100, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (55655) motor_base: DEBUG Axis 1: calling pulse_gen_->startMove(pulses=100, freq=600.0, accel=6000.0)[0m
+[0;33mW (55664) MCPWM_PULSE: DEBUG startMove: pulses=100, max_vel=600.0 Hz, accel=6000.0, dir=FWD[0m
+[0;33mW (55672) MCPWM_PULSE: DEBUG startMove: profile calculated: accel=29, cruise=42, decel=29, cruise_vel=600.0[0m
+[0;33mW (55682) MCPWM_PULSE: DEBUG startMove: stopping and clearing PCNT[0m
+[0;33mW (55688) MCPWM_PULSE: DEBUG startMove: configuring PCNT watch point for 100 pulses[0m
+[0;33mW (55695) MCPWM_PULSE: DEBUG configurePcntWatchPoint: target=100, HIGH_LIMIT=32767[0m
+[1;31mE (55702) pcnt: pcnt_unit_remove_watch_point(663): watch point 32767 not added yet[0m
+[0;33mW (55709) MCPWM_PULSE: DEBUG configurePcntWatchPoint: adding direct watch point at 100[0m
+[0;33mW (55717) MCPWM_PULSE: DEBUG startMove: setting initial freq=2 Hz[0m
+[0;33mW (55723) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (55728) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (55737) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (55744) MCPWM_PULSE: DEBUG startMove: starting MCPWM timer[0m
+[0;33mW (55744) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (55749) MCPWM_PULSE: DEBUG startMove: completed successfully[0m
+[0;33mW (55755) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (55760) motor_base: DEBUG Axis 1: moveAbsolute completed, state=MOVING[0m
+[0;33mW (55769) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+OK
+[0;33mW (55783) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (55788) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (55797) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (55805) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (55809) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (55818) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (55826) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (55830) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (55839) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (55847) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (55851) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (55860) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (55868) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (55872) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (55881) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (55889) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (55893) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (55902) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (55910) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (55914) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (55923) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (55931) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (55935) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (55944) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (55952) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (55956) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (55965) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (55973) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (55977) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (55986) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (55994) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (55998) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (56007) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (56015) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (56019) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (56028) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (56036) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (56040) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (56049) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (56057) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (56061) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (56070) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (56078) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (56082) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (56091) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (56099) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (56103) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (56112) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (56120) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (56124) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (56133) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (56141) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (56145) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (56154) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (56162) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (56166) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (56175) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (56183) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (56187) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (56196) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (56204) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (56208) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (56217) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (56225) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (56229) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (56238) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (56246) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (56250) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (56259) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (56267) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (56271) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (56280) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (56288) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (56292) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (56301) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (56309) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (56313) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (56322) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (56330) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (56334) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (56343) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (56351) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (56355) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (56364) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (56372) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (56376) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (56385) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (56393) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (56397) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (56406) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (56414) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (56418) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (56427) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (56435) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (56439) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (56448) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (56456) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (56460) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (56469) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (56477) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (56481) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (56490) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (56498) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (56502) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (56511) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (56519) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (56523) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (56532) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (56540) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (56544) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (56553) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (56561) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (56565) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (56574) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (56582) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (56586) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (56595) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (56603) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (56607) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (56616) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (56624) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (56628) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (56637) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (56645) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (56649) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (56658) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (56666) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (56670) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (56679) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (56687) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (56691) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (56700) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (56708) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (56712) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (56721) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (56729) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (56733) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (56742) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (56750) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (56754) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (56763) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (56771) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (56775) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (56784) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (56792) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (56796) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (56805) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (56813) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (56818) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (56826) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (56834) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (56839) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (56847) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (56855) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (56860) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (56868) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (56876) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (56881) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (56889) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (56897) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (56902) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (56910) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (56918) MCPWM_PULSE: DEBUG setFrequency: input freq=189.7 Hz[0m
+[0;33mW (56923) MCPWM_PULSE: DEBUG setFrequency: freq=189.7 Hz -> period_ticks=527 (resolution=100000 Hz)[0m
+[0;33mW (56931) MCPWM_PULSE: DEBUG setFrequency: compare_value=263 (for 50% duty)[0m
+[0;33mW (56939) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (56944) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (56952) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (56960) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (56965) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (56973) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (56981) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (56986) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (56994) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (57002) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (57007) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (57015) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (57023) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (57028) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (57036) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (57044) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (57049) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (57057) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (57065) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (57070) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (57078) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (57086) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (57091) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (57099) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (57107) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (57112) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (57120) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (57128) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (57133) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (57141) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (57149) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (57154) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (57162) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (57170) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (57175) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (57183) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (57191) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (57196) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (57204) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (57212) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (57217) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (57225) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (57233) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (57238) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (57246) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (57254) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (57259) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (57267) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (57275) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (57280) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (57288) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (57296) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (57301) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (57309) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (57317) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (57322) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (57330) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (57338) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (57343) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (57351) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (57359) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (57364) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (57372) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (57380) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (57385) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (57393) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (57401) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (57406) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (57414) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (57422) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (57427) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (57435) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (57443) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (57448) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (57456) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (57464) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (57469) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (57477) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (57485) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (57490) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (57498) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (57506) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (57511) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (57519) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (57527) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (57532) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (57540) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (57548) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (57553) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (57561) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (57569) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (57574) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (57582) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (57590) MCPWM_PULSE: DEBUG setFrequency: input freq=289.8 Hz[0m
+[0;33mW (57595) MCPWM_PULSE: DEBUG setFrequency: freq=289.8 Hz -> period_ticks=345 (resolution=100000 Hz)[0m
+[0;33mW (57603) MCPWM_PULSE: DEBUG setFrequency: compare_value=172 (for 50% duty)[0m
+[0;33mW (57611) MCPWM_PULSE: DEBUG setFrequency: input freq=379.5 Hz[0m
+[0;33mW (57616) MCPWM_PULSE: DEBUG setFrequency: freq=379.5 Hz -> period_ticks=263 (resolution=100000 Hz)[0m
+[0;33mW (57624) MCPWM_PULSE: DEBUG setFrequency: compare_value=131 (for 50% duty)[0m
+[0;33mW (57632) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (57637) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (57645) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (57653) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (57658) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (57666) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (57674) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (57679) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (57687) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (57695) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (57700) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (57708) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (57716) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (57721) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (57729) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (57737) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (57742) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (57751) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (57758) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (57763) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (57772) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (57779) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (57784) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (57793) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (57800) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (57805) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (57814) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (57821) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (57826) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (57835) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (57842) MCPWM_PULSE: DEBUG updateProfile: PCNT count=16, target=100[0m
+[0;33mW (57847) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (57853) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (57862) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (57869) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (57874) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (57883) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (57890) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (57895) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (57904) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (57911) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (57916) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (57925) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (57932) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (57937) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (57946) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (57953) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (57958) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (57967) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (57974) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (57979) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (57988) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (57995) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (58000) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (58009) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (58016) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (58021) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (58030) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (58037) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (58042) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (58051) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (58058) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (58063) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (58072) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (58079) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (58084) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (58093) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (58100) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (58105) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (58114) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (58121) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (58126) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (58135) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (58142) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (58147) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (58156) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (58163) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (58168) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (58177) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (58184) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (58189) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (58198) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (58205) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (58210) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (58219) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (58226) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (58231) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (58240) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (58247) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (58252) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (58261) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (58268) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (58273) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (58282) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (58289) MCPWM_PULSE: DEBUG setFrequency: input freq=513.8 Hz[0m
+[0;33mW (58294) MCPWM_PULSE: DEBUG setFrequency: freq=513.8 Hz -> period_ticks=194 (resolution=100000 Hz)[0m
+[0;33mW (58303) MCPWM_PULSE: DEBUG setFrequency: compare_value=97 (for 50% duty)[0m
+[0;33mW (58310) MCPWM_PULSE: DEBUG setFrequency: input freq=600.0 Hz[0m
+[0;33mW (58315) MCPWM_PULSE: DEBUG setFrequency: freq=600.0 Hz -> period_ticks=166 (resolution=100000 Hz)[0m
+[0;33mW (58324) MCPWM_PULSE: DEBUG setFrequency: compare_value=83 (for 50% duty)[0m
+[0;33mW (58331) MCPWM_PULSE: DEBUG setFrequency: input freq=600.0 Hz[0m
+[0;33mW (58336) MCPWM_PULSE: DEBUG setFrequency: freq=600.0 Hz -> period_ticks=166 (resolution=100000 Hz)[0m
+[0;33mW (58345) MCPWM_PULSE: DEBUG setFrequency: compare_value=83 (for 50% duty)[0m
+[0;33mW (58352) MCPWM_PULSE: DEBUG setFrequency: input freq=600.0 Hz[0m
+[0;33mW (58357) MCPWM_PULSE: DEBUG setFrequency: freq=600.0 Hz -> period_ticks=166 (resolution=100000 Hz)[0m
+[0;33mW (58366) MCPWM_PULSE: DEBUG setFrequency: compare_value=83 (for 50% duty)[0m
+[0;33mW (58373) MCPWM_PULSE: DEBUG setFrequency: input freq=600.0 Hz[0m
+[0;33mW (58378) MCPWM_PULSE: DEBUG setFrequency: freq=600.0 Hz -> period_ticks=166 (resolution=100000 Hz)[0m
+[0;33mW (58386) MCPWM_PULSE: DEBUG setFrequency: compare_value=83 (for 50% duty)[0m
+[0;33mW (58394) MCPWM_PULSE: DEBUG setFrequency: input freq=477.5 Hz[0m
+[0;33mW (58399) MCPWM_PULSE: DEBUG setFrequency: freq=477.5 Hz -> period_ticks=209 (resolution=100000 Hz)[0m
+[0;33mW (58407) MCPWM_PULSE: DEBUG setFrequency: compare_value=104 (for 50% duty)[0m
+[0;33mW (58415) MCPWM_PULSE: DEBUG setFrequency: input freq=289.8 Hz[0m
+[0;33mW (58420) MCPWM_PULSE: DEBUG setFrequency: freq=289.8 Hz -> period_ticks=345 (resolution=100000 Hz)[0m
+[0;33mW (58428) MCPWM_PULSE: DEBUG setFrequency: compare_value=172 (for 50% duty)[0m
+[0;33mW (58508) MCPWM_PULSE: DEBUG updateProfile: PCNT count=122, target=100[0m
+[0;33mW (58608) MCPWM_PULSE: DEBUG updateProfile: PCNT count=151, target=100[0m
+[0;33mW (58708) MCPWM_PULSE: DEBUG updateProfile: PCNT count=180, target=100[0m
+[0;33mW (58808) MCPWM_PULSE: DEBUG updateProfile: PCNT count=209, target=100[0m
+[0;33mW (58908) MCPWM_PULSE: DEBUG updateProfile: PCNT count=238, target=100[0m
+[0;33mW (59008) MCPWM_PULSE: DEBUG updateProfile: PCNT count=267, target=100[0m
+[0;33mW (59108) MCPWM_PULSE: DEBUG updateProfile: PCNT count=296, target=100[0m
+[0;33mW (59208) MCPWM_PULSE: DEBUG updateProfile: PCNT count=325, target=100[0m
+[0;33mW (59308) MCPWM_PULSE: DEBUG updateProfile: PCNT count=354, target=100[0m
+[0;33mW (59408) MCPWM_PULSE: DEBUG updateProfile: PCNT count=383, target=100[0m
+[0;33mW (59508) MCPWM_PULSE: DEBUG updateProfile: PCNT count=412, target=100[0m
+[0;33mW (59608) MCPWM_PULSE: DEBUG updateProfile: PCNT count=441, target=100[0m
+[0;33mW (59708) MCPWM_PULSE: DEBUG updateProfile: PCNT count=470, target=100[0m
+[0;33mW (59808) MCPWM_PULSE: DEBUG updateProfile: PCNT count=499, target=100[0m
+[0;33mW (59908) MCPWM_PULSE: DEBUG updateProfile: PCNT count=528, target=100[0m
+[0;33mW (60008) MCPWM_PULSE: DEBUG updateProfile: PCNT count=557, target=100[0m
+[0;33mW (60108) MCPWM_PULSE: DEBUG updateProfile: PCNT count=586, target=100[0m
+[0;33mW (60208) MCPWM_PULSE: DEBUG updateProfile: PCNT count=615, target=100[0m
+[0;33mW (60308) MCPWM_PULSE: DEBUG updateProfile: PCNT count=644, target=100[0m
+[0;33mW (60408) MCPWM_PULSE: DEBUG updateProfile: PCNT count=673, target=100[0m
+[0;33mW (60508) MCPWM_PULSE: DEBUG updateProfile: PCNT count=702, target=100[0m
+[0;33mW (60608) MCPWM_PULSE: DEBUG updateProfile: PCNT count=731, target=100[0m
+[0;33mW (60708) MCPWM_PULSE: DEBUG updateProfile: PCNT count=760, target=100[0m
+[0;33mW (60808) MCPWM_PULSE: DEBUG updateProfile: PCNT count=789, target=100[0m
+[0;33mW (60908) MCPWM_PULSE: DEBUG updateProfile: PCNT count=818, target=100[0m
+[0;33mW (61008) MCPWM_PULSE: DEBUG updateProfile: PCNT count=846, target=100[0m
+[0;33mW (61108) MCPWM_PULSE: DEBUG updateProfile: PCNT count=875, target=100[0m
+[0;33mW (61208) MCPWM_PULSE: DEBUG updateProfile: PCNT count=904, target=100[0m
+[0;33mW (61308) MCPWM_PULSE: DEBUG updateProfile: PCNT count=933, target=100[0m
+[0;33mW (61408) MCPWM_PULSE: DEBUG updateProfile: PCNT count=962, target=100[0m
+[0;33mW (61508) MCPWM_PULSE: DEBUG updateProfile: PCNT count=991, target=100[0m
+[0;33mW (61608) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1020, target=100[0m
+[0;33mW (61708) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1049, target=100[0m
+[0;33mW (61808) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1078, target=100[0m
+[0;33mW (61908) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1107, target=100[0m
+[0;33mW (62008) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1136, target=100[0m
+[0;33mW (62108) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1165, target=100[0m
+[0;33mW (62208) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1194, target=100[0m
+[0;33mW (62308) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1223, target=100[0m
+[0;33mW (62408) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1252, target=100[0m
+[0;33mW (62508) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1281, target=100[0m
+[0;33mW (62608) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1310, target=100[0m
+[0;33mW (62708) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1339, target=100[0m
+[0;33mW (62808) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1368, target=100[0m
+[0;33mW (62908) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1397, target=100[0m
+[0;33mW (63008) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1426, target=100[0m
+[0;33mW (63108) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1455, target=100[0m
+[0;33mW (63208) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1484, target=100[0m
+[0;33mW (63308) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1513, target=100[0m
+[0;33mW (63408) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1542, target=100[0m
+[0;33mW (63508) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1571, target=100[0m
+[0;33mW (63608) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1600, target=100[0m
+[0;33mW (63708) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1629, target=100[0m
+[0;33mW (63808) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1658, target=100[0m
+[0;33mW (63908) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1687, target=100[0m
+[0;33mW (64008) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1716, target=100[0m
+[0;33mW (64108) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1745, target=100[0m
+[0;33mW (64208) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1774, target=100[0m
+[0;33mW (64308) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1803, target=100[0m
+[0;33mW (64408) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1832, target=100[0m
+[0;33mW (64508) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1861, target=100[0m
+[0;33mW (64608) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1890, target=100[0m
+[0;33mW (64708) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1919, target=100[0m
+[0;33mW (64808) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1948, target=100[0m
+[0;33mW (64908) MCPWM_PULSE: DEBUG updateProfile: PCNT count=1977, target=100[0m
+[0;33mW (65008) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2006, target=100[0m
+[0;33mW (65108) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2035, target=100[0m
+[0;33mW (65208) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2064, target=100[0m
+[0;33mW (65308) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2093, target=100[0m
+[0;33mW (65408) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2122, target=100[0m
+[0;33mW (65508) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2151, target=100[0m
+[0;33mW (65608) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2180, target=100[0m
+[0;33mW (65708) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2209, target=100[0m
+[0;33mW (65808) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2238, target=100[0m
+[0;33mW (65908) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2267, target=100[0m
+[0;33mW (66008) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2296, target=100[0m
+[0;33mW (66108) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2325, target=100[0m
+[0;33mW (66208) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2354, target=100[0m
+[0;33mW (66308) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2383, target=100[0m
+[0;33mW (66408) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2412, target=100[0m
+[0;33mW (66508) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2441, target=100[0m
+[0;33mW (66608) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2470, target=100[0m
+[0;33mW (66708) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2499, target=100[0m
+[0;33mW (66808) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2528, target=100[0m
+[0;33mW (66908) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2557, target=100[0m
+[0;33mW (67008) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2586, target=100[0m
+[0;33mW (67108) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2615, target=100[0m
+[0;33mW (67208) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2644, target=100[0m
+[0;33mW (67308) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2673, target=100[0m
+[0;33mW (67408) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2702, target=100[0m
+[0;33mW (67508) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2731, target=100[0m
+[0;33mW (67608) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2760, target=100[0m
+[0;33mW (67708) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2789, target=100[0m
+[0;33mW (67808) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2818, target=100[0m
+[0;33mW (67908) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2846, target=100[0m
+[0;33mW (68008) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2875, target=100[0m
+[0;33mW (68108) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2904, target=100[0m
+[0;33mW (68208) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2933, target=100[0m
+[0;33mW (68308) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2962, target=100[0m
+[0;33mW (68408) MCPWM_PULSE: DEBUG updateProfile: PCNT count=2991, target=100[0m
+[0;33mW (68508) MCPWM_PULSE: DEBUG updateProfile: PCNT count=3020, target=100[0m
+[0;33mW (68608) MCPWM_PULSE: DEBUG updateProfile: PCNT count=3049, target=100[0m
+[0;33mW (68708) MCPWM_PULSE: DEBUG updateProfile: PCNT count=3078, target=100[0m
+[0;33mW (68808) MCPWM_PULSE: DEBUG updateProfile: PCNT count=3107, target=100[0m
+[0;33mW (68908) MCPWM_PULSE: DEBUG updateProfile: PCNT count=3136, target=100[0m
+[0;33mW (69008) MCPWM_PULSE: DEBUG updateProfile: PCNT count=3165, target=100[0m
+[0;33mW (69108) MCPWM_PULSE: DEBUG updateProfile: PCNT count=3194, target=100[0m
+[0;33mW (69208) MCPWM_PULSE: DEBUG updateProfile: PCNT count=3223, target=100[0m
+[0;33mW (69308) MCPWM_PULSE: DEBUG updateProfile: PCNT count=3252, target=100[0m
+[0;33mW (69408) MCPWM_PULSE: DEBUG updateProfile: PCNT count=3281, target=100[0m
+[0;33mW (69508) MCPWM_PULSE: DEBUG updateProfile: PCNT count=3310, target=100[0m
+[0;33mW (69608) MCPWM_PULSE: DEBUG updateProfile: PCNT count=3339, target=100[0m
+[0;33mW (69708) MCPWM_PULSE: DEBUG updateProfile: PCNT count=3368, target=100[0m
+[0;33mW (69808) MCPWM_PULSE: DEBUG updateProfile: PCNT count=3397, target=100[0m
+[0;33mW (69908) MCPWM_PULSE: DEBUG updateProfile: PCNT count=3426, target=100[0m
+[0;33mW (70008) MCPWM_PULSE: DEBUG updateProfile: PCNT count=3455, target=100[0m
+[0;33mW (70108) MCPWM_PULSE: DEBUG updateProfile: PCNT count=3484, target=100[0m
+[0;33mW (70208) MCPWM_PULSE: DEBUG updateProfile: PCNT count=3513, target=100[0m
+[0;33mW (70308) MCPWM_PULSE: DEBUG updateProfile: PCNT count=3542, target=100[0m
+[0;33mW (70408) MCPWM_PULSE: DEBUG updateProfile: PCNT count=3571, target=100[0m
+[0;33mW (70508) MCPWM_PULSE: DEBUG updateProfile: PCNT count=3600, target=100[0m
+[0;33mW (70608) MCPWM_PULSE: DEBUG updateProfile: PCNT count=3629, target=100[0m
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x8 (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x15a0
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xd20
+load:0x403cb700,len:0x2ee4
+entry 0x403c8928
+[0;32mI (27) boot: ESP-IDF v5.4-dirty 2nd stage bootloader[0m
+[0;32mI (27) boot: compile time Dec  6 2025 20:10:08[0m
+[0;32mI (27) boot: Multicore bootloader[0m
+[0;32mI (27) boot: chip revision: v0.2[0m
+[0;32mI (30) boot: efuse block revision: v1.3[0m
+[0;32mI (34) boot.esp32s3: Boot SPI Speed : 80MHz[0m
+[0;32mI (38) boot.esp32s3: SPI Mode       : DIO[0m
+[0;32mI (41) boot.esp32s3: SPI Flash Size : 16MB[0m
+[0;32mI (45) boot: Enabling RNG early entropy source...[0m
+[0;32mI (50) boot: Partition Table:[0m
+[0;32mI (52) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (59) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (65) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (72) boot:  2 factory          factory app      00 00 00010000 00300000[0m
+[0;32mI (78) boot:  3 storage          Unknown data     01 82 00310000 00100000[0m
+[0;32mI (85) boot: End of partition table[0m
+[0;32mI (88) esp_image: segment 0: paddr=00010020 vaddr=3c040020 size=174b8h ( 95416) map[0m
+[0;32mI (112) esp_image: segment 1: paddr=000274e0 vaddr=3fc97100 size=03738h ( 14136) load[0m
+[0;32mI (115) esp_image: segment 2: paddr=0002ac20 vaddr=40374000 size=053f8h ( 21496) load[0m
+[0;32mI (121) esp_image: segment 3: paddr=00030020 vaddr=42000020 size=3d378h (250744) map[0m
+[0;32mI (168) esp_image: segment 4: paddr=0006d3a0 vaddr=403793f8 size=0dc34h ( 56372) load[0m
+[0;32mI (180) esp_image: segment 5: paddr=0007afdc vaddr=600fe100 size=0001ch (    28) load[0m
+[0;32mI (188) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (188) boot: Disabling RNG early entropy source...[0m
+[0;32mI (198) octal_psram: vendor id    : 0x0d (AP)[0m
+[0;32mI (198) octal_psram: dev id       : 0x02 (generation 3)[0m
+[0;32mI (198) octal_psram: density      : 0x03 (64 Mbit)[0m
+[0;32mI (201) octal_psram: good-die     : 0x01 (Pass)[0m
+[0;32mI (205) octal_psram: Latency      : 0x01 (Fixed)[0m
+[0;32mI (209) octal_psram: VCC          : 0x01 (3V)[0m
+[0;32mI (213) octal_psram: SRF          : 0x01 (Fast Refresh)[0m
+[0;32mI (218) octal_psram: BurstType    : 0x01 (Hybrid Wrap)[0m
+[0;32mI (223) octal_psram: BurstLen     : 0x01 (32 Byte)[0m
+[0;32mI (228) octal_psram: Readlatency  : 0x02 (10 cycles@Fixed)[0m
+[0;32mI (233) octal_psram: DriveStrength: 0x00 (1/1)[0m
+[0;32mI (237) esp_psram: Found 8MB PSRAM device[0m
+[0;32mI (241) esp_psram: Speed: 40MHz[0m
+[0;32mI (244) cpu_start: Multicore app[0m
+[0;32mI (977) esp_psram: SPI SRAM memory test OK[0m
+[0;32mI (991) cpu_start: Pro cpu start user code[0m
+[0;32mI (991) cpu_start: cpu freq: 240000000 Hz[0m
+[0;32mI (991) app_init: Application information:[0m
+[0;32mI (991) app_init: Project name:     yarobot_control_unit[0m
+[0;32mI (997) app_init: App version:      0fd5c63-dirty[0m
+[0;32mI (1001) app_init: Compile time:     Dec  8 2025 12:47:02[0m
+[0;32mI (1006) app_init: ELF file SHA256:  e7ec95325...[0m
+[0;32mI (1010) app_init: ESP-IDF:          v5.4-dirty[0m
+[0;32mI (1015) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (1019) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (1023) efuse_init: Chip rev:         v0.2[0m
+[0;32mI (1027) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (1033) heap_init: At 3FC9CA88 len 0004CC88 (307 KiB): RAM[0m
+[0;32mI (1038) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM[0m
+[0;32mI (1043) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM[0m
+[0;32mI (1049) heap_init: At 600FE11C len 00001ECC (7 KiB): RTCRAM[0m
+[0;32mI (1054) esp_psram: Adding pool of 8192K of PSRAM memory to heap allocator[0m
+[0;32mI (1062) spi_flash: detected chip: boya[0m
+[0;32mI (1064) spi_flash: flash io: dio[0m
+[0;32mI (1068) sleep_gpio: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (1074) sleep_gpio: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (1081) main_task: Started on CPU0[0m
+[0;32mI (1084) esp_psram: Reserving pool of 32K of internal memory for DMA/internal allocations[0m
+[0;32mI (1092) main_task: Calling app_main()[0m
+[0;32mI (3095) main: Hello from app_main[0m
+[0;32mI (3095) main: PSRAM detected: 8388608 bytes (8.0 MB)[0m
+[0;32mI (3095) main: Firmware: YAROBOT_CONTROL_UNIT v1.0.0[0m
+[0;32mI (3096) main: Axes: 8 (Servos:5, Steppers:2, Discrete:1)[0m
+[0;32mI (3101) main: GPIO X_STEP: 4, I2C MCP0: 0x20[0m
+[0;32mI (3105) main: Initializing USB CDC interface...[0m
+[0;32mI (3110) usb_cdc: Initializing USB CDC interface[0m
+[0;33mW (3114) tusb_desc: No Device descriptor provided, using default.[0m
+[0;33mW (3120) tusb_desc: No FullSpeed configuration descriptor provided, using default.[0m
+[0;33mW (3127) tusb_desc: No String descriptors provided, using default.[0m
+[0;32mI (3133) tusb_desc: [0m
+┌─────────────────────────────────┐
+│  USB Device Descriptor Summary  │
+├───────────────────┬─────────────┤
+│bDeviceClass       │ 239         │
+├───────────────────┼─────────────┤
+│bDeviceSubClass    │ 2           │
+├───────────────────┼─────────────┤
+│bDeviceProtocol    │ 1           │
+├───────────────────┼─────────────┤
+│bMaxPacketSize0    │ 64          │
+├───────────────────┼─────────────┤
+│idVendor           │ 0x303a      │
+├───────────────────┼─────────────┤
+│idProduct          │ 0x4001      │
+├───────────────────┼─────────────┤
+│bcdDevice          │ 0x100       │
+├───────────────────┼─────────────┤
+│iManufacturer      │ 0x1         │
+├───────────────────┼─────────────┤
+│iProduct           │ 0x2         │
+├───────────────────┼─────────────┤
+│iSerialNumber      │ 0x3         │
+├───────────────────┼─────────────┤
+│bNumConfigurations │ 0x1         │
+└───────────────────┴─────────────┘
+[0;32mI (3300) TinyUSB: TinyUSB Driver installed[0m
+[0;32mI (3304) usb_cdc: USB CDC initialized successfully[0m
+[0;32mI (3308) main: USB CDC initialized successfully[0m
+[0;32mI (3313) main: ========================================[0m
+[0;32mI (3318) main: Hardware Initialization Starting[0m
+[0;32mI (3322) main: ========================================[0m
+[0;32mI (3327) gpio_hal: Initializing GPIO HAL[0m
+[0;32mI (3331) gpio: GPIO[4]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3339) gpio: GPIO[5]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3347) gpio: GPIO[6]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3356) gpio: GPIO[7]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3364) gpio: GPIO[15]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3372) gpio: GPIO[16]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3381) gpio: GPIO[17]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3389) gpio: GPIO[13]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3398) gpio: GPIO[1]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3406) gpio: GPIO[2]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3414) gpio: GPIO[40]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3423) gpio: GPIO[41]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3431) gpio: GPIO[42]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3439) gpio: GPIO[38]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3448) gpio: GPIO[39]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3456) gpio: GPIO[47]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3465) gpio: GPIO[48]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3473) gpio_hal: GPIO HAL initialized successfully[0m
+[0;32mI (3478) i2c_hal: Initializing I2C0: SDA=8, SCL=18, freq=400000 Hz[0m
+[0;32mI (3484) i2c_hal: I2C0 initialized successfully[0m
+[0;32mI (3488) main: MCP23017 #0 (0x20) IODIR_A=0xFF[0m
+[0;32mI (3492) main: MCP23017 #1 (0x21) IODIR_A=0xFF[0m
+[0;32mI (3496) i2c_hal: Initializing I2C1: SDA=14, SCL=21, freq=400000 Hz[0m
+[0;32mI (3503) i2c_hal: I2C1 initialized successfully[0m
+[0;32mI (3534) main: OLED initialized with test pattern[0m
+[0;32mI (3534) i2c_hal: Scanning I2C0 bus...[0m
+[0;32mI (3538) i2c_hal: I2C0: Found device at 0x20[0m
+[0;32mI (3538) i2c_hal: I2C0: Found device at 0x21[0m
+[0;32mI (3551) i2c_hal: I2C0 scan complete: 2 device(s) found[0m
+[0;32mI (3551) main: I2C bus isolation verified: I2C0 still operational[0m
+[0;32mI (3551) spi_hal: Initializing SPI1: MOSI=11, SCLK=12, CS=10[0m
+[0;32mI (3557) gpio: GPIO[9]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3564) spi_hal: SPI initialized successfully, OE pin=9 (disabled)[0m
+[0;32mI (3570) tpic6b595: Initializing TPIC6B595 driver[0m
+[0;32mI (3575) spi_hal: SR outputs ENABLED[0m
+[0;32mI (3578) tpic6b595: TPIC6B595 driver initialized, 40-bit chain ready[0m
+[0;32mI (3584) main: TPIC6B595 shift register initialized (test skipped)[0m
+[0;32mI (3590) main: ========================================[0m
+[0;32mI (3595) main: Hardware Initialization: ALL PASSED[0m
+[0;32mI (3599) main: ========================================[0m
+[0;32mI (3604) main: Creating FreeRTOS tasks...[0m
+[0;32mI (3608) tasks: Task safety started on core 0[0m
+[0;32mI (3612) tasks: Task usb_rx started on core 0[0m
+[0;32mI (3616) tasks: Task usb_tx started on core 0[0m
+[0;32mI (3620) tasks: Task cmd_exec started on core 0[0m
+[0;32mI (3625) tasks: Task i2c_mon started on core 0[0m
+[0;32mI (3629) tasks: Task idle_mon started on core 0[0m
+[0;32mI (3633) tasks: Task motion_X (axis 0) started on core 1[0m
+[0;32mI (3634) tasks: Task motion_B (axis 4) started on core 1[0m
+[0;32mI (3633) tasks: Task motion_Z (axis 2) started on core 1[0m
+[0;32mI (3634) tasks: Task motion_C (axis 5) started on core 1[0m
+[0;32mI (3633) tasks: Task motion_Y (axis 1) started on core 1[0m
+[0;32mI (3634) tasks: Task motion_D (axis 6) started on core 1[0m
+[0;32mI (3633) tasks: Task motion_A (axis 3) started on core 1[0m
+[0;32mI (3634) tasks: Task motion_E (axis 7) started on core 1[0m
+[0;32mI (3633) main: YaRobot Control Unit - All tasks started[0m
+[0;32mI (3673) tasks: Task display started on core 1[0m
+[0;32mI (3678) main_task: Returned from app_main()[0m
+[0;32mI (8807) usb_cdc: USB CDC connected (DTR=1, RTS=1)[0m
+[0;32mI (8816) tasks: USB CDC connection state: connected[0m
+[0;32mI (14465) CMD_EXEC: Initialized with 4 built-in commands[0m
+[0;32mI (14465) EVENT_MGR: Event processor task started[0m
+[0;32mI (14465) EVENT_MGR: Initialized (queue=32, max_subs=8)[0m
+[0;32mI (14468) tasks: Command executor initialized[0m
+[0;32mI (14472) motor_system: ========================================[0m
+[0;32mI (14478) motor_system: Motor System Initialization Starting[0m
+[0;32mI (14483) motor_system: ========================================[0m
+[0;33mW (14489) tpic6b595: Already initialized[0m
+[0;32mI (14493) motor_system: Axis configurations initialized[0m
+[0;32mI (14498) RMT_PULSE: Initializing RMT channel 0 on GPIO 4 (step)[0m
+[0;32mI (14504) RMT_PULSE: RMT channel 0 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (14511) RMT_PULSE: Initializing RMT channel 1 on GPIO 6 (step)[0m
+[0;32mI (14505) RMT_PULSE: Ramp task started for channel 0[0m
+[0;32mI (14517) RMT_PULSE: RMT channel 1 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (14529) RMT_PULSE: Initializing RMT channel 2 on GPIO 7 (step)[0m
+[0;32mI (14522) RMT_PULSE: Ramp task started for channel 1[0m
+[0;32mI (14535) RMT_PULSE: RMT channel 2 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (14547) RMT_PULSE: Initializing RMT channel 3 on GPIO 15 (step)[0m
+[0;32mI (14540) RMT_PULSE: Ramp task started for channel 2[0m
+[0;32mI (14553) RMT_PULSE: RMT channel 3 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (14565) MCPWM_PULSE: Initializing MCPWM timer 0 on GPIO 5 with PCNT unit 0[0m
+[0;32mI (14572) gpio: GPIO[5]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (14558) RMT_PULSE: Ramp task started for channel 3[0m
+[0;32mI (14582) MCPWM_PULSE: Profile task started for timer 0[0m
+[0;32mI (14582) MCPWM_PULSE: MCPWM timer 0 with PCNT unit 0 initialized successfully[0m
+[0;32mI (14597) MCPWM_PULSE: Initializing MCPWM timer 1 on GPIO 16 with PCNT unit 1[0m
+[0;32mI (14604) gpio: GPIO[16]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (14613) MCPWM_PULSE: MCPWM timer 1 with PCNT unit 1 initialized successfully[0m
+[0;32mI (14613) MCPWM_PULSE: Profile task started for timer 1[0m
+[0;32mI (14619) LEDC_PULSE: Initializing LEDC timer 2, channel 2 on GPIO 17[0m
+[0;32mI (14630) gpio: GPIO[17]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (14639) LEDC_PULSE: Configured GPIO 17 for PCNT internal loopback[0m
+[0;32mI (14645) LEDC_PULSE: LEDC timer 2 initialized successfully[0m
+[0;32mI (14645) LEDC_PULSE: Completion task started for LEDC timer 2[0m
+[0;32mI (14650) motor_system: All pulse generators initialized[0m
+[0;32mI (14661) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (14665) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (14670) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (14674) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (14679) TIME_TRACKER: Time tracker initialized with travel time 1000 ms[0m
+[0;32mI (14685) motor_system: All position trackers initialized[0m
+[0;32mI (14690) motor_system: Pulse generators wired to position trackers[0m
+[0;32mI (14696) motor_system: Motor objects created[0m
+[0;32mI (14701) motor_base: Axis 0 initialized (0.556 pulses/unit)[0m
+[0;32mI (14706) motor_base: Axis 1 initialized (0.556 pulses/unit)[0m
+[0;32mI (14711) motor_base: Axis 2 initialized (0.556 pulses/unit)[0m
+[0;32mI (14717) motor_base: Axis 3 initialized (0.556 pulses/unit)[0m
+[0;32mI (14722) motor_base: Axis 4 initialized (0.556 pulses/unit)[0m
+[0;32mI (14727) motor_base: Axis 5 initialized (0.556 pulses/unit)[0m
+[0;32mI (14733) LEDC_PULSE: setPositionTracker: tracker=0x3fc9b934 (PcntTracker for hardware PCNT)[0m
+[0;32mI (14741) motor_base: Axis 6 initialized (0.556 pulses/unit)[0m
+[0;33mW (14746) TIME_TRACKER: Time tracker already initialized[0m
+[0;32mI (14751) discrete_axis: Axis 7 initialized (discrete actuator, travel time 1000 ms)[0m
+[0;32mI (14759) motor_system: All motor objects initialized[0m
+[0;32mI (14764) MOTION_CTRL: Initialized with 8 axes[0m
+[0;32mI (14768) motor_system: Motion controller initialized with 8 axes[0m
+[0;32mI (14774) MOVE_HDL: Registered MOVE handler[0m
+[0;32mI (14777) MOVR_HDL: Registered MOVR handler[0m
+[0;32mI (14781) EN_HDL: Registered EN handler[0m
+[0;32mI (14785) POS_HDL: Registered POS handler[0m
+[0;32mI (14789) VEL_HDL: Registered VEL handler[0m
+[0;32mI (14792) STOP_HDL: Registered STOP handler[0m
+[0;32mI (14796) motor_system: Command handlers registered (MOVE, MOVR, EN, POS, VEL, STOP)[0m
+[0;32mI (14804) motor_system: ========================================[0m
+[0;32mI (14809) motor_system: Motor System Initialization: SUCCESS[0m
+[0;32mI (14815) motor_system:   Servos: 5 (X, Y, Z, A, B)[0m
+[0;32mI (14819) motor_system:   Steppers: 2 (C, D)[0m
+[0;32mI (14823) motor_system:   Discrete: 1 (E)[0m
+[0;32mI (14827) motor_system: ========================================[0m
+[0;32mI (14833) CMD_EXEC: CMD: MODE -[0m
+OK READY
+[0;32mI (17967) CMD_EXEC: CMD: EN Y 1.0000[0m
+[0;32mI (17968) motor_base: Axis 1 enabled[0m
+OK
+[0;32mI (24108) CMD_EXEC: CMD: MOVE Y 180.0000[0m
+[0;33mW (24108) motor_base: DEBUG Axis 1: moveAbsolute(pos=180.0000, vel=1080.0000)[0m
+[0;33mW (24109) motor_base: DEBUG Axis 1: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (24115) motor_base: DEBUG Axis 1: current_pos=0.0000, target_pos=180.0000[0m
+[0;33mW (24121) motor_base: DEBUG Axis 1: setting direction=FWD[0m
+[0;33mW (24127) motor_base: DEBUG Axis 1: pulses_per_unit=0.56, pulses=100, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (24135) motor_base: DEBUG Axis 1: calling pulse_gen_->startMove(pulses=100, freq=600.0, accel=6000.0)[0m
+[0;33mW (24144) MCPWM_PULSE: DEBUG startMove: pulses=100, max_vel=600.0 Hz, accel=6000.0, dir=FWD[0m
+[0;33mW (24152) MCPWM_PULSE: DEBUG startMove: profile calculated: accel=29, cruise=42, decel=29, cruise_vel=600.0[0m
+[0;33mW (24162) MCPWM_PULSE: DEBUG startMove: stopping and clearing PCNT[0m
+[0;33mW (24168) MCPWM_PULSE: DEBUG startMove: configuring PCNT watch point for 100 pulses[0m
+[0;33mW (24175) MCPWM_PULSE: DEBUG configurePcntWatchPoint: target=100, HIGH_LIMIT=32767[0m
+[1;31mE (24182) pcnt: pcnt_unit_remove_watch_point(663): watch point 32767 not added yet[0m
+[0;33mW (24189) MCPWM_PULSE: DEBUG configurePcntWatchPoint: adding direct watch point at 100[0m
+[0;33mW (24197) MCPWM_PULSE: DEBUG startMove: setting initial freq=2 Hz[0m
+[0;33mW (24203) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (24208) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (24217) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (24224) MCPWM_PULSE: DEBUG startMove: starting MCPWM timer[0m
+[0;33mW (24224) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (24229) MCPWM_PULSE: DEBUG startMove: completed successfully[0m
+[0;33mW (24235) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (24240) motor_base: DEBUG Axis 1: moveAbsolute completed, state=MOVING[0m
+[0;33mW (24249) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+OK
+[0;33mW (24263) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (24268) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (24277) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (24285) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (24289) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (24298) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (24306) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (24310) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (24319) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (24327) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (24331) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (24340) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (24348) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (24352) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (24361) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (24369) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (24373) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (24382) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (24390) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (24394) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (24403) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (24411) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (24415) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (24424) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (24432) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (24436) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (24445) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (24453) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (24457) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (24466) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (24474) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (24478) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (24487) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (24495) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (24499) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (24508) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (24516) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (24520) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (24529) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (24537) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (24541) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (24550) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (24558) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (24562) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (24571) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (24579) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (24583) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (24592) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (24600) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (24604) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (24613) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (24621) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (24625) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (24634) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (24642) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (24646) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (24655) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (24663) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (24667) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (24676) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (24684) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (24688) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (24697) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (24705) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (24709) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (24718) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (24726) MCPWM_PULSE: DEBUG setFrequency: input freq=2.0 Hz[0m
+[0;33mW (24730) MCPWM_PULSE: DEBUG setFrequency: freq=2.0 Hz -> period_ticks=50000 (resolution=100000 Hz)[0m
+[0;33mW (24739) MCPWM_PULSE: DEBUG setFrequency: compare_value=25000 (for 50% duty)[0m
+[0;33mW (24747) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (24751) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (24760) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (24768) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (24772) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (24781) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (24789) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (24793) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (24802) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (24810) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (24814) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (24823) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (24831) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (24835) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (24844) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (24852) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (24856) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (24865) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (24873) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (24877) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (24886) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (24894) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (24898) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (24907) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (24915) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (24919) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (24928) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (24936) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (24940) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (24949) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (24957) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (24961) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (24970) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (24978) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (24982) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (24991) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (24999) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (25003) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (25012) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (25020) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (25024) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (25033) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (25041) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (25045) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (25054) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (25062) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (25066) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (25075) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (25083) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (25087) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (25096) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (25104) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (25108) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (25117) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (25125) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (25129) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (25138) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (25146) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (25150) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (25159) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (25167) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (25171) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (25180) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (25188) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (25192) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (25201) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (25209) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (25213) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (25222) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (25230) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (25234) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (25243) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (25251) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (25255) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (25264) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (25272) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (25277) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (25285) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (25293) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (25298) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (25306) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (25314) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (25319) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (25327) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (25335) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (25340) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (25348) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (25356) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (25361) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (25369) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (25377) MCPWM_PULSE: DEBUG setFrequency: input freq=109.5 Hz[0m
+[0;33mW (25382) MCPWM_PULSE: DEBUG setFrequency: freq=109.5 Hz -> period_ticks=912 (resolution=100000 Hz)[0m
+[0;33mW (25390) MCPWM_PULSE: DEBUG setFrequency: compare_value=456 (for 50% duty)[0m
+[0;33mW (25398) MCPWM_PULSE: DEBUG setFrequency: input freq=189.7 Hz[0m
+[0;33mW (25403) MCPWM_PULSE: DEBUG setFrequency: freq=189.7 Hz -> period_ticks=527 (resolution=100000 Hz)[0m
+[0;33mW (25411) MCPWM_PULSE: DEBUG setFrequency: compare_value=263 (for 50% duty)[0m
+[0;33mW (25419) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (25424) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (25432) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (25440) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (25445) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (25453) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (25461) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (25466) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (25474) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (25482) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (25487) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (25495) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (25503) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (25508) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (25516) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (25524) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (25529) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (25537) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (25545) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (25550) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (25558) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (25566) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (25571) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (25579) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (25587) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (25592) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (25600) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (25608) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (25613) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (25621) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (25629) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (25634) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (25642) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (25650) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (25655) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (25663) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (25671) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (25676) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (25684) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (25692) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (25697) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (25705) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (25713) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (25718) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (25726) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (25734) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (25739) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (25747) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (25755) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (25760) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (25768) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (25776) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (25781) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (25789) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (25797) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (25802) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (25810) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (25818) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (25823) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (25831) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (25839) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (25844) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (25852) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (25860) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (25865) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (25873) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (25881) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (25886) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (25894) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (25902) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (25907) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (25915) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (25923) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (25928) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (25936) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (25944) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (25949) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (25957) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (25965) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (25970) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (25978) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (25986) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (25991) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (25999) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (26007) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (26012) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (26020) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (26028) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (26033) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (26041) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (26049) MCPWM_PULSE: DEBUG setFrequency: input freq=219.1 Hz[0m
+[0;33mW (26054) MCPWM_PULSE: DEBUG setFrequency: freq=219.1 Hz -> period_ticks=456 (resolution=100000 Hz)[0m
+[0;33mW (26062) MCPWM_PULSE: DEBUG setFrequency: compare_value=228 (for 50% duty)[0m
+[0;33mW (26070) MCPWM_PULSE: DEBUG setFrequency: input freq=289.8 Hz[0m
+[0;33mW (26075) MCPWM_PULSE: DEBUG setFrequency: freq=289.8 Hz -> period_ticks=345 (resolution=100000 Hz)[0m
+[0;33mW (26083) MCPWM_PULSE: DEBUG setFrequency: compare_value=172 (for 50% duty)[0m
+[0;33mW (26091) MCPWM_PULSE: DEBUG setFrequency: input freq=379.5 Hz[0m
+[0;33mW (26096) MCPWM_PULSE: DEBUG setFrequency: freq=379.5 Hz -> period_ticks=263 (resolution=100000 Hz)[0m
+[0;33mW (26104) MCPWM_PULSE: DEBUG setFrequency: compare_value=131 (for 50% duty)[0m
+[0;33mW (26112) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (26117) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (26125) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (26133) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (26138) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (26146) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (26154) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (26159) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (26167) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (26175) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (26180) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (26188) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (26196) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (26201) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (26210) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (26217) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (26222) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (26231) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (26238) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (26243) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (26252) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (26259) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (26264) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (26273) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (26280) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (26285) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (26294) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (26301) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (26306) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (26315) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (26322) MCPWM_PULSE: DEBUG updateProfile: PCNT count=16, target=100[0m
+[0;33mW (26327) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (26333) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (26342) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (26349) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (26354) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (26363) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (26370) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (26375) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (26384) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (26391) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (26396) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (26405) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (26412) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (26417) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (26426) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (26433) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (26438) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (26447) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (26454) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (26459) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (26468) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (26475) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (26480) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (26489) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (26496) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (26501) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (26510) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (26517) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (26522) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (26531) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (26538) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (26543) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (26552) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (26559) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (26564) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (26573) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (26580) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (26585) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (26594) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (26601) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (26606) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (26615) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (26622) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (26627) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (26636) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (26643) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (26648) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (26657) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (26664) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (26669) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (26678) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (26685) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (26690) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (26699) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (26706) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (26711) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (26720) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (26727) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (26732) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (26741) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (26748) MCPWM_PULSE: DEBUG setFrequency: input freq=438.2 Hz[0m
+[0;33mW (26753) MCPWM_PULSE: DEBUG setFrequency: freq=438.2 Hz -> period_ticks=228 (resolution=100000 Hz)[0m
+[0;33mW (26762) MCPWM_PULSE: DEBUG setFrequency: compare_value=114 (for 50% duty)[0m
+[0;33mW (26769) MCPWM_PULSE: DEBUG setFrequency: input freq=502.0 Hz[0m
+[0;33mW (26774) MCPWM_PULSE: DEBUG setFrequency: freq=502.0 Hz -> period_ticks=199 (resolution=100000 Hz)[0m
+[0;33mW (26783) MCPWM_PULSE: DEBUG setFrequency: compare_value=99 (for 50% duty)[0m
+[0;33mW (26790) MCPWM_PULSE: DEBUG setFrequency: input freq=600.0 Hz[0m
+[0;33mW (26795) MCPWM_PULSE: DEBUG setFrequency: freq=600.0 Hz -> period_ticks=166 (resolution=100000 Hz)[0m
+[0;33mW (26804) MCPWM_PULSE: DEBUG setFrequency: compare_value=83 (for 50% duty)[0m
+[0;33mW (26811) MCPWM_PULSE: DEBUG setFrequency: input freq=600.0 Hz[0m
+[0;33mW (26816) MCPWM_PULSE: DEBUG setFrequency: freq=600.0 Hz -> period_ticks=166 (resolution=100000 Hz)[0m
+[0;33mW (26825) MCPWM_PULSE: DEBUG setFrequency: compare_value=83 (for 50% duty)[0m
+[0;33mW (26832) MCPWM_PULSE: DEBUG setFrequency: input freq=600.0 Hz[0m
+[0;33mW (26837) MCPWM_PULSE: DEBUG setFrequency: freq=600.0 Hz -> period_ticks=166 (resolution=100000 Hz)[0m
+[0;33mW (26846) MCPWM_PULSE: DEBUG setFrequency: compare_value=83 (for 50% duty)[0m
+[0;33mW (26853) MCPWM_PULSE: DEBUG setFrequency: input freq=600.0 Hz[0m
+[0;33mW (26858) MCPWM_PULSE: DEBUG setFrequency: freq=600.0 Hz -> period_ticks=166 (resolution=100000 Hz)[0m
+[0;33mW (26866) MCPWM_PULSE: DEBUG setFrequency: compare_value=83 (for 50% duty)[0m
+[0;33mW (26874) MCPWM_PULSE: DEBUG setFrequency: input freq=477.5 Hz[0m
+[0;33mW (26879) MCPWM_PULSE: DEBUG setFrequency: freq=477.5 Hz -> period_ticks=209 (resolution=100000 Hz)[0m
+[0;33mW (26887) MCPWM_PULSE: DEBUG setFrequency: compare_value=104 (for 50% duty)[0m
+[0;33mW (26895) MCPWM_PULSE: DEBUG setFrequency: input freq=309.8 Hz[0m
+[0;33mW (26900) MCPWM_PULSE: DEBUG setFrequency: freq=309.8 Hz -> period_ticks=322 (resolution=100000 Hz)[0m
+[0;33mW (26908) MCPWM_PULSE: DEBUG setFrequency: compare_value=161 (for 50% duty)[0m
+[0;33mW (26988) MCPWM_PULSE: DEBUG updateProfile: PCNT count=123, target=100[0m
+[0;33mW (27088) MCPWM_PULSE: DEBUG updateProfile: PCNT count=155, target=100[0m
+[0;33mW (27188) MCPWM_PULSE: DEBUG updateProfile: PCNT count=186, target=100[0m
+[0;33mW (27288) MCPWM_PULSE: DEBUG updateProfile: PCNT count=217, target=100[0m
+[0;33mW (27388) MCPWM_PULSE: DEBUG updateProfile: PCNT count=248, target=100[0m
+[0;33mW (27488) MCPWM_PULSE: DEBUG updateProfile: PCNT count=279, target=100[0m
+[0;33mW (27588) MCPWM_PULSE: DEBUG updateProfile: PCNT count=310, target=100[0m
+[0;33mW (27688) MCPWM_PULSE: DEBUG updateProfile: PCNT count=341, target=100[0m
+[0;33mW (27788) MCPWM_PULSE: DEBUG updateProfile: PCNT count=372, target=100[0m
+[0;33mW (27888) MCPWM_PULSE: DEBUG updateProfile: PCNT count=403, target=100[0m
+[0;33mW (27988) MCPWM_PULSE: DEBUG updateProfile: PCNT count=434, target=100[0m
+[0;33mW (28088) MCPWM_PULSE: DEBUG updateProfile: PCNT count=465, target=100[0m
+[0;33mW (28188) MCPWM_PULSE: DEBUG updateProfile: PCNT count=496, target=100[0m
+[0;33mW (28288) MCPWM_PULSE: DEBUG updateProfile: PCNT count=527, target=100[0m
+[0;33mW (28388) MCPWM_PULSE: DEBUG updateProfile: PCNT count=558, target=100[0m
+[0;33mW (28488) MCPWM_PULSE: DEBUG updateProfile: PCNT count=589, target=100[0m
+[0;33mW (28588) MCPWM_PULSE: DEBUG updateProfile: PCNT count=620, target=100[0m
+[0;33mW (28688) MCPWM_PULSE: DEBUG updateProfile: PCNT count=651, target=100[0m
+[0;33mW (28788) MCPWM_PULSE: DEBUG updateProfile: PCNT count=682, target=100[0m

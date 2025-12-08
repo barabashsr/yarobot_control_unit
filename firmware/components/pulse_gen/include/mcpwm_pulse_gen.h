@@ -156,10 +156,11 @@ private:
     bool direction_;  // true = forward, false = reverse
     bool last_direction_;  // For tracking direction changes
 
-    // Pulse counting
-    std::atomic<int64_t> pulse_count_;      ///< Total pulses (PCNT + overflow tracking)
+    // Pulse counting (PCNT hardware-based)
+    std::atomic<int64_t> pulse_count_;      ///< Total pulses from PCNT + overflow tracking
     std::atomic<int32_t> overflow_count_;   ///< Number of PCNT overflows
     std::atomic<float> current_velocity_;
+    int32_t last_watch_point_;              ///< Last configured watch point (for removal)
 
     // Profile update task
     TaskHandle_t profile_task_handle_;
@@ -168,6 +169,8 @@ private:
     // Callback
     MotionCompleteCallback completion_callback_;
     SemaphoreHandle_t callback_mutex_;
+    std::atomic<bool> completion_notified_;  ///< Prevents double completion callback
+    uint64_t motion_start_time_;              ///< For time-based acceleration
 
     // Position tracker (stored but not used - PCNT provides real-time position)
     IPositionTracker* position_tracker_;

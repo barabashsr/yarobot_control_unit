@@ -126,8 +126,14 @@
  */
 #define DEFAULT_MAX_PULSE_FREQ_HZ   200000
 
-/** @brief Minimum pulse frequency (Hz) */
-#define LIMIT_MIN_PULSE_FREQ_HZ     1
+/**
+ * @brief Minimum pulse frequency (Hz)
+ *
+ * Set to 100 Hz for responsive motor startup.
+ * With MCPWM_RESOLUTION_HZ = 100000: period = 100000/100 = 1000 ticks
+ * Lower values cause long delays during acceleration ramp-up.
+ */
+#define LIMIT_MIN_PULSE_FREQ_HZ     100
 
 /**
  * @brief Maximum stop latency for immediate stop (microseconds)

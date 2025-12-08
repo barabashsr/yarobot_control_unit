@@ -520,11 +520,16 @@ esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/mcpwm_pulse_gen.cpp.obj: /Users
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/clk_tree_defs.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/gpio_num.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/gpio_pins.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/gpio_sig_map.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/mpu_caps.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/reset_reasons.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/soc.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/soc_caps.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/gpio_reg.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/gpio_struct.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/io_mux_reg.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/reg_base.h \
+  /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/include/soc/gpio_periph.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/esp32s3/include/xtensa/config/core-isa.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/esp32s3/include/xtensa/config/core-matmap.h \
   /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/esp32s3/include/xtensa/config/core.h \
@@ -827,11 +832,15 @@ esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/rmt_pulse_gen.cpp.obj: /Users/s
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_rmt/include/driver/rmt_types.h:
 
-/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_rmt/include/driver/rmt_common.h:
-
 /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/rmt_pulse_gen.cpp:
 
 /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/include/mcpwm_pulse_gen.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/esp_driver_rmt/include/driver/rmt_common.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/include/soc/gpio_periph.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/gpio_reg.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/hal/include/hal/mcpwm_types.h:
 
@@ -867,6 +876,8 @@ config/sdkconfig.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/esp32s3/include/xtensa/config/core-matmap.h:
 
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/io_mux_reg.h:
+
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/xtensa/esp32s3/include/xtensa/config/core-isa.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/reg_base.h:
@@ -886,6 +897,8 @@ config/sdkconfig.h:
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/time.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/sys/unistd.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/include/soc/gpio_sig_map.h:
 
 /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/newlib/platform_include/sys/time.h:
 
@@ -1290,6 +1303,8 @@ config/sdkconfig.h:
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/bits/std_function.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/c++/14.2.0/debug/debug.h:
+
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/soc/esp32s3/register/soc/gpio_struct.h:
 
 /Users/sergeybarabash/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/xtensa-esp-elf/include/sys/cdefs.h:
 

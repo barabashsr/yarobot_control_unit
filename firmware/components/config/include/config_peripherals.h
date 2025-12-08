@@ -63,11 +63,15 @@
 /**
  * @brief MCPWM timer resolution (Hz)
  *
- * 10 MHz clock provides 100ns resolution per tick.
- * At 100kHz: period = 10000000 / 100000 = 100 ticks
- * At 25kHz: period = 10000000 / 25000 = 400 ticks
+ * 100 kHz clock provides 10us resolution per tick.
+ * Max period: 65535 ticks (16-bit timer limit)
+ * Min frequency: 100000 / 65535 ≈ 1.5 Hz (good for slow start)
+ * Max frequency: 100000 / 1 = 100 kHz (sufficient for steppers)
+ *
+ * Note: Previous 10 MHz resolution caused period overflow at low frequencies
+ * (1 Hz required 10M ticks, exceeding 16-bit limit of 65535)
  */
-#define MCPWM_RESOLUTION_HZ     10000000
+#define MCPWM_RESOLUTION_HZ     100000
 
 /**
  * @brief MCPWM duty cycle percentage (0-100)
