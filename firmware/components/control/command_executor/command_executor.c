@@ -236,10 +236,16 @@ esp_err_t dispatch_command(const ParsedCommand* cmd, char* response, size_t resp
     }
 
     // Log command (FR26: command history for debugging)
-    ESP_LOGD(TAG, "verb=%s axis=%c params=%d",
-             cmd->verb,
-             cmd->axis ? cmd->axis : '-',
-             cmd->param_count);
+    if (cmd->param_count > 0) {
+        ESP_LOGI(TAG, "CMD: %s %c %.4f",
+                 cmd->verb,
+                 cmd->axis ? cmd->axis : '-',
+                 cmd->params[0]);
+    } else {
+        ESP_LOGI(TAG, "CMD: %s %c",
+                 cmd->verb,
+                 cmd->axis ? cmd->axis : '-');
+    }
 
     // Find command in table
     const CommandEntry* entry = find_command(cmd->verb);

@@ -10,7 +10,6 @@
 
 #include "software_tracker.h"
 #include "esp_log.h"
-#include "esp_attr.h"  // For IRAM_ATTR
 
 static const char* TAG = "SW_TRACKER";
 
@@ -71,13 +70,13 @@ void SoftwareTracker::setDirection(bool forward)
 }
 
 // ============================================================================
-// Pulse Addition (called from pulse generator callback)
+// Pulse Addition (called from pushCommand - task context)
 // ============================================================================
 
-void IRAM_ATTR SoftwareTracker::addPulses(int64_t count)
+void SoftwareTracker::addPulses(int64_t count)
 {
-    // NOTE: This function is called from ISR context (RMT encoder callback)
-    // Must use only atomic operations - NO logging, NO locks!
+    // NOTE: This function is now called from task context (pushCommand)
+    // No longer called from ISR - queue-based position tracking
 
     if (!initialized_ || count == 0) {
         return;
@@ -87,6 +86,6 @@ void IRAM_ATTR SoftwareTracker::addPulses(int64_t count)
     bool forward = direction_.load(std::memory_order_relaxed);
     int64_t delta = forward ? count : -count;
 
-    // Atomic add - ISR safe
+    // Atomic add
     position_.fetch_add(delta, std::memory_order_acq_rel);
 }

@@ -249,9 +249,23 @@ bool RmtPulseGenerator::pushCommand(const StepCommand& cmd)
     }
     queue_end_.ticks_queued += static_cast<uint32_t>(cmd.ticks) * cmd.steps;
 
-    // Note: Position tracking moved to encodeCallback() - track when pulses
-    // are actually generated, not when commands are queued. This ensures
-    // accurate position in all modes (MOVE, VEL, STOP).
+    // Update position tracker when QUEUING (task context)
+    // Queue-based tracking: position = queued steps
+    // For MOVE mode: queued == generated (queue drains completely)
+    // For VEL + stop(): decel runs to completion, queue drains
+    // For stopImmediate(): sync from ISR pulse_count_ in stopImmediate()
+    if (position_tracker_ && cmd.steps > 0) {
+        position_tracker_->addPulses(cmd.steps);
+        // Debug: log tracker position after update
+        static int push_count = 0;
+        push_count++;
+        if (push_count <= 20 || push_count % 50 == 0) {
+            ESP_LOGW(TAG, "DEBUG pushCmd[%d]: steps=%ld, tracker_pos=%lld, queue_end=%ld",
+                     push_count, (long)cmd.steps,
+                     (long long)position_tracker_->getPosition(),
+                     (long)queue_end_.position);
+        }
+    }
 
     return true;
 }
@@ -377,6 +391,25 @@ StepCommand RmtPulseGenerator::generateNextCommand()
     if (gen_call_count <= 5) {
         ESP_LOGW(TAG, "DEBUG genCmd[%d]: target_vel=%.1f, accel=%.1f, target_pos=%ld, pos_mode=%d, ramp_state=%d",
                  gen_call_count, target_vel, accel, (long)target_pos, position_mode, (int)ramp_state_);
+    }
+
+    // ============================================================
+    // Calculate remaining distance to target (position mode only)
+    // This is used to clamp steps at the END of this function
+    // ============================================================
+    int32_t remaining = INT32_MAX;  // Default: no limit for velocity mode
+    if (position_mode) {
+        if (direction_.load(std::memory_order_relaxed)) {
+            remaining = target_pos - queue_end_.position;
+        } else {
+            remaining = target_pos + queue_end_.position;
+        }
+
+        // If already at target, return completion command
+        if (remaining <= 0) {
+            cmd.flags |= CMD_FLAG_LAST;
+            return cmd;  // steps=0, ticks=0
+        }
     }
 
     // Set direction flag
@@ -517,13 +550,20 @@ StepCommand RmtPulseGenerator::generateNextCommand()
             if (steps > remaining_to_target) {
                 steps = static_cast<uint8_t>(remaining_to_target);
             }
+
+            // If remaining is exactly what we need, this is the last command
+            if (steps == remaining_to_target) {
+                cmd.flags |= CMD_FLAG_LAST;
+                ESP_LOGW(TAG, "DEBUG DECEL: exact finish, steps=%u == remaining=%ld", steps, (long)remaining_to_target);
+            }
+
             ramp_steps_down_ += steps;
 
             cmd.ticks = (current_ticks_ > 65535) ? 65535 : static_cast<uint16_t>(current_ticks_);
             cmd.steps = steps;
 
             // Check if this command completes the motion
-            if (position_mode) {
+            if (position_mode && !(cmd.flags & CMD_FLAG_LAST)) {
                 // Calculate remaining after this command
                 // For FWD: remaining = target - (position + steps) = target - position - steps
                 // For REV: remaining = target - |position + (-steps)| = target + position - steps
@@ -533,10 +573,12 @@ StepCommand RmtPulseGenerator::generateNextCommand()
                 } else {
                     remaining_after = target_pos + queue_end_.position - steps;
                 }
+                ESP_LOGW(TAG, "DEBUG DECEL: queue_pos=%ld, steps=%u, remaining_after=%ld",
+                         (long)queue_end_.position, steps, (long)remaining_after);
                 if (remaining_after <= 0) {
                     cmd.flags |= CMD_FLAG_LAST;
                 }
-            } else {
+            } else if (!position_mode) {
                 int32_t decel_dist = calculateDecelDistance(current_velocity_, accel);
                 if (ramp_steps_down_ >= decel_dist) {
                     cmd.flags |= CMD_FLAG_LAST;
@@ -549,6 +591,19 @@ StepCommand RmtPulseGenerator::generateNextCommand()
             cmd.ticks = 0;
             cmd.steps = 0;
             break;
+    }
+
+    // ============================================================
+    // Clamp steps to remaining distance (position mode)
+    // This ensures we NEVER generate more steps than target requires
+    // ============================================================
+    if (position_mode && remaining < INT32_MAX && cmd.steps > 0) {
+        // Cast cmd.steps to int32_t to avoid uint8_t overflow in comparison
+        if (static_cast<int32_t>(cmd.steps) > remaining) {
+            cmd.steps = static_cast<uint8_t>(remaining);
+            cmd.flags |= CMD_FLAG_LAST;
+            ESP_LOGW(TAG, "DEBUG genCmd: clamped steps to remaining=%ld", (long)remaining);
+        }
     }
 
     return cmd;
@@ -657,21 +712,15 @@ size_t IRAM_ATTR RmtPulseGenerator::encodeCallback(
     size_t steps_generated = self->fillSymbols(symbols, cmd);
 
     // ============================================================
-    // POSITION TRACKING (ISR context - atomic operations only)
-    // Track position when pulses are ACTUALLY GENERATED, not when
-    // commands are queued. This ensures accurate position for all
-    // modes (MOVE, VEL, STOP) regardless of queue state.
+    // ISR PULSE COUNT (for stopImmediate sync only)
+    // Position tracking moved to pushCommand() - queue-based tracking
+    // pulse_count_ is only used as fallback when queue is aborted
     // ============================================================
     if (steps_generated > 0) {
         bool dir = self->direction_.load(std::memory_order_relaxed);
         int64_t delta = dir ? static_cast<int64_t>(steps_generated)
                             : -static_cast<int64_t>(steps_generated);
         self->pulse_count_.fetch_add(delta, std::memory_order_relaxed);
-
-        // Update position tracker - addPulses() is ISR-safe (atomic only)
-        if (self->position_tracker_) {
-            self->position_tracker_->addPulses(steps_generated);
-        }
     }
 
     // Wake ramp task if queue running low (< 8 entries)
@@ -903,7 +952,8 @@ esp_err_t RmtPulseGenerator::startMove(int32_t pulses, float max_velocity, float
     ESP_LOGW(TAG, "DEBUG startMove: starting fresh, dir=%s, abs_pulses=%ld",
              new_direction ? "FWD" : "REV", (long)abs_pulses);
     clearQueue();
-    pulse_count_.store(0, std::memory_order_relaxed);
+    // NOTE: Do NOT reset pulse_count_ - it must stay cumulative for stopImmediate() sync
+    // pulse_count_ tracks absolute position like position_tracker_
     current_velocity_ = 0.0f;
     current_ticks_ = LIMIT_RMT_MIN_CMD_TICKS;
     ramp_steps_up_ = 0;
@@ -972,7 +1022,8 @@ esp_err_t RmtPulseGenerator::startVelocity(float velocity, float acceleration)
         // Starting fresh
         ESP_LOGW(TAG, "DEBUG startVelocity: starting fresh, dir=%s", new_direction ? "FWD" : "REV");
         clearQueue();
-        pulse_count_.store(0, std::memory_order_relaxed);
+        // NOTE: Do NOT reset pulse_count_ - it must stay cumulative for stopImmediate() sync
+        // pulse_count_ tracks absolute position like position_tracker_
         current_velocity_ = 0.0f;
         current_ticks_ = LIMIT_RMT_MIN_CMD_TICKS;
         ramp_steps_up_ = 0;
@@ -1061,6 +1112,15 @@ void RmtPulseGenerator::stopImmediate()
     ramp_state_ = RampState::IDLE;
     current_velocity_ = 0.0f;
     clearQueue();
+
+    // Sync position tracker to actual generated pulses (ISR count)
+    // This is the ONLY place we use ISR-tracked pulse_count_ for position
+    // because stopImmediate() aborts the queue before it can drain completely
+    if (position_tracker_) {
+        int64_t actual = pulse_count_.load(std::memory_order_acquire);
+        position_tracker_->reset(actual);
+        ESP_LOGD(TAG, "stopImmediate: synced position to pulse_count=%lld", (long long)actual);
+    }
 
     // Note: Do NOT fire completion callback on immediate stop
 }
