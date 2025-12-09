@@ -487,8 +487,10 @@ void McpwmPulseGenerator::updateProfile()
         ESP_LOGW(TAG, "updateProfile: STOP - pcnt=%lld >= target=%ld",
                  (long long)current_count, (long)profile_.target_pulses);
 
-        // Stop MCPWM timer immediately
-        mcpwm_timer_start_stop(timer_handle_, MCPWM_TIMER_STOP_FULL);
+        // Stop MCPWM timer immediately (STOP_EMPTY prevents leftover GPIO HIGH state)
+        mcpwm_timer_start_stop(timer_handle_, MCPWM_TIMER_STOP_EMPTY);
+
+        // No force level needed - PCNT will start AFTER MCPWM in next move to avoid leftover edges
 
         // Stop PCNT
         pcnt_unit_stop(pcnt_unit_);
@@ -685,7 +687,8 @@ esp_err_t McpwmPulseGenerator::startMove(int32_t pulses, float max_velocity, flo
         // Don't return error - task polling is the primary mechanism
     }
 
-    pcnt_unit_start(pcnt_unit_);
+    // NOTE: PCNT will be started AFTER MCPWM to avoid counting leftover pulse edges
+    // Generator actions are always active - no need for force level manipulation
 
     // Set initial frequency (responsive start)
     ESP_LOGW(TAG, "DEBUG startMove: setting initial freq=%.0f Hz", MIN_MOTION_START_FREQ);
@@ -704,6 +707,12 @@ esp_err_t McpwmPulseGenerator::startMove(int32_t pulses, float max_velocity, flo
         ESP_LOGE(TAG, "Failed to start MCPWM timer: %s", esp_err_to_name(ret));
         return ret;
     }
+
+    // CRITICAL FIX: Start PCNT AFTER MCPWM to avoid counting leftover pulse edges
+    // Wait for MCPWM to generate 2-3 clean pulses before enabling PCNT counting
+    esp_rom_delay_us(10);  // 10µs = 3 periods at 300 Hz
+    pcnt_unit_start(pcnt_unit_);
+    ESP_LOGW(TAG, "DEBUG startMove: PCNT started after MCPWM stabilization");
 
     ESP_LOGW(TAG, "DEBUG startMove: completed successfully");
     return ESP_OK;
@@ -818,10 +827,12 @@ void McpwmPulseGenerator::stopImmediate()
 
     ESP_LOGD(TAG, "stopImmediate");
 
-    // Stop MCPWM timer immediately
+    // Stop MCPWM timer immediately (STOP_EMPTY prevents leftover GPIO HIGH state)
     if (timer_handle_) {
-        mcpwm_timer_start_stop(timer_handle_, MCPWM_TIMER_STOP_FULL);
+        mcpwm_timer_start_stop(timer_handle_, MCPWM_TIMER_STOP_EMPTY);
     }
+
+    // No force level needed - PCNT will start AFTER MCPWM in next move to avoid leftover edges
 
     // Read final count
     int64_t final_count = readPcntCount();
@@ -1111,7 +1122,8 @@ bool McpwmPulseGenerator::handlePcntReachISR(const pcnt_watch_event_data_t* even
     // NOTE: Do NOT stop PCNT here - calling pcnt_unit_stop() from ISR context
     // causes issues with subsequent moves. MCPWM stop is enough since no more
     // pulses will be generated. Task will stop PCNT when it handles completion.
-    mcpwm_timer_start_stop(timer_handle_, MCPWM_TIMER_STOP_FULL);
+    // Using STOP_EMPTY prevents leftover GPIO HIGH state.
+    mcpwm_timer_start_stop(timer_handle_, MCPWM_TIMER_STOP_EMPTY);
 
     // Calculate position using TARGET (commanded value), not PCNT read
     // Watch point fired at target, so we know we reached exactly target pulses

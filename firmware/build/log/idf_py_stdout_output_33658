@@ -1,0 +1,903 @@
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x8 (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x15a0
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xd20
+load:0x403cb700,len:0x2ee4
+entry 0x403c8928
+[0;32mI (27) boot: ESP-IDF v5.4-dirty 2nd stage bootloader[0m
+[0;32mI (27) boot: compile time Dec  6 2025 20:10:08[0m
+[0;32mI (27) boot: Multicore bootloader[0m
+[0;32mI (27) boot: chip revision: v0.2[0m
+[0;32mI (30) boot: efuse block revision: v1.3[0m
+[0;32mI (34) boot.esp32s3: Boot SPI Speed : 80MHz[0m
+[0;32mI (38) boot.esp32s3: SPI Mode       : DIO[0m
+[0;32mI (41) boot.esp32s3: SPI Flash Size : 16MB[0m
+[0;32mI (45) boot: Enabling RNG early entropy source...[0m
+[0;32mI (50) boot: Partition Table:[0m
+[0;32mI (52) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (59) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (65) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (72) boot:  2 factory          factory app      00 00 00010000 00300000[0m
+[0;32mI (78) boot:  3 storage          Unknown data     01 82 00310000 00100000[0m
+[0;32mI (85) boot: End of partition table[0m
+[0;32mI (88) esp_image: segment 0: paddr=00010020 vaddr=3c040020 size=17318h ( 95000) map[0m
+[0;32mI (112) esp_image: segment 1: paddr=00027340 vaddr=3fc96e00 size=03738h ( 14136) load[0m
+[0;32mI (115) esp_image: segment 2: paddr=0002aa80 vaddr=40374000 size=05598h ( 21912) load[0m
+[0;32mI (121) esp_image: segment 3: paddr=00030020 vaddr=42000020 size=3d104h (250116) map[0m
+[0;32mI (168) esp_image: segment 4: paddr=0006d12c vaddr=40379598 size=0d7ach ( 55212) load[0m
+[0;32mI (180) esp_image: segment 5: paddr=0007a8e0 vaddr=600fe100 size=0001ch (    28) load[0m
+[0;32mI (187) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (188) boot: Disabling RNG early entropy source...[0m
+[0;32mI (198) octal_psram: vendor id    : 0x0d (AP)[0m
+[0;32mI (198) octal_psram: dev id       : 0x02 (generation 3)[0m
+[0;32mI (198) octal_psram: density      : 0x03 (64 Mbit)[0m
+[0;32mI (200) octal_psram: good-die     : 0x01 (Pass)[0m
+[0;32mI (204) octal_psram: Latency      : 0x01 (Fixed)[0m
+[0;32mI (209) octal_psram: VCC          : 0x01 (3V)[0m
+[0;32mI (213) octal_psram: SRF          : 0x01 (Fast Refresh)[0m
+[0;32mI (218) octal_psram: BurstType    : 0x01 (Hybrid Wrap)[0m
+[0;32mI (223) octal_psram: BurstLen     : 0x01 (32 Byte)[0m
+[0;32mI (227) octal_psram: Readlatency  : 0x02 (10 cycles@Fixed)[0m
+[0;32mI (232) octal_psram: DriveStrength: 0x00 (1/1)[0m
+[0;32mI (237) esp_psram: Found 8MB PSRAM device[0m
+[0;32mI (240) esp_psram: Speed: 40MHz[0m
+[0;32mI (243) cpu_start: Multicore app[0m
+[0;32mI (977) esp_psram: SPI SRAM memory test OK[0m
+[0;32mI (986) cpu_start: Pro cpu start user code[0m
+[0;32mI (986) cpu_start: cpu freq: 240000000 Hz[0m
+[0;32mI (986) app_init: Application information:[0m
+[0;32mI (986) app_init: Project name:     yarobot_control_unit[0m
+[0;32mI (991) app_init: App version:      63acf9d-dirty[0m
+[0;32mI (996) app_init: Compile time:     Dec  8 2025 18:15:32[0m
+[0;32mI (1001) app_init: ELF file SHA256:  5f4d12589...[0m
+[0;32mI (1005) app_init: ESP-IDF:          v5.4-dirty[0m
+[0;32mI (1009) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (1013) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (1017) efuse_init: Chip rev:         v0.2[0m
+[0;32mI (1021) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (1028) heap_init: At 3FC9C7D8 len 0004CF38 (307 KiB): RAM[0m
+[0;32mI (1033) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM[0m
+[0;32mI (1038) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM[0m
+[0;32mI (1043) heap_init: At 600FE11C len 00001ECC (7 KiB): RTCRAM[0m
+[0;32mI (1049) esp_psram: Adding pool of 8192K of PSRAM memory to heap allocator[0m
+[0;32mI (1056) spi_flash: detected chip: boya[0m
+[0;32mI (1059) spi_flash: flash io: dio[0m
+[0;32mI (1062) sleep_gpio: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (1068) sleep_gpio: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (1075) main_task: Started on CPU0[0m
+[0;32mI (1078) esp_psram: Reserving pool of 32K of internal memory for DMA/internal allocations[0m
+[0;32mI (1086) main_task: Calling app_main()[0m
+[0;32mI (3089) main: Hello from app_main[0m
+[0;32mI (3089) main: PSRAM detected: 8388608 bytes (8.0 MB)[0m
+[0;32mI (3089) main: Firmware: YAROBOT_CONTROL_UNIT v1.0.0[0m
+[0;32mI (3090) main: Axes: 8 (Servos:5, Steppers:2, Discrete:1)[0m
+[0;32mI (3095) main: GPIO X_STEP: 4, I2C MCP0: 0x20[0m
+[0;32mI (3099) main: Initializing USB CDC interface...[0m
+[0;32mI (3104) usb_cdc: Initializing USB CDC interface[0m
+[0;33mW (3108) tusb_desc: No Device descriptor provided, using default.[0m
+[0;33mW (3114) tusb_desc: No FullSpeed configuration descriptor provided, using default.[0m
+[0;33mW (3121) tusb_desc: No String descriptors provided, using default.[0m
+[0;32mI (3127) tusb_desc: [0m
+┌─────────────────────────────────┐
+│  USB Device Descriptor Summary  │
+├───────────────────┬─────────────┤
+│bDeviceClass       │ 239         │
+├───────────────────┼─────────────┤
+│bDeviceSubClass    │ 2           │
+├───────────────────┼─────────────┤
+│bDeviceProtocol    │ 1           │
+├───────────────────┼─────────────┤
+│bMaxPacketSize0    │ 64          │
+├───────────────────┼─────────────┤
+│idVendor           │ 0x303a      │
+├───────────────────┼─────────────┤
+│idProduct          │ 0x4001      │
+├───────────────────┼─────────────┤
+│bcdDevice          │ 0x100       │
+├───────────────────┼─────────────┤
+│iManufacturer      │ 0x1         │
+├───────────────────┼─────────────┤
+│iProduct           │ 0x2         │
+├───────────────────┼─────────────┤
+│iSerialNumber      │ 0x3         │
+├───────────────────┼─────────────┤
+│bNumConfigurations │ 0x1         │
+└───────────────────┴─────────────┘
+[0;32mI (3294) TinyUSB: TinyUSB Driver installed[0m
+[0;32mI (3298) usb_cdc: USB CDC initialized successfully[0m
+[0;32mI (3302) main: USB CDC initialized successfully[0m
+[0;32mI (3307) main: ========================================[0m
+[0;32mI (3312) main: Hardware Initialization Starting[0m
+[0;32mI (3316) main: ========================================[0m
+[0;32mI (3321) gpio_hal: Initializing GPIO HAL[0m
+[0;32mI (3325) gpio: GPIO[4]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3333) gpio: GPIO[5]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3341) gpio: GPIO[6]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3350) gpio: GPIO[7]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3358) gpio: GPIO[15]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3366) gpio: GPIO[16]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3375) gpio: GPIO[17]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3383) gpio: GPIO[13]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3392) gpio: GPIO[1]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3400) gpio: GPIO[2]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3408) gpio: GPIO[40]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3417) gpio: GPIO[41]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3425) gpio: GPIO[42]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3433) gpio: GPIO[38]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3442) gpio: GPIO[39]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3450) gpio: GPIO[47]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3459) gpio: GPIO[48]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3467) gpio_hal: GPIO HAL initialized successfully[0m
+[0;32mI (3472) i2c_hal: Initializing I2C0: SDA=8, SCL=18, freq=400000 Hz[0m
+[0;32mI (3478) i2c_hal: I2C0 initialized successfully[0m
+[0;32mI (3482) main: MCP23017 #0 (0x20) IODIR_A=0xFF[0m
+[0;32mI (3486) main: MCP23017 #1 (0x21) IODIR_A=0xFF[0m
+[0;32mI (3490) i2c_hal: Initializing I2C1: SDA=14, SCL=21, freq=400000 Hz[0m
+[0;32mI (3497) i2c_hal: I2C1 initialized successfully[0m
+[0;32mI (3528) main: OLED initialized with test pattern[0m
+[0;32mI (3529) i2c_hal: Scanning I2C0 bus...[0m
+[0;32mI (3532) i2c_hal: I2C0: Found device at 0x20[0m
+[0;32mI (3532) i2c_hal: I2C0: Found device at 0x21[0m
+[0;32mI (3545) i2c_hal: I2C0 scan complete: 2 device(s) found[0m
+[0;32mI (3545) main: I2C bus isolation verified: I2C0 still operational[0m
+[0;32mI (3545) spi_hal: Initializing SPI1: MOSI=11, SCLK=12, CS=10[0m
+[0;32mI (3551) gpio: GPIO[9]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3559) spi_hal: SPI initialized successfully, OE pin=9 (disabled)[0m
+[0;32mI (3565) tpic6b595: Initializing TPIC6B595 driver[0m
+[0;32mI (3569) spi_hal: SR outputs ENABLED[0m
+[0;32mI (3572) tpic6b595: TPIC6B595 driver initialized, 40-bit chain ready[0m
+[0;32mI (3578) main: TPIC6B595 shift register initialized (test skipped)[0m
+[0;32mI (3584) main: ========================================[0m
+[0;32mI (3589) main: Hardware Initialization: ALL PASSED[0m
+[0;32mI (3594) main: ========================================[0m
+[0;32mI (3599) main: Creating FreeRTOS tasks...[0m
+[0;32mI (3602) tasks: Task safety started on core 0[0m
+[0;32mI (3607) tasks: Task usb_rx started on core 0[0m
+[0;32mI (3611) tasks: Task usb_tx started on core 0[0m
+[0;32mI (3615) tasks: Task cmd_exec started on core 0[0m
+[0;32mI (3619) tasks: Task i2c_mon started on core 0[0m
+[0;32mI (3623) tasks: Task idle_mon started on core 0[0m
+[0;32mI (3627) tasks: Task motion_X (axis 0) started on core 1[0m
+[0;32mI (3628) tasks: Task motion_B (axis 4) started on core 1[0m
+[0;32mI (3628) tasks: Task motion_Z (axis 2) started on core 1[0m
+[0;32mI (3628) tasks: Task motion_C (axis 5) started on core 1[0m
+[0;32mI (3628) tasks: Task motion_Y (axis 1) started on core 1[0m
+[0;32mI (3628) tasks: Task motion_D (axis 6) started on core 1[0m
+[0;32mI (3628) tasks: Task motion_A (axis 3) started on core 1[0m
+[0;32mI (3628) tasks: Task motion_E (axis 7) started on core 1[0m
+[0;32mI (3628) main: YaRobot Control Unit - All tasks started[0m
+[0;32mI (3668) tasks: Task display started on core 1[0m
+[0;32mI (3673) main_task: Returned from app_main()[0m
+[0;32mI (5176) usb_cdc: USB CDC connected (DTR=1, RTS=1)[0m
+[0;32mI (5211) tasks: USB CDC connection state: connected[0m
+[0;32mI (15289) CMD_EXEC: Initialized with 4 built-in commands[0m
+[0;32mI (15289) EVENT_MGR: Event processor task started[0m
+[0;32mI (15289) EVENT_MGR: Initialized (queue=32, max_subs=8)[0m
+[0;32mI (15292) tasks: Command executor initialized[0m
+[0;32mI (15296) motor_system: ========================================[0m
+[0;32mI (15302) motor_system: Motor System Initialization Starting[0m
+[0;32mI (15307) motor_system: ========================================[0m
+[0;33mW (15313) tpic6b595: Already initialized[0m
+[0;32mI (15317) motor_system: Axis configurations initialized[0m
+[0;32mI (15322) RMT_PULSE: Initializing RMT channel 0 on GPIO 4 (step)[0m
+[0;32mI (15328) RMT_PULSE: RMT channel 0 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (15335) RMT_PULSE: Initializing RMT channel 1 on GPIO 6 (step)[0m
+[0;32mI (15329) RMT_PULSE: Ramp task started for channel 0[0m
+[0;32mI (15341) RMT_PULSE: RMT channel 1 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (15353) RMT_PULSE: Initializing RMT channel 2 on GPIO 7 (step)[0m
+[0;32mI (15346) RMT_PULSE: Ramp task started for channel 1[0m
+[0;32mI (15359) RMT_PULSE: RMT channel 2 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (15371) RMT_PULSE: Initializing RMT channel 3 on GPIO 15 (step)[0m
+[0;32mI (15364) RMT_PULSE: Ramp task started for channel 2[0m
+[0;32mI (15377) RMT_PULSE: RMT channel 3 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (15389) MCPWM_PULSE: Initializing MCPWM timer 0 on GPIO 5 with PCNT unit 0[0m
+[0;32mI (15396) gpio: GPIO[5]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;33mW (15405) MCPWM_PULSE: DEBUG init: MCPWM generator created on GPIO 5 with io_loop_back=true[0m
+[0;32mI (15412) MCPWM_PULSE: GPIO 5 input enabled for PCNT loopback, settling for 700000 µs[0m
+[0;32mI (15382) RMT_PULSE: Ramp task started for channel 3[0m
+[0;32mI (16120) MCPWM_PULSE: GPIO 5 loopback settled and ready[0m
+[0;33mW (16120) MCPWM_PULSE: DEBUG init: Creating PCNT channel on GPIO 5[0m
+[0;32mI (16121) MCPWM_PULSE: MCPWM timer 0 with PCNT unit 0 initialized successfully[0m
+[0;32mI (16121) MCPWM_PULSE: Profile task started for timer 0[0m
+[0;32mI (16127) MCPWM_PULSE: Initializing MCPWM timer 1 on GPIO 16 with PCNT unit 1[0m
+[0;32mI (16139) gpio: GPIO[16]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;33mW (16148) MCPWM_PULSE: DEBUG init: MCPWM generator created on GPIO 16 with io_loop_back=true[0m
+[0;32mI (16155) MCPWM_PULSE: GPIO 16 input enabled for PCNT loopback, settling for 700000 µs[0m
+[0;32mI (16863) MCPWM_PULSE: GPIO 16 loopback settled and ready[0m
+[0;33mW (16863) MCPWM_PULSE: DEBUG init: Creating PCNT channel on GPIO 16[0m
+[0;32mI (16864) MCPWM_PULSE: Profile task started for timer 1[0m
+[0;32mI (16864) MCPWM_PULSE: MCPWM timer 1 with PCNT unit 1 initialized successfully[0m
+[0;32mI (16875) LEDC_PULSE: Initializing LEDC timer 2, channel 2 on GPIO 17[0m
+[0;32mI (16881) gpio: GPIO[17]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (16890) LEDC_PULSE: Configured GPIO 17 for PCNT internal loopback[0m
+[0;32mI (16896) LEDC_PULSE: Completion task started for LEDC timer 2[0m
+[0;32mI (16896) LEDC_PULSE: LEDC timer 2 initialized successfully[0m
+[0;32mI (16907) motor_system: All pulse generators initialized[0m
+[0;32mI (16912) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (16916) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (16921) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (16925) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (16930) TIME_TRACKER: Time tracker initialized with travel time 1000 ms[0m
+[0;32mI (16936) motor_system: All position trackers initialized[0m
+[0;32mI (16941) motor_system: Pulse generators wired to position trackers[0m
+[0;32mI (16947) motor_system: Motor objects created[0m
+[0;32mI (16951) motor_base: Axis 0 initialized (0.556 pulses/unit)[0m
+[0;32mI (16957) motor_base: Axis 1 initialized (0.556 pulses/unit)[0m
+[0;32mI (16962) motor_base: Axis 2 initialized (0.556 pulses/unit)[0m
+[0;32mI (16968) motor_base: Axis 3 initialized (0.556 pulses/unit)[0m
+[0;32mI (16973) motor_base: Axis 4 initialized (0.556 pulses/unit)[0m
+[0;32mI (16978) motor_base: Axis 5 initialized (0.556 pulses/unit)[0m
+[0;32mI (16984) LEDC_PULSE: setPositionTracker: tracker=0x3fc9b634 (PcntTracker for hardware PCNT)[0m
+[0;32mI (16992) motor_base: Axis 6 initialized (0.556 pulses/unit)[0m
+[0;33mW (16997) TIME_TRACKER: Time tracker already initialized[0m
+[0;32mI (17002) discrete_axis: Axis 7 initialized (discrete actuator, travel time 1000 ms)[0m
+[0;32mI (17010) motor_system: All motor objects initialized[0m
+[0;32mI (17014) MOTION_CTRL: Initialized with 8 axes[0m
+[0;32mI (17019) motor_system: Motion controller initialized with 8 axes[0m
+[0;32mI (17024) MOVE_HDL: Registered MOVE handler[0m
+[0;32mI (17028) MOVR_HDL: Registered MOVR handler[0m
+[0;32mI (17032) EN_HDL: Registered EN handler[0m
+[0;32mI (17036) POS_HDL: Registered POS handler[0m
+[0;32mI (17040) VEL_HDL: Registered VEL handler[0m
+[0;32mI (17043) STOP_HDL: Registered STOP handler[0m
+[0;32mI (17047) motor_system: Command handlers registered (MOVE, MOVR, EN, POS, VEL, STOP)[0m
+[0;32mI (17055) motor_system: ========================================[0m
+[0;32mI (17060) motor_system: Motor System Initialization: SUCCESS[0m
+[0;32mI (17066) motor_system:   Servos: 5 (X, Y, Z, A, B)[0m
+[0;32mI (17070) motor_system:   Steppers: 2 (C, D)[0m
+[0;32mI (17074) motor_system:   Discrete: 1 (E)[0m
+[0;32mI (17078) motor_system: ========================================[0m
+[0;32mI (17084) CMD_EXEC: CMD: MODE -[0m
+OK READY
+[0;32mI (22338) CMD_EXEC: CMD: EN Y 1.0000[0m
+[0;32mI (22338) motor_base: Axis 1 enabled[0m
+OK
+[0;32mI (26639) CMD_EXEC: CMD: MOVE Y 100.0000[0m
+[0;33mW (26639) motor_base: DEBUG Axis 1: moveAbsolute(pos=100.0000, vel=1080.0000)[0m
+[0;33mW (26640) motor_base: DEBUG Axis 1: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (26646) motor_base: DEBUG Axis 1: current_pos=0.0000, target_pos=100.0000[0m
+[0;33mW (26652) motor_base: DEBUG Axis 1: setting direction=FWD[0m
+[0;33mW (26657) motor_base: DEBUG Axis 1: pulses_per_unit=0.56, pulses=55, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (26666) motor_base: DEBUG Axis 1: calling pulse_gen_->startMove(pulses=55, freq=600.0, accel=6000.0)[0m
+[0;33mW (26675) MCPWM_PULSE: DEBUG startMove: pulses=55, max_vel=600.0 Hz, accel=6000.0, dir=FWD[0m
+[0;33mW (26683) MCPWM_PULSE: DEBUG startMove: profile calculated: accel=27, cruise=0, decel=28, cruise_vel=569.2[0m
+[0;33mW (26692) MCPWM_PULSE: DEBUG startMove: move_start_position=0, direction=FWD[0m
+[0;33mW (26699) MCPWM_PULSE: DEBUG startMove: stopping and clearing PCNT[0m
+[0;33mW (26705) MCPWM_PULSE: DEBUG startMove: configuring PCNT watch point for 55 pulses[0m
+[0;33mW (26712) MCPWM_PULSE: DEBUG startMove: setting initial freq=300 Hz[0m
+[0;33mW (26718) MCPWM_PULSE: DEBUG startMove: starting MCPWM timer[0m
+[0;33mW (26724) MCPWM_PULSE: DEBUG startMove: PCNT started after MCPWM stabilization[0m
+[0;33mW (26730) MCPWM_PULSE: DEBUG startMove: completed successfully[0m
+[0;33mW (26736) motor_base: DEBUG Axis 1: moveAbsolute completed, state=MOVING[0m
+OK
+[0;33mW (26768) MCPWM_PULSE: DEBUG updateProfile: pcnt=20, target=55, freq=477.5, state=3[0m
+[0;33mW (26819) MCPWM_PULSE: DEBUG updateProfile: pcnt=44, target=55, freq=363.3, state=3[0m
+[0;33mW (26866) MCPWM_PULSE: updateProfile: STOP - pcnt=55 >= target=55[0m
+[0;33mW (26866) MCPWM_PULSE: updateProfile: COMPLETED - actual_pcnt=55, start=0, new_abs=55[0m
+[0;33mW (26868) motor_base: DEBUG Axis 1: onMotionComplete(total_pulses=55)[0m
+[0;33mW (26875) motor_base: DEBUG Axis 1: before sync: pulse_count=0, tracker_pos=55[0m
+[0;33mW (26882) motor_base: DEBUG Axis 1: after sync: pulse_count=55[0m
+[0;33mW (26887) motor_base: Axis 1: motion complete at position 99.0000[0m
+[0;32mI (33213) CMD_EXEC: CMD: MOVE Y 180.0000[0m
+[0;33mW (33213) motor_base: DEBUG Axis 1: moveAbsolute(pos=180.0000, vel=1080.0000)[0m
+[0;33mW (33214) motor_base: DEBUG Axis 1: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (33220) motor_base: DEBUG Axis 1: current_pos=99.0000, target_pos=180.0000[0m
+[0;33mW (33226) motor_base: DEBUG Axis 1: setting direction=FWD[0m
+[0;33mW (33232) motor_base: DEBUG Axis 1: pulses_per_unit=0.56, pulses=45, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (33240) motor_base: DEBUG Axis 1: calling pulse_gen_->startMove(pulses=45, freq=600.0, accel=6000.0)[0m
+[0;33mW (33249) MCPWM_PULSE: DEBUG startMove: pulses=45, max_vel=600.0 Hz, accel=6000.0, dir=FWD[0m
+[0;33mW (33257) MCPWM_PULSE: DEBUG startMove: profile calculated: accel=22, cruise=0, decel=23, cruise_vel=513.8[0m
+[0;33mW (33266) MCPWM_PULSE: DEBUG startMove: move_start_position=55, direction=FWD[0m
+[0;33mW (33273) MCPWM_PULSE: DEBUG startMove: stopping and clearing PCNT[0m
+[0;33mW (33279) MCPWM_PULSE: DEBUG startMove: configuring PCNT watch point for 45 pulses[0m
+[0;33mW (33286) MCPWM_PULSE: DEBUG startMove: setting initial freq=300 Hz[0m
+[0;33mW (33292) MCPWM_PULSE: DEBUG startMove: starting MCPWM timer[0m
+[0;33mW (33295) MCPWM_PULSE: DEBUG updateProfile: pcnt=0, target=45, freq=306.0, state=1[0m
+[0;33mW (33298) MCPWM_PULSE: DEBUG startMove: PCNT started after MCPWM stabilization[0m
+[0;33mW (33312) MCPWM_PULSE: DEBUG startMove: completed successfully[0m
+[0;33mW (33318) motor_base: DEBUG Axis 1: moveAbsolute completed, state=MOVING[0m
+OK
+[0;33mW (33355) MCPWM_PULSE: DEBUG updateProfile: pcnt=10, target=45, freq=346.4, state=3[0m
+[0;33mW (33406) MCPWM_PULSE: DEBUG updateProfile: pcnt=10, target=45, freq=346.4, state=3[0m
+[0;33mW (33456) MCPWM_PULSE: DEBUG updateProfile: pcnt=10, target=45, freq=346.4, state=3[0m
+[0;33mW (33506) MCPWM_PULSE: DEBUG updateProfile: pcnt=10, target=45, freq=346.4, state=3[0m
+[0;33mW (33556) MCPWM_PULSE: DEBUG updateProfile: pcnt=10, target=45, freq=346.4, state=3[0m
+[0;33mW (33606) MCPWM_PULSE: DEBUG updateProfile: pcnt=10, target=45, freq=346.4, state=3[0m
+[0;33mW (33656) MCPWM_PULSE: DEBUG updateProfile: pcnt=10, target=45, freq=346.4, state=3[0m
+[0;33mW (33706) MCPWM_PULSE: DEBUG updateProfile: pcnt=10, target=45, freq=346.4, state=3[0m
+[0;33mW (33756) MCPWM_PULSE: DEBUG updateProfile: pcnt=10, target=45, freq=346.4, state=3[0m
+[0;33mW (33806) MCPWM_PULSE: DEBUG updateProfile: pcnt=10, target=45, freq=346.4, state=3[0m
+[0;33mW (33856) MCPWM_PULSE: DEBUG updateProfile: pcnt=10, target=45, freq=346.4, state=3[0m
+[0;33mW (33906) MCPWM_PULSE: DEBUG updateProfile: pcnt=10, target=45, freq=346.4, state=3[0m
+[0;33mW (33956) MCPWM_PULSE: DEBUG updateProfile: pcnt=10, target=45, freq=346.4, state=3[0m
+[0;33mW (34006) MCPWM_PULSE: DEBUG updateProfile: pcnt=22, target=45, freq=502.0, state=3[0m
+[0;33mW (34056) MCPWM_PULSE: DEBUG updateProfile: pcnt=41, target=45, freq=244.9, state=3[0m
+[0;33mW (34081) MCPWM_PULSE: updateProfile: STOP - pcnt=45 >= target=45[0m
+[0;33mW (34081) MCPWM_PULSE: updateProfile: COMPLETED - actual_pcnt=45, start=55, new_abs=100[0m
+[0;33mW (34084) motor_base: DEBUG Axis 1: onMotionComplete(total_pulses=100)[0m
+[0;33mW (34090) motor_base: DEBUG Axis 1: before sync: pulse_count=55, tracker_pos=100[0m
+[0;33mW (34097) motor_base: DEBUG Axis 1: after sync: pulse_count=100[0m
+[0;33mW (34103) motor_base: Axis 1: motion complete at position 180.0000[0m
+[0;32mI (63335) CMD_EXEC: CMD: MOVE Y 360.0000[0m
+[0;33mW (63335) motor_base: DEBUG Axis 1: moveAbsolute(pos=360.0000, vel=1080.0000)[0m
+[0;33mW (63336) motor_base: DEBUG Axis 1: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (63342) motor_base: DEBUG Axis 1: current_pos=180.0000, target_pos=360.0000[0m
+[0;33mW (63348) motor_base: DEBUG Axis 1: setting direction=FWD[0m
+[0;33mW (63354) motor_base: DEBUG Axis 1: pulses_per_unit=0.56, pulses=100, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (63362) motor_base: DEBUG Axis 1: calling pulse_gen_->startMove(pulses=100, freq=600.0, accel=6000.0)[0m
+[0;33mW (63371) MCPWM_PULSE: DEBUG startMove: pulses=100, max_vel=600.0 Hz, accel=6000.0, dir=FWD[0m
+[0;33mW (63379) MCPWM_PULSE: DEBUG startMove: profile calculated: accel=29, cruise=42, decel=29, cruise_vel=600.0[0m
+[0;33mW (63389) MCPWM_PULSE: DEBUG startMove: move_start_position=100, direction=FWD[0m
+[0;33mW (63396) MCPWM_PULSE: DEBUG startMove: stopping and clearing PCNT[0m
+[0;33mW (63402) MCPWM_PULSE: DEBUG startMove: configuring PCNT watch point for 100 pulses[0m
+[0;33mW (63409) MCPWM_PULSE: DEBUG startMove: setting initial freq=300 Hz[0m
+[0;33mW (63415) MCPWM_PULSE: DEBUG startMove: starting MCPWM timer[0m
+[0;33mW (63420) MCPWM_PULSE: DEBUG startMove: PCNT started after MCPWM stabilization[0m
+[0;33mW (63427) MCPWM_PULSE: DEBUG startMove: completed successfully[0m
+[0;33mW (63433) motor_base: DEBUG Axis 1: moveAbsolute completed, state=MOVING[0m
+OK
+[0;33mW (63440) MCPWM_PULSE: DEBUG updateProfile: pcnt=6, target=100, freq=438.0, state=1[0m
+[0;33mW (63497) MCPWM_PULSE: DEBUG updateProfile: pcnt=37, target=100, freq=600.0, state=2[0m
+[0;33mW (63548) MCPWM_PULSE: DEBUG updateProfile: pcnt=68, target=100, freq=600.0, state=2[0m
+[0;33mW (63598) MCPWM_PULSE: DEBUG updateProfile: pcnt=91, target=100, freq=328.6, state=3[0m
+[0;33mW (63638) MCPWM_PULSE: updateProfile: STOP - pcnt=100 >= target=100[0m
+[0;33mW (63638) MCPWM_PULSE: updateProfile: COMPLETED - actual_pcnt=100, start=100, new_abs=200[0m
+[0;33mW (63641) motor_base: DEBUG Axis 1: onMotionComplete(total_pulses=200)[0m
+[0;33mW (63647) motor_base: DEBUG Axis 1: before sync: pulse_count=100, tracker_pos=200[0m
+[0;33mW (63654) motor_base: DEBUG Axis 1: after sync: pulse_count=200[0m
+[0;33mW (63660) motor_base: Axis 1: motion complete at position 360.0000[0m
+[0;32mI (69630) CMD_EXEC: CMD: MOVE Y 7000000.0000[0m
+[0;33mW (69630) motor_base: DEBUG Axis 1: moveAbsolute(pos=7000000.0000, vel=1080.0000)[0m
+[0;33mW (69631) motor_base: Axis 1: position 7000000.0000 out of limits [-360000.0000, 360000.0000][0m
+ERROR E005 Position limit exceeded
+[0;32mI (78142) CMD_EXEC: CMD: MOVE Y 7000.0000[0m
+[0;33mW (78142) motor_base: DEBUG Axis 1: moveAbsolute(pos=7000.0000, vel=1080.0000)[0m
+[0;33mW (78143) motor_base: DEBUG Axis 1: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (78149) motor_base: DEBUG Axis 1: current_pos=360.0000, target_pos=7000.0000[0m
+[0;33mW (78156) motor_base: DEBUG Axis 1: setting direction=FWD[0m
+[0;33mW (78161) motor_base: DEBUG Axis 1: pulses_per_unit=0.56, pulses=3688, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (78169) motor_base: DEBUG Axis 1: calling pulse_gen_->startMove(pulses=3688, freq=600.0, accel=6000.0)[0m
+[0;33mW (78179) MCPWM_PULSE: DEBUG startMove: pulses=3688, max_vel=600.0 Hz, accel=6000.0, dir=FWD[0m
+[0;33mW (78187) MCPWM_PULSE: DEBUG startMove: profile calculated: accel=29, cruise=3630, decel=29, cruise_vel=600.0[0m
+[0;33mW (78196) MCPWM_PULSE: DEBUG startMove: move_start_position=200, direction=FWD[0m
+[0;33mW (78203) MCPWM_PULSE: DEBUG startMove: stopping and clearing PCNT[0m
+[0;33mW (78209) MCPWM_PULSE: DEBUG startMove: configuring PCNT watch point for 3688 pulses[0m
+[0;33mW (78217) MCPWM_PULSE: DEBUG startMove: setting initial freq=300 Hz[0m
+[0;33mW (78223) MCPWM_PULSE: DEBUG startMove: starting MCPWM timer[0m
+[0;33mW (78228) MCPWM_PULSE: DEBUG startMove: PCNT started after MCPWM stabilization[0m
+[0;33mW (78232) MCPWM_PULSE: DEBUG updateProfile: pcnt=0, target=3688, freq=348.0, state=1[0m
+[0;33mW (78235) MCPWM_PULSE: DEBUG startMove: completed successfully[0m
+[0;33mW (78248) motor_base: DEBUG Axis 1: moveAbsolute completed, state=MOVING[0m
+OK
+[0;33mW (78293) MCPWM_PULSE: DEBUG updateProfile: pcnt=0, target=3688, freq=100.0, state=2[0m
+[0;33mW (78344) MCPWM_PULSE: DEBUG updateProfile: pcnt=0, target=3688, freq=100.0, state=2[0m
+[0;33mW (78394) MCPWM_PULSE: DEBUG updateProfile: pcnt=0, target=3688, freq=100.0, state=2[0m
+[0;33mW (78444) MCPWM_PULSE: DEBUG updateProfile: pcnt=0, target=3688, freq=100.0, state=2[0m
+[0;33mW (78494) MCPWM_PULSE: DEBUG updateProfile: pcnt=0, target=3688, freq=100.0, state=2[0m
+[0;33mW (78544) MCPWM_PULSE: DEBUG updateProfile: pcnt=0, target=3688, freq=100.0, state=2[0m
+[0;33mW (78594) MCPWM_PULSE: DEBUG updateProfile: pcnt=0, target=3688, freq=100.0, state=2[0m
+[0;33mW (78644) MCPWM_PULSE: DEBUG updateProfile: pcnt=0, target=3688, freq=100.0, state=2[0m
+[0;33mW (78694) MCPWM_PULSE: DEBUG updateProfile: pcnt=0, target=3688, freq=100.0, state=2[0m
+[0;33mW (78744) MCPWM_PULSE: DEBUG updateProfile: pcnt=0, target=3688, freq=100.0, state=2[0m
+[0;33mW (78794) MCPWM_PULSE: DEBUG updateProfile: pcnt=0, target=3688, freq=100.0, state=2[0m
+[0;33mW (78844) MCPWM_PULSE: DEBUG updateProfile: pcnt=0, target=3688, freq=100.0, state=2[0m
+[0;33mW (78894) MCPWM_PULSE: DEBUG updateProfile: pcnt=2, target=3688, freq=154.9, state=2[0m
+[0;33mW (78944) MCPWM_PULSE: DEBUG updateProfile: pcnt=16, target=3688, freq=438.2, state=2[0m
+[0;33mW (78994) MCPWM_PULSE: DEBUG updateProfile: pcnt=44, target=3688, freq=600.0, state=2[0m
+[0;33mW (79044) MCPWM_PULSE: DEBUG updateProfile: pcnt=75, target=3688, freq=600.0, state=2[0m
+[0;33mW (79094) MCPWM_PULSE: DEBUG updateProfile: pcnt=105, target=3688, freq=600.0, state=2[0m
+[0;33mW (79144) MCPWM_PULSE: DEBUG updateProfile: pcnt=135, target=3688, freq=600.0, state=2[0m
+[0;33mW (79194) MCPWM_PULSE: DEBUG updateProfile: pcnt=165, target=3688, freq=600.0, state=2[0m
+[0;33mW (79244) MCPWM_PULSE: DEBUG updateProfile: pcnt=195, target=3688, freq=600.0, state=2[0m
+[0;33mW (79294) MCPWM_PULSE: DEBUG updateProfile: pcnt=225, target=3688, freq=600.0, state=2[0m
+[0;33mW (79344) MCPWM_PULSE: DEBUG updateProfile: pcnt=255, target=3688, freq=600.0, state=2[0m
+[0;33mW (79394) MCPWM_PULSE: DEBUG updateProfile: pcnt=285, target=3688, freq=600.0, state=2[0m
+[0;33mW (79444) MCPWM_PULSE: DEBUG updateProfile: pcnt=316, target=3688, freq=600.0, state=2[0m
+[0;33mW (79494) MCPWM_PULSE: DEBUG updateProfile: pcnt=346, target=3688, freq=600.0, state=2[0m
+[0;33mW (79544) MCPWM_PULSE: DEBUG updateProfile: pcnt=376, target=3688, freq=600.0, state=2[0m
+[0;33mW (79594) MCPWM_PULSE: DEBUG updateProfile: pcnt=406, target=3688, freq=600.0, state=2[0m
+[0;33mW (79644) MCPWM_PULSE: DEBUG updateProfile: pcnt=436, target=3688, freq=600.0, state=2[0m
+[0;33mW (79694) MCPWM_PULSE: DEBUG updateProfile: pcnt=466, target=3688, freq=600.0, state=2[0m
+[0;33mW (79744) MCPWM_PULSE: DEBUG updateProfile: pcnt=496, target=3688, freq=600.0, state=2[0m
+[0;33mW (79794) MCPWM_PULSE: DEBUG updateProfile: pcnt=526, target=3688, freq=600.0, state=2[0m
+[0;33mW (79844) MCPWM_PULSE: DEBUG updateProfile: pcnt=557, target=3688, freq=600.0, state=2[0m
+[0;33mW (79894) MCPWM_PULSE: DEBUG updateProfile: pcnt=587, target=3688, freq=600.0, state=2[0m
+[0;33mW (79944) MCPWM_PULSE: DEBUG updateProfile: pcnt=617, target=3688, freq=600.0, state=2[0m
+[0;33mW (79994) MCPWM_PULSE: DEBUG updateProfile: pcnt=647, target=3688, freq=600.0, state=2[0m
+[0;33mW (80044) MCPWM_PULSE: DEBUG updateProfile: pcnt=677, target=3688, freq=600.0, state=2[0m
+[0;33mW (80094) MCPWM_PULSE: DEBUG updateProfile: pcnt=707, target=3688, freq=600.0, state=2[0m
+[0;33mW (80144) MCPWM_PULSE: DEBUG updateProfile: pcnt=737, target=3688, freq=600.0, state=2[0m
+[0;33mW (80194) MCPWM_PULSE: DEBUG updateProfile: pcnt=767, target=3688, freq=600.0, state=2[0m
+[0;33mW (80244) MCPWM_PULSE: DEBUG updateProfile: pcnt=797, target=3688, freq=600.0, state=2[0m
+[0;33mW (80294) MCPWM_PULSE: DEBUG updateProfile: pcnt=828, target=3688, freq=600.0, state=2[0m
+[0;33mW (80344) MCPWM_PULSE: DEBUG updateProfile: pcnt=858, target=3688, freq=600.0, state=2[0m
+[0;33mW (80394) MCPWM_PULSE: DEBUG updateProfile: pcnt=888, target=3688, freq=600.0, state=2[0m
+[0;33mW (80444) MCPWM_PULSE: DEBUG updateProfile: pcnt=918, target=3688, freq=600.0, state=2[0m
+[0;33mW (80494) MCPWM_PULSE: DEBUG updateProfile: pcnt=948, target=3688, freq=600.0, state=2[0m
+[0;33mW (80544) MCPWM_PULSE: DEBUG updateProfile: pcnt=978, target=3688, freq=600.0, state=2[0m
+[0;33mW (80594) MCPWM_PULSE: DEBUG updateProfile: pcnt=1008, target=3688, freq=600.0, state=2[0m
+[0;33mW (80644) MCPWM_PULSE: DEBUG updateProfile: pcnt=1038, target=3688, freq=600.0, state=2[0m
+[0;33mW (80694) MCPWM_PULSE: DEBUG updateProfile: pcnt=1069, target=3688, freq=600.0, state=2[0m
+[0;33mW (80744) MCPWM_PULSE: DEBUG updateProfile: pcnt=1099, target=3688, freq=600.0, state=2[0m
+[0;33mW (80794) MCPWM_PULSE: DEBUG updateProfile: pcnt=1129, target=3688, freq=600.0, state=2[0m
+[0;33mW (80844) MCPWM_PULSE: DEBUG updateProfile: pcnt=1159, target=3688, freq=600.0, state=2[0m
+[0;33mW (80894) MCPWM_PULSE: DEBUG updateProfile: pcnt=1189, target=3688, freq=600.0, state=2[0m
+[0;33mW (80944) MCPWM_PULSE: DEBUG updateProfile: pcnt=1219, target=3688, freq=600.0, state=2[0m
+[0;33mW (80994) MCPWM_PULSE: DEBUG updateProfile: pcnt=1249, target=3688, freq=600.0, state=2[0m
+[0;33mW (81044) MCPWM_PULSE: DEBUG updateProfile: pcnt=1279, target=3688, freq=600.0, state=2[0m
+[0;33mW (81094) MCPWM_PULSE: DEBUG updateProfile: pcnt=1310, target=3688, freq=600.0, state=2[0m
+[0;33mW (81144) MCPWM_PULSE: DEBUG updateProfile: pcnt=1340, target=3688, freq=600.0, state=2[0m
+[0;33mW (81194) MCPWM_PULSE: DEBUG updateProfile: pcnt=1370, target=3688, freq=600.0, state=2[0m
+[0;33mW (81244) MCPWM_PULSE: DEBUG updateProfile: pcnt=1400, target=3688, freq=600.0, state=2[0m
+[0;33mW (81294) MCPWM_PULSE: DEBUG updateProfile: pcnt=1430, target=3688, freq=600.0, state=2[0m
+[0;33mW (81344) MCPWM_PULSE: DEBUG updateProfile: pcnt=1460, target=3688, freq=600.0, state=2[0m
+[0;33mW (81394) MCPWM_PULSE: DEBUG updateProfile: pcnt=1490, target=3688, freq=600.0, state=2[0m
+[0;33mW (81444) MCPWM_PULSE: DEBUG updateProfile: pcnt=1520, target=3688, freq=600.0, state=2[0m
+[0;33mW (81494) MCPWM_PULSE: DEBUG updateProfile: pcnt=1551, target=3688, freq=600.0, state=2[0m
+[0;33mW (81544) MCPWM_PULSE: DEBUG updateProfile: pcnt=1581, target=3688, freq=600.0, state=2[0m
+[0;33mW (81594) MCPWM_PULSE: DEBUG updateProfile: pcnt=1611, target=3688, freq=600.0, state=2[0m
+[0;33mW (81644) MCPWM_PULSE: DEBUG updateProfile: pcnt=1641, target=3688, freq=600.0, state=2[0m
+[0;33mW (81694) MCPWM_PULSE: DEBUG updateProfile: pcnt=1671, target=3688, freq=600.0, state=2[0m
+[0;33mW (81744) MCPWM_PULSE: DEBUG updateProfile: pcnt=1701, target=3688, freq=600.0, state=2[0m
+[0;33mW (81794) MCPWM_PULSE: DEBUG updateProfile: pcnt=1731, target=3688, freq=600.0, state=2[0m
+[0;33mW (81844) MCPWM_PULSE: DEBUG updateProfile: pcnt=1761, target=3688, freq=600.0, state=2[0m
+[0;33mW (81894) MCPWM_PULSE: DEBUG updateProfile: pcnt=1791, target=3688, freq=600.0, state=2[0m
+[0;33mW (81944) MCPWM_PULSE: DEBUG updateProfile: pcnt=1822, target=3688, freq=600.0, state=2[0m
+[0;33mW (81994) MCPWM_PULSE: DEBUG updateProfile: pcnt=1852, target=3688, freq=600.0, state=2[0m
+[0;33mW (82044) MCPWM_PULSE: DEBUG updateProfile: pcnt=1882, target=3688, freq=600.0, state=2[0m
+[0;33mW (82094) MCPWM_PULSE: DEBUG updateProfile: pcnt=1912, target=3688, freq=600.0, state=2[0m
+[0;33mW (82144) MCPWM_PULSE: DEBUG updateProfile: pcnt=1942, target=3688, freq=600.0, state=2[0m
+[0;33mW (82194) MCPWM_PULSE: DEBUG updateProfile: pcnt=1972, target=3688, freq=600.0, state=2[0m
+[0;33mW (82244) MCPWM_PULSE: DEBUG updateProfile: pcnt=2002, target=3688, freq=600.0, state=2[0m
+[0;33mW (82294) MCPWM_PULSE: DEBUG updateProfile: pcnt=2032, target=3688, freq=600.0, state=2[0m
+[0;33mW (82344) MCPWM_PULSE: DEBUG updateProfile: pcnt=2063, target=3688, freq=600.0, state=2[0m
+[0;33mW (82394) MCPWM_PULSE: DEBUG updateProfile: pcnt=2093, target=3688, freq=600.0, state=2[0m
+[0;33mW (82444) MCPWM_PULSE: DEBUG updateProfile: pcnt=2123, target=3688, freq=600.0, state=2[0m
+[0;33mW (82494) MCPWM_PULSE: DEBUG updateProfile: pcnt=2153, target=3688, freq=600.0, state=2[0m
+[0;33mW (82544) MCPWM_PULSE: DEBUG updateProfile: pcnt=2183, target=3688, freq=600.0, state=2[0m
+[0;33mW (82594) MCPWM_PULSE: DEBUG updateProfile: pcnt=2213, target=3688, freq=600.0, state=2[0m
+[0;33mW (82644) MCPWM_PULSE: DEBUG updateProfile: pcnt=2243, target=3688, freq=600.0, state=2[0m
+[0;33mW (82694) MCPWM_PULSE: DEBUG updateProfile: pcnt=2273, target=3688, freq=600.0, state=2[0m
+[0;33mW (82744) MCPWM_PULSE: DEBUG updateProfile: pcnt=2304, target=3688, freq=600.0, state=2[0m
+[0;33mW (82794) MCPWM_PULSE: DEBUG updateProfile: pcnt=2334, target=3688, freq=600.0, state=2[0m
+[0;33mW (82844) MCPWM_PULSE: DEBUG updateProfile: pcnt=2364, target=3688, freq=600.0, state=2[0m
+[0;33mW (82894) MCPWM_PULSE: DEBUG updateProfile: pcnt=2394, target=3688, freq=600.0, state=2[0m
+[0;33mW (82944) MCPWM_PULSE: DEBUG updateProfile: pcnt=2424, target=3688, freq=600.0, state=2[0m
+[0;33mW (82994) MCPWM_PULSE: DEBUG updateProfile: pcnt=2454, target=3688, freq=600.0, state=2[0m
+[0;33mW (83044) MCPWM_PULSE: DEBUG updateProfile: pcnt=2484, target=3688, freq=600.0, state=2[0m
+[0;33mW (83094) MCPWM_PULSE: DEBUG updateProfile: pcnt=2514, target=3688, freq=600.0, state=2[0m
+[0;33mW (83144) MCPWM_PULSE: DEBUG updateProfile: pcnt=2544, target=3688, freq=600.0, state=2[0m
+[0;33mW (83194) MCPWM_PULSE: DEBUG updateProfile: pcnt=2575, target=3688, freq=600.0, state=2[0m
+[0;33mW (83244) MCPWM_PULSE: DEBUG updateProfile: pcnt=2605, target=3688, freq=600.0, state=2[0m
+[0;33mW (83294) MCPWM_PULSE: DEBUG updateProfile: pcnt=2635, target=3688, freq=600.0, state=2[0m
+[0;33mW (83344) MCPWM_PULSE: DEBUG updateProfile: pcnt=2665, target=3688, freq=600.0, state=2[0m
+[0;33mW (83394) MCPWM_PULSE: DEBUG updateProfile: pcnt=2695, target=3688, freq=600.0, state=2[0m
+[0;33mW (83444) MCPWM_PULSE: DEBUG updateProfile: pcnt=2725, target=3688, freq=600.0, state=2[0m
+[0;33mW (83494) MCPWM_PULSE: DEBUG updateProfile: pcnt=2755, target=3688, freq=600.0, state=2[0m
+[0;33mW (83544) MCPWM_PULSE: DEBUG updateProfile: pcnt=2785, target=3688, freq=600.0, state=2[0m
+[0;33mW (83594) MCPWM_PULSE: DEBUG updateProfile: pcnt=2816, target=3688, freq=600.0, state=2[0m
+[0;33mW (83644) MCPWM_PULSE: DEBUG updateProfile: pcnt=2846, target=3688, freq=600.0, state=2[0m
+[0;33mW (83694) MCPWM_PULSE: DEBUG updateProfile: pcnt=2876, target=3688, freq=600.0, state=2[0m
+[0;33mW (83744) MCPWM_PULSE: DEBUG updateProfile: pcnt=2906, target=3688, freq=600.0, state=2[0m
+[0;33mW (83794) MCPWM_PULSE: DEBUG updateProfile: pcnt=2936, target=3688, freq=600.0, state=2[0m
+[0;33mW (83844) MCPWM_PULSE: DEBUG updateProfile: pcnt=2966, target=3688, freq=600.0, state=2[0m
+[0;33mW (83894) MCPWM_PULSE: DEBUG updateProfile: pcnt=2996, target=3688, freq=600.0, state=2[0m
+[0;33mW (83944) MCPWM_PULSE: DEBUG updateProfile: pcnt=3026, target=3688, freq=600.0, state=2[0m
+[0;33mW (83994) MCPWM_PULSE: DEBUG updateProfile: pcnt=3057, target=3688, freq=600.0, state=2[0m
+[0;33mW (84044) MCPWM_PULSE: DEBUG updateProfile: pcnt=3087, target=3688, freq=600.0, state=2[0m
+[0;33mW (84094) MCPWM_PULSE: DEBUG updateProfile: pcnt=3117, target=3688, freq=600.0, state=2[0m
+[0;33mW (84144) MCPWM_PULSE: DEBUG updateProfile: pcnt=3147, target=3688, freq=600.0, state=2[0m
+[0;33mW (84194) MCPWM_PULSE: DEBUG updateProfile: pcnt=3177, target=3688, freq=600.0, state=2[0m
+[0;33mW (84244) MCPWM_PULSE: DEBUG updateProfile: pcnt=3207, target=3688, freq=600.0, state=2[0m
+[0;33mW (84294) MCPWM_PULSE: DEBUG updateProfile: pcnt=3237, target=3688, freq=600.0, state=2[0m
+[0;33mW (84344) MCPWM_PULSE: DEBUG updateProfile: pcnt=3267, target=3688, freq=600.0, state=2[0m
+[0;33mW (84394) MCPWM_PULSE: DEBUG updateProfile: pcnt=3297, target=3688, freq=600.0, state=2[0m
+[0;33mW (84444) MCPWM_PULSE: DEBUG updateProfile: pcnt=3328, target=3688, freq=600.0, state=2[0m
+[0;33mW (84494) MCPWM_PULSE: DEBUG updateProfile: pcnt=3358, target=3688, freq=600.0, state=2[0m
+[0;33mW (84544) MCPWM_PULSE: DEBUG updateProfile: pcnt=3388, target=3688, freq=600.0, state=2[0m
+[0;33mW (84594) MCPWM_PULSE: DEBUG updateProfile: pcnt=3418, target=3688, freq=600.0, state=2[0m
+[0;33mW (84644) MCPWM_PULSE: DEBUG updateProfile: pcnt=3448, target=3688, freq=600.0, state=2[0m
+[0;33mW (84694) MCPWM_PULSE: DEBUG updateProfile: pcnt=3478, target=3688, freq=600.0, state=2[0m
+[0;33mW (84744) MCPWM_PULSE: DEBUG updateProfile: pcnt=3508, target=3688, freq=600.0, state=2[0m
+[0;33mW (84794) MCPWM_PULSE: DEBUG updateProfile: pcnt=3538, target=3688, freq=600.0, state=2[0m
+[0;33mW (84844) MCPWM_PULSE: DEBUG updateProfile: pcnt=3569, target=3688, freq=600.0, state=2[0m
+[0;33mW (84894) MCPWM_PULSE: DEBUG updateProfile: pcnt=3599, target=3688, freq=600.0, state=2[0m
+[0;33mW (84944) MCPWM_PULSE: DEBUG updateProfile: pcnt=3629, target=3688, freq=600.0, state=2[0m
+[0;33mW (84994) MCPWM_PULSE: DEBUG updateProfile: pcnt=3659, target=3688, freq=600.0, state=2[0m
+[0;33mW (85044) MCPWM_PULSE: DEBUG updateProfile: pcnt=3681, target=3688, freq=289.8, state=3[0m
+[0;33mW (85079) MCPWM_PULSE: updateProfile: STOP - pcnt=3688 >= target=3688[0m
+[0;33mW (85079) MCPWM_PULSE: updateProfile: COMPLETED - actual_pcnt=3688, start=200, new_abs=3888[0m
+[0;33mW (85082) motor_base: DEBUG Axis 1: onMotionComplete(total_pulses=3888)[0m
+[0;33mW (85089) motor_base: DEBUG Axis 1: before sync: pulse_count=200, tracker_pos=3888[0m
+[0;33mW (85096) motor_base: DEBUG Axis 1: after sync: pulse_count=3888[0m
+[0;33mW (85102) motor_base: Axis 1: motion complete at position 6998.3999[0m
+[0;32mI (89965) CMD_EXEC: CMD: MOVE Y 0.0000[0m
+[0;33mW (89965) motor_base: DEBUG Axis 1: moveAbsolute(pos=0.0000, vel=1080.0000)[0m
+[0;33mW (89966) motor_base: DEBUG Axis 1: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (89971) motor_base: DEBUG Axis 1: current_pos=6998.3999, target_pos=0.0000[0m
+[0;33mW (89978) motor_base: DEBUG Axis 1: setting direction=REV[0m
+[0;33mW (89983) motor_base: DEBUG Axis 1: pulses_per_unit=0.56, pulses=3888, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (89992) motor_base: DEBUG Axis 1: calling pulse_gen_->startMove(pulses=-3888, freq=600.0, accel=6000.0)[0m
+[0;33mW (90001) MCPWM_PULSE: DEBUG startMove: pulses=-3888, max_vel=600.0 Hz, accel=6000.0, dir=REV[0m
+[0;33mW (90009) MCPWM_PULSE: DEBUG startMove: profile calculated: accel=29, cruise=3830, decel=29, cruise_vel=600.0[0m
+[0;33mW (90019) MCPWM_PULSE: DEBUG startMove: move_start_position=3888, direction=REV[0m
+[0;33mW (90026) MCPWM_PULSE: DEBUG startMove: stopping and clearing PCNT[0m
+[0;33mW (90032) MCPWM_PULSE: DEBUG startMove: configuring PCNT watch point for 3888 pulses[0m
+[0;33mW (90039) MCPWM_PULSE: DEBUG startMove: setting initial freq=300 Hz[0m
+[0;33mW (90045) MCPWM_PULSE: DEBUG startMove: starting MCPWM timer[0m
+[0;33mW (90051) MCPWM_PULSE: DEBUG startMove: PCNT started after MCPWM stabilization[0m
+[0;33mW (90057) MCPWM_PULSE: DEBUG startMove: completed successfully[0m
+[0;33mW (90060) MCPWM_PULSE: DEBUG updateProfile: pcnt=2, target=3888, freq=378.0, state=1[0m
+[0;33mW (90063) motor_base: DEBUG Axis 1: moveAbsolute completed, state=MOVING[0m
+OK
+[0;33mW (90121) MCPWM_PULSE: DEBUG updateProfile: pcnt=33, target=3888, freq=600.0, state=2[0m
+[0;33mW (90172) MCPWM_PULSE: DEBUG updateProfile: pcnt=64, target=3888, freq=600.0, state=2[0m
+[0;33mW (90222) MCPWM_PULSE: DEBUG updateProfile: pcnt=94, target=3888, freq=600.0, state=2[0m
+[0;33mW (90272) MCPWM_PULSE: DEBUG updateProfile: pcnt=124, target=3888, freq=600.0, state=2[0m
+[0;33mW (90322) MCPWM_PULSE: DEBUG updateProfile: pcnt=154, target=3888, freq=600.0, state=2[0m
+[0;33mW (90372) MCPWM_PULSE: DEBUG updateProfile: pcnt=185, target=3888, freq=600.0, state=2[0m
+[0;33mW (90422) MCPWM_PULSE: DEBUG updateProfile: pcnt=215, target=3888, freq=600.0, state=2[0m
+[0;33mW (90472) MCPWM_PULSE: DEBUG updateProfile: pcnt=245, target=3888, freq=600.0, state=2[0m
+[0;33mW (90522) MCPWM_PULSE: DEBUG updateProfile: pcnt=275, target=3888, freq=600.0, state=2[0m
+[0;33mW (90572) MCPWM_PULSE: DEBUG updateProfile: pcnt=305, target=3888, freq=600.0, state=2[0m
+[0;33mW (90622) MCPWM_PULSE: DEBUG updateProfile: pcnt=335, target=3888, freq=600.0, state=2[0m
+[0;33mW (90672) MCPWM_PULSE: DEBUG updateProfile: pcnt=365, target=3888, freq=600.0, state=2[0m
+[0;33mW (90722) MCPWM_PULSE: DEBUG updateProfile: pcnt=395, target=3888, freq=600.0, state=2[0m
+[0;33mW (90772) MCPWM_PULSE: DEBUG updateProfile: pcnt=425, target=3888, freq=600.0, state=2[0m
+[0;33mW (90822) MCPWM_PULSE: DEBUG updateProfile: pcnt=456, target=3888, freq=600.0, state=2[0m
+[0;33mW (90872) MCPWM_PULSE: DEBUG updateProfile: pcnt=486, target=3888, freq=600.0, state=2[0m
+[0;33mW (90922) MCPWM_PULSE: DEBUG updateProfile: pcnt=516, target=3888, freq=600.0, state=2[0m
+[0;33mW (90972) MCPWM_PULSE: DEBUG updateProfile: pcnt=546, target=3888, freq=600.0, state=2[0m
+[0;33mW (91022) MCPWM_PULSE: DEBUG updateProfile: pcnt=576, target=3888, freq=600.0, state=2[0m
+[0;33mW (91072) MCPWM_PULSE: DEBUG updateProfile: pcnt=606, target=3888, freq=600.0, state=2[0m
+[0;33mW (91122) MCPWM_PULSE: DEBUG updateProfile: pcnt=636, target=3888, freq=600.0, state=2[0m
+[0;33mW (91172) MCPWM_PULSE: DEBUG updateProfile: pcnt=666, target=3888, freq=600.0, state=2[0m
+[0;33mW (91222) MCPWM_PULSE: DEBUG updateProfile: pcnt=697, target=3888, freq=600.0, state=2[0m
+[0;33mW (91272) MCPWM_PULSE: DEBUG updateProfile: pcnt=727, target=3888, freq=600.0, state=2[0m
+[0;33mW (91322) MCPWM_PULSE: DEBUG updateProfile: pcnt=757, target=3888, freq=600.0, state=2[0m
+[0;33mW (91372) MCPWM_PULSE: DEBUG updateProfile: pcnt=787, target=3888, freq=600.0, state=2[0m
+[0;33mW (91422) MCPWM_PULSE: DEBUG updateProfile: pcnt=817, target=3888, freq=600.0, state=2[0m
+[0;33mW (91472) MCPWM_PULSE: DEBUG updateProfile: pcnt=847, target=3888, freq=600.0, state=2[0m
+[0;33mW (91522) MCPWM_PULSE: DEBUG updateProfile: pcnt=877, target=3888, freq=600.0, state=2[0m
+[0;33mW (91572) MCPWM_PULSE: DEBUG updateProfile: pcnt=907, target=3888, freq=600.0, state=2[0m
+[0;33mW (91622) MCPWM_PULSE: DEBUG updateProfile: pcnt=938, target=3888, freq=600.0, state=2[0m
+[0;33mW (91672) MCPWM_PULSE: DEBUG updateProfile: pcnt=968, target=3888, freq=600.0, state=2[0m
+[0;33mW (91722) MCPWM_PULSE: DEBUG updateProfile: pcnt=998, target=3888, freq=600.0, state=2[0m
+[0;33mW (91772) MCPWM_PULSE: DEBUG updateProfile: pcnt=1028, target=3888, freq=600.0, state=2[0m
+[0;33mW (91822) MCPWM_PULSE: DEBUG updateProfile: pcnt=1058, target=3888, freq=600.0, state=2[0m
+[0;33mW (91872) MCPWM_PULSE: DEBUG updateProfile: pcnt=1088, target=3888, freq=600.0, state=2[0m
+[0;33mW (91922) MCPWM_PULSE: DEBUG updateProfile: pcnt=1118, target=3888, freq=600.0, state=2[0m
+[0;33mW (91972) MCPWM_PULSE: DEBUG updateProfile: pcnt=1148, target=3888, freq=600.0, state=2[0m
+[0;33mW (92022) MCPWM_PULSE: DEBUG updateProfile: pcnt=1178, target=3888, freq=600.0, state=2[0m
+[0;33mW (92072) MCPWM_PULSE: DEBUG updateProfile: pcnt=1209, target=3888, freq=600.0, state=2[0m
+[0;33mW (92122) MCPWM_PULSE: DEBUG updateProfile: pcnt=1239, target=3888, freq=600.0, state=2[0m
+[0;33mW (92172) MCPWM_PULSE: DEBUG updateProfile: pcnt=1269, target=3888, freq=600.0, state=2[0m
+[0;33mW (92222) MCPWM_PULSE: DEBUG updateProfile: pcnt=1299, target=3888, freq=600.0, state=2[0m
+[0;33mW (92272) MCPWM_PULSE: DEBUG updateProfile: pcnt=1329, target=3888, freq=600.0, state=2[0m
+[0;33mW (92322) MCPWM_PULSE: DEBUG updateProfile: pcnt=1359, target=3888, freq=600.0, state=2[0m
+[0;33mW (92372) MCPWM_PULSE: DEBUG updateProfile: pcnt=1389, target=3888, freq=600.0, state=2[0m
+[0;33mW (92422) MCPWM_PULSE: DEBUG updateProfile: pcnt=1419, target=3888, freq=600.0, state=2[0m
+[0;33mW (92472) MCPWM_PULSE: DEBUG updateProfile: pcnt=1450, target=3888, freq=600.0, state=2[0m
+[0;33mW (92522) MCPWM_PULSE: DEBUG updateProfile: pcnt=1480, target=3888, freq=600.0, state=2[0m
+[0;33mW (92572) MCPWM_PULSE: DEBUG updateProfile: pcnt=1510, target=3888, freq=600.0, state=2[0m
+[0;33mW (92622) MCPWM_PULSE: DEBUG updateProfile: pcnt=1540, target=3888, freq=600.0, state=2[0m
+[0;33mW (92672) MCPWM_PULSE: DEBUG updateProfile: pcnt=1570, target=3888, freq=600.0, state=2[0m
+[0;33mW (92722) MCPWM_PULSE: DEBUG updateProfile: pcnt=1600, target=3888, freq=600.0, state=2[0m
+[0;33mW (92772) MCPWM_PULSE: DEBUG updateProfile: pcnt=1630, target=3888, freq=600.0, state=2[0m
+[0;33mW (92822) MCPWM_PULSE: DEBUG updateProfile: pcnt=1660, target=3888, freq=600.0, state=2[0m
+[0;33mW (92872) MCPWM_PULSE: DEBUG updateProfile: pcnt=1691, target=3888, freq=600.0, state=2[0m
+[0;33mW (92922) MCPWM_PULSE: DEBUG updateProfile: pcnt=1721, target=3888, freq=600.0, state=2[0m
+[0;33mW (92972) MCPWM_PULSE: DEBUG updateProfile: pcnt=1751, target=3888, freq=600.0, state=2[0m
+[0;33mW (93022) MCPWM_PULSE: DEBUG updateProfile: pcnt=1781, target=3888, freq=600.0, state=2[0m
+[0;33mW (93072) MCPWM_PULSE: DEBUG updateProfile: pcnt=1811, target=3888, freq=600.0, state=2[0m
+[0;33mW (93122) MCPWM_PULSE: DEBUG updateProfile: pcnt=1841, target=3888, freq=600.0, state=2[0m
+[0;33mW (93172) MCPWM_PULSE: DEBUG updateProfile: pcnt=1871, target=3888, freq=600.0, state=2[0m
+[0;33mW (93222) MCPWM_PULSE: DEBUG updateProfile: pcnt=1901, target=3888, freq=600.0, state=2[0m
+[0;33mW (93272) MCPWM_PULSE: DEBUG updateProfile: pcnt=1932, target=3888, freq=600.0, state=2[0m
+[0;33mW (93322) MCPWM_PULSE: DEBUG updateProfile: pcnt=1962, target=3888, freq=600.0, state=2[0m
+[0;33mW (93372) MCPWM_PULSE: DEBUG updateProfile: pcnt=1992, target=3888, freq=600.0, state=2[0m
+[0;33mW (93422) MCPWM_PULSE: DEBUG updateProfile: pcnt=2022, target=3888, freq=600.0, state=2[0m
+[0;33mW (93472) MCPWM_PULSE: DEBUG updateProfile: pcnt=2052, target=3888, freq=600.0, state=2[0m
+[0;33mW (93522) MCPWM_PULSE: DEBUG updateProfile: pcnt=2082, target=3888, freq=600.0, state=2[0m
+[0;33mW (93572) MCPWM_PULSE: DEBUG updateProfile: pcnt=2112, target=3888, freq=600.0, state=2[0m
+[0;33mW (93622) MCPWM_PULSE: DEBUG updateProfile: pcnt=2142, target=3888, freq=600.0, state=2[0m
+[0;33mW (93672) MCPWM_PULSE: DEBUG updateProfile: pcnt=2172, target=3888, freq=600.0, state=2[0m
+[0;33mW (93722) MCPWM_PULSE: DEBUG updateProfile: pcnt=2203, target=3888, freq=600.0, state=2[0m
+[0;33mW (93772) MCPWM_PULSE: DEBUG updateProfile: pcnt=2233, target=3888, freq=600.0, state=2[0m
+[0;33mW (93822) MCPWM_PULSE: DEBUG updateProfile: pcnt=2263, target=3888, freq=600.0, state=2[0m
+[0;33mW (93872) MCPWM_PULSE: DEBUG updateProfile: pcnt=2293, target=3888, freq=600.0, state=2[0m
+[0;33mW (93922) MCPWM_PULSE: DEBUG updateProfile: pcnt=2323, target=3888, freq=600.0, state=2[0m
+[0;33mW (93972) MCPWM_PULSE: DEBUG updateProfile: pcnt=2353, target=3888, freq=600.0, state=2[0m
+[0;33mW (94022) MCPWM_PULSE: DEBUG updateProfile: pcnt=2383, target=3888, freq=600.0, state=2[0m
+[0;33mW (94072) MCPWM_PULSE: DEBUG updateProfile: pcnt=2413, target=3888, freq=600.0, state=2[0m
+[0;33mW (94122) MCPWM_PULSE: DEBUG updateProfile: pcnt=2444, target=3888, freq=600.0, state=2[0m
+[0;33mW (94172) MCPWM_PULSE: DEBUG updateProfile: pcnt=2474, target=3888, freq=600.0, state=2[0m
+[0;33mW (94222) MCPWM_PULSE: DEBUG updateProfile: pcnt=2504, target=3888, freq=600.0, state=2[0m
+[0;33mW (94272) MCPWM_PULSE: DEBUG updateProfile: pcnt=2534, target=3888, freq=600.0, state=2[0m
+[0;33mW (94322) MCPWM_PULSE: DEBUG updateProfile: pcnt=2564, target=3888, freq=600.0, state=2[0m
+[0;33mW (94372) MCPWM_PULSE: DEBUG updateProfile: pcnt=2594, target=3888, freq=600.0, state=2[0m
+[0;33mW (94422) MCPWM_PULSE: DEBUG updateProfile: pcnt=2624, target=3888, freq=600.0, state=2[0m
+[0;33mW (94472) MCPWM_PULSE: DEBUG updateProfile: pcnt=2654, target=3888, freq=600.0, state=2[0m
+[0;33mW (94522) MCPWM_PULSE: DEBUG updateProfile: pcnt=2685, target=3888, freq=600.0, state=2[0m
+[0;33mW (94572) MCPWM_PULSE: DEBUG updateProfile: pcnt=2715, target=3888, freq=600.0, state=2[0m
+[0;33mW (94622) MCPWM_PULSE: DEBUG updateProfile: pcnt=2745, target=3888, freq=600.0, state=2[0m
+[0;33mW (94672) MCPWM_PULSE: DEBUG updateProfile: pcnt=2775, target=3888, freq=600.0, state=2[0m
+[0;33mW (94722) MCPWM_PULSE: DEBUG updateProfile: pcnt=2805, target=3888, freq=600.0, state=2[0m
+[0;33mW (94772) MCPWM_PULSE: DEBUG updateProfile: pcnt=2835, target=3888, freq=600.0, state=2[0m
+[0;33mW (94822) MCPWM_PULSE: DEBUG updateProfile: pcnt=2865, target=3888, freq=600.0, state=2[0m
+[0;33mW (94872) MCPWM_PULSE: DEBUG updateProfile: pcnt=2895, target=3888, freq=600.0, state=2[0m
+[0;33mW (94922) MCPWM_PULSE: DEBUG updateProfile: pcnt=2925, target=3888, freq=600.0, state=2[0m
+[0;33mW (94972) MCPWM_PULSE: DEBUG updateProfile: pcnt=2956, target=3888, freq=600.0, state=2[0m
+[0;33mW (95022) MCPWM_PULSE: DEBUG updateProfile: pcnt=2986, target=3888, freq=600.0, state=2[0m
+[0;33mW (95072) MCPWM_PULSE: DEBUG updateProfile: pcnt=3016, target=3888, freq=600.0, state=2[0m
+[0;33mW (95122) MCPWM_PULSE: DEBUG updateProfile: pcnt=3046, target=3888, freq=600.0, state=2[0m
+[0;33mW (95172) MCPWM_PULSE: DEBUG updateProfile: pcnt=3076, target=3888, freq=600.0, state=2[0m
+[0;33mW (95222) MCPWM_PULSE: DEBUG updateProfile: pcnt=3106, target=3888, freq=600.0, state=2[0m
+[0;33mW (95272) MCPWM_PULSE: DEBUG updateProfile: pcnt=3136, target=3888, freq=600.0, state=2[0m
+[0;33mW (95322) MCPWM_PULSE: DEBUG updateProfile: pcnt=3166, target=3888, freq=600.0, state=2[0m
+[0;33mW (95372) MCPWM_PULSE: DEBUG updateProfile: pcnt=3197, target=3888, freq=600.0, state=2[0m
+[0;33mW (95422) MCPWM_PULSE: DEBUG updateProfile: pcnt=3227, target=3888, freq=600.0, state=2[0m
+[0;33mW (95472) MCPWM_PULSE: DEBUG updateProfile: pcnt=3257, target=3888, freq=600.0, state=2[0m
+[0;33mW (95522) MCPWM_PULSE: DEBUG updateProfile: pcnt=3287, target=3888, freq=600.0, state=2[0m
+[0;33mW (95572) MCPWM_PULSE: DEBUG updateProfile: pcnt=3317, target=3888, freq=600.0, state=2[0m
+[0;33mW (95622) MCPWM_PULSE: DEBUG updateProfile: pcnt=3347, target=3888, freq=600.0, state=2[0m
+[0;33mW (95672) MCPWM_PULSE: DEBUG updateProfile: pcnt=3377, target=3888, freq=600.0, state=2[0m
+[0;33mW (95722) MCPWM_PULSE: DEBUG updateProfile: pcnt=3407, target=3888, freq=600.0, state=2[0m
+[0;33mW (95772) MCPWM_PULSE: DEBUG updateProfile: pcnt=3438, target=3888, freq=600.0, state=2[0m
+[0;33mW (95822) MCPWM_PULSE: DEBUG updateProfile: pcnt=3468, target=3888, freq=600.0, state=2[0m
+[0;33mW (95872) MCPWM_PULSE: DEBUG updateProfile: pcnt=3498, target=3888, freq=600.0, state=2[0m
+[0;33mW (95922) MCPWM_PULSE: DEBUG updateProfile: pcnt=3528, target=3888, freq=600.0, state=2[0m
+[0;33mW (95972) MCPWM_PULSE: DEBUG updateProfile: pcnt=3558, target=3888, freq=600.0, state=2[0m
+[0;33mW (96022) MCPWM_PULSE: DEBUG updateProfile: pcnt=3588, target=3888, freq=600.0, state=2[0m
+[0;33mW (96072) MCPWM_PULSE: DEBUG updateProfile: pcnt=3618, target=3888, freq=600.0, state=2[0m
+[0;33mW (96122) MCPWM_PULSE: DEBUG updateProfile: pcnt=3648, target=3888, freq=600.0, state=2[0m
+[0;33mW (96172) MCPWM_PULSE: DEBUG updateProfile: pcnt=3678, target=3888, freq=600.0, state=2[0m
+[0;33mW (96222) MCPWM_PULSE: DEBUG updateProfile: pcnt=3709, target=3888, freq=600.0, state=2[0m
+[0;33mW (96272) MCPWM_PULSE: DEBUG updateProfile: pcnt=3739, target=3888, freq=600.0, state=2[0m
+[0;33mW (96322) MCPWM_PULSE: DEBUG updateProfile: pcnt=3769, target=3888, freq=600.0, state=2[0m
+[0;33mW (96372) MCPWM_PULSE: DEBUG updateProfile: pcnt=3799, target=3888, freq=600.0, state=2[0m
+[0;33mW (96422) MCPWM_PULSE: DEBUG updateProfile: pcnt=3829, target=3888, freq=600.0, state=2[0m
+[0;33mW (96472) MCPWM_PULSE: DEBUG updateProfile: pcnt=3859, target=3888, freq=589.9, state=3[0m
+[0;33mW (96522) MCPWM_PULSE: DEBUG updateProfile: pcnt=3881, target=3888, freq=289.8, state=3[0m
+[0;33mW (96557) MCPWM_PULSE: updateProfile: STOP - pcnt=3888 >= target=3888[0m
+[0;33mW (96557) MCPWM_PULSE: updateProfile: COMPLETED - actual_pcnt=3888, start=3888, new_abs=0[0m
+[0;33mW (96560) motor_base: DEBUG Axis 1: onMotionComplete(total_pulses=0)[0m
+[0;33mW (96566) motor_base: DEBUG Axis 1: before sync: pulse_count=3888, tracker_pos=0[0m
+[0;33mW (96573) motor_base: DEBUG Axis 1: after sync: pulse_count=0[0m
+[0;33mW (96579) motor_base: Axis 1: motion complete at position 0.0000[0m
+[0;32mI (102387) CMD_EXEC: CMD: MOVE Y 400.0000[0m
+[0;33mW (102387) motor_base: DEBUG Axis 1: moveAbsolute(pos=400.0000, vel=1080.0000)[0m
+[0;33mW (102388) motor_base: DEBUG Axis 1: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (102394) motor_base: DEBUG Axis 1: current_pos=0.0000, target_pos=400.0000[0m
+[0;33mW (102401) motor_base: DEBUG Axis 1: setting direction=FWD[0m
+[0;33mW (102406) motor_base: DEBUG Axis 1: pulses_per_unit=0.56, pulses=222, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (102414) motor_base: DEBUG Axis 1: calling pulse_gen_->startMove(pulses=222, freq=600.0, accel=6000.0)[0m
+[0;33mW (102424) MCPWM_PULSE: DEBUG startMove: pulses=222, max_vel=600.0 Hz, accel=6000.0, dir=FWD[0m
+[0;33mW (102432) MCPWM_PULSE: DEBUG startMove: profile calculated: accel=29, cruise=164, decel=29, cruise_vel=600.0[0m
+[0;33mW (102441) MCPWM_PULSE: DEBUG startMove: move_start_position=0, direction=FWD[0m
+[0;33mW (102448) MCPWM_PULSE: DEBUG startMove: stopping and clearing PCNT[0m
+[0;33mW (102454) MCPWM_PULSE: DEBUG startMove: configuring PCNT watch point for 222 pulses[0m
+[0;33mW (102462) MCPWM_PULSE: DEBUG startMove: setting initial freq=300 Hz[0m
+[0;33mW (102468) MCPWM_PULSE: DEBUG startMove: starting MCPWM timer[0m
+[0;33mW (102473) MCPWM_PULSE: DEBUG startMove: PCNT started after MCPWM stabilization[0m
+[0;33mW (102480) MCPWM_PULSE: DEBUG startMove: completed successfully[0m
+[0;33mW (102482) MCPWM_PULSE: DEBUG updateProfile: pcnt=2, target=222, freq=378.0, state=1[0m
+[0;33mW (102486) motor_base: DEBUG Axis 1: moveAbsolute completed, state=MOVING[0m
+OK
+[0;33mW (102543) MCPWM_PULSE: DEBUG updateProfile: pcnt=33, target=222, freq=600.0, state=2[0m
+[0;33mW (102594) MCPWM_PULSE: DEBUG updateProfile: pcnt=64, target=222, freq=600.0, state=2[0m
+[0;33mW (102644) MCPWM_PULSE: DEBUG updateProfile: pcnt=94, target=222, freq=600.0, state=2[0m
+[0;33mW (102694) MCPWM_PULSE: DEBUG updateProfile: pcnt=124, target=222, freq=600.0, state=2[0m
+[0;33mW (102744) MCPWM_PULSE: DEBUG updateProfile: pcnt=154, target=222, freq=600.0, state=2[0m
+[0;33mW (102794) MCPWM_PULSE: DEBUG updateProfile: pcnt=184, target=222, freq=600.0, state=2[0m
+[0;33mW (102844) MCPWM_PULSE: DEBUG updateProfile: pcnt=210, target=222, freq=379.5, state=3[0m
+[0;33mW (102894) MCPWM_PULSE: DEBUG updateProfile: pcnt=222, target=222, freq=109.5, state=3[0m
+[0;33mW (102894) MCPWM_PULSE: updateProfile: STOP - pcnt=222 >= target=222[0m
+[0;33mW (102897) MCPWM_PULSE: updateProfile: COMPLETED - actual_pcnt=222, start=0, new_abs=222[0m
+[0;33mW (102905) motor_base: DEBUG Axis 1: onMotionComplete(total_pulses=222)[0m
+[0;33mW (102911) motor_base: DEBUG Axis 1: before sync: pulse_count=0, tracker_pos=222[0m
+[0;33mW (102918) motor_base: DEBUG Axis 1: after sync: pulse_count=222[0m
+[0;33mW (102924) motor_base: Axis 1: motion complete at position 399.6000[0m
+[0;32mI (106851) CMD_EXEC: CMD: MOVE Y 0.0000[0m
+[0;33mW (106851) motor_base: DEBUG Axis 1: moveAbsolute(pos=0.0000, vel=1080.0000)[0m
+[0;33mW (106852) motor_base: DEBUG Axis 1: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (106857) motor_base: DEBUG Axis 1: current_pos=399.6000, target_pos=0.0000[0m
+[0;33mW (106864) motor_base: DEBUG Axis 1: setting direction=REV[0m
+[0;33mW (106869) motor_base: DEBUG Axis 1: pulses_per_unit=0.56, pulses=222, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (106878) motor_base: DEBUG Axis 1: calling pulse_gen_->startMove(pulses=-222, freq=600.0, accel=6000.0)[0m
+[0;33mW (106887) MCPWM_PULSE: DEBUG startMove: pulses=-222, max_vel=600.0 Hz, accel=6000.0, dir=REV[0m
+[0;33mW (106896) MCPWM_PULSE: DEBUG startMove: profile calculated: accel=29, cruise=164, decel=29, cruise_vel=600.0[0m
+[0;33mW (106905) MCPWM_PULSE: DEBUG startMove: move_start_position=222, direction=REV[0m
+[0;33mW (106912) MCPWM_PULSE: DEBUG startMove: stopping and clearing PCNT[0m
+[0;33mW (106918) MCPWM_PULSE: DEBUG startMove: configuring PCNT watch point for 222 pulses[0m
+[0;33mW (106926) MCPWM_PULSE: DEBUG startMove: setting initial freq=300 Hz[0m
+[0;33mW (106932) MCPWM_PULSE: DEBUG startMove: starting MCPWM timer[0m
+[0;33mW (106937) MCPWM_PULSE: DEBUG startMove: PCNT started after MCPWM stabilization[0m
+[0;33mW (106944) MCPWM_PULSE: DEBUG startMove: completed successfully[0m
+[0;33mW (106950) motor_base: DEBUG Axis 1: moveAbsolute completed, state=MOVING[0m
+OK
+[0;33mW (106981) MCPWM_PULSE: DEBUG updateProfile: pcnt=15, target=222, freq=588.0, state=1[0m
+[0;33mW (107032) MCPWM_PULSE: DEBUG updateProfile: pcnt=15, target=222, freq=424.3, state=2[0m
+[0;33mW (107082) MCPWM_PULSE: DEBUG updateProfile: pcnt=15, target=222, freq=424.3, state=2[0m
+[0;33mW (107132) MCPWM_PULSE: DEBUG updateProfile: pcnt=15, target=222, freq=424.3, state=2[0m
+[0;33mW (107182) MCPWM_PULSE: DEBUG updateProfile: pcnt=15, target=222, freq=424.3, state=2[0m
+[0;33mW (107232) MCPWM_PULSE: DEBUG updateProfile: pcnt=15, target=222, freq=424.3, state=2[0m
+[0;33mW (107282) MCPWM_PULSE: DEBUG updateProfile: pcnt=15, target=222, freq=424.3, state=2[0m
+[0;33mW (107332) MCPWM_PULSE: DEBUG updateProfile: pcnt=15, target=222, freq=424.3, state=2[0m
+[0;33mW (107382) MCPWM_PULSE: DEBUG updateProfile: pcnt=15, target=222, freq=424.3, state=2[0m
+[0;33mW (107432) MCPWM_PULSE: DEBUG updateProfile: pcnt=15, target=222, freq=424.3, state=2[0m
+[0;33mW (107482) MCPWM_PULSE: DEBUG updateProfile: pcnt=15, target=222, freq=424.3, state=2[0m
+[0;33mW (107532) MCPWM_PULSE: DEBUG updateProfile: pcnt=15, target=222, freq=424.3, state=2[0m
+[0;33mW (107582) MCPWM_PULSE: DEBUG updateProfile: pcnt=15, target=222, freq=424.3, state=2[0m
+[0;33mW (107632) MCPWM_PULSE: DEBUG updateProfile: pcnt=17, target=222, freq=451.7, state=2[0m
+[0;33mW (107682) MCPWM_PULSE: DEBUG updateProfile: pcnt=45, target=222, freq=600.0, state=2[0m
+[0;33mW (107732) MCPWM_PULSE: DEBUG updateProfile: pcnt=75, target=222, freq=600.0, state=2[0m
+[0;33mW (107782) MCPWM_PULSE: DEBUG updateProfile: pcnt=106, target=222, freq=600.0, state=2[0m
+[0;33mW (107832) MCPWM_PULSE: DEBUG updateProfile: pcnt=136, target=222, freq=600.0, state=2[0m
+[0;33mW (107882) MCPWM_PULSE: DEBUG updateProfile: pcnt=166, target=222, freq=600.0, state=2[0m
+[0;33mW (107932) MCPWM_PULSE: DEBUG updateProfile: pcnt=196, target=222, freq=569.2, state=3[0m
+[0;33mW (107982) MCPWM_PULSE: DEBUG updateProfile: pcnt=216, target=222, freq=268.3, state=3[0m
+[0;33mW (108013) MCPWM_PULSE: updateProfile: STOP - pcnt=222 >= target=222[0m
+[0;33mW (108013) MCPWM_PULSE: updateProfile: COMPLETED - actual_pcnt=222, start=222, new_abs=0[0m
+[0;33mW (108016) motor_base: DEBUG Axis 1: onMotionComplete(total_pulses=0)[0m
+[0;33mW (108022) motor_base: DEBUG Axis 1: before sync: pulse_count=222, tracker_pos=0[0m
+[0;33mW (108029) motor_base: DEBUG Axis 1: after sync: pulse_count=0[0m
+[0;33mW (108035) motor_base: Axis 1: motion complete at position 0.0000[0m
+[0;32mI (113687) CMD_EXEC: CMD: MOVE Y 7000.0000[0m
+[0;33mW (113687) motor_base: DEBUG Axis 1: moveAbsolute(pos=7000.0000, vel=1080.0000)[0m
+[0;33mW (113688) motor_base: DEBUG Axis 1: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (113694) motor_base: DEBUG Axis 1: current_pos=0.0000, target_pos=7000.0000[0m
+[0;33mW (113701) motor_base: DEBUG Axis 1: setting direction=FWD[0m
+[0;33mW (113706) motor_base: DEBUG Axis 1: pulses_per_unit=0.56, pulses=3888, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (113715) motor_base: DEBUG Axis 1: calling pulse_gen_->startMove(pulses=3888, freq=600.0, accel=6000.0)[0m
+[0;33mW (113724) MCPWM_PULSE: DEBUG startMove: pulses=3888, max_vel=600.0 Hz, accel=6000.0, dir=FWD[0m
+[0;33mW (113732) MCPWM_PULSE: DEBUG startMove: profile calculated: accel=29, cruise=3830, decel=29, cruise_vel=600.0[0m
+[0;33mW (113742) MCPWM_PULSE: DEBUG startMove: move_start_position=0, direction=FWD[0m
+[0;33mW (113749) MCPWM_PULSE: DEBUG startMove: stopping and clearing PCNT[0m
+[0;33mW (113755) MCPWM_PULSE: DEBUG startMove: configuring PCNT watch point for 3888 pulses[0m
+[0;33mW (113762) MCPWM_PULSE: DEBUG startMove: setting initial freq=300 Hz[0m
+[0;33mW (113769) MCPWM_PULSE: DEBUG startMove: starting MCPWM timer[0m
+[0;33mW (113774) MCPWM_PULSE: DEBUG startMove: PCNT started after MCPWM stabilization[0m
+[0;33mW (113781) MCPWM_PULSE: DEBUG startMove: completed successfully[0m
+[0;33mW (113787) motor_base: DEBUG Axis 1: moveAbsolute completed, state=MOVING[0m
+[0;33mW (113787) MCPWM_PULSE: DEBUG updateProfile: pcnt=3, target=3888, freq=402.0, state=1[0m
+OK
+[0;33mW (113851) MCPWM_PULSE: DEBUG updateProfile: pcnt=37, target=3888, freq=600.0, state=2[0m
+[0;33mW (113902) MCPWM_PULSE: DEBUG updateProfile: pcnt=68, target=3888, freq=600.0, state=2[0m
+[0;33mW (113952) MCPWM_PULSE: DEBUG updateProfile: pcnt=98, target=3888, freq=600.0, state=2[0m
+[0;33mW (114002) MCPWM_PULSE: DEBUG updateProfile: pcnt=128, target=3888, freq=600.0, state=2[0m
+[0;33mW (114052) MCPWM_PULSE: DEBUG updateProfile: pcnt=158, target=3888, freq=600.0, state=2[0m
+[0;33mW (114102) MCPWM_PULSE: DEBUG updateProfile: pcnt=188, target=3888, freq=600.0, state=2[0m
+[0;33mW (114152) MCPWM_PULSE: DEBUG updateProfile: pcnt=218, target=3888, freq=600.0, state=2[0m
+[0;33mW (114202) MCPWM_PULSE: DEBUG updateProfile: pcnt=249, target=3888, freq=600.0, state=2[0m
+[0;33mW (114252) MCPWM_PULSE: DEBUG updateProfile: pcnt=279, target=3888, freq=600.0, state=2[0m
+[0;33mW (114302) MCPWM_PULSE: DEBUG updateProfile: pcnt=309, target=3888, freq=600.0, state=2[0m
+[0;33mW (114352) MCPWM_PULSE: DEBUG updateProfile: pcnt=339, target=3888, freq=600.0, state=2[0m
+[0;33mW (114402) MCPWM_PULSE: DEBUG updateProfile: pcnt=369, target=3888, freq=600.0, state=2[0m
+[0;33mW (114452) MCPWM_PULSE: DEBUG updateProfile: pcnt=399, target=3888, freq=600.0, state=2[0m
+[0;33mW (114502) MCPWM_PULSE: DEBUG updateProfile: pcnt=429, target=3888, freq=600.0, state=2[0m
+[0;33mW (114552) MCPWM_PULSE: DEBUG updateProfile: pcnt=459, target=3888, freq=600.0, state=2[0m
+[0;33mW (114602) MCPWM_PULSE: DEBUG updateProfile: pcnt=490, target=3888, freq=600.0, state=2[0m
+[0;33mW (114652) MCPWM_PULSE: DEBUG updateProfile: pcnt=520, target=3888, freq=600.0, state=2[0m
+[0;33mW (114702) MCPWM_PULSE: DEBUG updateProfile: pcnt=550, target=3888, freq=600.0, state=2[0m
+[0;33mW (114752) MCPWM_PULSE: DEBUG updateProfile: pcnt=580, target=3888, freq=600.0, state=2[0m
+[0;33mW (114802) MCPWM_PULSE: DEBUG updateProfile: pcnt=610, target=3888, freq=600.0, state=2[0m
+[0;33mW (114852) MCPWM_PULSE: DEBUG updateProfile: pcnt=640, target=3888, freq=600.0, state=2[0m
+[0;33mW (114902) MCPWM_PULSE: DEBUG updateProfile: pcnt=670, target=3888, freq=600.0, state=2[0m
+[0;33mW (114952) MCPWM_PULSE: DEBUG updateProfile: pcnt=700, target=3888, freq=600.0, state=2[0m
+[0;33mW (115002) MCPWM_PULSE: DEBUG updateProfile: pcnt=731, target=3888, freq=600.0, state=2[0m
+[0;33mW (115052) MCPWM_PULSE: DEBUG updateProfile: pcnt=761, target=3888, freq=600.0, state=2[0m
+[0;33mW (115102) MCPWM_PULSE: DEBUG updateProfile: pcnt=791, target=3888, freq=600.0, state=2[0m
+[0;33mW (115152) MCPWM_PULSE: DEBUG updateProfile: pcnt=821, target=3888, freq=600.0, state=2[0m
+[0;33mW (115202) MCPWM_PULSE: DEBUG updateProfile: pcnt=851, target=3888, freq=600.0, state=2[0m
+[0;33mW (115252) MCPWM_PULSE: DEBUG updateProfile: pcnt=881, target=3888, freq=600.0, state=2[0m
+[0;33mW (115302) MCPWM_PULSE: DEBUG updateProfile: pcnt=911, target=3888, freq=600.0, state=2[0m
+[0;33mW (115352) MCPWM_PULSE: DEBUG updateProfile: pcnt=941, target=3888, freq=600.0, state=2[0m
+[0;33mW (115402) MCPWM_PULSE: DEBUG updateProfile: pcnt=971, target=3888, freq=600.0, state=2[0m
+[0;33mW (115452) MCPWM_PULSE: DEBUG updateProfile: pcnt=1002, target=3888, freq=600.0, state=2[0m
+[0;33mW (115502) MCPWM_PULSE: DEBUG updateProfile: pcnt=1032, target=3888, freq=600.0, state=2[0m
+[0;33mW (115552) MCPWM_PULSE: DEBUG updateProfile: pcnt=1062, target=3888, freq=600.0, state=2[0m
+[0;33mW (115602) MCPWM_PULSE: DEBUG updateProfile: pcnt=1092, target=3888, freq=600.0, state=2[0m
+[0;33mW (115652) MCPWM_PULSE: DEBUG updateProfile: pcnt=1122, target=3888, freq=600.0, state=2[0m
+[0;33mW (115702) MCPWM_PULSE: DEBUG updateProfile: pcnt=1152, target=3888, freq=600.0, state=2[0m
+[0;33mW (115752) MCPWM_PULSE: DEBUG updateProfile: pcnt=1182, target=3888, freq=600.0, state=2[0m
+[0;33mW (115802) MCPWM_PULSE: DEBUG updateProfile: pcnt=1212, target=3888, freq=600.0, state=2[0m
+[0;33mW (115852) MCPWM_PULSE: DEBUG updateProfile: pcnt=1243, target=3888, freq=600.0, state=2[0m
+[0;33mW (115902) MCPWM_PULSE: DEBUG updateProfile: pcnt=1273, target=3888, freq=600.0, state=2[0m
+[0;33mW (115952) MCPWM_PULSE: DEBUG updateProfile: pcnt=1303, target=3888, freq=600.0, state=2[0m
+[0;33mW (116002) MCPWM_PULSE: DEBUG updateProfile: pcnt=1333, target=3888, freq=600.0, state=2[0m
+[0;33mW (116052) MCPWM_PULSE: DEBUG updateProfile: pcnt=1363, target=3888, freq=600.0, state=2[0m
+[0;33mW (116102) MCPWM_PULSE: DEBUG updateProfile: pcnt=1393, target=3888, freq=600.0, state=2[0m
+[0;33mW (116152) MCPWM_PULSE: DEBUG updateProfile: pcnt=1423, target=3888, freq=600.0, state=2[0m
+[0;33mW (116202) MCPWM_PULSE: DEBUG updateProfile: pcnt=1453, target=3888, freq=600.0, state=2[0m
+[0;33mW (116252) MCPWM_PULSE: DEBUG updateProfile: pcnt=1484, target=3888, freq=600.0, state=2[0m
+[0;33mW (116302) MCPWM_PULSE: DEBUG updateProfile: pcnt=1514, target=3888, freq=600.0, state=2[0m
+[0;33mW (116352) MCPWM_PULSE: DEBUG updateProfile: pcnt=1544, target=3888, freq=600.0, state=2[0m
+[0;33mW (116402) MCPWM_PULSE: DEBUG updateProfile: pcnt=1574, target=3888, freq=600.0, state=2[0m
+[0;33mW (116452) MCPWM_PULSE: DEBUG updateProfile: pcnt=1604, target=3888, freq=600.0, state=2[0m
+[0;33mW (116502) MCPWM_PULSE: DEBUG updateProfile: pcnt=1634, target=3888, freq=600.0, state=2[0m
+[0;33mW (116552) MCPWM_PULSE: DEBUG updateProfile: pcnt=1664, target=3888, freq=600.0, state=2[0m
+[0;33mW (116602) MCPWM_PULSE: DEBUG updateProfile: pcnt=1694, target=3888, freq=600.0, state=2[0m
+[0;33mW (116652) MCPWM_PULSE: DEBUG updateProfile: pcnt=1725, target=3888, freq=600.0, state=2[0m
+[0;33mW (116702) MCPWM_PULSE: DEBUG updateProfile: pcnt=1755, target=3888, freq=600.0, state=2[0m
+[0;33mW (116752) MCPWM_PULSE: DEBUG updateProfile: pcnt=1785, target=3888, freq=600.0, state=2[0m
+[0;33mW (116802) MCPWM_PULSE: DEBUG updateProfile: pcnt=1815, target=3888, freq=600.0, state=2[0m
+[0;33mW (116852) MCPWM_PULSE: DEBUG updateProfile: pcnt=1845, target=3888, freq=600.0, state=2[0m
+[0;33mW (116902) MCPWM_PULSE: DEBUG updateProfile: pcnt=1875, target=3888, freq=600.0, state=2[0m
+[0;33mW (116952) MCPWM_PULSE: DEBUG updateProfile: pcnt=1905, target=3888, freq=600.0, state=2[0m
+[0;33mW (117002) MCPWM_PULSE: DEBUG updateProfile: pcnt=1935, target=3888, freq=600.0, state=2[0m
+[0;33mW (117052) MCPWM_PULSE: DEBUG updateProfile: pcnt=1965, target=3888, freq=600.0, state=2[0m
+[0;33mW (117102) MCPWM_PULSE: DEBUG updateProfile: pcnt=1996, target=3888, freq=600.0, state=2[0m
+[0;33mW (117152) MCPWM_PULSE: DEBUG updateProfile: pcnt=2026, target=3888, freq=600.0, state=2[0m
+[0;33mW (117202) MCPWM_PULSE: DEBUG updateProfile: pcnt=2056, target=3888, freq=600.0, state=2[0m
+[0;33mW (117252) MCPWM_PULSE: DEBUG updateProfile: pcnt=2086, target=3888, freq=600.0, state=2[0m
+[0;33mW (117302) MCPWM_PULSE: DEBUG updateProfile: pcnt=2116, target=3888, freq=600.0, state=2[0m
+[0;33mW (117352) MCPWM_PULSE: DEBUG updateProfile: pcnt=2146, target=3888, freq=600.0, state=2[0m
+[0;33mW (117402) MCPWM_PULSE: DEBUG updateProfile: pcnt=2176, target=3888, freq=600.0, state=2[0m
+[0;33mW (117452) MCPWM_PULSE: DEBUG updateProfile: pcnt=2206, target=3888, freq=600.0, state=2[0m
+[0;33mW (117502) MCPWM_PULSE: DEBUG updateProfile: pcnt=2237, target=3888, freq=600.0, state=2[0m
+[0;33mW (117552) MCPWM_PULSE: DEBUG updateProfile: pcnt=2267, target=3888, freq=600.0, state=2[0m
+[0;33mW (117602) MCPWM_PULSE: DEBUG updateProfile: pcnt=2297, target=3888, freq=600.0, state=2[0m
+[0;33mW (117652) MCPWM_PULSE: DEBUG updateProfile: pcnt=2327, target=3888, freq=600.0, state=2[0m
+[0;33mW (117702) MCPWM_PULSE: DEBUG updateProfile: pcnt=2357, target=3888, freq=600.0, state=2[0m
+[0;33mW (117752) MCPWM_PULSE: DEBUG updateProfile: pcnt=2387, target=3888, freq=600.0, state=2[0m
+[0;33mW (117802) MCPWM_PULSE: DEBUG updateProfile: pcnt=2417, target=3888, freq=600.0, state=2[0m
+[0;33mW (117852) MCPWM_PULSE: DEBUG updateProfile: pcnt=2447, target=3888, freq=600.0, state=2[0m
+[0;33mW (117902) MCPWM_PULSE: DEBUG updateProfile: pcnt=2478, target=3888, freq=600.0, state=2[0m
+[0;33mW (117952) MCPWM_PULSE: DEBUG updateProfile: pcnt=2508, target=3888, freq=600.0, state=2[0m
+[0;33mW (118002) MCPWM_PULSE: DEBUG updateProfile: pcnt=2538, target=3888, freq=600.0, state=2[0m
+[0;33mW (118052) MCPWM_PULSE: DEBUG updateProfile: pcnt=2568, target=3888, freq=600.0, state=2[0m
+[0;33mW (118102) MCPWM_PULSE: DEBUG updateProfile: pcnt=2598, target=3888, freq=600.0, state=2[0m
+[0;33mW (118152) MCPWM_PULSE: DEBUG updateProfile: pcnt=2628, target=3888, freq=600.0, state=2[0m
+[0;33mW (118202) MCPWM_PULSE: DEBUG updateProfile: pcnt=2658, target=3888, freq=600.0, state=2[0m
+[0;33mW (118252) MCPWM_PULSE: DEBUG updateProfile: pcnt=2688, target=3888, freq=600.0, state=2[0m
+[0;33mW (118302) MCPWM_PULSE: DEBUG updateProfile: pcnt=2718, target=3888, freq=600.0, state=2[0m
+[0;33mW (118352) MCPWM_PULSE: DEBUG updateProfile: pcnt=2749, target=3888, freq=600.0, state=2[0m
+[0;33mW (118402) MCPWM_PULSE: DEBUG updateProfile: pcnt=2779, target=3888, freq=600.0, state=2[0m
+[0;33mW (118452) MCPWM_PULSE: DEBUG updateProfile: pcnt=2809, target=3888, freq=600.0, state=2[0m
+[0;33mW (118502) MCPWM_PULSE: DEBUG updateProfile: pcnt=2839, target=3888, freq=600.0, state=2[0m
+[0;33mW (118552) MCPWM_PULSE: DEBUG updateProfile: pcnt=2869, target=3888, freq=600.0, state=2[0m
+[0;33mW (118602) MCPWM_PULSE: DEBUG updateProfile: pcnt=2899, target=3888, freq=600.0, state=2[0m
+[0;33mW (118652) MCPWM_PULSE: DEBUG updateProfile: pcnt=2929, target=3888, freq=600.0, state=2[0m
+[0;33mW (118702) MCPWM_PULSE: DEBUG updateProfile: pcnt=2959, target=3888, freq=600.0, state=2[0m
+[0;33mW (118752) MCPWM_PULSE: DEBUG updateProfile: pcnt=2990, target=3888, freq=600.0, state=2[0m
+[0;33mW (118802) MCPWM_PULSE: DEBUG updateProfile: pcnt=3020, target=3888, freq=600.0, state=2[0m
+[0;33mW (118852) MCPWM_PULSE: DEBUG updateProfile: pcnt=3050, target=3888, freq=600.0, state=2[0m
+[0;33mW (118902) MCPWM_PULSE: DEBUG updateProfile: pcnt=3080, target=3888, freq=600.0, state=2[0m
+[0;33mW (118952) MCPWM_PULSE: DEBUG updateProfile: pcnt=3110, target=3888, freq=600.0, state=2[0m
+[0;33mW (119002) MCPWM_PULSE: DEBUG updateProfile: pcnt=3140, target=3888, freq=600.0, state=2[0m
+[0;33mW (119052) MCPWM_PULSE: DEBUG updateProfile: pcnt=3170, target=3888, freq=600.0, state=2[0m
+[0;33mW (119102) MCPWM_PULSE: DEBUG updateProfile: pcnt=3200, target=3888, freq=600.0, state=2[0m
+[0;33mW (119152) MCPWM_PULSE: DEBUG updateProfile: pcnt=3231, target=3888, freq=600.0, state=2[0m
+[0;33mW (119202) MCPWM_PULSE: DEBUG updateProfile: pcnt=3261, target=3888, freq=600.0, state=2[0m
+[0;33mW (119252) MCPWM_PULSE: DEBUG updateProfile: pcnt=3291, target=3888, freq=600.0, state=2[0m
+[0;33mW (119302) MCPWM_PULSE: DEBUG updateProfile: pcnt=3321, target=3888, freq=600.0, state=2[0m
+[0;33mW (119352) MCPWM_PULSE: DEBUG updateProfile: pcnt=3351, target=3888, freq=600.0, state=2[0m
+[0;33mW (119402) MCPWM_PULSE: DEBUG updateProfile: pcnt=3381, target=3888, freq=600.0, state=2[0m
+[0;33mW (119452) MCPWM_PULSE: DEBUG updateProfile: pcnt=3411, target=3888, freq=600.0, state=2[0m
+[0;33mW (119502) MCPWM_PULSE: DEBUG updateProfile: pcnt=3441, target=3888, freq=600.0, state=2[0m
+[0;33mW (119552) MCPWM_PULSE: DEBUG updateProfile: pcnt=3471, target=3888, freq=600.0, state=2[0m
+[0;33mW (119602) MCPWM_PULSE: DEBUG updateProfile: pcnt=3502, target=3888, freq=600.0, state=2[0m
+[0;33mW (119652) MCPWM_PULSE: DEBUG updateProfile: pcnt=3532, target=3888, freq=600.0, state=2[0m
+[0;33mW (119702) MCPWM_PULSE: DEBUG updateProfile: pcnt=3562, target=3888, freq=600.0, state=2[0m
+[0;33mW (119752) MCPWM_PULSE: DEBUG updateProfile: pcnt=3592, target=3888, freq=600.0, state=2[0m
+[0;33mW (119802) MCPWM_PULSE: DEBUG updateProfile: pcnt=3622, target=3888, freq=600.0, state=2[0m
+[0;33mW (119852) MCPWM_PULSE: DEBUG updateProfile: pcnt=3652, target=3888, freq=600.0, state=2[0m
+[0;33mW (119902) MCPWM_PULSE: DEBUG updateProfile: pcnt=3682, target=3888, freq=600.0, state=2[0m
+[0;33mW (119952) MCPWM_PULSE: DEBUG updateProfile: pcnt=3712, target=3888, freq=600.0, state=2[0m
+[0;33mW (120002) MCPWM_PULSE: DEBUG updateProfile: pcnt=3743, target=3888, freq=600.0, state=2[0m
+[0;33mW (120052) MCPWM_PULSE: DEBUG updateProfile: pcnt=3773, target=3888, freq=600.0, state=2[0m
+[0;33mW (120102) MCPWM_PULSE: DEBUG updateProfile: pcnt=3803, target=3888, freq=600.0, state=2[0m
+[0;33mW (120152) MCPWM_PULSE: DEBUG updateProfile: pcnt=3833, target=3888, freq=600.0, state=2[0m
+[0;33mW (120202) MCPWM_PULSE: DEBUG updateProfile: pcnt=3863, target=3888, freq=558.6, state=3[0m
+[0;33mW (120252) MCPWM_PULSE: DEBUG updateProfile: pcnt=3883, target=3888, freq=244.9, state=3[0m
+[0;33mW (120281) MCPWM_PULSE: updateProfile: STOP - pcnt=3888 >= target=3888[0m
+[0;33mW (120281) MCPWM_PULSE: updateProfile: COMPLETED - actual_pcnt=3888, start=0, new_abs=3888[0m
+[0;33mW (120284) motor_base: DEBUG Axis 1: onMotionComplete(total_pulses=3888)[0m
+[0;33mW (120291) motor_base: DEBUG Axis 1: before sync: pulse_count=0, tracker_pos=3888[0m
+[0;33mW (120298) motor_base: DEBUG Axis 1: after sync: pulse_count=3888[0m
+[0;33mW (120304) motor_base: Axis 1: motion complete at position 6998.3999[0m
