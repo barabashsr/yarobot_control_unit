@@ -163,6 +163,11 @@ private:
     std::atomic<float> current_velocity_;
     int32_t last_watch_point_;              ///< Last configured watch point (for removal)
     int64_t move_start_position_;           ///< Absolute position at start of current move
+    int32_t move_start_pcnt_count_;         ///< PCNT count at start of move (for continuous counting)
+
+    // Stable reference for background position calculation (NO RACE)
+    int64_t last_completed_position_;       ///< Position at last move completion (stable)
+    int32_t pcnt_at_last_completion_;       ///< PCNT hardware value at completion (stable)
 
     // Profile update task
     TaskHandle_t profile_task_handle_;

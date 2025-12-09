@@ -36,8 +36,8 @@ static constexpr uint32_t NOTIFY_UPDATE_BIT = 0x01;
 static constexpr uint32_t NOTIFY_COMPLETE_BIT = 0x02;
 static constexpr uint32_t NOTIFY_EXIT_BIT = 0x04;
 
-// Profile update interval (ms) - controls how often frequency is adjusted
-static constexpr uint32_t PROFILE_UPDATE_INTERVAL_MS = 1;
+// Profile update interval uses global timing constant for all axes (10ms)
+// This controls how often frequency is adjusted AND position is updated
 
 // Maximum frequency change per millisecond for smooth ramping
 // 1000 Hz/ms means 0→600 Hz takes 0.6ms (very smooth but responsive)
@@ -77,6 +77,9 @@ McpwmPulseGenerator::McpwmPulseGenerator(int timer_id, int gpio_num, int pcnt_un
     , current_velocity_(0.0f)
     , last_watch_point_(0)
     , move_start_position_(0)
+    , move_start_pcnt_count_(0)
+    , last_completed_position_(0)
+    , pcnt_at_last_completion_(0)
     , profile_task_handle_(nullptr)
     , task_should_exit_(false)
     , completion_callback_(nullptr)
@@ -354,6 +357,16 @@ esp_err_t McpwmPulseGenerator::init()
         ESP_LOGE(TAG, "Failed to enable PCNT unit: %s", esp_err_to_name(ret));
     }
 
+    // Start PCNT counting immediately - runs continuously for position tracking
+    ret = pcnt_unit_start(pcnt_unit_);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to start PCNT unit: %s", esp_err_to_name(ret));
+    }
+
+    // Initialize PCNT baseline for continuous counting
+    move_start_pcnt_count_ = 0;
+    ESP_LOGI(TAG, "PCNT started for continuous position tracking");
+
     // Enable MCPWM timer
     ret = mcpwm_timer_enable(timer_handle_);
     if (ret != ESP_OK) {
@@ -427,7 +440,7 @@ void McpwmPulseGenerator::profileTaskLoop()
 
     while (!task_should_exit_.load(std::memory_order_acquire)) {
         uint32_t notification = 0;
-        if (xTaskNotifyWait(0, UINT32_MAX, &notification, pdMS_TO_TICKS(PROFILE_UPDATE_INTERVAL_MS)) == pdTRUE) {
+        if (xTaskNotifyWait(0, UINT32_MAX, &notification, pdMS_TO_TICKS(TIMING_POSITION_UPDATE_LATENCY_MS)) == pdTRUE) {
             if (notification & NOTIFY_EXIT_BIT) {
                 break;
             }
@@ -436,8 +449,34 @@ void McpwmPulseGenerator::profileTaskLoop()
             }
         }
 
-        // Update profile if running
+        // Always update position continuously (PCNT runs continuously)
+        // Profile updates (frequency changes) only when running
         McpwmProfileState current = state_.load(std::memory_order_acquire);
+
+        // Update position continuously using STABLE reference (NO RACE)
+        // Uses last_completed_position_ and pcnt_at_last_completion_ which are
+        // ONLY updated in completion handlers - no mid-move changes!
+        int count = 0;
+        if (pcnt_unit_) {
+            pcnt_unit_get_count(pcnt_unit_, &count);
+        }
+        int32_t overflows = overflow_count_.load(std::memory_order_relaxed);
+        int32_t hw_pcnt = count + (overflows * PCNT_HIGH_LIMIT);
+
+        // Calculate position delta from last completion (STABLE reference point)
+        int32_t pcnt_delta = hw_pcnt - pcnt_at_last_completion_;
+        bool current_dir = direction_;  // Read current direction (not atomic, but OK here)
+        int64_t position_delta = current_dir ? pcnt_delta : -pcnt_delta;
+
+        // Update absolute position (SINGLE SOURCE OF TRUTH)
+        int64_t new_position = last_completed_position_ + position_delta;
+        absolute_position_.store(new_position, std::memory_order_relaxed);
+
+        // Also update pulse_count_ for profile tracking (relative to move start)
+        int64_t current_count = readPcntCount();
+        pulse_count_.store(current_count, std::memory_order_relaxed);
+
+        // Update motion profile if running
         if (current != McpwmProfileState::IDLE) {
             updateProfile();
         }
@@ -465,10 +504,12 @@ void McpwmPulseGenerator::updateProfile()
         completion_notified_.store(false, std::memory_order_relaxed);
     }
 
-    // Read actual hardware pulse count from PCNT
-    int64_t current_count = readPcntCount();
+    // Note: Position is updated continuously in profileTaskLoop() every 20ms
+    // This function only handles motion profile updates (frequency changes, state transitions)
+
+    // Get current pulse count (already updated by task loop)
+    int64_t current_count = pulse_count_.load(std::memory_order_relaxed);
     profile_.current_pulse = current_count;
-    pulse_count_.store(current_count, std::memory_order_relaxed);
 
     // DEBUG: Log every 50 updates
     static int debug_counter = 0;
@@ -490,10 +531,16 @@ void McpwmPulseGenerator::updateProfile()
         // Stop MCPWM timer immediately (STOP_EMPTY prevents leftover GPIO HIGH state)
         mcpwm_timer_start_stop(timer_handle_, MCPWM_TIMER_STOP_EMPTY);
 
-        // No force level needed - PCNT will start AFTER MCPWM in next move to avoid leftover edges
+        // Reconfigure generator action to force GPIO LOW when timer is at zero
+        // This overrides the HIGH action used for pulse generation
+        esp_err_t ret = mcpwm_generator_set_action_on_timer_event(gen_handle_,
+            MCPWM_GEN_TIMER_EVENT_ACTION(MCPWM_TIMER_DIRECTION_UP, MCPWM_TIMER_EVENT_EMPTY, MCPWM_GEN_ACTION_LOW));
+        if (ret != ESP_OK) {
+            ESP_LOGE(TAG, "Failed to set generator LOW action: %s", esp_err_to_name(ret));
+        }
+        ESP_LOGW(TAG, "DEBUG: Reconfigured generator to force GPIO LOW when stopped");
 
-        // Stop PCNT
-        pcnt_unit_stop(pcnt_unit_);
+        // NOTE: Keep PCNT running continuously for position tracking (don't stop it)
 
         // Calculate new absolute position based on ACTUAL PCNT count (not target!)
         // PCNT is the sole source of truth for position.
@@ -507,6 +554,21 @@ void McpwmPulseGenerator::updateProfile()
         ESP_LOGW(TAG, "updateProfile: COMPLETED - actual_pcnt=%lld, start=%lld, new_abs=%lld",
                  (long long)actual_pulses, (long long)move_start_position_, (long long)new_abs_pos);
 
+        // Update stable reference for background position calculation (NO RACE)
+        last_completed_position_ = new_abs_pos;
+        int count_hw = 0;
+        pcnt_unit_get_count(pcnt_unit_, &count_hw);
+        int32_t overflows_hw = overflow_count_.load(std::memory_order_relaxed);
+        pcnt_at_last_completion_ = count_hw + (overflows_hw * PCNT_HIGH_LIMIT);
+        ESP_LOGW(TAG, "DEBUG: Updated stable reference - last_pos=%lld, pcnt_hw=%ld",
+                 (long long)last_completed_position_, (long)pcnt_at_last_completion_);
+
+        // Read PCNT again after stop to verify it's stable (planning phase starts now)
+        int count_after_stop = 0;
+        pcnt_unit_get_count(pcnt_unit_, &count_after_stop);
+        ESP_LOGW(TAG, "DEBUG PLANNING: PCNT after stop = %d (should equal %lld)",
+                 count_after_stop, (long long)actual_pulses);
+
         state_.store(McpwmProfileState::IDLE, std::memory_order_release);
         current_velocity_.store(0.0f, std::memory_order_relaxed);
 
@@ -514,6 +576,58 @@ void McpwmPulseGenerator::updateProfile()
         motion_start_time_ = 0;
 
         // Fire completion callback with target count (notifyCompletion has double-call protection)
+        notifyCompletion();
+        return;
+    }
+
+    // =========================================================================
+    // STOPPING STATE COMPLETION CHECK (controlled deceleration stop)
+    // When stop() is called, it sets state to STOPPING and calculates target_pulses
+    // for deceleration. We must check if we've reached that target and stop.
+    // =========================================================================
+    if (current_state == McpwmProfileState::STOPPING && current_count >= profile_.target_pulses) {
+        ESP_LOGW(TAG, "updateProfile: STOPPING COMPLETE - pcnt=%lld >= target=%ld",
+                 (long long)current_count, (long)profile_.target_pulses);
+
+        // Stop MCPWM timer immediately
+        mcpwm_timer_start_stop(timer_handle_, MCPWM_TIMER_STOP_EMPTY);
+
+        // Reconfigure generator action to force GPIO LOW when timer is at zero
+        esp_err_t ret = mcpwm_generator_set_action_on_timer_event(gen_handle_,
+            MCPWM_GEN_TIMER_EVENT_ACTION(MCPWM_TIMER_DIRECTION_UP, MCPWM_TIMER_EVENT_EMPTY, MCPWM_GEN_ACTION_LOW));
+        if (ret != ESP_OK) {
+            ESP_LOGE(TAG, "Failed to set generator LOW action: %s", esp_err_to_name(ret));
+        }
+        ESP_LOGW(TAG, "DEBUG STOPPING: Reconfigured generator to force GPIO LOW");
+
+        // NOTE: Keep PCNT running continuously for position tracking (don't stop it)
+
+        // Calculate new absolute position based on ACTUAL PCNT count
+        int64_t actual_pulses = current_count;
+        int64_t delta = direction_ ? actual_pulses : -actual_pulses;
+        int64_t new_abs_pos = move_start_position_ + delta;
+        absolute_position_.store(new_abs_pos, std::memory_order_relaxed);
+        pulse_count_.store(actual_pulses, std::memory_order_relaxed);
+
+        ESP_LOGW(TAG, "updateProfile: STOP DONE - actual_pcnt=%lld, start=%lld, new_abs=%lld",
+                 (long long)actual_pulses, (long long)move_start_position_, (long long)new_abs_pos);
+
+        // Update stable reference for background position calculation (NO RACE)
+        last_completed_position_ = new_abs_pos;
+        int count_hw = 0;
+        pcnt_unit_get_count(pcnt_unit_, &count_hw);
+        int32_t overflows_hw = overflow_count_.load(std::memory_order_relaxed);
+        pcnt_at_last_completion_ = count_hw + (overflows_hw * PCNT_HIGH_LIMIT);
+        ESP_LOGW(TAG, "DEBUG: Updated stable reference (STOPPING) - last_pos=%lld, pcnt_hw=%ld",
+                 (long long)last_completed_position_, (long)pcnt_at_last_completion_);
+
+        state_.store(McpwmProfileState::IDLE, std::memory_order_release);
+        current_velocity_.store(0.0f, std::memory_order_relaxed);
+
+        // Reset timing for next motion
+        motion_start_time_ = 0;
+
+        // Fire completion callback (stop() initiated the controlled stop)
         notifyCompletion();
         return;
     }
@@ -635,6 +749,12 @@ esp_err_t McpwmPulseGenerator::startMove(int32_t pulses, float max_velocity, flo
     ESP_LOGW(TAG, "DEBUG startMove: pulses=%ld, max_vel=%.1f Hz, accel=%.1f, dir=%s",
              (long)pulses, max_velocity, acceleration, direction_ ? "FWD" : "REV");
 
+    // DEBUG: Read PCNT at entry (planning phase just ended)
+    int count_at_entry = 0;
+    pcnt_unit_get_count(pcnt_unit_, &count_at_entry);
+    ESP_LOGW(TAG, "DEBUG PLANNING: PCNT at startMove entry = %d (end of planning phase)",
+             count_at_entry);
+
     // Set direction via shift register if direction changed
     if (direction_ != last_direction_) {
         // Determine axis from timer_id
@@ -668,19 +788,26 @@ esp_err_t McpwmPulseGenerator::startMove(int32_t pulses, float max_velocity, flo
     profile_.current_pulse = 0;
     profile_.current_velocity = MIN_MOTION_START_FREQ;
 
-    // Clear and restart PCNT (PRIMARY pulse counting mechanism)
-    ESP_LOGW(TAG, "DEBUG startMove: stopping and clearing PCNT");
-    pcnt_unit_stop(pcnt_unit_);
-    pcnt_unit_clear_count(pcnt_unit_);
+    // CRITICAL: Keep PCNT running continuously for accurate position tracking
+    // Read current PCNT count as baseline for this move (don't clear it!)
+    int current_pcnt = 0;
+    pcnt_unit_get_count(pcnt_unit_, &current_pcnt);
+    move_start_pcnt_count_ = current_pcnt;
+    ESP_LOGW(TAG, "DEBUG startMove: PCNT baseline = %ld (continuous counting, never cleared)", (long)move_start_pcnt_count_);
+
+    // Calculate absolute watch point target: current PCNT + relative pulses
+    int32_t watch_point_target = move_start_pcnt_count_ + abs_pulses;
+    ESP_LOGW(TAG, "DEBUG startMove: watch point target = %ld + %ld = %ld (absolute PCNT value)",
+             (long)move_start_pcnt_count_, (long)abs_pulses, (long)watch_point_target);
 
     // GPIO input is permanently enabled during init() - no need to re-enable here.
     // MCPWM timer start/stop does NOT affect GPIO input buffer state (verified ESP-IDF behavior).
     // Removing redundant PIN_INPUT_ENABLE() call to avoid unnecessary 650ms settling delays.
 
-    // Configure PCNT watch point (optional - task polling is primary stop mechanism)
-    // Watch point ISR provides backup but we don't rely on it
-    ESP_LOGW(TAG, "DEBUG startMove: configuring PCNT watch point for %ld pulses", (long)abs_pulses);
-    esp_err_t ret = configurePcntWatchPoint(abs_pulses);
+    // Configure PCNT watch point using absolute target value
+    // Watch point ISR provides backup but task polling is primary stop mechanism
+    ESP_LOGW(TAG, "DEBUG startMove: configuring PCNT watch point for absolute count %ld", (long)watch_point_target);
+    esp_err_t ret = configurePcntWatchPoint(watch_point_target);
     if (ret != ESP_OK) {
         ESP_LOGW(TAG, "PCNT watch point config failed: %s (task polling will handle stop)",
                  esp_err_to_name(ret));
@@ -698,9 +825,27 @@ esp_err_t McpwmPulseGenerator::startMove(int32_t pulses, float max_velocity, flo
         return ret;
     }
 
-    // Start MCPWM timer
+    // Restore generator action to HIGH on timer empty (for pulse generation)
+    // This must be done BEFORE starting the timer
+    ret = mcpwm_generator_set_action_on_timer_event(gen_handle_,
+        MCPWM_GEN_TIMER_EVENT_ACTION(MCPWM_TIMER_DIRECTION_UP, MCPWM_TIMER_EVENT_EMPTY, MCPWM_GEN_ACTION_HIGH));
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to restore generator HIGH action: %s", esp_err_to_name(ret));
+        return ret;
+    }
+    ESP_LOGW(TAG, "DEBUG startMove: Restored generator HIGH action for pulse generation");
+
+    // DEBUG: Check PCNT after restoring HIGH action (PCNT already running continuously)
+    int count_after_high = 0;
+    pcnt_unit_get_count(pcnt_unit_, &count_after_high);
+    ESP_LOGW(TAG, "DEBUG PLANNING: PCNT after HIGH action = %d (continuous counting)", count_after_high);
+
+    // NOTE: PCNT runs continuously (started in init()) - no need to start/stop it
+    // This ensures accurate position tracking across multiple moves
+
+    // Start MCPWM timer - PCNT is already counting
     state_.store(McpwmProfileState::ACCELERATING, std::memory_order_release);
-    ESP_LOGW(TAG, "DEBUG startMove: starting MCPWM timer");
+    ESP_LOGW(TAG, "DEBUG startMove: starting MCPWM timer (PCNT continuously running)");
     ret = mcpwm_timer_start_stop(timer_handle_, MCPWM_TIMER_START_NO_STOP);
     if (ret != ESP_OK) {
         state_.store(McpwmProfileState::IDLE, std::memory_order_release);
@@ -708,11 +853,11 @@ esp_err_t McpwmPulseGenerator::startMove(int32_t pulses, float max_velocity, flo
         return ret;
     }
 
-    // CRITICAL FIX: Start PCNT AFTER MCPWM to avoid counting leftover pulse edges
-    // Wait for MCPWM to generate 2-3 clean pulses before enabling PCNT counting
-    esp_rom_delay_us(10);  // 10µs = 3 periods at 300 Hz
-    pcnt_unit_start(pcnt_unit_);
-    ESP_LOGW(TAG, "DEBUG startMove: PCNT started after MCPWM stabilization");
+    // DEBUG: Check PCNT shortly after MCPWM start
+    esp_rom_delay_us(100);  // 100µs delay to let a few edges occur
+    int count_after_mcpwm = 0;
+    pcnt_unit_get_count(pcnt_unit_, &count_after_mcpwm);
+    ESP_LOGW(TAG, "DEBUG PLANNING: PCNT after MCPWM start = %d (should be ~30 at 300Hz)", count_after_mcpwm);
 
     ESP_LOGW(TAG, "DEBUG startMove: completed successfully");
     return ESP_OK;
@@ -753,6 +898,11 @@ esp_err_t McpwmPulseGenerator::startVelocity(float velocity, float acceleration)
     mode_ = McpwmMotionMode::VELOCITY;
     calculateVelocityProfile(abs_velocity, acceleration);
 
+    // Save starting position for absolute position tracking
+    move_start_position_ = absolute_position_.load(std::memory_order_relaxed);
+    ESP_LOGW(TAG, "DEBUG startVelocity: move_start_position=%lld, direction=%s",
+             (long long)move_start_position_, direction_ ? "FWD" : "REV");
+
     // Reset counters
     pulse_count_.store(0, std::memory_order_relaxed);
     overflow_count_.store(0, std::memory_order_relaxed);
@@ -760,21 +910,33 @@ esp_err_t McpwmPulseGenerator::startVelocity(float velocity, float acceleration)
     profile_.current_pulse = 0;
     profile_.current_velocity = LIMIT_MIN_PULSE_FREQ_HZ;
 
-    // Clear and restart PCNT (no watch point for velocity mode)
-    pcnt_unit_stop(pcnt_unit_);
-    pcnt_unit_clear_count(pcnt_unit_);
+    // CRITICAL: Keep PCNT running continuously for accurate position tracking
+    // Read current PCNT count as baseline for this move (don't clear it!)
+    int current_pcnt = 0;
+    pcnt_unit_get_count(pcnt_unit_, &current_pcnt);
+    move_start_pcnt_count_ = current_pcnt;
+    ESP_LOGW(TAG, "DEBUG startVelocity: PCNT baseline = %ld (continuous counting)", (long)move_start_pcnt_count_);
 
-    // Remove any existing watch points
+    // Remove any existing watch points (no target in velocity mode)
     pcnt_unit_remove_watch_point(pcnt_unit_, PCNT_HIGH_LIMIT);
-
-    pcnt_unit_start(pcnt_unit_);
 
     // Set initial frequency
     setFrequency(LIMIT_MIN_PULSE_FREQ_HZ);
 
+    // Restore generator action to HIGH on timer empty (for pulse generation)
+    esp_err_t ret = mcpwm_generator_set_action_on_timer_event(gen_handle_,
+        MCPWM_GEN_TIMER_EVENT_ACTION(MCPWM_TIMER_DIRECTION_UP, MCPWM_TIMER_EVENT_EMPTY, MCPWM_GEN_ACTION_HIGH));
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to restore generator HIGH action: %s", esp_err_to_name(ret));
+        return ret;
+    }
+    ESP_LOGW(TAG, "DEBUG startVelocity: Restored generator HIGH action");
+
+    // NOTE: PCNT runs continuously (started in init()) - no need to start/stop it
+
     // Start MCPWM timer
     state_.store(McpwmProfileState::ACCELERATING, std::memory_order_release);
-    esp_err_t ret = mcpwm_timer_start_stop(timer_handle_, MCPWM_TIMER_START_NO_STOP);
+    ret = mcpwm_timer_start_stop(timer_handle_, MCPWM_TIMER_START_NO_STOP);
     if (ret != ESP_OK) {
         state_.store(McpwmProfileState::IDLE, std::memory_order_release);
         ESP_LOGE(TAG, "Failed to start MCPWM timer: %s", esp_err_to_name(ret));
@@ -832,16 +994,36 @@ void McpwmPulseGenerator::stopImmediate()
         mcpwm_timer_start_stop(timer_handle_, MCPWM_TIMER_STOP_EMPTY);
     }
 
-    // No force level needed - PCNT will start AFTER MCPWM in next move to avoid leftover edges
+    // Reconfigure generator action to force GPIO LOW when timer is at zero
+    esp_err_t ret = mcpwm_generator_set_action_on_timer_event(gen_handle_,
+        MCPWM_GEN_TIMER_EVENT_ACTION(MCPWM_TIMER_DIRECTION_UP, MCPWM_TIMER_EVENT_EMPTY, MCPWM_GEN_ACTION_LOW));
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to set generator LOW action: %s", esp_err_to_name(ret));
+    }
+    ESP_LOGW(TAG, "DEBUG stopImmediate: Reconfigured generator to force GPIO LOW");
 
-    // Read final count
+    // Read final count and update absolute position (CRITICAL for velocity mode!)
     int64_t final_count = readPcntCount();
     pulse_count_.store(final_count, std::memory_order_relaxed);
 
-    // Stop PCNT
-    if (pcnt_unit_) {
-        pcnt_unit_stop(pcnt_unit_);
-    }
+    // Calculate new absolute position based on actual pulses moved
+    int64_t delta = direction_ ? final_count : -final_count;
+    int64_t new_abs_pos = move_start_position_ + delta;
+    absolute_position_.store(new_abs_pos, std::memory_order_relaxed);
+
+    ESP_LOGW(TAG, "stopImmediate: moved %lld pulses, start=%lld, new_abs=%lld",
+             (long long)final_count, (long long)move_start_position_, (long long)new_abs_pos);
+
+    // Update stable reference for background position calculation (NO RACE)
+    last_completed_position_ = new_abs_pos;
+    int count_hw = 0;
+    pcnt_unit_get_count(pcnt_unit_, &count_hw);
+    int32_t overflows_hw = overflow_count_.load(std::memory_order_relaxed);
+    pcnt_at_last_completion_ = count_hw + (overflows_hw * PCNT_HIGH_LIMIT);
+    ESP_LOGW(TAG, "DEBUG: Updated stable reference (stopImmediate) - last_pos=%lld, pcnt_hw=%ld",
+             (long long)last_completed_position_, (long)pcnt_at_last_completion_);
+
+    // NOTE: Keep PCNT running continuously for position tracking (don't stop it)
 
     // Clear state
     state_.store(McpwmProfileState::IDLE, std::memory_order_release);
@@ -862,13 +1044,8 @@ bool McpwmPulseGenerator::isRunning() const
 int64_t McpwmPulseGenerator::getPulseCount() const
 {
     // Return absolute position for IPositionTracker interface
-    // During motion, calculate current absolute position from start + PCNT (with direction)
-    if (state_.load(std::memory_order_acquire) != McpwmProfileState::IDLE) {
-        int64_t pcnt = readPcntCount();
-        int64_t delta = direction_ ? pcnt : -pcnt;
-        return move_start_position_ + delta;
-    }
-    // When idle, return stored absolute position
+    // absolute_position_ is updated continuously every 20ms in updateProfile()
+    // when motor is enabled (PCNT counting), so always return the stored value
     return absolute_position_.load(std::memory_order_relaxed);
 }
 
@@ -1067,9 +1244,14 @@ int64_t McpwmPulseGenerator::readPcntCount() const
         pcnt_unit_get_count(pcnt_unit_, &count);
     }
 
-    // Add overflow contribution
+    // Add overflow contribution for absolute PCNT count
     int32_t overflows = overflow_count_.load(std::memory_order_relaxed);
-    return static_cast<int64_t>(count) + (static_cast<int64_t>(overflows) * PCNT_HIGH_LIMIT);
+    int64_t absolute_pcnt = static_cast<int64_t>(count) + (static_cast<int64_t>(overflows) * PCNT_HIGH_LIMIT);
+
+    // Return relative position for current move (pulses since move start)
+    // PCNT runs continuously, so we subtract the baseline count from move start
+    int64_t relative_pulses = absolute_pcnt - move_start_pcnt_count_;
+    return relative_pulses;
 }
 
 // ============================================================================

@@ -281,7 +281,14 @@ void MotorBase::stopImmediate()
 
 float MotorBase::getPosition() const
 {
-    // Position from pulse count
+    // During motion, query position tracker for real-time position
+    // This ensures POS commands return live position during MOVE/VEL
+    if (isMoving() && position_tracker_) {
+        int64_t live_pulses = position_tracker_->getPosition();
+        return static_cast<float>(live_pulses) / config_.getPulsesPerUnit();
+    }
+
+    // When idle, use cached pulse_count_ (synced from tracker at completion)
     int64_t pulses = pulse_count_.load(std::memory_order_acquire);
     return static_cast<float>(pulses) / config_.getPulsesPerUnit();
 }

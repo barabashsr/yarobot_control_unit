@@ -172,10 +172,10 @@
  * @brief Position update latency target (ms)
  *
  * Maximum time between position updates during motion.
- * PRD requirement: <10ms for real-time position feedback.
- * Used to calculate steps per command.
+ * Used to calculate steps per command and profile update rate.
+ * Position is updated continuously when motor is enabled (PCNT counting).
  */
-#define TIMING_POSITION_UPDATE_LATENCY_MS  10
+#define TIMING_POSITION_UPDATE_LATENCY_MS  20
 
 /**
  * @brief RMT stop latency maximum (µs)

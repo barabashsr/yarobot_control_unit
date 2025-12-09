@@ -1,0 +1,263 @@
+In file included from /Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:15,
+                 from /Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/mcpwm_pulse_gen.cpp:20:
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/mcpwm_pulse_gen.cpp: In member function 'virtual esp_err_t McpwmPulseGenerator::startMove(int32_t, float, float)':
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log_color.h:98:31: error: format '%d' expects argument of type 'int', but argument 6 has type 'int32_t' {aka 'long int'} [-Werror=format=]
+   98 | #define LOG_COLOR_E           ""
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:62:37: note: in expansion of macro 'LOG_COLOR_E'
+   62 | #define LOG_FORMAT(letter, format)  LOG_COLOR_ ## letter #letter " (%" PRIu32 ") %s: " format LOG_RESET_COLOR "\n"
+      |                                     ^~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:164:86: note: in expansion of macro 'LOG_FORMAT'
+  164 |         if (level==ESP_LOG_ERROR )          { esp_log_write(ESP_LOG_ERROR,      tag, LOG_FORMAT(E, format), esp_log_timestamp(), tag __VA_OPT__(,) __VA_ARGS__); } \
+      |                                                                                      ^~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:205:38: note: in expansion of macro 'ESP_LOG_LEVEL'
+  205 |         if (_ESP_LOG_ENABLED(level)) ESP_LOG_LEVEL(level, tag, format, ##__VA_ARGS__); \
+      |                                      ^~~~~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:107:38: note: in expansion of macro 'ESP_LOG_LEVEL_LOCAL'
+  107 | #define ESP_LOGW( tag, format, ... ) ESP_LOG_LEVEL_LOCAL(ESP_LOG_WARN,    tag, format __VA_OPT__(,) __VA_ARGS__)
+      |                                      ^~~~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/mcpwm_pulse_gen.cpp:755:5: note: in expansion of macro 'ESP_LOGW'
+  755 |     ESP_LOGW(TAG, "DEBUG startMove: PCNT baseline = %d (continuous counting, never cleared)", move_start_pcnt_count_);
+      |     ^~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log_color.h:99:31: error: format '%d' expects argument of type 'int', but argument 6 has type 'int32_t' {aka 'long int'} [-Werror=format=]
+   99 | #define LOG_COLOR_W           ""
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:62:37: note: in expansion of macro 'LOG_COLOR_W'
+   62 | #define LOG_FORMAT(letter, format)  LOG_COLOR_ ## letter #letter " (%" PRIu32 ") %s: " format LOG_RESET_COLOR "\n"
+      |                                     ^~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:165:86: note: in expansion of macro 'LOG_FORMAT'
+  165 |         else if (level==ESP_LOG_WARN )      { esp_log_write(ESP_LOG_WARN,       tag, LOG_FORMAT(W, format), esp_log_timestamp(), tag __VA_OPT__(,) __VA_ARGS__); } \
+      |                                                                                      ^~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:205:38: note: in expansion of macro 'ESP_LOG_LEVEL'
+  205 |         if (_ESP_LOG_ENABLED(level)) ESP_LOG_LEVEL(level, tag, format, ##__VA_ARGS__); \
+      |                                      ^~~~~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:107:38: note: in expansion of macro 'ESP_LOG_LEVEL_LOCAL'
+  107 | #define ESP_LOGW( tag, format, ... ) ESP_LOG_LEVEL_LOCAL(ESP_LOG_WARN,    tag, format __VA_OPT__(,) __VA_ARGS__)
+      |                                      ^~~~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/mcpwm_pulse_gen.cpp:755:5: note: in expansion of macro 'ESP_LOGW'
+  755 |     ESP_LOGW(TAG, "DEBUG startMove: PCNT baseline = %d (continuous counting, never cleared)", move_start_pcnt_count_);
+      |     ^~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log_color.h:101:31: error: format '%d' expects argument of type 'int', but argument 6 has type 'int32_t' {aka 'long int'} [-Werror=format=]
+  101 | #define LOG_COLOR_D           ""
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:62:37: note: in expansion of macro 'LOG_COLOR_D'
+   62 | #define LOG_FORMAT(letter, format)  LOG_COLOR_ ## letter #letter " (%" PRIu32 ") %s: " format LOG_RESET_COLOR "\n"
+      |                                     ^~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:166:86: note: in expansion of macro 'LOG_FORMAT'
+  166 |         else if (level==ESP_LOG_DEBUG )     { esp_log_write(ESP_LOG_DEBUG,      tag, LOG_FORMAT(D, format), esp_log_timestamp(), tag __VA_OPT__(,) __VA_ARGS__); } \
+      |                                                                                      ^~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:205:38: note: in expansion of macro 'ESP_LOG_LEVEL'
+  205 |         if (_ESP_LOG_ENABLED(level)) ESP_LOG_LEVEL(level, tag, format, ##__VA_ARGS__); \
+      |                                      ^~~~~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:107:38: note: in expansion of macro 'ESP_LOG_LEVEL_LOCAL'
+  107 | #define ESP_LOGW( tag, format, ... ) ESP_LOG_LEVEL_LOCAL(ESP_LOG_WARN,    tag, format __VA_OPT__(,) __VA_ARGS__)
+      |                                      ^~~~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/mcpwm_pulse_gen.cpp:755:5: note: in expansion of macro 'ESP_LOGW'
+  755 |     ESP_LOGW(TAG, "DEBUG startMove: PCNT baseline = %d (continuous counting, never cleared)", move_start_pcnt_count_);
+      |     ^~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log_color.h:102:31: error: format '%d' expects argument of type 'int', but argument 6 has type 'int32_t' {aka 'long int'} [-Werror=format=]
+  102 | #define LOG_COLOR_V           ""
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:62:37: note: in expansion of macro 'LOG_COLOR_V'
+   62 | #define LOG_FORMAT(letter, format)  LOG_COLOR_ ## letter #letter " (%" PRIu32 ") %s: " format LOG_RESET_COLOR "\n"
+      |                                     ^~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:167:86: note: in expansion of macro 'LOG_FORMAT'
+  167 |         else if (level==ESP_LOG_VERBOSE )   { esp_log_write(ESP_LOG_VERBOSE,    tag, LOG_FORMAT(V, format), esp_log_timestamp(), tag __VA_OPT__(,) __VA_ARGS__); } \
+      |                                                                                      ^~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:205:38: note: in expansion of macro 'ESP_LOG_LEVEL'
+  205 |         if (_ESP_LOG_ENABLED(level)) ESP_LOG_LEVEL(level, tag, format, ##__VA_ARGS__); \
+      |                                      ^~~~~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:107:38: note: in expansion of macro 'ESP_LOG_LEVEL_LOCAL'
+  107 | #define ESP_LOGW( tag, format, ... ) ESP_LOG_LEVEL_LOCAL(ESP_LOG_WARN,    tag, format __VA_OPT__(,) __VA_ARGS__)
+      |                                      ^~~~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/mcpwm_pulse_gen.cpp:755:5: note: in expansion of macro 'ESP_LOGW'
+  755 |     ESP_LOGW(TAG, "DEBUG startMove: PCNT baseline = %d (continuous counting, never cleared)", move_start_pcnt_count_);
+      |     ^~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log_color.h:100:31: error: format '%d' expects argument of type 'int', but argument 6 has type 'int32_t' {aka 'long int'} [-Werror=format=]
+  100 | #define LOG_COLOR_I           ""
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:62:37: note: in expansion of macro 'LOG_COLOR_I'
+   62 | #define LOG_FORMAT(letter, format)  LOG_COLOR_ ## letter #letter " (%" PRIu32 ") %s: " format LOG_RESET_COLOR "\n"
+      |                                     ^~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:168:86: note: in expansion of macro 'LOG_FORMAT'
+  168 |         else                                { esp_log_write(ESP_LOG_INFO,       tag, LOG_FORMAT(I, format), esp_log_timestamp(), tag __VA_OPT__(,) __VA_ARGS__); } \
+      |                                                                                      ^~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:205:38: note: in expansion of macro 'ESP_LOG_LEVEL'
+  205 |         if (_ESP_LOG_ENABLED(level)) ESP_LOG_LEVEL(level, tag, format, ##__VA_ARGS__); \
+      |                                      ^~~~~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:107:38: note: in expansion of macro 'ESP_LOG_LEVEL_LOCAL'
+  107 | #define ESP_LOGW( tag, format, ... ) ESP_LOG_LEVEL_LOCAL(ESP_LOG_WARN,    tag, format __VA_OPT__(,) __VA_ARGS__)
+      |                                      ^~~~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/mcpwm_pulse_gen.cpp:755:5: note: in expansion of macro 'ESP_LOGW'
+  755 |     ESP_LOGW(TAG, "DEBUG startMove: PCNT baseline = %d (continuous counting, never cleared)", move_start_pcnt_count_);
+      |     ^~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log_color.h:98:31: error: format '%d' expects argument of type 'int', but argument 6 has type 'int32_t' {aka 'long int'} [-Werror=format=]
+   98 | #define LOG_COLOR_E           ""
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:62:37: note: in expansion of macro 'LOG_COLOR_E'
+   62 | #define LOG_FORMAT(letter, format)  LOG_COLOR_ ## letter #letter " (%" PRIu32 ") %s: " format LOG_RESET_COLOR "\n"
+      |                                     ^~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:164:86: note: in expansion of macro 'LOG_FORMAT'
+  164 |         if (level==ESP_LOG_ERROR )          { esp_log_write(ESP_LOG_ERROR,      tag, LOG_FORMAT(E, format), esp_log_timestamp(), tag __VA_OPT__(,) __VA_ARGS__); } \
+      |                                                                                      ^~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:205:38: note: in expansion of macro 'ESP_LOG_LEVEL'
+  205 |         if (_ESP_LOG_ENABLED(level)) ESP_LOG_LEVEL(level, tag, format, ##__VA_ARGS__); \
+      |                                      ^~~~~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:107:38: note: in expansion of macro 'ESP_LOG_LEVEL_LOCAL'
+  107 | #define ESP_LOGW( tag, format, ... ) ESP_LOG_LEVEL_LOCAL(ESP_LOG_WARN,    tag, format __VA_OPT__(,) __VA_ARGS__)
+      |                                      ^~~~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/mcpwm_pulse_gen.cpp:759:5: note: in expansion of macro 'ESP_LOGW'
+  759 |     ESP_LOGW(TAG, "DEBUG startMove: watch point target = %d + %ld = %ld (absolute PCNT value)",
+      |     ^~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log_color.h:99:31: error: format '%d' expects argument of type 'int', but argument 6 has type 'int32_t' {aka 'long int'} [-Werror=format=]
+   99 | #define LOG_COLOR_W           ""
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:62:37: note: in expansion of macro 'LOG_COLOR_W'
+   62 | #define LOG_FORMAT(letter, format)  LOG_COLOR_ ## letter #letter " (%" PRIu32 ") %s: " format LOG_RESET_COLOR "\n"
+      |                                     ^~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:165:86: note: in expansion of macro 'LOG_FORMAT'
+  165 |         else if (level==ESP_LOG_WARN )      { esp_log_write(ESP_LOG_WARN,       tag, LOG_FORMAT(W, format), esp_log_timestamp(), tag __VA_OPT__(,) __VA_ARGS__); } \
+      |                                                                                      ^~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:205:38: note: in expansion of macro 'ESP_LOG_LEVEL'
+  205 |         if (_ESP_LOG_ENABLED(level)) ESP_LOG_LEVEL(level, tag, format, ##__VA_ARGS__); \
+      |                                      ^~~~~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:107:38: note: in expansion of macro 'ESP_LOG_LEVEL_LOCAL'
+  107 | #define ESP_LOGW( tag, format, ... ) ESP_LOG_LEVEL_LOCAL(ESP_LOG_WARN,    tag, format __VA_OPT__(,) __VA_ARGS__)
+      |                                      ^~~~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/mcpwm_pulse_gen.cpp:759:5: note: in expansion of macro 'ESP_LOGW'
+  759 |     ESP_LOGW(TAG, "DEBUG startMove: watch point target = %d + %ld = %ld (absolute PCNT value)",
+      |     ^~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log_color.h:101:31: error: format '%d' expects argument of type 'int', but argument 6 has type 'int32_t' {aka 'long int'} [-Werror=format=]
+  101 | #define LOG_COLOR_D           ""
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:62:37: note: in expansion of macro 'LOG_COLOR_D'
+   62 | #define LOG_FORMAT(letter, format)  LOG_COLOR_ ## letter #letter " (%" PRIu32 ") %s: " format LOG_RESET_COLOR "\n"
+      |                                     ^~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:166:86: note: in expansion of macro 'LOG_FORMAT'
+  166 |         else if (level==ESP_LOG_DEBUG )     { esp_log_write(ESP_LOG_DEBUG,      tag, LOG_FORMAT(D, format), esp_log_timestamp(), tag __VA_OPT__(,) __VA_ARGS__); } \
+      |                                                                                      ^~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:205:38: note: in expansion of macro 'ESP_LOG_LEVEL'
+  205 |         if (_ESP_LOG_ENABLED(level)) ESP_LOG_LEVEL(level, tag, format, ##__VA_ARGS__); \
+      |                                      ^~~~~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:107:38: note: in expansion of macro 'ESP_LOG_LEVEL_LOCAL'
+  107 | #define ESP_LOGW( tag, format, ... ) ESP_LOG_LEVEL_LOCAL(ESP_LOG_WARN,    tag, format __VA_OPT__(,) __VA_ARGS__)
+      |                                      ^~~~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/mcpwm_pulse_gen.cpp:759:5: note: in expansion of macro 'ESP_LOGW'
+  759 |     ESP_LOGW(TAG, "DEBUG startMove: watch point target = %d + %ld = %ld (absolute PCNT value)",
+      |     ^~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log_color.h:102:31: error: format '%d' expects argument of type 'int', but argument 6 has type 'int32_t' {aka 'long int'} [-Werror=format=]
+  102 | #define LOG_COLOR_V           ""
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:62:37: note: in expansion of macro 'LOG_COLOR_V'
+   62 | #define LOG_FORMAT(letter, format)  LOG_COLOR_ ## letter #letter " (%" PRIu32 ") %s: " format LOG_RESET_COLOR "\n"
+      |                                     ^~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:167:86: note: in expansion of macro 'LOG_FORMAT'
+  167 |         else if (level==ESP_LOG_VERBOSE )   { esp_log_write(ESP_LOG_VERBOSE,    tag, LOG_FORMAT(V, format), esp_log_timestamp(), tag __VA_OPT__(,) __VA_ARGS__); } \
+      |                                                                                      ^~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:205:38: note: in expansion of macro 'ESP_LOG_LEVEL'
+  205 |         if (_ESP_LOG_ENABLED(level)) ESP_LOG_LEVEL(level, tag, format, ##__VA_ARGS__); \
+      |                                      ^~~~~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:107:38: note: in expansion of macro 'ESP_LOG_LEVEL_LOCAL'
+  107 | #define ESP_LOGW( tag, format, ... ) ESP_LOG_LEVEL_LOCAL(ESP_LOG_WARN,    tag, format __VA_OPT__(,) __VA_ARGS__)
+      |                                      ^~~~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/mcpwm_pulse_gen.cpp:759:5: note: in expansion of macro 'ESP_LOGW'
+  759 |     ESP_LOGW(TAG, "DEBUG startMove: watch point target = %d + %ld = %ld (absolute PCNT value)",
+      |     ^~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log_color.h:100:31: error: format '%d' expects argument of type 'int', but argument 6 has type 'int32_t' {aka 'long int'} [-Werror=format=]
+  100 | #define LOG_COLOR_I           ""
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:62:37: note: in expansion of macro 'LOG_COLOR_I'
+   62 | #define LOG_FORMAT(letter, format)  LOG_COLOR_ ## letter #letter " (%" PRIu32 ") %s: " format LOG_RESET_COLOR "\n"
+      |                                     ^~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:168:86: note: in expansion of macro 'LOG_FORMAT'
+  168 |         else                                { esp_log_write(ESP_LOG_INFO,       tag, LOG_FORMAT(I, format), esp_log_timestamp(), tag __VA_OPT__(,) __VA_ARGS__); } \
+      |                                                                                      ^~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:205:38: note: in expansion of macro 'ESP_LOG_LEVEL'
+  205 |         if (_ESP_LOG_ENABLED(level)) ESP_LOG_LEVEL(level, tag, format, ##__VA_ARGS__); \
+      |                                      ^~~~~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:107:38: note: in expansion of macro 'ESP_LOG_LEVEL_LOCAL'
+  107 | #define ESP_LOGW( tag, format, ... ) ESP_LOG_LEVEL_LOCAL(ESP_LOG_WARN,    tag, format __VA_OPT__(,) __VA_ARGS__)
+      |                                      ^~~~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/mcpwm_pulse_gen.cpp:759:5: note: in expansion of macro 'ESP_LOGW'
+  759 |     ESP_LOGW(TAG, "DEBUG startMove: watch point target = %d + %ld = %ld (absolute PCNT value)",
+      |     ^~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/mcpwm_pulse_gen.cpp: In member function 'virtual esp_err_t McpwmPulseGenerator::startVelocity(float, float)':
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log_color.h:98:31: error: format '%d' expects argument of type 'int', but argument 6 has type 'int32_t' {aka 'long int'} [-Werror=format=]
+   98 | #define LOG_COLOR_E           ""
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:62:37: note: in expansion of macro 'LOG_COLOR_E'
+   62 | #define LOG_FORMAT(letter, format)  LOG_COLOR_ ## letter #letter " (%" PRIu32 ") %s: " format LOG_RESET_COLOR "\n"
+      |                                     ^~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:164:86: note: in expansion of macro 'LOG_FORMAT'
+  164 |         if (level==ESP_LOG_ERROR )          { esp_log_write(ESP_LOG_ERROR,      tag, LOG_FORMAT(E, format), esp_log_timestamp(), tag __VA_OPT__(,) __VA_ARGS__); } \
+      |                                                                                      ^~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:205:38: note: in expansion of macro 'ESP_LOG_LEVEL'
+  205 |         if (_ESP_LOG_ENABLED(level)) ESP_LOG_LEVEL(level, tag, format, ##__VA_ARGS__); \
+      |                                      ^~~~~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:107:38: note: in expansion of macro 'ESP_LOG_LEVEL_LOCAL'
+  107 | #define ESP_LOGW( tag, format, ... ) ESP_LOG_LEVEL_LOCAL(ESP_LOG_WARN,    tag, format __VA_OPT__(,) __VA_ARGS__)
+      |                                      ^~~~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/mcpwm_pulse_gen.cpp:872:5: note: in expansion of macro 'ESP_LOGW'
+  872 |     ESP_LOGW(TAG, "DEBUG startVelocity: PCNT baseline = %d (continuous counting)", move_start_pcnt_count_);
+      |     ^~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log_color.h:99:31: error: format '%d' expects argument of type 'int', but argument 6 has type 'int32_t' {aka 'long int'} [-Werror=format=]
+   99 | #define LOG_COLOR_W           ""
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:62:37: note: in expansion of macro 'LOG_COLOR_W'
+   62 | #define LOG_FORMAT(letter, format)  LOG_COLOR_ ## letter #letter " (%" PRIu32 ") %s: " format LOG_RESET_COLOR "\n"
+      |                                     ^~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:165:86: note: in expansion of macro 'LOG_FORMAT'
+  165 |         else if (level==ESP_LOG_WARN )      { esp_log_write(ESP_LOG_WARN,       tag, LOG_FORMAT(W, format), esp_log_timestamp(), tag __VA_OPT__(,) __VA_ARGS__); } \
+      |                                                                                      ^~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:205:38: note: in expansion of macro 'ESP_LOG_LEVEL'
+  205 |         if (_ESP_LOG_ENABLED(level)) ESP_LOG_LEVEL(level, tag, format, ##__VA_ARGS__); \
+      |                                      ^~~~~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:107:38: note: in expansion of macro 'ESP_LOG_LEVEL_LOCAL'
+  107 | #define ESP_LOGW( tag, format, ... ) ESP_LOG_LEVEL_LOCAL(ESP_LOG_WARN,    tag, format __VA_OPT__(,) __VA_ARGS__)
+      |                                      ^~~~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/mcpwm_pulse_gen.cpp:872:5: note: in expansion of macro 'ESP_LOGW'
+  872 |     ESP_LOGW(TAG, "DEBUG startVelocity: PCNT baseline = %d (continuous counting)", move_start_pcnt_count_);
+      |     ^~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log_color.h:101:31: error: format '%d' expects argument of type 'int', but argument 6 has type 'int32_t' {aka 'long int'} [-Werror=format=]
+  101 | #define LOG_COLOR_D           ""
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:62:37: note: in expansion of macro 'LOG_COLOR_D'
+   62 | #define LOG_FORMAT(letter, format)  LOG_COLOR_ ## letter #letter " (%" PRIu32 ") %s: " format LOG_RESET_COLOR "\n"
+      |                                     ^~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:166:86: note: in expansion of macro 'LOG_FORMAT'
+  166 |         else if (level==ESP_LOG_DEBUG )     { esp_log_write(ESP_LOG_DEBUG,      tag, LOG_FORMAT(D, format), esp_log_timestamp(), tag __VA_OPT__(,) __VA_ARGS__); } \
+      |                                                                                      ^~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:205:38: note: in expansion of macro 'ESP_LOG_LEVEL'
+  205 |         if (_ESP_LOG_ENABLED(level)) ESP_LOG_LEVEL(level, tag, format, ##__VA_ARGS__); \
+      |                                      ^~~~~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:107:38: note: in expansion of macro 'ESP_LOG_LEVEL_LOCAL'
+  107 | #define ESP_LOGW( tag, format, ... ) ESP_LOG_LEVEL_LOCAL(ESP_LOG_WARN,    tag, format __VA_OPT__(,) __VA_ARGS__)
+      |                                      ^~~~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/mcpwm_pulse_gen.cpp:872:5: note: in expansion of macro 'ESP_LOGW'
+  872 |     ESP_LOGW(TAG, "DEBUG startVelocity: PCNT baseline = %d (continuous counting)", move_start_pcnt_count_);
+      |     ^~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log_color.h:102:31: error: format '%d' expects argument of type 'int', but argument 6 has type 'int32_t' {aka 'long int'} [-Werror=format=]
+  102 | #define LOG_COLOR_V           ""
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:62:37: note: in expansion of macro 'LOG_COLOR_V'
+   62 | #define LOG_FORMAT(letter, format)  LOG_COLOR_ ## letter #letter " (%" PRIu32 ") %s: " format LOG_RESET_COLOR "\n"
+      |                                     ^~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:167:86: note: in expansion of macro 'LOG_FORMAT'
+  167 |         else if (level==ESP_LOG_VERBOSE )   { esp_log_write(ESP_LOG_VERBOSE,    tag, LOG_FORMAT(V, format), esp_log_timestamp(), tag __VA_OPT__(,) __VA_ARGS__); } \
+      |                                                                                      ^~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:205:38: note: in expansion of macro 'ESP_LOG_LEVEL'
+  205 |         if (_ESP_LOG_ENABLED(level)) ESP_LOG_LEVEL(level, tag, format, ##__VA_ARGS__); \
+      |                                      ^~~~~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:107:38: note: in expansion of macro 'ESP_LOG_LEVEL_LOCAL'
+  107 | #define ESP_LOGW( tag, format, ... ) ESP_LOG_LEVEL_LOCAL(ESP_LOG_WARN,    tag, format __VA_OPT__(,) __VA_ARGS__)
+      |                                      ^~~~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/mcpwm_pulse_gen.cpp:872:5: note: in expansion of macro 'ESP_LOGW'
+  872 |     ESP_LOGW(TAG, "DEBUG startVelocity: PCNT baseline = %d (continuous counting)", move_start_pcnt_count_);
+      |     ^~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log_color.h:100:31: error: format '%d' expects argument of type 'int', but argument 6 has type 'int32_t' {aka 'long int'} [-Werror=format=]
+  100 | #define LOG_COLOR_I           ""
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:62:37: note: in expansion of macro 'LOG_COLOR_I'
+   62 | #define LOG_FORMAT(letter, format)  LOG_COLOR_ ## letter #letter " (%" PRIu32 ") %s: " format LOG_RESET_COLOR "\n"
+      |                                     ^~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:168:86: note: in expansion of macro 'LOG_FORMAT'
+  168 |         else                                { esp_log_write(ESP_LOG_INFO,       tag, LOG_FORMAT(I, format), esp_log_timestamp(), tag __VA_OPT__(,) __VA_ARGS__); } \
+      |                                                                                      ^~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:205:38: note: in expansion of macro 'ESP_LOG_LEVEL'
+  205 |         if (_ESP_LOG_ENABLED(level)) ESP_LOG_LEVEL(level, tag, format, ##__VA_ARGS__); \
+      |                                      ^~~~~~~~~~~~~
+/Users/sergeybarabash/robo/esp/v5.4/esp-idf/components/log/include/esp_log.h:107:38: note: in expansion of macro 'ESP_LOG_LEVEL_LOCAL'
+  107 | #define ESP_LOGW( tag, format, ... ) ESP_LOG_LEVEL_LOCAL(ESP_LOG_WARN,    tag, format __VA_OPT__(,) __VA_ARGS__)
+      |                                      ^~~~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/mcpwm_pulse_gen.cpp:872:5: note: in expansion of macro 'ESP_LOGW'
+  872 |     ESP_LOGW(TAG, "DEBUG startVelocity: PCNT baseline = %d (continuous counting)", move_start_pcnt_count_);
+      |     ^~~~~~~~
+cc1plus: all warnings being treated as errors
+make[2]: *** [esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/mcpwm_pulse_gen.cpp.obj] Error 1
+make[1]: *** [esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/all] Error 2
+make: *** [all] Error 2
