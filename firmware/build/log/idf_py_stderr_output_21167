@@ -1,0 +1,14 @@
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/mcpwm_pulse_gen.cpp: In constructor 'McpwmPulseGenerator::McpwmPulseGenerator(int, int, int)':
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/mcpwm_pulse_gen.cpp:83:7: error: class 'McpwmPulseGenerator' does not have any field named 'profile_task_handle_'
+   83 |     , profile_task_handle_(nullptr)
+      |       ^~~~~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/mcpwm_pulse_gen.cpp:84:7: error: class 'McpwmPulseGenerator' does not have any field named 'task_should_exit_'
+   84 |     , task_should_exit_(false)
+      |       ^~~~~~~~~~~~~~~~~
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/mcpwm_pulse_gen.cpp: In member function 'bool McpwmPulseGenerator::handlePcntReachISR(const pcnt_watch_event_data_t*)':
+/Users/sergeybarabash/robo/yarobot_control_unit/firmware/components/pulse_gen/mcpwm_pulse_gen.cpp:1413:9: error: 'profile_task_handle_' was not declared in this scope
+ 1413 |     if (profile_task_handle_) {
+      |         ^~~~~~~~~~~~~~~~~~~~
+make[2]: *** [esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/mcpwm_pulse_gen.cpp.obj] Error 1
+make[1]: *** [esp-idf/pulse_gen/CMakeFiles/__idf_pulse_gen.dir/all] Error 2
+make: *** [all] Error 2

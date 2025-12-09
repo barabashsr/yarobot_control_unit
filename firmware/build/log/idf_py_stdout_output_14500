@@ -1,0 +1,2174 @@
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x8 (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x15a0
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xd20
+load:0x403cb700,len:0x2ee4
+entry 0x403c8928
+[0;32mI (27) boot: ESP-IDF v5.4-dirty 2nd stage bootloader[0m
+[0;32mI (27) boot: compile time Dec  6 2025 20:10:08[0m
+[0;32mI (27) boot: Multicore bootloader[0m
+[0;32mI (27) boot: chip revision: v0.2[0m
+[0;32mI (30) boot: efuse block revision: v1.3[0m
+[0;32mI (34) boot.esp32s3: Boot SPI Speed : 80MHz[0m
+[0;32mI (38) boot.esp32s3: SPI Mode       : DIO[0m
+[0;32mI (41) boot.esp32s3: SPI Flash Size : 16MB[0m
+[0;32mI (45) boot: Enabling RNG early entropy source...[0m
+[0;32mI (50) boot: Partition Table:[0m
+[0;32mI (52) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (59) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (65) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (72) boot:  2 factory          factory app      00 00 00010000 00300000[0m
+[0;32mI (78) boot:  3 storage          Unknown data     01 82 00310000 00100000[0m
+[0;32mI (85) boot: End of partition table[0m
+[0;32mI (88) esp_image: segment 0: paddr=00010020 vaddr=3c040020 size=17a48h ( 96840) map[0m
+[0;32mI (112) esp_image: segment 1: paddr=00027a70 vaddr=3fc96e00 size=03738h ( 14136) load[0m
+[0;32mI (116) esp_image: segment 2: paddr=0002b1b0 vaddr=40374000 size=04e68h ( 20072) load[0m
+[0;32mI (121) esp_image: segment 3: paddr=00030020 vaddr=42000020 size=3d978h (252280) map[0m
+[0;32mI (168) esp_image: segment 4: paddr=0006d9a0 vaddr=40378e68 size=0dedch ( 57052) load[0m
+[0;32mI (181) esp_image: segment 5: paddr=0007b884 vaddr=600fe100 size=0001ch (    28) load[0m
+[0;32mI (189) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (189) boot: Disabling RNG early entropy source...[0m
+[0;32mI (199) octal_psram: vendor id    : 0x0d (AP)[0m
+[0;32mI (199) octal_psram: dev id       : 0x02 (generation 3)[0m
+[0;32mI (199) octal_psram: density      : 0x03 (64 Mbit)[0m
+[0;32mI (201) octal_psram: good-die     : 0x01 (Pass)[0m
+[0;32mI (205) octal_psram: Latency      : 0x01 (Fixed)[0m
+[0;32mI (210) octal_psram: VCC          : 0x01 (3V)[0m
+[0;32mI (214) octal_psram: SRF          : 0x01 (Fast Refresh)[0m
+[0;32mI (219) octal_psram: BurstType    : 0x01 (Hybrid Wrap)[0m
+[0;32mI (224) octal_psram: BurstLen     : 0x01 (32 Byte)[0m
+[0;32mI (228) octal_psram: Readlatency  : 0x02 (10 cycles@Fixed)[0m
+[0;32mI (233) octal_psram: DriveStrength: 0x00 (1/1)[0m
+[0;32mI (238) esp_psram: Found 8MB PSRAM device[0m
+[0;32mI (241) esp_psram: Speed: 40MHz[0m
+[0;32mI (247) cpu_start: Multicore app[0m
+[0;32mI (978) esp_psram: SPI SRAM memory test OK[0m
+[0;32mI (987) cpu_start: Pro cpu start user code[0m
+[0;32mI (987) cpu_start: cpu freq: 240000000 Hz[0m
+[0;32mI (987) app_init: Application information:[0m
+[0;32mI (987) app_init: Project name:     yarobot_control_unit[0m
+[0;32mI (992) app_init: App version:      d717750-dirty[0m
+[0;32mI (997) app_init: Compile time:     Dec  9 2025 11:03:04[0m
+[0;32mI (1002) app_init: ELF file SHA256:  7ff29e938...[0m
+[0;32mI (1006) app_init: ESP-IDF:          v5.4-dirty[0m
+[0;32mI (1010) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (1014) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (1018) efuse_init: Chip rev:         v0.2[0m
+[0;32mI (1022) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (1029) heap_init: At 3FC9C808 len 0004CF08 (307 KiB): RAM[0m
+[0;32mI (1034) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM[0m
+[0;32mI (1039) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM[0m
+[0;32mI (1044) heap_init: At 600FE11C len 00001ECC (7 KiB): RTCRAM[0m
+[0;32mI (1050) esp_psram: Adding pool of 8192K of PSRAM memory to heap allocator[0m
+[0;32mI (1057) spi_flash: detected chip: boya[0m
+[0;32mI (1060) spi_flash: flash io: dio[0m
+[0;32mI (1063) sleep_gpio: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (1069) sleep_gpio: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (1076) main_task: Started on CPU0[0m
+[0;32mI (1079) esp_psram: Reserving pool of 32K of internal memory for DMA/internal allocations[0m
+[0;32mI (1087) main_task: Calling app_main()[0m
+[0;32mI (3090) main: Hello from app_main[0m
+[0;32mI (3090) main: PSRAM detected: 8388608 bytes (8.0 MB)[0m
+[0;32mI (3090) main: Firmware: YAROBOT_CONTROL_UNIT v1.0.0[0m
+[0;32mI (3091) main: Axes: 8 (Servos:5, Steppers:2, Discrete:1)[0m
+[0;32mI (3096) main: GPIO X_STEP: 4, I2C MCP0: 0x20[0m
+[0;32mI (3100) main: Initializing USB CDC interface...[0m
+[0;32mI (3105) usb_cdc: Initializing USB CDC interface[0m
+[0;33mW (3109) tusb_desc: No Device descriptor provided, using default.[0m
+[0;33mW (3115) tusb_desc: No FullSpeed configuration descriptor provided, using default.[0m
+[0;33mW (3122) tusb_desc: No String descriptors provided, using default.[0m
+[0;32mI (3128) tusb_desc: [0m
+┌─────────────────────────────────┐
+│  USB Device Descriptor Summary  │
+├───────────────────┬─────────────┤
+│bDeviceClass       │ 239         │
+├───────────────────┼─────────────┤
+│bDeviceSubClass    │ 2           │
+├───────────────────┼─────────────┤
+│bDeviceProtocol    │ 1           │
+├───────────────────┼─────────────┤
+│bMaxPacketSize0    │ 64          │
+├───────────────────┼─────────────┤
+│idVendor           │ 0x303a      │
+├───────────────────┼─────────────┤
+│idProduct          │ 0x4001      │
+├───────────────────┼─────────────┤
+│bcdDevice          │ 0x100       │
+├───────────────────┼─────────────┤
+│iManufacturer      │ 0x1         │
+├───────────────────┼─────────────┤
+│iProduct           │ 0x2         │
+├───────────────────┼─────────────┤
+│iSerialNumber      │ 0x3         │
+├───────────────────┼─────────────┤
+│bNumConfigurations │ 0x1         │
+└───────────────────┴─────────────┘
+[0;32mI (3295) TinyUSB: TinyUSB Driver installed[0m
+[0;32mI (3299) usb_cdc: USB CDC initialized successfully[0m
+[0;32mI (3303) main: USB CDC initialized successfully[0m
+[0;32mI (3308) main: ========================================[0m
+[0;32mI (3313) main: Hardware Initialization Starting[0m
+[0;32mI (3317) main: ========================================[0m
+[0;32mI (3322) gpio_hal: Initializing GPIO HAL[0m
+[0;32mI (3326) gpio: GPIO[4]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3334) gpio: GPIO[5]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3342) gpio: GPIO[6]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3351) gpio: GPIO[7]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3359) gpio: GPIO[15]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3367) gpio: GPIO[16]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3376) gpio: GPIO[17]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3384) gpio: GPIO[13]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3393) gpio: GPIO[1]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3401) gpio: GPIO[2]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3409) gpio: GPIO[40]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3418) gpio: GPIO[41]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3426) gpio: GPIO[42]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3434) gpio: GPIO[38]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3443) gpio: GPIO[39]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3451) gpio: GPIO[47]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3460) gpio: GPIO[48]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3468) gpio_hal: GPIO HAL initialized successfully[0m
+[0;32mI (3473) i2c_hal: Initializing I2C0: SDA=8, SCL=18, freq=400000 Hz[0m
+[0;32mI (3479) i2c_hal: I2C0 initialized successfully[0m
+[0;32mI (3483) main: MCP23017 #0 (0x20) IODIR_A=0xFF[0m
+[0;32mI (3487) main: MCP23017 #1 (0x21) IODIR_A=0xFF[0m
+[0;32mI (3491) i2c_hal: Initializing I2C1: SDA=14, SCL=21, freq=400000 Hz[0m
+[0;32mI (3498) i2c_hal: I2C1 initialized successfully[0m
+[0;32mI (3529) main: OLED initialized with test pattern[0m
+[0;32mI (3529) i2c_hal: Scanning I2C0 bus...[0m
+[0;32mI (3533) i2c_hal: I2C0: Found device at 0x20[0m
+[0;32mI (3533) i2c_hal: I2C0: Found device at 0x21[0m
+[0;32mI (3546) i2c_hal: I2C0 scan complete: 2 device(s) found[0m
+[0;32mI (3546) main: I2C bus isolation verified: I2C0 still operational[0m
+[0;32mI (3546) spi_hal: Initializing SPI1: MOSI=11, SCLK=12, CS=10[0m
+[0;32mI (3552) gpio: GPIO[9]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3559) spi_hal: SPI initialized successfully, OE pin=9 (disabled)[0m
+[0;32mI (3565) tpic6b595: Initializing TPIC6B595 driver[0m
+[0;32mI (3570) spi_hal: SR outputs ENABLED[0m
+[0;32mI (3573) tpic6b595: TPIC6B595 driver initialized, 40-bit chain ready[0m
+[0;32mI (3579) main: TPIC6B595 shift register initialized (test skipped)[0m
+[0;32mI (3585) main: ========================================[0m
+[0;32mI (3590) main: Hardware Initialization: ALL PASSED[0m
+[0;32mI (3594) main: ========================================[0m
+[0;32mI (3599) main: Creating FreeRTOS tasks...[0m
+[0;32mI (3603) tasks: Task safety started on core 0[0m
+[0;32mI (3607) tasks: Task usb_rx started on core 0[0m
+[0;32mI (3611) tasks: Task usb_tx started on core 0[0m
+[0;32mI (3615) tasks: Task cmd_exec started on core 0[0m
+[0;32mI (3620) tasks: Task i2c_mon started on core 0[0m
+[0;32mI (3624) tasks: Task idle_mon started on core 0[0m
+[0;32mI (3628) tasks: Task motion_X (axis 0) started on core 1[0m
+[0;32mI (3629) tasks: Task motion_B (axis 4) started on core 1[0m
+[0;32mI (3628) tasks: Task motion_Z (axis 2) started on core 1[0m
+[0;32mI (3629) tasks: Task motion_C (axis 5) started on core 1[0m
+[0;32mI (3628) tasks: Task motion_Y (axis 1) started on core 1[0m
+[0;32mI (3629) tasks: Task motion_D (axis 6) started on core 1[0m
+[0;32mI (3628) tasks: Task motion_A (axis 3) started on core 1[0m
+[0;32mI (3629) tasks: Task motion_E (axis 7) started on core 1[0m
+[0;32mI (3628) main: YaRobot Control Unit - All tasks started[0m
+[0;32mI (3668) tasks: Task display started on core 1[0m
+[0;32mI (3673) main_task: Returned from app_main()[0m
+[0;32mI (42252) usb_cdc: USB CDC connected (DTR=1, RTS=1)[0m
+[0;32mI (42311) tasks: USB CDC connection state: connected[0m
+[0;32mI (47960) CMD_EXEC: Initialized with 4 built-in commands[0m
+[0;32mI (47960) EVENT_MGR: Event processor task started[0m
+[0;32mI (47960) EVENT_MGR: Initialized (queue=32, max_subs=8)[0m
+[0;32mI (47963) tasks: Command executor initialized[0m
+[0;32mI (47967) motor_system: ========================================[0m
+[0;32mI (47973) motor_system: Motor System Initialization Starting[0m
+[0;32mI (47978) motor_system: ========================================[0m
+[0;33mW (47984) tpic6b595: Already initialized[0m
+[0;32mI (47988) motor_system: Axis configurations initialized[0m
+[0;32mI (47993) RMT_PULSE: Initializing RMT channel 0 on GPIO 4 (step)[0m
+[0;32mI (47999) RMT_PULSE: RMT channel 0 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (48006) RMT_PULSE: Initializing RMT channel 1 on GPIO 6 (step)[0m
+[0;32mI (48000) RMT_PULSE: Ramp task started for channel 0[0m
+[0;32mI (48012) RMT_PULSE: RMT channel 1 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (48024) RMT_PULSE: Initializing RMT channel 2 on GPIO 7 (step)[0m
+[0;32mI (48017) RMT_PULSE: Ramp task started for channel 1[0m
+[0;32mI (48030) RMT_PULSE: RMT channel 2 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (48042) RMT_PULSE: Initializing RMT channel 3 on GPIO 15 (step)[0m
+[0;32mI (48035) RMT_PULSE: Ramp task started for channel 2[0m
+[0;32mI (48048) RMT_PULSE: RMT channel 3 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (48060) MCPWM_PULSE: Initializing MCPWM timer 0 on GPIO 5 with PCNT unit 0[0m
+[0;32mI (48067) gpio: GPIO[5]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;33mW (48076) MCPWM_PULSE: DEBUG init: MCPWM generator created on GPIO 5 with io_loop_back=true[0m
+[0;32mI (48083) MCPWM_PULSE: GPIO 5 input enabled for PCNT loopback, settling for 700000 µs[0m
+[0;32mI (48053) RMT_PULSE: Ramp task started for channel 3[0m
+[0;32mI (48791) MCPWM_PULSE: GPIO 5 loopback settled and ready[0m
+[0;33mW (48791) MCPWM_PULSE: DEBUG init: Creating PCNT channel on GPIO 5[0m
+[0;32mI (48792) MCPWM_PULSE: PCNT started for continuous position tracking (baseline: 0)[0m
+[0;32mI (48798) MCPWM_PULSE: Profile task started for timer 0[0m
+[0;32mI (48798) MCPWM_PULSE: MCPWM timer 0 with PCNT unit 0 initialized successfully[0m
+[0;32mI (48810) MCPWM_PULSE: Initializing MCPWM timer 1 on GPIO 16 with PCNT unit 1[0m
+[0;32mI (48817) gpio: GPIO[16]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;33mW (48826) MCPWM_PULSE: DEBUG init: MCPWM generator created on GPIO 16 with io_loop_back=true[0m
+[0;32mI (48834) MCPWM_PULSE: GPIO 16 input enabled for PCNT loopback, settling for 700000 µs[0m
+[0;32mI (49541) MCPWM_PULSE: GPIO 16 loopback settled and ready[0m
+[0;33mW (49542) MCPWM_PULSE: DEBUG init: Creating PCNT channel on GPIO 16[0m
+[0;32mI (49542) MCPWM_PULSE: PCNT started for continuous position tracking (baseline: 0)[0m
+[0;32mI (49549) MCPWM_PULSE: MCPWM timer 1 with PCNT unit 1 initialized successfully[0m
+[0;32mI (49549) MCPWM_PULSE: Profile task started for timer 1[0m
+[0;32mI (49556) LEDC_PULSE: Initializing LEDC timer 2, channel 2 on GPIO 17[0m
+[0;32mI (49567) gpio: GPIO[17]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (49575) LEDC_PULSE: Configured GPIO 17 for PCNT internal loopback[0m
+[0;32mI (49582) LEDC_PULSE: LEDC timer 2 initialized successfully[0m
+[0;32mI (49582) LEDC_PULSE: Completion task started for LEDC timer 2[0m
+[0;32mI (49587) motor_system: All pulse generators initialized[0m
+[0;32mI (49597) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (49602) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (49606) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (49611) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (49615) TIME_TRACKER: Time tracker initialized with travel time 1000 ms[0m
+[0;32mI (49622) motor_system: All position trackers initialized[0m
+[0;32mI (49627) motor_system: Pulse generators wired to position trackers[0m
+[0;32mI (49633) motor_system: Motor objects created[0m
+[0;32mI (49637) motor_base: Axis 0 initialized (0.556 pulses/unit)[0m
+[0;32mI (49642) motor_base: Axis 1 initialized (0.556 pulses/unit)[0m
+[0;32mI (49648) motor_base: Axis 2 initialized (0.556 pulses/unit)[0m
+[0;32mI (49653) motor_base: Axis 3 initialized (0.556 pulses/unit)[0m
+[0;32mI (49658) motor_base: Axis 4 initialized (0.556 pulses/unit)[0m
+[0;32mI (49664) motor_base: Axis 5 initialized (0.556 pulses/unit)[0m
+[0;32mI (49669) LEDC_PULSE: setPositionTracker: tracker=0x3fc9b634 (PcntTracker for hardware PCNT)[0m
+[0;32mI (49677) motor_base: Axis 6 initialized (0.556 pulses/unit)[0m
+[0;33mW (49683) TIME_TRACKER: Time tracker already initialized[0m
+[0;32mI (49688) discrete_axis: Axis 7 initialized (discrete actuator, travel time 1000 ms)[0m
+[0;32mI (49695) motor_system: All motor objects initialized[0m
+[0;32mI (49700) MOTION_CTRL: Initialized with 8 axes[0m
+[0;32mI (49704) motor_system: Motion controller initialized with 8 axes[0m
+[0;32mI (49710) MOVE_HDL: Registered MOVE handler[0m
+[0;32mI (49714) MOVR_HDL: Registered MOVR handler[0m
+[0;32mI (49718) EN_HDL: Registered EN handler[0m
+[0;32mI (49721) POS_HDL: Registered POS handler[0m
+[0;32mI (49725) VEL_HDL: Registered VEL handler[0m
+[0;32mI (49729) STOP_HDL: Registered STOP handler[0m
+[0;32mI (49733) motor_system: Command handlers registered (MOVE, MOVR, EN, POS, VEL, STOP)[0m
+[0;32mI (49740) motor_system: ========================================[0m
+[0;32mI (49746) motor_system: Motor System Initialization: SUCCESS[0m
+[0;32mI (49751) motor_system:   Servos: 5 (X, Y, Z, A, B)[0m
+[0;32mI (49756) motor_system:   Steppers: 2 (C, D)[0m
+[0;32mI (49760) motor_system:   Discrete: 1 (E)[0m
+[0;32mI (49764) motor_system: ========================================[0m
+ERROR E001 Invalid command
+[0;32mI (58582) CMD_EXEC: CMD: MODE -[0m
+OK READY
+[0;32mI (63732) CMD_EXEC: CMD: EN Y 1.0000[0m
+[0;32mI (63732) motor_base: Axis 1 enabled[0m
+OK
+[0;32mI (75423) CMD_EXEC: CMD: MOVE Y 180.0000[0m
+[0;33mW (75423) motor_base: DEBUG Axis 1: moveAbsolute(pos=180.0000, vel=1080.0000)[0m
+[0;33mW (75424) motor_base: DEBUG Axis 1: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (75430) motor_base: DEBUG Axis 1: current_pos=0.0000, target_pos=180.0000[0m
+[0;33mW (75436) motor_base: DEBUG Axis 1: setting direction=FWD[0m
+[0;33mW (75442) motor_base: DEBUG Axis 1: pulses_per_unit=0.56, pulses=100, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (75450) motor_base: DEBUG Axis 1: calling pulse_gen_->startMove(pulses=100, freq=600.0, accel=6000.0)[0m
+[0;33mW (75459) MCPWM_PULSE: DEBUG startMove: pulses=100, max_vel=600.0 Hz, accel=6000.0, dir=FWD[0m
+[0;33mW (75467) MCPWM_PULSE: DEBUG PLANNING: PCNT at startMove entry = 0 (end of planning phase)[0m
+[0;33mW (75475) MCPWM_PULSE: DEBUG startMove: profile calculated: accel=29, cruise=42, decel=29, cruise_vel=600.0[0m
+[0;33mW (75485) MCPWM_PULSE: DEBUG startMove: move_start_position=0, direction=FWD[0m
+[0;33mW (75491) MCPWM_PULSE: DEBUG startMove: PCNT baseline = 0 (continuous counting, never cleared)[0m
+[0;33mW (75500) MCPWM_PULSE: DEBUG startMove: watch point target = 0 + 100 = 100 (absolute PCNT value)[0m
+[0;33mW (75508) MCPWM_PULSE: DEBUG startMove: configuring PCNT watch point for absolute count 100[0m
+[0;33mW (75516) MCPWM_PULSE: DEBUG startMove: setting initial freq=300 Hz[0m
+[0;33mW (75522) MCPWM_PULSE: DEBUG startMove: Restored generator HIGH action for pulse generation[0m
+[0;33mW (75530) MCPWM_PULSE: DEBUG PLANNING: PCNT after HIGH action = 0 (continuous counting)[0m
+[0;33mW (75538) MCPWM_PULSE: DEBUG startMove: starting MCPWM timer (PCNT continuously running)[0m
+[0;33mW (75546) MCPWM_PULSE: DEBUG PLANNING: PCNT after MCPWM start = 0 (should be ~30 at 300Hz)[0m
+[0;33mW (75554) MCPWM_PULSE: DEBUG startMove: completed successfully[0m
+[0;33mW (75559) motor_base: DEBUG Axis 1: moveAbsolute completed, state=MOVING[0m
+OK
+[0;33mW (76423) MCPWM_PULSE: updateProfile: STOP - pcnt=101 >= target=100[0m
+[0;33mW (76423) MCPWM_PULSE: DEBUG: Reconfigured generator to force GPIO LOW when stopped[0m
+[0;33mW (76426) MCPWM_PULSE: updateProfile: COMPLETED - actual_pcnt=101, start=0, new_abs=101[0m
+[0;33mW (76433) MCPWM_PULSE: DEBUG: Updated stable reference - last_pos=101, pcnt_hw=101[0m
+[0;33mW (76441) MCPWM_PULSE: DEBUG PLANNING: PCNT after stop = 101 (should equal 101)[0m
+[0;33mW (76448) motor_base: DEBUG Axis 1: onMotionComplete(total_pulses=101)[0m
+[0;33mW (76454) motor_base: DEBUG Axis 1: before sync: pulse_count=0, tracker_pos=101[0m
+[0;33mW (76461) motor_base: DEBUG Axis 1: after sync: pulse_count=101[0m
+[0;33mW (76467) motor_base: Axis 1: motion complete at position 181.8000[0m
+[0;32mI (91586) CMD_EXEC: CMD: MOVE X[0m
+ERROR E003 Invalid parameter
+[0;32mI (95646) CMD_EXEC: CMD: MOVE Y 0.0000[0m
+[0;33mW (95646) motor_base: DEBUG Axis 1: moveAbsolute(pos=0.0000, vel=1080.0000)[0m
+[0;33mW (95646) motor_base: DEBUG Axis 1: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (95652) motor_base: DEBUG Axis 1: current_pos=181.8000, target_pos=0.0000[0m
+[0;33mW (95659) motor_base: DEBUG Axis 1: setting direction=REV[0m
+[0;33mW (95664) motor_base: DEBUG Axis 1: pulses_per_unit=0.56, pulses=101, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (95672) motor_base: DEBUG Axis 1: calling pulse_gen_->startMove(pulses=-101, freq=600.0, accel=6000.0)[0m
+[0;33mW (95682) MCPWM_PULSE: DEBUG startMove: pulses=-101, max_vel=600.0 Hz, accel=6000.0, dir=REV[0m
+[0;33mW (95690) MCPWM_PULSE: DEBUG PLANNING: PCNT at startMove entry = 101 (end of planning phase)[0m
+[0;33mW (95698) MCPWM_PULSE: DEBUG startMove: profile calculated: accel=29, cruise=43, decel=29, cruise_vel=600.0[0m
+[0;33mW (95707) MCPWM_PULSE: DEBUG startMove: move_start_position=101, direction=REV[0m
+[0;33mW (95714) MCPWM_PULSE: DEBUG startMove: PCNT baseline = 101 (continuous counting, never cleared)[0m
+[0;33mW (95723) MCPWM_PULSE: DEBUG startMove: watch point target = 101 + 101 = 202 (absolute PCNT value)[0m
+[0;33mW (95731) MCPWM_PULSE: DEBUG startMove: configuring PCNT watch point for absolute count 202[0m
+[0;33mW (95740) MCPWM_PULSE: DEBUG startMove: setting initial freq=300 Hz[0m
+[0;33mW (95746) MCPWM_PULSE: DEBUG startMove: Restored generator HIGH action for pulse generation[0m
+[0;33mW (95754) MCPWM_PULSE: DEBUG PLANNING: PCNT after HIGH action = 101 (continuous counting)[0m
+[0;33mW (95761) MCPWM_PULSE: DEBUG startMove: starting MCPWM timer (PCNT continuously running)[0m
+[0;33mW (95769) MCPWM_PULSE: DEBUG PLANNING: PCNT after MCPWM start = 101 (should be ~30 at 300Hz)[0m
+[0;33mW (95777) MCPWM_PULSE: DEBUG startMove: completed successfully[0m
+[0;33mW (95783) motor_base: DEBUG Axis 1: moveAbsolute completed, state=MOVING[0m
+OK
+[0;33mW (95852) MCPWM_PULSE: DEBUG updateProfile: pcnt=6, target=101, freq=402.5, state=1[0m
+[0;33mW (96633) MCPWM_PULSE: updateProfile: STOP - pcnt=101 >= target=101[0m
+[0;33mW (96633) MCPWM_PULSE: DEBUG: Reconfigured generator to force GPIO LOW when stopped[0m
+[0;33mW (96635) MCPWM_PULSE: updateProfile: COMPLETED - actual_pcnt=101, start=101, new_abs=0[0m
+[0;33mW (96643) MCPWM_PULSE: DEBUG: Updated stable reference - last_pos=0, pcnt_hw=202[0m
+[0;33mW (96650) MCPWM_PULSE: DEBUG PLANNING: PCNT after stop = 202 (should equal 101)[0m
+[0;33mW (96657) motor_base: DEBUG Axis 1: onMotionComplete(total_pulses=0)[0m
+[0;33mW (96663) motor_base: DEBUG Axis 1: before sync: pulse_count=101, tracker_pos=0[0m
+[0;33mW (96670) motor_base: DEBUG Axis 1: after sync: pulse_count=0[0m
+[0;33mW (96676) motor_base: Axis 1: motion complete at position 0.0000[0m
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x8 (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x15a0
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xd20
+load:0x403cb700,len:0x2ee4
+entry 0x403c8928
+[0;32mI (27) boot: ESP-IDF v5.4-dirty 2nd stage bootloader[0m
+[0;32mI (27) boot: compile time Dec  6 2025 20:10:08[0m
+[0;32mI (27) boot: Multicore bootloader[0m
+[0;32mI (27) boot: chip revision: v0.2[0m
+[0;32mI (30) boot: efuse block revision: v1.3[0m
+[0;32mI (34) boot.esp32s3: Boot SPI Speed : 80MHz[0m
+[0;32mI (38) boot.esp32s3: SPI Mode       : DIO[0m
+[0;32mI (41) boot.esp32s3: SPI Flash Size : 16MB[0m
+[0;32mI (45) boot: Enabling RNG early entropy source...[0m
+[0;32mI (50) boot: Partition Table:[0m
+[0;32mI (52) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (59) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (65) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (72) boot:  2 factory          factory app      00 00 00010000 00300000[0m
+[0;32mI (78) boot:  3 storage          Unknown data     01 82 00310000 00100000[0m
+[0;32mI (85) boot: End of partition table[0m
+[0;32mI (88) esp_image: segment 0: paddr=00010020 vaddr=3c040020 size=17a48h ( 96840) map[0m
+[0;32mI (112) esp_image: segment 1: paddr=00027a70 vaddr=3fc96e00 size=03738h ( 14136) load[0m
+[0;32mI (116) esp_image: segment 2: paddr=0002b1b0 vaddr=40374000 size=04e68h ( 20072) load[0m
+[0;32mI (121) esp_image: segment 3: paddr=00030020 vaddr=42000020 size=3d978h (252280) map[0m
+[0;32mI (168) esp_image: segment 4: paddr=0006d9a0 vaddr=40378e68 size=0dedch ( 57052) load[0m
+[0;32mI (181) esp_image: segment 5: paddr=0007b884 vaddr=600fe100 size=0001ch (    28) load[0m
+[0;32mI (189) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (189) boot: Disabling RNG early entropy source...[0m
+[0;32mI (199) octal_psram: vendor id    : 0x0d (AP)[0m
+[0;32mI (199) octal_psram: dev id       : 0x02 (generation 3)[0m
+[0;32mI (199) octal_psram: density      : 0x03 (64 Mbit)[0m
+[0;32mI (201) octal_psram: good-die     : 0x01 (Pass)[0m
+[0;32mI (205) octal_psram: Latency      : 0x01 (Fixed)[0m
+[0;32mI (210) octal_psram: VCC          : 0x01 (3V)[0m
+[0;32mI (214) octal_psram: SRF          : 0x01 (Fast Refresh)[0m
+[0;32mI (219) octal_psram: BurstType    : 0x01 (Hybrid Wrap)[0m
+[0;32mI (224) octal_psram: BurstLen     : 0x01 (32 Byte)[0m
+[0;32mI (228) octal_psram: Readlatency  : 0x02 (10 cycles@Fixed)[0m
+[0;32mI (233) octal_psram: DriveStrength: 0x00 (1/1)[0m
+[0;32mI (238) esp_psram: Found 8MB PSRAM device[0m
+[0;32mI (241) esp_psram: Speed: 40MHz[0m
+[0;32mI (244) cpu_start: Multicore app[0m
+[0;32mI (978) esp_psram: SPI SRAM memory test OK[0m
+[0;32mI (987) cpu_start: Pro cpu start user code[0m
+[0;32mI (992) cpu_start: cpu freq: 240000000 Hz[0m
+[0;32mI (992) app_init: Application information:[0m
+[0;32mI (992) app_init: Project name:     yarobot_control_unit[0m
+[0;32mI (997) app_init: App version:      d717750-dirty[0m
+[0;32mI (1002) app_init: Compile time:     Dec  9 2025 11:03:04[0m
+[0;32mI (1007) app_init: ELF file SHA256:  7ff29e938...[0m
+[0;32mI (1011) app_init: ESP-IDF:          v5.4-dirty[0m
+[0;32mI (1015) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (1019) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (1023) efuse_init: Chip rev:         v0.2[0m
+[0;32mI (1027) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (1034) heap_init: At 3FC9C808 len 0004CF08 (307 KiB): RAM[0m
+[0;32mI (1039) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM[0m
+[0;32mI (1044) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM[0m
+[0;32mI (1049) heap_init: At 600FE11C len 00001ECC (7 KiB): RTCRAM[0m
+[0;32mI (1055) esp_psram: Adding pool of 8192K of PSRAM memory to heap allocator[0m
+[0;32mI (1062) spi_flash: detected chip: boya[0m
+[0;32mI (1065) spi_flash: flash io: dio[0m
+[0;32mI (1068) sleep_gpio: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (1074) sleep_gpio: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (1081) main_task: Started on CPU0[0m
+[0;32mI (1084) esp_psram: Reserving pool of 32K of internal memory for DMA/internal allocations[0m
+[0;32mI (1092) main_task: Calling app_main()[0m
+[0;32mI (3095) main: Hello from app_main[0m
+[0;32mI (3095) main: PSRAM detected: 8388608 bytes (8.0 MB)[0m
+[0;32mI (3095) main: Firmware: YAROBOT_CONTROL_UNIT v1.0.0[0m
+[0;32mI (3096) main: Axes: 8 (Servos:5, Steppers:2, Discrete:1)[0m
+[0;32mI (3101) main: GPIO X_STEP: 4, I2C MCP0: 0x20[0m
+[0;32mI (3105) main: Initializing USB CDC interface...[0m
+[0;32mI (3110) usb_cdc: Initializing USB CDC interface[0m
+[0;33mW (3114) tusb_desc: No Device descriptor provided, using default.[0m
+[0;33mW (3120) tusb_desc: No FullSpeed configuration descriptor provided, using default.[0m
+[0;33mW (3127) tusb_desc: No String descriptors provided, using default.[0m
+[0;32mI (3133) tusb_desc: [0m
+┌─────────────────────────────────┐
+│  USB Device Descriptor Summary  │
+├───────────────────┬─────────────┤
+│bDeviceClass       │ 239         │
+├───────────────────┼─────────────┤
+│bDeviceSubClass    │ 2           │
+├───────────────────┼─────────────┤
+│bDeviceProtocol    │ 1           │
+├───────────────────┼─────────────┤
+│bMaxPacketSize0    │ 64          │
+├───────────────────┼─────────────┤
+│idVendor           │ 0x303a      │
+├───────────────────┼─────────────┤
+│idProduct          │ 0x4001      │
+├───────────────────┼─────────────┤
+│bcdDevice          │ 0x100       │
+├───────────────────┼─────────────┤
+│iManufacturer      │ 0x1         │
+├───────────────────┼─────────────┤
+│iProduct           │ 0x2         │
+├───────────────────┼─────────────┤
+│iSerialNumber      │ 0x3         │
+├───────────────────┼─────────────┤
+│bNumConfigurations │ 0x1         │
+└───────────────────┴─────────────┘
+[0;32mI (3300) TinyUSB: TinyUSB Driver installed[0m
+[0;32mI (3304) usb_cdc: USB CDC initialized successfully[0m
+[0;32mI (3308) main: USB CDC initialized successfully[0m
+[0;32mI (3313) main: ========================================[0m
+[0;32mI (3318) main: Hardware Initialization Starting[0m
+[0;32mI (3322) main: ========================================[0m
+[0;32mI (3327) gpio_hal: Initializing GPIO HAL[0m
+[0;32mI (3331) gpio: GPIO[4]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3339) gpio: GPIO[5]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3347) gpio: GPIO[6]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3356) gpio: GPIO[7]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3364) gpio: GPIO[15]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3372) gpio: GPIO[16]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3381) gpio: GPIO[17]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3389) gpio: GPIO[13]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3398) gpio: GPIO[1]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3406) gpio: GPIO[2]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3414) gpio: GPIO[40]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3423) gpio: GPIO[41]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3431) gpio: GPIO[42]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3439) gpio: GPIO[38]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3448) gpio: GPIO[39]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3456) gpio: GPIO[47]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3465) gpio: GPIO[48]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3473) gpio_hal: GPIO HAL initialized successfully[0m
+[0;32mI (3478) i2c_hal: Initializing I2C0: SDA=8, SCL=18, freq=400000 Hz[0m
+[0;32mI (3484) i2c_hal: I2C0 initialized successfully[0m
+[0;32mI (3488) main: MCP23017 #0 (0x20) IODIR_A=0xFF[0m
+[0;32mI (3492) main: MCP23017 #1 (0x21) IODIR_A=0xFF[0m
+[0;32mI (3496) i2c_hal: Initializing I2C1: SDA=14, SCL=21, freq=400000 Hz[0m
+[0;32mI (3503) i2c_hal: I2C1 initialized successfully[0m
+[0;32mI (3534) main: OLED initialized with test pattern[0m
+[0;32mI (3534) i2c_hal: Scanning I2C0 bus...[0m
+[0;32mI (3538) i2c_hal: I2C0: Found device at 0x20[0m
+[0;32mI (3538) i2c_hal: I2C0: Found device at 0x21[0m
+[0;32mI (3551) i2c_hal: I2C0 scan complete: 2 device(s) found[0m
+[0;32mI (3551) main: I2C bus isolation verified: I2C0 still operational[0m
+[0;32mI (3551) spi_hal: Initializing SPI1: MOSI=11, SCLK=12, CS=10[0m
+[0;32mI (3557) gpio: GPIO[9]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3564) spi_hal: SPI initialized successfully, OE pin=9 (disabled)[0m
+[0;32mI (3570) tpic6b595: Initializing TPIC6B595 driver[0m
+[0;32mI (3575) spi_hal: SR outputs ENABLED[0m
+[0;32mI (3578) tpic6b595: TPIC6B595 driver initialized, 40-bit chain ready[0m
+[0;32mI (3584) main: TPIC6B595 shift register initialized (test skipped)[0m
+[0;32mI (3590) main: ========================================[0m
+[0;32mI (3595) main: Hardware Initialization: ALL PASSED[0m
+[0;32mI (3599) main: ========================================[0m
+[0;32mI (3604) main: Creating FreeRTOS tasks...[0m
+[0;32mI (3608) tasks: Task safety started on core 0[0m
+[0;32mI (3612) tasks: Task usb_rx started on core 0[0m
+[0;32mI (3616) tasks: Task usb_tx started on core 0[0m
+[0;32mI (3620) tasks: Task cmd_exec started on core 0[0m
+[0;32mI (3625) tasks: Task i2c_mon started on core 0[0m
+[0;32mI (3629) tasks: Task idle_mon started on core 0[0m
+[0;32mI (3633) main: YaRobot Control Unit - All tasks started[0m
+[0;32mI (3633) tasks: Task motion_X (axis 0) started on core 1[0m
+[0;32mI (3633) tasks: Task motion_B (axis 4) started on core 1[0m
+[0;32mI (3633) tasks: Task motion_Z (axis 2) started on core 1[0m
+[0;32mI (3634) tasks: Task motion_C (axis 5) started on core 1[0m
+[0;32mI (3633) tasks: Task motion_Y (axis 1) started on core 1[0m
+[0;32mI (3634) tasks: Task motion_D (axis 6) started on core 1[0m
+[0;32mI (3633) tasks: Task motion_A (axis 3) started on core 1[0m
+[0;32mI (3634) tasks: Task motion_E (axis 7) started on core 1[0m
+[0;32mI (3634) tasks: Task display started on core 1[0m
+[0;32mI (3638) main_task: Returned from app_main()[0m
+[0;32mI (112604) usb_cdc: USB CDC connected (DTR=1, RTS=1)[0m
+[0;32mI (112616) tasks: USB CDC connection state: connected[0m
+[0;32mI (116128) CMD_EXEC: Initialized with 4 built-in commands[0m
+[0;32mI (116128) EVENT_MGR: Initialized (queue=32, max_subs=8)[0m
+[0;32mI (116128) EVENT_MGR: Event processor task started[0m
+[0;32mI (116128) tasks: Command executor initialized[0m
+[0;32mI (116136) motor_system: ========================================[0m
+[0;32mI (116141) motor_system: Motor System Initialization Starting[0m
+[0;32mI (116147) motor_system: ========================================[0m
+[0;33mW (116153) tpic6b595: Already initialized[0m
+[0;32mI (116156) motor_system: Axis configurations initialized[0m
+[0;32mI (116161) RMT_PULSE: Initializing RMT channel 0 on GPIO 4 (step)[0m
+[0;32mI (116168) RMT_PULSE: RMT channel 0 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (116175) RMT_PULSE: Initializing RMT channel 1 on GPIO 6 (step)[0m
+[0;32mI (116169) RMT_PULSE: Ramp task started for channel 0[0m
+[0;32mI (116181) RMT_PULSE: RMT channel 1 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (116193) RMT_PULSE: Initializing RMT channel 2 on GPIO 7 (step)[0m
+[0;32mI (116200) RMT_PULSE: RMT channel 2 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (116207) RMT_PULSE: Initializing RMT channel 3 on GPIO 15 (step)[0m
+[0;32mI (116200) RMT_PULSE: Ramp task started for channel 2[0m
+[0;32mI (116213) RMT_PULSE: RMT channel 3 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (116225) MCPWM_PULSE: Initializing MCPWM timer 0 on GPIO 5 with PCNT unit 0[0m
+[0;32mI (116232) gpio: GPIO[5]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;33mW (116241) MCPWM_PULSE: DEBUG init: MCPWM generator created on GPIO 5 with io_loop_back=true[0m
+[0;32mI (116249) MCPWM_PULSE: GPIO 5 input enabled for PCNT loopback, settling for 700000 µs[0m
+[0;32mI (116186) RMT_PULSE: Ramp task started for channel 1[0m
+[0;32mI (116218) RMT_PULSE: Ramp task started for channel 3[0m
+[0;32mI (116956) MCPWM_PULSE: GPIO 5 loopback settled and ready[0m
+[0;33mW (116957) MCPWM_PULSE: DEBUG init: Creating PCNT channel on GPIO 5[0m
+[0;32mI (116957) MCPWM_PULSE: PCNT started for continuous position tracking (baseline: 0)[0m
+[0;32mI (116964) MCPWM_PULSE: Profile task started for timer 0[0m
+[0;32mI (116964) MCPWM_PULSE: MCPWM timer 0 with PCNT unit 0 initialized successfully[0m
+[0;32mI (116976) MCPWM_PULSE: Initializing MCPWM timer 1 on GPIO 16 with PCNT unit 1[0m
+[0;32mI (116983) gpio: GPIO[16]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;33mW (116992) MCPWM_PULSE: DEBUG init: MCPWM generator created on GPIO 16 with io_loop_back=true[0m
+[0;32mI (117000) MCPWM_PULSE: GPIO 16 input enabled for PCNT loopback, settling for 700000 µs[0m
+[0;32mI (117708) MCPWM_PULSE: GPIO 16 loopback settled and ready[0m
+[0;33mW (117708) MCPWM_PULSE: DEBUG init: Creating PCNT channel on GPIO 16[0m
+[0;32mI (117708) MCPWM_PULSE: PCNT started for continuous position tracking (baseline: 0)[0m
+[0;32mI (117715) MCPWM_PULSE: Profile task started for timer 1[0m
+[0;32mI (117715) MCPWM_PULSE: MCPWM timer 1 with PCNT unit 1 initialized successfully[0m
+[0;32mI (117727) LEDC_PULSE: Initializing LEDC timer 2, channel 2 on GPIO 17[0m
+[0;32mI (117734) gpio: GPIO[17]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (117742) LEDC_PULSE: Configured GPIO 17 for PCNT internal loopback[0m
+[0;32mI (117749) LEDC_PULSE: LEDC timer 2 initialized successfully[0m
+[0;32mI (117749) LEDC_PULSE: Completion task started for LEDC timer 2[0m
+[0;32mI (117754) motor_system: All pulse generators initialized[0m
+[0;32mI (117764) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (117769) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (117774) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (117778) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (117783) TIME_TRACKER: Time tracker initialized with travel time 1000 ms[0m
+[0;32mI (117789) motor_system: All position trackers initialized[0m
+[0;32mI (117795) motor_system: Pulse generators wired to position trackers[0m
+[0;32mI (117801) motor_system: Motor objects created[0m
+[0;32mI (117805) motor_base: Axis 0 initialized (0.556 pulses/unit)[0m
+[0;32mI (117810) motor_base: Axis 1 initialized (0.556 pulses/unit)[0m
+[0;32mI (117816) motor_base: Axis 2 initialized (0.556 pulses/unit)[0m
+[0;32mI (117821) motor_base: Axis 3 initialized (0.556 pulses/unit)[0m
+[0;32mI (117827) motor_base: Axis 4 initialized (0.556 pulses/unit)[0m
+[0;32mI (117832) motor_base: Axis 5 initialized (0.556 pulses/unit)[0m
+[0;32mI (117838) LEDC_PULSE: setPositionTracker: tracker=0x3fc9b634 (PcntTracker for hardware PCNT)[0m
+[0;32mI (117846) motor_base: Axis 6 initialized (0.556 pulses/unit)[0m
+[0;33mW (117851) TIME_TRACKER: Time tracker already initialized[0m
+[0;32mI (117857) discrete_axis: Axis 7 initialized (discrete actuator, travel time 1000 ms)[0m
+[0;32mI (117864) motor_system: All motor objects initialized[0m
+[0;32mI (117869) MOTION_CTRL: Initialized with 8 axes[0m
+[0;32mI (117873) motor_system: Motion controller initialized with 8 axes[0m
+[0;32mI (117879) MOVE_HDL: Registered MOVE handler[0m
+[0;32mI (117883) MOVR_HDL: Registered MOVR handler[0m
+[0;32mI (117887) EN_HDL: Registered EN handler[0m
+[0;32mI (117891) POS_HDL: Registered POS handler[0m
+[0;32mI (117895) VEL_HDL: Registered VEL handler[0m
+[0;32mI (117898) STOP_HDL: Registered STOP handler[0m
+[0;32mI (117902) motor_system: Command handlers registered (MOVE, MOVR, EN, POS, VEL, STOP)[0m
+[0;32mI (117910) motor_system: ========================================[0m
+[0;32mI (117916) motor_system: Motor System Initialization: SUCCESS[0m
+[0;32mI (117921) motor_system:   Servos: 5 (X, Y, Z, A, B)[0m
+[0;32mI (117926) motor_system:   Steppers: 2 (C, D)[0m
+[0;32mI (117930) motor_system:   Discrete: 1 (E)[0m
+[0;32mI (117934) motor_system: ========================================[0m
+[0;32mI (117940) CMD_EXEC: CMD: MOD -[0m
+ERROR E001 Invalid command
+[0;32mI (120065) CMD_EXEC: CMD: MODE -[0m
+OK READY
+[0;32mI (124215) CMD_EXEC: CMD: EN Y 1.0000[0m
+[0;32mI (124215) motor_base: Axis 1 enabled[0m
+OK
+[0;32mI (131556) CMD_EXEC: CMD: MOVE Y 180.0000[0m
+[0;33mW (131556) motor_base: DEBUG Axis 1: moveAbsolute(pos=180.0000, vel=1080.0000)[0m
+[0;33mW (131557) motor_base: DEBUG Axis 1: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (131563) motor_base: DEBUG Axis 1: current_pos=0.0000, target_pos=180.0000[0m
+[0;33mW (131570) motor_base: DEBUG Axis 1: setting direction=FWD[0m
+[0;33mW (131575) motor_base: DEBUG Axis 1: pulses_per_unit=0.56, pulses=100, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (131583) motor_base: DEBUG Axis 1: calling pulse_gen_->startMove(pulses=100, freq=600.0, accel=6000.0)[0m
+[0;33mW (131593) MCPWM_PULSE: DEBUG startMove: pulses=100, max_vel=600.0 Hz, accel=6000.0, dir=FWD[0m
+[0;33mW (131601) MCPWM_PULSE: DEBUG PLANNING: PCNT at startMove entry = 0 (end of planning phase)[0m
+[0;33mW (131609) MCPWM_PULSE: DEBUG startMove: profile calculated: accel=29, cruise=42, decel=29, cruise_vel=600.0[0m
+[0;33mW (131618) MCPWM_PULSE: DEBUG startMove: move_start_position=0, direction=FWD[0m
+[0;33mW (131625) MCPWM_PULSE: DEBUG startMove: PCNT baseline = 0 (continuous counting, never cleared)[0m
+[0;33mW (131634) MCPWM_PULSE: DEBUG startMove: watch point target = 0 + 100 = 100 (absolute PCNT value)[0m
+[0;33mW (131642) MCPWM_PULSE: DEBUG startMove: configuring PCNT watch point for absolute count 100[0m
+[0;33mW (131650) MCPWM_PULSE: DEBUG startMove: setting initial freq=300 Hz[0m
+[0;33mW (131657) MCPWM_PULSE: DEBUG startMove: Restored generator HIGH action for pulse generation[0m
+[0;33mW (131665) MCPWM_PULSE: DEBUG PLANNING: PCNT after HIGH action = 0 (continuous counting)[0m
+[0;33mW (131672) MCPWM_PULSE: DEBUG startMove: starting MCPWM timer (PCNT continuously running)[0m
+[0;33mW (131681) MCPWM_PULSE: DEBUG PLANNING: PCNT after MCPWM start = 0 (should be ~30 at 300Hz)[0m
+[0;33mW (131688) MCPWM_PULSE: DEBUG startMove: completed successfully[0m
+[0;33mW (131694) motor_base: DEBUG Axis 1: moveAbsolute completed, state=MOVING[0m
+OK
+[0;33mW (131889) MCPWM_PULSE: updateProfile: STOP - pcnt=100 >= target=100[0m
+[0;33mW (131889) MCPWM_PULSE: DEBUG: Reconfigured generator to force GPIO LOW when stopped[0m
+[0;33mW (131892) MCPWM_PULSE: updateProfile: COMPLETED - actual_pcnt=100, start=0, new_abs=100[0m
+[0;33mW (131900) MCPWM_PULSE: DEBUG: Updated stable reference - last_pos=100, pcnt_hw=100[0m
+[0;33mW (131907) MCPWM_PULSE: DEBUG PLANNING: PCNT after stop = 100 (should equal 100)[0m
+[0;33mW (131914) motor_base: DEBUG Axis 1: onMotionComplete(total_pulses=100)[0m
+[0;33mW (131920) motor_base: DEBUG Axis 1: before sync: pulse_count=0, tracker_pos=100[0m
+[0;33mW (131927) motor_base: DEBUG Axis 1: after sync: pulse_count=100[0m
+[0;33mW (131933) motor_base: Axis 1: motion complete at position 180.0000[0m
+[0;32mI (138401) CMD_EXEC: CMD: MOVE Y 0.0000[0m
+[0;33mW (138401) motor_base: DEBUG Axis 1: moveAbsolute(pos=0.0000, vel=1080.0000)[0m
+[0;33mW (138401) motor_base: DEBUG Axis 1: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (138407) motor_base: DEBUG Axis 1: current_pos=180.0000, target_pos=0.0000[0m
+[0;33mW (138414) motor_base: DEBUG Axis 1: setting direction=REV[0m
+[0;33mW (138419) motor_base: DEBUG Axis 1: pulses_per_unit=0.56, pulses=100, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (138428) motor_base: DEBUG Axis 1: calling pulse_gen_->startMove(pulses=-100, freq=600.0, accel=6000.0)[0m
+[0;33mW (138437) MCPWM_PULSE: DEBUG startMove: pulses=-100, max_vel=600.0 Hz, accel=6000.0, dir=REV[0m
+[0;33mW (138445) MCPWM_PULSE: DEBUG PLANNING: PCNT at startMove entry = 100 (end of planning phase)[0m
+[0;33mW (138454) MCPWM_PULSE: DEBUG startMove: profile calculated: accel=29, cruise=42, decel=29, cruise_vel=600.0[0m
+[0;33mW (138463) MCPWM_PULSE: DEBUG startMove: move_start_position=100, direction=REV[0m
+[0;33mW (138470) MCPWM_PULSE: DEBUG startMove: PCNT baseline = 100 (continuous counting, never cleared)[0m
+[0;33mW (138479) MCPWM_PULSE: DEBUG startMove: watch point target = 100 + 100 = 200 (absolute PCNT value)[0m
+[0;33mW (138488) MCPWM_PULSE: DEBUG startMove: configuring PCNT watch point for absolute count 200[0m
+[0;33mW (138496) MCPWM_PULSE: DEBUG startMove: setting initial freq=300 Hz[0m
+[0;33mW (138502) MCPWM_PULSE: DEBUG startMove: Restored generator HIGH action for pulse generation[0m
+[0;33mW (138510) MCPWM_PULSE: DEBUG PLANNING: PCNT after HIGH action = 100 (continuous counting)[0m
+[0;33mW (138518) MCPWM_PULSE: DEBUG startMove: starting MCPWM timer (PCNT continuously running)[0m
+[0;33mW (138526) MCPWM_PULSE: DEBUG PLANNING: PCNT after MCPWM start = 100 (should be ~30 at 300Hz)[0m
+[0;33mW (138534) MCPWM_PULSE: DEBUG startMove: completed successfully[0m
+[0;33mW (138540) motor_base: DEBUG Axis 1: moveAbsolute completed, state=MOVING[0m
+OK
+[0;33mW (139279) MCPWM_PULSE: DEBUG updateProfile: pcnt=14, target=100, freq=507.9, state=1[0m
+[0;33mW (140040) MCPWM_PULSE: updateProfile: STOP - pcnt=100 >= target=100[0m
+[0;33mW (140040) MCPWM_PULSE: DEBUG: Reconfigured generator to force GPIO LOW when stopped[0m
+[0;33mW (140043) MCPWM_PULSE: updateProfile: COMPLETED - actual_pcnt=100, start=100, new_abs=0[0m
+[0;33mW (140050) MCPWM_PULSE: DEBUG: Updated stable reference - last_pos=0, pcnt_hw=200[0m
+[0;33mW (140058) MCPWM_PULSE: DEBUG PLANNING: PCNT after stop = 200 (should equal 100)[0m
+[0;33mW (140065) motor_base: DEBUG Axis 1: onMotionComplete(total_pulses=0)[0m
+[0;33mW (140071) motor_base: DEBUG Axis 1: before sync: pulse_count=100, tracker_pos=0[0m
+[0;33mW (140078) motor_base: DEBUG Axis 1: after sync: pulse_count=0[0m
+[0;33mW (140084) motor_base: Axis 1: motion complete at position 0.0000[0m
+[0;32mI (151977) CMD_EXEC: CMD: VEL Y 200.0000[0m
+[0;33mW (151977) motor_base: DEBUG Axis 1: moveVelocity(vel=200.0000)[0m
+[0;33mW (151978) motor_base: DEBUG Axis 1: clamped velocity=200.0000 (max=1080.0000)[0m
+[0;33mW (151982) motor_base: DEBUG Axis 1: setting direction=FWD[0m
+[0;33mW (151988) motor_base: DEBUG Axis 1: freq_hz=111.1, accel=6000.0[0m
+[0;33mW (151993) motor_base: DEBUG Axis 1: calling pulse_gen_->startVelocity(freq=111.1, accel=6000.0)[0m
+[0;33mW (152002) MCPWM_PULSE: DEBUG startVelocity: move_start_position=0, direction=FWD[0m
+[0;33mW (152009) MCPWM_PULSE: DEBUG startVelocity: PCNT baseline = 200 (continuous counting)[0m
+[1;31mE (152017) pcnt: pcnt_unit_remove_watch_point(663): watch point 32767 not added yet[0m
+[0;33mW (152024) MCPWM_PULSE: DEBUG startVelocity: Restored generator HIGH action[0m
+[0;33mW (152031) motor_base: DEBUG Axis 1: moveVelocity completed, state=MOVING[0m
+OK
+[0;33mW (152269) MCPWM_PULSE: DEBUG updateProfile: pcnt=1, target=2147483647, freq=111.1, state=2[0m
+[0;33mW (153270) MCPWM_PULSE: DEBUG updateProfile: pcnt=65, target=2147483647, freq=111.1, state=2[0m
+[0;33mW (154270) MCPWM_PULSE: DEBUG updateProfile: pcnt=176, target=2147483647, freq=111.1, state=2[0m
+[0;33mW (155271) MCPWM_PULSE: DEBUG updateProfile: pcnt=288, target=2147483647, freq=111.1, state=2[0m
+[0;33mW (156272) MCPWM_PULSE: DEBUG updateProfile: pcnt=399, target=2147483647, freq=111.1, state=2[0m
+[0;33mW (157273) MCPWM_PULSE: DEBUG updateProfile: pcnt=510, target=2147483647, freq=111.1, state=2[0m
+[0;32mI (157718) CMD_EXEC: CMD: VEL Y 400.0000[0m
+[0;33mW (157718) motor_base: DEBUG Axis 1: moveVelocity(vel=400.0000)[0m
+[0;33mW (157719) motor_base: DEBUG Axis 1: clamped velocity=400.0000 (max=1080.0000)[0m
+[0;33mW (157723) motor_base: DEBUG Axis 1: setting direction=FWD[0m
+[0;33mW (157729) motor_base: DEBUG Axis 1: freq_hz=222.2, accel=6000.0[0m
+[0;33mW (157734) motor_base: DEBUG Axis 1: calling pulse_gen_->startVelocity(freq=222.2, accel=6000.0)[0m
+[0;33mW (157743) MCPWM_PULSE: startVelocity: Already running, updating velocity smoothly (no hardware re-init)[0m
+[0;33mW (157752) motor_base: DEBUG Axis 1: moveVelocity completed, state=MOVING[0m
+OK
+[0;33mW (158274) MCPWM_PULSE: DEBUG updateProfile: pcnt=680, target=2147483647, freq=222.2, state=2[0m
+[0;33mW (159275) MCPWM_PULSE: DEBUG updateProfile: pcnt=902, target=2147483647, freq=222.2, state=2[0m
+[0;33mW (160275) MCPWM_PULSE: DEBUG updateProfile: pcnt=1124, target=2147483647, freq=222.2, state=2[0m
+[0;33mW (161275) MCPWM_PULSE: DEBUG updateProfile: pcnt=1346, target=2147483647, freq=222.2, state=2[0m
+[0;33mW (162276) MCPWM_PULSE: DEBUG updateProfile: pcnt=1569, target=2147483647, freq=222.2, state=2[0m
+[0;33mW (163277) MCPWM_PULSE: DEBUG updateProfile: pcnt=1791, target=2147483647, freq=222.2, state=2[0m
+[0;33mW (164278) MCPWM_PULSE: DEBUG updateProfile: pcnt=2014, target=2147483647, freq=222.2, state=2[0m
+[0;32mI (164999) CMD_EXEC: CMD: VEL Y -400.0000[0m
+[0;33mW (164999) motor_base: DEBUG Axis 1: moveVelocity(vel=-400.0000)[0m
+[0;33mW (165000) motor_base: DEBUG Axis 1: clamped velocity=-400.0000 (max=1080.0000)[0m
+[0;33mW (165005) motor_base: DEBUG Axis 1: setting direction=REV[0m
+[0;33mW (165010) motor_base: DEBUG Axis 1: freq_hz=222.2, accel=6000.0[0m
+[0;33mW (165016) motor_base: DEBUG Axis 1: calling pulse_gen_->startVelocity(freq=-222.2, accel=6000.0)[0m
+[0;33mW (165024) MCPWM_PULSE: startVelocity: Already running, updating velocity smoothly (no hardware re-init)[0m
+[0;33mW (165033) motor_base: DEBUG Axis 1: moveVelocity completed, state=MOVING[0m
+OK
+[0;33mW (165279) MCPWM_PULSE: DEBUG updateProfile: pcnt=2238, target=2147483647, freq=222.2, state=2[0m
+[0;33mW (166280) MCPWM_PULSE: DEBUG updateProfile: pcnt=2460, target=2147483647, freq=222.2, state=2[0m
+[0;33mW (167280) MCPWM_PULSE: DEBUG updateProfile: pcnt=2683, target=2147483647, freq=222.2, state=2[0m
+[0;33mW (168281) MCPWM_PULSE: DEBUG updateProfile: pcnt=2905, target=2147483647, freq=222.2, state=2[0m
+[0;32mI (168940) CMD_EXEC: CMD: STOP -[0m
+OK
+[0;33mW (168942) MCPWM_PULSE: updateProfile: STOPPING COMPLETE - pcnt=3052 >= target=3051[0m
+[0;33mW (168942) MCPWM_PULSE: DEBUG STOPPING: Reconfigured generator to force GPIO LOW[0m
+[0;33mW (168947) MCPWM_PULSE: updateProfile: STOP DONE - actual_pcnt=3052, start=0, new_abs=-3052[0m
+[0;33mW (168955) MCPWM_PULSE: DEBUG: Updated stable reference (STOPPING) - last_pos=-3052, pcnt_hw=3252[0m
+[0;33mW (168963) motor_base: DEBUG Axis 1: onMotionComplete(total_pulses=-3052)[0m
+[0;33mW (168970) motor_base: DEBUG Axis 1: before sync: pulse_count=0, tracker_pos=-3052[0m
+[0;33mW (168977) motor_base: DEBUG Axis 1: after sync: pulse_count=-3052[0m
+[0;33mW (168983) motor_base: Axis 1: motion complete at position -5493.5996[0m
+[0;32mI (188540) CMD_EXEC: CMD: VEL Y 600.0000[0m
+[0;33mW (188540) motor_base: DEBUG Axis 1: moveVelocity(vel=600.0000)[0m
+[0;33mW (188541) motor_base: DEBUG Axis 1: clamped velocity=600.0000 (max=1080.0000)[0m
+[0;33mW (188545) motor_base: DEBUG Axis 1: setting direction=FWD[0m
+[0;33mW (188551) motor_base: DEBUG Axis 1: freq_hz=333.3, accel=6000.0[0m
+[0;33mW (188556) motor_base: DEBUG Axis 1: calling pulse_gen_->startVelocity(freq=333.3, accel=6000.0)[0m
+[0;33mW (188565) MCPWM_PULSE: DEBUG startVelocity: move_start_position=-3052, direction=FWD[0m
+[0;33mW (188572) MCPWM_PULSE: DEBUG startVelocity: PCNT baseline = 3252 (continuous counting)[0m
+[1;31mE (188580) pcnt: pcnt_unit_remove_watch_point(663): watch point 32767 not added yet[0m
+[0;33mW (188587) MCPWM_PULSE: DEBUG startVelocity: Restored generator HIGH action[0m
+[0;33mW (188594) motor_base: DEBUG Axis 1: moveVelocity completed, state=MOVING[0m
+OK
+[0;33mW (188929) MCPWM_PULSE: DEBUG updateProfile: pcnt=1, target=2147483647, freq=319.4, state=1[0m
+[0;33mW (189930) MCPWM_PULSE: DEBUG updateProfile: pcnt=225, target=2147483647, freq=333.3, state=2[0m
+[0;33mW (190930) MCPWM_PULSE: DEBUG updateProfile: pcnt=558, target=2147483647, freq=333.3, state=2[0m
+[0;33mW (191930) MCPWM_PULSE: DEBUG updateProfile: pcnt=892, target=2147483647, freq=333.3, state=2[0m
+[0;33mW (192931) MCPWM_PULSE: DEBUG updateProfile: pcnt=1225, target=2147483647, freq=333.3, state=2[0m
+[0;33mW (193932) MCPWM_PULSE: DEBUG updateProfile: pcnt=1559, target=2147483647, freq=333.3, state=2[0m
+[0;32mI (194671) CMD_EXEC: CMD: VEL Y 100.0000[0m
+[0;33mW (194671) motor_base: DEBUG Axis 1: moveVelocity(vel=100.0000)[0m
+[0;33mW (194672) motor_base: DEBUG Axis 1: clamped velocity=100.0000 (max=1080.0000)[0m
+[0;33mW (194676) motor_base: DEBUG Axis 1: setting direction=FWD[0m
+[0;33mW (194682) motor_base: DEBUG Axis 1: freq_hz=55.6, accel=6000.0[0m
+[0;33mW (194687) motor_base: DEBUG Axis 1: calling pulse_gen_->startVelocity(freq=55.6, accel=6000.0)[0m
+[1;31mE (194696) MCPWM_PULSE: Invalid velocity: 55.6 (must be 100 <= |v| <= 500000)[0m
+[1;31mE (194702) motor_base: Axis 1: startVelocity failed: ESP_ERR_INVALID_ARG[0m
+[0;33mW (194709) VEL_HDL: Unexpected error from moveVelocity: 0x102[0m
+ERROR E009 Communication error
+[0;33mW (194933) MCPWM_PULSE: DEBUG updateProfile: pcnt=1893, target=2147483647, freq=333.3, state=2[0m
+[0;33mW (195934) MCPWM_PULSE: DEBUG updateProfile: pcnt=2226, target=2147483647, freq=333.3, state=2[0m
+[0;33mW (196934) MCPWM_PULSE: DEBUG updateProfile: pcnt=2560, target=2147483647, freq=333.3, state=2[0m
+[0;33mW (197935) MCPWM_PULSE: DEBUG updateProfile: pcnt=2893, target=2147483647, freq=333.3, state=2[0m
+[0;33mW (198936) MCPWM_PULSE: DEBUG updateProfile: pcnt=3227, target=2147483647, freq=333.3, state=2[0m
+[0;32mI (199187) CMD_EXEC: CMD: VEL Y 400.0000[0m
+[0;33mW (199187) motor_base: DEBUG Axis 1: moveVelocity(vel=400.0000)[0m
+[0;33mW (199188) motor_base: DEBUG Axis 1: clamped velocity=400.0000 (max=1080.0000)[0m
+[0;33mW (199192) motor_base: DEBUG Axis 1: setting direction=FWD[0m
+[0;33mW (199198) motor_base: DEBUG Axis 1: freq_hz=222.2, accel=6000.0[0m
+[0;33mW (199203) motor_base: DEBUG Axis 1: calling pulse_gen_->startVelocity(freq=222.2, accel=6000.0)[0m
+[0;33mW (199212) MCPWM_PULSE: startVelocity: Already running, updating velocity smoothly (no hardware re-init)[0m
+[0;33mW (199221) motor_base: DEBUG Axis 1: moveVelocity completed, state=MOVING[0m
+OK
+[0;33mW (199937) MCPWM_PULSE: DEBUG updateProfile: pcnt=3484, target=2147483647, freq=222.2, state=2[0m
+[0;33mW (200938) MCPWM_PULSE: DEBUG updateProfile: pcnt=3707, target=2147483647, freq=222.2, state=2[0m
+[0;33mW (201939) MCPWM_PULSE: DEBUG updateProfile: pcnt=3929, target=2147483647, freq=222.2, state=2[0m
+[0;33mW (202940) MCPWM_PULSE: DEBUG updateProfile: pcnt=4151, target=2147483647, freq=222.2, state=2[0m
+[0;33mW (203941) MCPWM_PULSE: DEBUG updateProfile: pcnt=4374, target=2147483647, freq=222.2, state=2[0m
+[0;33mW (204941) MCPWM_PULSE: DEBUG updateProfile: pcnt=4596, target=2147483647, freq=222.2, state=2[0m
+[0;33mW (205941) MCPWM_PULSE: DEBUG updateProfile: pcnt=4818, target=2147483647, freq=222.2, state=2[0m
+[0;32mI (206938) CMD_EXEC: CMD: VEL Y -200.0000[0m
+[0;33mW (206938) motor_base: DEBUG Axis 1: moveVelocity(vel=-200.0000)[0m
+[0;33mW (206939) motor_base: DEBUG Axis 1: clamped velocity=-200.0000 (max=1080.0000)[0m
+[0;33mW (206942) MCPWM_PULSE: DEBUG updateProfile: pcnt=5041, target=2147483647, freq=222.2, state=2[0m
+[0;33mW (206944) motor_base: DEBUG Axis 1: setting direction=REV[0m
+[0;33mW (206957) motor_base: DEBUG Axis 1: freq_hz=111.1, accel=6000.0[0m
+[0;33mW (206963) motor_base: DEBUG Axis 1: calling pulse_gen_->startVelocity(freq=-111.1, accel=6000.0)[0m
+[0;33mW (206971) MCPWM_PULSE: startVelocity: Already running, updating velocity smoothly (no hardware re-init)[0m
+[0;33mW (206981) motor_base: DEBUG Axis 1: moveVelocity completed, state=MOVING[0m
+OK
+[0;33mW (207952) MCPWM_PULSE: DEBUG updateProfile: pcnt=5162, target=2147483647, freq=111.1, state=2[0m
+[0;33mW (208953) MCPWM_PULSE: DEBUG updateProfile: pcnt=5273, target=2147483647, freq=111.1, state=2[0m
+[0;33mW (209953) MCPWM_PULSE: DEBUG updateProfile: pcnt=5384, target=2147483647, freq=111.1, state=2[0m
+[0;33mW (210953) MCPWM_PULSE: DEBUG updateProfile: pcnt=5496, target=2147483647, freq=111.1, state=2[0m
+[0;33mW (211954) MCPWM_PULSE: DEBUG updateProfile: pcnt=5607, target=2147483647, freq=111.1, state=2[0m
+[0;33mW (212955) MCPWM_PULSE: DEBUG updateProfile: pcnt=5718, target=2147483647, freq=111.1, state=2[0m
+[0;32mI (213428) CMD_EXEC: CMD: VEL Y 700.0000[0m
+[0;33mW (213428) motor_base: DEBUG Axis 1: moveVelocity(vel=700.0000)[0m
+[0;33mW (213429) motor_base: DEBUG Axis 1: clamped velocity=700.0000 (max=1080.0000)[0m
+[0;33mW (213433) motor_base: DEBUG Axis 1: setting direction=FWD[0m
+[0;33mW (213439) motor_base: DEBUG Axis 1: freq_hz=388.9, accel=6000.0[0m
+[0;33mW (213444) motor_base: DEBUG Axis 1: calling pulse_gen_->startVelocity(freq=388.9, accel=6000.0)[0m
+[0;33mW (213453) MCPWM_PULSE: startVelocity: Already running, updating velocity smoothly (no hardware re-init)[0m
+[0;33mW (213462) motor_base: DEBUG Axis 1: moveVelocity completed, state=MOVING[0m
+OK
+[0;33mW (213956) MCPWM_PULSE: DEBUG updateProfile: pcnt=5776, target=2147483647, freq=388.9, state=2[0m
+[0;33mW (214957) MCPWM_PULSE: DEBUG updateProfile: pcnt=6099, target=2147483647, freq=388.9, state=2[0m
+[0;33mW (215957) MCPWM_PULSE: DEBUG updateProfile: pcnt=6488, target=2147483647, freq=388.9, state=2[0m
+[0;33mW (216958) MCPWM_PULSE: DEBUG updateProfile: pcnt=6878, target=2147483647, freq=388.9, state=2[0m
+[0;33mW (217959) MCPWM_PULSE: DEBUG updateProfile: pcnt=7267, target=2147483647, freq=388.9, state=2[0m
+[0;33mW (218959) MCPWM_PULSE: DEBUG updateProfile: pcnt=7656, target=2147483647, freq=388.9, state=2[0m
+[0;33mW (219959) MCPWM_PULSE: DEBUG updateProfile: pcnt=8046, target=2147483647, freq=388.9, state=2[0m
+[0;32mI (220409) CMD_EXEC: CMD: VEL Y 1000.0000[0m
+[0;33mW (220409) motor_base: DEBUG Axis 1: moveVelocity(vel=1000.0000)[0m
+[0;33mW (220410) motor_base: DEBUG Axis 1: clamped velocity=1000.0000 (max=1080.0000)[0m
+[0;33mW (220415) motor_base: DEBUG Axis 1: setting direction=FWD[0m
+[0;33mW (220420) motor_base: DEBUG Axis 1: freq_hz=555.6, accel=6000.0[0m
+[0;33mW (220425) motor_base: DEBUG Axis 1: calling pulse_gen_->startVelocity(freq=555.6, accel=6000.0)[0m
+[0;33mW (220434) MCPWM_PULSE: startVelocity: Already running, updating velocity smoothly (no hardware re-init)[0m
+[0;33mW (220443) motor_base: DEBUG Axis 1: moveVelocity completed, state=MOVING[0m
+OK
+[0;33mW (220960) MCPWM_PULSE: DEBUG updateProfile: pcnt=8240, target=2147483647, freq=555.6, state=2[0m
+[0;33mW (221961) MCPWM_PULSE: DEBUG updateProfile: pcnt=8714, target=2147483647, freq=555.6, state=2[0m
+[0;33mW (222961) MCPWM_PULSE: DEBUG updateProfile: pcnt=9273, target=2147483647, freq=555.6, state=2[0m
+[0;33mW (223962) MCPWM_PULSE: DEBUG updateProfile: pcnt=9832, target=2147483647, freq=555.6, state=2[0m
+[0;33mW (224963) MCPWM_PULSE: DEBUG updateProfile: pcnt=10391, target=2147483647, freq=555.6, state=2[0m
+[0;33mW (225964) MCPWM_PULSE: DEBUG updateProfile: pcnt=10951, target=2147483647, freq=555.6, state=2[0m
+[0;33mW (226965) MCPWM_PULSE: DEBUG updateProfile: pcnt=11510, target=2147483647, freq=555.6, state=2[0m
+[0;32mI (227080) CMD_EXEC: CMD: VEL Y 500.0000[0m
+[0;33mW (227080) motor_base: DEBUG Axis 1: moveVelocity(vel=500.0000)[0m
+[0;33mW (227081) motor_base: DEBUG Axis 1: clamped velocity=500.0000 (max=1080.0000)[0m
+[0;33mW (227085) motor_base: DEBUG Axis 1: setting direction=FWD[0m
+[0;33mW (227091) motor_base: DEBUG Axis 1: freq_hz=277.8, accel=6000.0[0m
+[0;33mW (227096) motor_base: DEBUG Axis 1: calling pulse_gen_->startVelocity(freq=277.8, accel=6000.0)[0m
+[0;33mW (227105) MCPWM_PULSE: startVelocity: Already running, updating velocity smoothly (no hardware re-init)[0m
+[0;33mW (227114) motor_base: DEBUG Axis 1: moveVelocity completed, state=MOVING[0m
+OK
+[0;33mW (227966) MCPWM_PULSE: DEBUG updateProfile: pcnt=11834, target=2147483647, freq=277.8, state=2[0m
+[0;33mW (228967) MCPWM_PULSE: DEBUG updateProfile: pcnt=12113, target=2147483647, freq=277.8, state=2[0m
+[0;33mW (229967) MCPWM_PULSE: DEBUG updateProfile: pcnt=12391, target=2147483647, freq=277.8, state=2[0m
+[0;33mW (230967) MCPWM_PULSE: DEBUG updateProfile: pcnt=12670, target=2147483647, freq=277.8, state=2[0m
+[0;33mW (231968) MCPWM_PULSE: DEBUG updateProfile: pcnt=12949, target=2147483647, freq=277.8, state=2[0m
+[0;33mW (232969) MCPWM_PULSE: DEBUG updateProfile: pcnt=13228, target=2147483647, freq=277.8, state=2[0m
+[0;33mW (233969) MCPWM_PULSE: DEBUG updateProfile: pcnt=13506, target=2147483647, freq=277.8, state=2[0m
+[0;33mW (234970) MCPWM_PULSE: DEBUG updateProfile: pcnt=13785, target=2147483647, freq=277.8, state=2[0m
+[0;33mW (235971) MCPWM_PULSE: DEBUG updateProfile: pcnt=14064, target=2147483647, freq=277.8, state=2[0m
+[0;32mI (236101) CMD_EXEC: CMD: VEL Y -500.0000[0m
+[0;33mW (236101) motor_base: DEBUG Axis 1: moveVelocity(vel=-500.0000)[0m
+[0;33mW (236102) motor_base: DEBUG Axis 1: clamped velocity=-500.0000 (max=1080.0000)[0m
+[0;33mW (236107) motor_base: DEBUG Axis 1: setting direction=REV[0m
+[0;33mW (236112) motor_base: DEBUG Axis 1: freq_hz=277.8, accel=6000.0[0m
+[0;33mW (236118) motor_base: DEBUG Axis 1: calling pulse_gen_->startVelocity(freq=-277.8, accel=6000.0)[0m
+[0;33mW (236126) MCPWM_PULSE: startVelocity: Already running, updating velocity smoothly (no hardware re-init)[0m
+[0;33mW (236135) motor_base: DEBUG Axis 1: moveVelocity completed, state=MOVING[0m
+OK
+[0;33mW (236972) MCPWM_PULSE: DEBUG updateProfile: pcnt=14343, target=2147483647, freq=277.8, state=2[0m
+[0;33mW (237973) MCPWM_PULSE: DEBUG updateProfile: pcnt=14622, target=2147483647, freq=277.8, state=2[0m
+[0;33mW (238973) MCPWM_PULSE: DEBUG updateProfile: pcnt=14901, target=2147483647, freq=277.8, state=2[0m
+[0;33mW (239973) MCPWM_PULSE: DEBUG updateProfile: pcnt=15179, target=2147483647, freq=277.8, state=2[0m
+[0;33mW (240973) MCPWM_PULSE: DEBUG updateProfile: pcnt=15458, target=2147483647, freq=277.8, state=2[0m
+[0;33mW (241973) MCPWM_PULSE: DEBUG updateProfile: pcnt=15736, target=2147483647, freq=277.8, state=2[0m
+[0;33mW (242973) MCPWM_PULSE: DEBUG updateProfile: pcnt=16015, target=2147483647, freq=277.8, state=2[0m
+[0;33mW (243974) MCPWM_PULSE: DEBUG updateProfile: pcnt=16294, target=2147483647, freq=277.8, state=2[0m
+[0;32mI (244392) CMD_EXEC: CMD: STOP -[0m
+OK
+[0;33mW (244395) MCPWM_PULSE: updateProfile: STOPPING COMPLETE - pcnt=16411 >= target=16411[0m
+[0;33mW (244395) MCPWM_PULSE: DEBUG STOPPING: Reconfigured generator to force GPIO LOW[0m
+[0;33mW (244399) MCPWM_PULSE: updateProfile: STOP DONE - actual_pcnt=16411, start=-3052, new_abs=-19463[0m
+[0;33mW (244407) MCPWM_PULSE: DEBUG: Updated stable reference (STOPPING) - last_pos=-19463, pcnt_hw=19663[0m
+[0;33mW (244416) motor_base: DEBUG Axis 1: onMotionComplete(total_pulses=-19463)[0m
+[0;33mW (244423) motor_base: DEBUG Axis 1: before sync: pulse_count=-3052, tracker_pos=-19463[0m
+[0;33mW (244431) motor_base: DEBUG Axis 1: after sync: pulse_count=-19463[0m
+[0;33mW (244437) motor_base: Axis 1: motion complete at position -35033.3984[0m
+[0;32mI (357512) CMD_EXEC: CMD: MOVE Y 0.0000[0m
+[0;33mW (357512) motor_base: DEBUG Axis 1: moveAbsolute(pos=0.0000, vel=1080.0000)[0m
+[0;33mW (357512) motor_base: DEBUG Axis 1: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (357518) motor_base: DEBUG Axis 1: current_pos=-35033.3984, target_pos=0.0000[0m
+[0;33mW (357525) motor_base: DEBUG Axis 1: setting direction=FWD[0m
+[0;33mW (357531) motor_base: DEBUG Axis 1: pulses_per_unit=0.56, pulses=19463, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (357539) motor_base: DEBUG Axis 1: calling pulse_gen_->startMove(pulses=19463, freq=600.0, accel=6000.0)[0m
+[0;33mW (357549) MCPWM_PULSE: DEBUG startMove: pulses=19463, max_vel=600.0 Hz, accel=6000.0, dir=FWD[0m
+[0;33mW (357557) MCPWM_PULSE: DEBUG PLANNING: PCNT at startMove entry = 19663 (end of planning phase)[0m
+[0;33mW (357566) MCPWM_PULSE: DEBUG startMove: profile calculated: accel=29, cruise=19405, decel=29, cruise_vel=600.0[0m
+[0;33mW (357575) MCPWM_PULSE: DEBUG startMove: move_start_position=-19463, direction=FWD[0m
+[0;33mW (357583) MCPWM_PULSE: DEBUG startMove: PCNT baseline = 19663 (continuous counting, never cleared)[0m
+[0;33mW (357591) MCPWM_PULSE: DEBUG startMove: watch point target = 19663 + 19463 = 39126 (absolute PCNT value)[0m
+[0;33mW (357601) MCPWM_PULSE: DEBUG startMove: configuring PCNT watch point for absolute count 39126[0m
+[0;33mW (357609) MCPWM_PULSE: DEBUG startMove: setting initial freq=300 Hz[0m
+[0;33mW (357615) MCPWM_PULSE: DEBUG startMove: Restored generator HIGH action for pulse generation[0m
+[0;33mW (357623) MCPWM_PULSE: DEBUG PLANNING: PCNT after HIGH action = 19663 (continuous counting)[0m
+[0;33mW (357631) MCPWM_PULSE: DEBUG startMove: starting MCPWM timer (PCNT continuously running)[0m
+[0;33mW (357639) MCPWM_PULSE: DEBUG PLANNING: PCNT after MCPWM start = 19663 (should be ~30 at 300Hz)[0m
+[0;33mW (357648) MCPWM_PULSE: DEBUG startMove: completed successfully[0m
+[0;33mW (357653) motor_base: DEBUG Axis 1: moveAbsolute completed, state=MOVING[0m
+OK
+[0;33mW (358203) MCPWM_PULSE: DEBUG updateProfile: pcnt=327, target=19463, freq=600.0, state=2[0m
+[0;33mW (359204) MCPWM_PULSE: DEBUG updateProfile: pcnt=931, target=19463, freq=600.0, state=2[0m
+[0;33mW (360204) MCPWM_PULSE: DEBUG updateProfile: pcnt=1533, target=19463, freq=600.0, state=2[0m
+[0;33mW (361204) MCPWM_PULSE: DEBUG updateProfile: pcnt=2135, target=19463, freq=600.0, state=2[0m
+[0;33mW (362204) MCPWM_PULSE: DEBUG updateProfile: pcnt=2738, target=19463, freq=600.0, state=2[0m
+[0;33mW (363204) MCPWM_PULSE: DEBUG updateProfile: pcnt=3340, target=19463, freq=600.0, state=2[0m
+[0;33mW (364204) MCPWM_PULSE: DEBUG updateProfile: pcnt=3943, target=19463, freq=600.0, state=2[0m
+[0;33mW (365204) MCPWM_PULSE: DEBUG updateProfile: pcnt=4545, target=19463, freq=600.0, state=2[0m
+[0;33mW (366204) MCPWM_PULSE: DEBUG updateProfile: pcnt=5147, target=19463, freq=600.0, state=2[0m
+[0;33mW (367204) MCPWM_PULSE: DEBUG updateProfile: pcnt=5750, target=19463, freq=600.0, state=2[0m
+[0;33mW (368204) MCPWM_PULSE: DEBUG updateProfile: pcnt=6352, target=19463, freq=600.0, state=2[0m
+[0;33mW (369204) MCPWM_PULSE: DEBUG updateProfile: pcnt=6955, target=19463, freq=600.0, state=2[0m
+[0;33mW (370204) MCPWM_PULSE: DEBUG updateProfile: pcnt=7557, target=19463, freq=600.0, state=2[0m
+[0;33mW (371204) MCPWM_PULSE: DEBUG updateProfile: pcnt=8159, target=19463, freq=600.0, state=2[0m
+[0;33mW (372204) MCPWM_PULSE: DEBUG updateProfile: pcnt=8762, target=19463, freq=600.0, state=2[0m
+[0;33mW (373204) MCPWM_PULSE: DEBUG updateProfile: pcnt=9364, target=19463, freq=600.0, state=2[0m
+[0;33mW (374204) MCPWM_PULSE: DEBUG updateProfile: pcnt=9967, target=19463, freq=600.0, state=2[0m
+[0;33mW (375204) MCPWM_PULSE: DEBUG updateProfile: pcnt=10569, target=19463, freq=600.0, state=2[0m
+[0;33mW (376204) MCPWM_PULSE: DEBUG updateProfile: pcnt=11171, target=19463, freq=600.0, state=2[0m
+[0;33mW (377204) MCPWM_PULSE: DEBUG updateProfile: pcnt=11774, target=19463, freq=600.0, state=2[0m
+[0;33mW (378204) MCPWM_PULSE: DEBUG updateProfile: pcnt=12376, target=19463, freq=600.0, state=2[0m
+[0;33mW (379204) MCPWM_PULSE: DEBUG updateProfile: pcnt=12979, target=19463, freq=600.0, state=2[0m
+[1;31mE (379424) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (379424) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (379447) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (379447) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (379470) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (379470) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (379493) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (379493) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (379516) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (379516) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (379539) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (379539) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (379562) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (379562) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (379585) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (379585) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (379608) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (379608) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (379631) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (379631) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (379654) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (379654) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (379677) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (379677) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (379700) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (379700) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (379723) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (379723) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (379746) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (379746) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (379769) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (379769) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (379792) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (379792) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (379815) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (379815) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (379838) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (379838) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (379861) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (379861) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (379884) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (379884) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (379907) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (379907) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (379930) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (379930) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (379953) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (379953) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (379976) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (379976) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (379999) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (379999) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380022) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380022) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380045) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380045) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380068) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380068) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380091) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380091) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380114) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380114) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380137) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380137) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380160) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380160) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380183) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380183) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380206) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380206) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380229) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380229) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380252) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380252) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380275) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380275) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380298) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380298) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[0;33mW (380321) MCPWM_PULSE: DEBUG updateProfile: pcnt=-19115, target=19463, freq=nan, state=2[0m
+[1;31mE (380321) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380324) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380352) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380352) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380375) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380375) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380398) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380398) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380421) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380421) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380444) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380444) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380467) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380467) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380490) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380490) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380513) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380513) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380536) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380536) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380559) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380559) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380582) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380582) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380605) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380605) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380628) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380628) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380651) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380651) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380674) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380674) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380697) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380697) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380720) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380720) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380743) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380743) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380766) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380766) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380789) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380789) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380812) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380812) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380835) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380835) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380858) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380858) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380881) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380881) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380904) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380904) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380927) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380927) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380950) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380950) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380973) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380973) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (380996) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (380996) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381019) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381019) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381042) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381042) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381065) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381065) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381088) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381088) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381111) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381111) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381134) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381134) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381157) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381157) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381180) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381180) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381203) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381203) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381226) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381226) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381249) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381249) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381272) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381272) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381295) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381295) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381318) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381318) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381341) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381341) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381364) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381364) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381387) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381387) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381410) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381410) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381433) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381433) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381456) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381456) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[0;33mW (381479) MCPWM_PULSE: DEBUG updateProfile: pcnt=-18418, target=19463, freq=nan, state=2[0m
+[1;31mE (381479) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381482) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381510) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381510) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381533) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381533) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381556) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381556) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381579) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381579) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381602) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381602) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381625) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381625) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381648) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381648) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381671) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381671) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381694) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381694) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381717) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381717) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381740) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381740) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381763) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381763) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381786) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381786) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381809) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381809) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381832) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381832) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381855) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381855) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381878) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381878) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381901) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381901) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381924) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381924) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381947) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381947) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381970) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381970) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (381993) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (381993) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382016) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382016) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382039) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382039) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382062) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382062) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382085) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382085) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382108) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382108) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382131) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382131) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382154) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382154) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382177) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382177) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382200) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382200) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382223) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382223) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382246) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382246) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382269) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382269) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382292) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382292) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382315) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382315) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382338) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382338) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382361) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382361) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382384) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382384) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382407) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382407) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382430) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382430) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382453) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382453) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382476) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382476) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382499) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382499) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382522) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382522) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382545) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382545) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382568) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382568) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382591) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382591) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382614) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382614) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[0;33mW (382637) MCPWM_PULSE: DEBUG updateProfile: pcnt=-17720, target=19463, freq=nan, state=2[0m
+[1;31mE (382637) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382640) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382668) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382668) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382691) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382691) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382714) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382714) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382737) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382737) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382760) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382760) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382783) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382783) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382806) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382806) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382829) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382829) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382852) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382852) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382875) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382875) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382898) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382898) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382921) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382921) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382944) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382944) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382967) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382967) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (382990) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (382990) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383013) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383013) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383036) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383036) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383059) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383059) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383082) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383082) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383105) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383105) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383128) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383128) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383151) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383151) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383174) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383174) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383197) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383197) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383220) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383220) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383243) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383243) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383266) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383266) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383289) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383289) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383312) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383312) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383335) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383335) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383358) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383358) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383381) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383381) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383404) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383404) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383427) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383427) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383450) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383450) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383473) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383473) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383496) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383496) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383519) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383519) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383542) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383542) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383565) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383565) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383588) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383588) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383611) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383611) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383634) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383634) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383657) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383657) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383680) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383680) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383703) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383703) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383726) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383726) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383749) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383749) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383772) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383772) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[0;33mW (383795) MCPWM_PULSE: DEBUG updateProfile: pcnt=-17023, target=19463, freq=nan, state=2[0m
+[1;31mE (383795) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383798) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383826) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383826) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383849) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383849) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383872) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383872) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383895) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383895) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383918) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383918) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383941) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383941) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383964) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383964) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (383987) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (383987) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384010) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384010) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384033) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384033) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384056) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384056) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384079) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384079) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384102) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384102) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384125) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384125) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384148) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384148) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384171) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384171) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384194) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384194) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384217) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384217) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384240) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384240) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384263) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384263) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384286) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384286) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384309) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384309) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384332) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384332) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384355) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384355) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384378) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384378) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384401) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384401) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384424) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384424) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384447) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384447) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384470) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384470) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384493) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384493) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384516) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384516) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384539) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384539) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384562) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384562) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384585) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384585) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384608) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384608) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384631) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384631) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384654) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384654) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384677) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384677) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384700) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384700) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384723) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384723) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384746) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384746) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384769) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384769) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384792) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384792) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384815) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384815) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384838) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384838) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384861) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384861) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384884) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384884) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384907) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384907) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384930) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384930) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[0;33mW (384953) MCPWM_PULSE: DEBUG updateProfile: pcnt=-16325, target=19463, freq=nan, state=2[0m
+[1;31mE (384953) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384956) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (384984) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (384984) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385007) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385007) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385030) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385030) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385053) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385053) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385076) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385076) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385099) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385099) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385122) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385122) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385145) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385145) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385168) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385168) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385191) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385191) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385214) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385214) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385237) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385237) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385260) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385260) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385283) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385283) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385306) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385306) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385329) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385329) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385352) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385352) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385375) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385375) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385398) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385398) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385421) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385421) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385444) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385444) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385467) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385467) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385490) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385490) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385513) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385513) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385536) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385536) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385559) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385559) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385582) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385582) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385605) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385605) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385628) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385628) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385651) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385651) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385674) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385674) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385697) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385697) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385720) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385720) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385743) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385743) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385766) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385766) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385789) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385789) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385812) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385812) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385835) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385835) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385858) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385858) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385881) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385881) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385904) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385904) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385927) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385927) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385950) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385950) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385973) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385973) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (385996) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (385996) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386019) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386019) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386042) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386042) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386065) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386065) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386088) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386088) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[0;33mW (386111) MCPWM_PULSE: DEBUG updateProfile: pcnt=-15627, target=19463, freq=nan, state=2[0m
+[1;31mE (386111) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386114) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386142) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386142) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386165) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386165) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386188) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386188) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386211) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386211) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386234) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386234) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386257) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386257) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386280) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386280) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386303) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386303) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386326) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386326) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386349) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386349) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386372) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386372) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386395) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386395) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386418) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386418) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386441) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386441) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386464) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386464) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386487) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386487) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386510) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386510) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386533) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386533) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386556) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386556) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386579) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386579) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386602) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386602) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386625) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386625) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386648) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386648) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386671) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386671) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386694) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386694) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386717) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386717) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386740) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386740) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386763) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386763) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386786) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386786) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386809) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386809) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386832) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386832) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386855) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386855) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386878) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386878) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386901) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386901) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386924) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386924) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386947) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386947) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386970) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386970) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (386993) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (386993) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387016) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387016) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387039) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387039) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387062) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387062) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387085) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387085) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387108) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387108) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387131) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387131) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387154) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387154) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387177) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387177) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387200) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387200) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387223) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387223) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387246) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387246) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[0;33mW (387269) MCPWM_PULSE: DEBUG updateProfile: pcnt=-14930, target=19463, freq=nan, state=2[0m
+[1;31mE (387269) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387272) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387300) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387300) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387323) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387323) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387346) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387346) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387369) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387369) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387392) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387392) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387415) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387415) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387438) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387438) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387461) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387461) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387484) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387484) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387507) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387507) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387530) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387530) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387553) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387553) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387576) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387576) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387599) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387599) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387622) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387622) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387645) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387645) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387668) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387668) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387691) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387691) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387714) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387714) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387737) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387737) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387760) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387760) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387783) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387783) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387806) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387806) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387829) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387829) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387852) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387852) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387875) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387875) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387898) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387898) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387921) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387921) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387944) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387944) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387967) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387967) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (387990) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (387990) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388013) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388013) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388036) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388036) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388059) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388059) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388082) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388082) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388105) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388105) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388128) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388128) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388151) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388151) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388174) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388174) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388197) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388197) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388220) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388220) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388243) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388243) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388266) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388266) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388289) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388289) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388312) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388312) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388335) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388335) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388358) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388358) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388381) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388381) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388404) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388404) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[0;33mW (388427) MCPWM_PULSE: DEBUG updateProfile: pcnt=-14232, target=19463, freq=nan, state=2[0m
+[1;31mE (388427) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388430) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388458) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388458) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388481) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388481) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388504) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388504) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388527) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388527) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388550) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388550) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388573) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388573) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388596) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388596) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388619) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388619) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388642) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388642) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388665) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388665) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388688) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388688) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388711) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388711) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388734) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388734) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388757) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388757) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388780) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388780) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388803) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388803) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388826) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388826) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388849) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388849) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388872) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388872) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388895) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388895) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388918) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388918) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388941) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388941) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388964) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388964) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (388987) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (388987) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389010) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389010) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389033) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389033) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389056) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389056) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389079) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389079) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389102) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389102) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389125) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389125) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389148) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389148) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389171) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389171) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389194) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389194) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389217) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389217) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389240) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389240) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389263) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389263) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389286) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389286) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389309) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389309) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389332) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389332) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389355) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389355) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389378) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389378) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389401) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389401) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389424) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389424) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389447) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389447) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389470) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389470) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389493) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389493) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389516) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389516) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389539) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389539) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389562) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389562) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[0;33mW (389585) MCPWM_PULSE: DEBUG updateProfile: pcnt=-13535, target=19463, freq=nan, state=2[0m
+[1;31mE (389585) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389588) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389616) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389616) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389639) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389639) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389662) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389662) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389685) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389685) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389708) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389708) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389731) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389731) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389754) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389754) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389777) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389777) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389800) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389800) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389823) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389823) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389846) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389846) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389869) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389869) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389892) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389892) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389915) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389915) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389938) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389938) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389961) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389961) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (389984) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (389984) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390007) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390007) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390030) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390030) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390053) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390053) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390076) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390076) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390099) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390099) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390122) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390122) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390145) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390145) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390168) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390168) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390191) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390191) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390214) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390214) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390237) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390237) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390260) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390260) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390283) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390283) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390306) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390306) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390329) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390329) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390352) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390352) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390375) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390375) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390398) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390398) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390421) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390421) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390444) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390444) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390467) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390467) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390490) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390490) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390513) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390513) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390536) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390536) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390559) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390559) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390582) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390582) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390605) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390605) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390628) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390628) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390651) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390651) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390674) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390674) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390697) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390697) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390720) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390720) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[0;33mW (390743) MCPWM_PULSE: DEBUG updateProfile: pcnt=-12837, target=19463, freq=nan, state=2[0m
+[1;31mE (390743) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390746) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390774) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390774) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390797) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390797) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390820) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390820) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390843) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390843) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390866) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390866) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390889) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390889) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390912) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390912) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390935) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390935) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390958) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390958) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (390981) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (390981) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391004) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391004) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391027) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391027) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391050) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391050) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391073) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391073) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391096) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391096) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391119) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391119) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391142) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391142) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391165) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391165) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391188) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391188) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391211) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391211) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391234) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391234) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391257) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391257) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391280) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391280) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391303) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391303) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391326) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391326) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391349) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391349) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391372) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391372) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391395) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391395) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391418) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391418) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391441) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391441) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391464) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391464) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391487) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391487) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391510) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391510) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391533) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391533) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391556) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391556) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391579) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391579) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391602) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391602) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391625) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391625) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391648) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391648) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391671) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391671) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391694) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391694) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391717) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391717) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391740) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391740) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391763) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391763) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391786) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391786) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391809) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391809) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391832) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391832) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391855) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391855) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391878) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391878) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[0;33mW (391901) MCPWM_PULSE: DEBUG updateProfile: pcnt=-12140, target=19463, freq=nan, state=2[0m
+[1;31mE (391901) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391904) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391932) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391932) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391955) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391955) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (391978) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (391978) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (392001) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (392001) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (392024) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (392024) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (392047) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (392047) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (392070) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (392070) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_ERR_INVALID_ARG[0m
+[1;31mE (392093) mcpwm: mcpwm_timer_set_period(200): invalid period ticks[0m
+[1;31mE (392093) MCPWM_PULSE: setFrequency: mcpwm_timer_set_period FAILED: ESP_�ESP-ROM:esp32s3-20210327[0m
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x8 (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x15a0
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xd20
+load:0x403cb700,len:0x2ee4
+entry 0x403c8928
+[0;32mI (27) boot: ESP-IDF v5.4-dirty 2nd stage bootloader[0m
+[0;32mI (27) boot: compile time Dec  6 2025 20:10:08[0m
+[0;32mI (27) boot: Multicore bootloader[0m
+[0;32mI (27) boot: chip revision: v0.2[0m
+[0;32mI (30) boot: efuse block revision: v1.3[0m
+[0;32mI (34) boot.esp32s3: Boot SPI Speed : 80MHz[0m
+[0;32mI (38) boot.esp32s3: SPI Mode       : DIO[0m
+[0;32mI (41) boot.esp32s3: SPI Flash Size : 16MB[0m
+[0;32mI (45) boot: Enabling RNG early entropy source...[0m
+[0;32mI (50) boot: Partition Table:[0m
+[0;32mI (52) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (59) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (65) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (72) boot:  2 factory          factory app      00 00 00010000 00300000[0m
+[0;32mI (78) boot:  3 storage          Unknown data     01 82 00310000 00100000[0m
+[0;32mI (85) boot: End of partition table[0m
+[0;32mI (88) esp_image: segment 0: paddr=00010020 vaddr=3c040020 size=17a48h ( 96840) map[0m
+[0;32mI (112) esp_image: segment 1: paddr=00027a70 vaddr=3fc96e00 size=03738h ( 14136) load[0m
+[0;32mI (116) esp_image: segment 2: paddr=0002b1b0 vaddr=40374000 size=04e68h ( 20072) load[0m
+[0;32mI (121) esp_image: segment 3: paddr=00030020 vaddr=42000020 size=3d978h (252280) map[0m
+[0;32mI (168) esp_image: segment 4: paddr=0006d9a0 vaddr=40378e68 size=0dedch ( 57052) load[0m
+[0;32mI (181) esp_image: segment 5: paddr=0007b884 vaddr=600fe100 size=0001ch (    28) load[0m
+[0;32mI (189) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (189) boot: Disabling RNG early entropy source...[0m
+[0;32mI (199) octal_psram: vendor id    : 0x0d (AP)[0m
+[0;32mI (199) octal_psram: dev id       : 0x02 (generation 3)[0m
+[0;32mI (199) octal_psram: density      : 0x03 (64 Mbit)[0m
+[0;32mI (201) octal_psram: good-die     : 0x01 (Pass)[0m
+[0;32mI (205) octal_psram: Latency      : 0x01 (Fixed)[0m
+[0;32mI (210) octal_psram: VCC          : 0x01 (3V)[0m
+[0;32mI (214) octal_psram: SRF          : 0x01 (Fast Refresh)[0m
+[0;32mI (219) octal_psram: BurstType    : 0x01 (Hybrid Wrap)[0m
+[0;32mI (224) octal_psram: BurstLen     : 0x01 (32 Byte)[0m
+[0;32mI (228) octal_psram: Readlatency  : 0x02 (10 cycles@Fixed)[0m
+[0;32mI (233) octal_psram: DriveStrength: 0x00 (1/1)[0m
+[0;32mI (238) esp_psram: Found 8MB PSRAM device[0m
+[0;32mI (241) esp_psram: Speed: 40MHz[0m
+[0;32mI (244) cpu_start: Multicore app[0m
+[0;32mI (980) esp_psram: SPI SRAM memory test OK[0m
+[0;32mI (989) cpu_start: Pro cpu start user code[0m
+[0;32mI (989) cpu_start: cpu freq: 240000000 Hz[0m
+[0;32mI (989) app_init: Application information:[0m
+[0;32mI (989) app_init: Project name:     yarobot_control_unit[0m
+[0;32mI (994) app_init: App version:      d717750-dirty[0m
+[0;32mI (999) app_init: Compile time:     Dec  9 2025 11:03:04[0m
+[0;32mI (1004) app_init: ELF file SHA256:  7ff29e938...[0m
+[0;32mI (1008) app_init: ESP-IDF:          v5.4-dirty[0m
+[0;32mI (1013) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (1016) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (1021) efuse_init: Chip rev:         v0.2[0m
+[0;32mI (1025) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (1031) heap_init: At 3FC9C808 len 0004CF08 (307 KiB): RAM[0m
+[0;32mI (1036) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM[0m
+[0;32mI (1041) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM[0m
+[0;32mI (1047) heap_init: At 600FE11C len 00001ECC (7 KiB): RTCRAM[0m
+[0;32mI (1052) esp_psram: Adding pool of 8192K of PSRAM memory to heap allocator[0m
+[0;32mI (1059) spi_flash: detected chip: boya[0m
+[0;32mI (1062) spi_flash: flash io: dio[0m
+[0;32mI (1066) sleep_gpio: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (1072) sleep_gpio: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (1079) main_task: Started on CPU0[0m
+[0;32mI (1082) esp_psram: Reserving pool of 32K of internal memory for DMA/internal allocations[0m
+[0;32mI (1090) main_task: Calling app_main()[0m
+[0;32mI (3093) main: Hello from app_main[0m
+[0;32mI (3093) main: PSRAM detected: 8388608 bytes (8.0 MB)[0m
+[0;32mI (3093) main: Firmware: YAROBOT_CONTROL_UNIT v1.0.0[0m
+[0;32mI (3094) main: Axes: 8 (Servos:5, Steppers:2, Discrete:1)[0m
+[0;32mI (3099) main: GPIO X_STEP: 4, I2C MCP0: 0x20[0m
+[0;32mI (3103) main: Initializing USB CDC interface...[0m
+[0;32mI (3108) usb_cdc: Initializing USB CDC interface[0m
+[0;33mW (3112) tusb_desc: No Device descriptor provided, using default.[0m
+[0;33mW (3118) tusb_desc: No FullSpeed configuration descriptor provided, using default.[0m
+[0;33mW (3125) tusb_desc: No String descriptors provided, using default.[0m
+[0;32mI (3131) tusb_desc: [0m
+┌─────────────────────────────────┐
+│  USB Device Descriptor Summary  │
+├───────────────────┬─────────────┤
+│bDeviceClass       │ 239         │
+├───────────────────┼─────────────┤
+│bDeviceSubClass    │ 2           │
+├───────────────────┼─────────────┤
+│bDeviceProtocol    │ 1           │
+├───────────────────┼─────────────┤
+│bMaxPacketSize0    │ 64          │
+├───────────────────┼─────────────┤
+│idVendor           │ 0x303a      │
+├───────────────────┼─────────────┤
+│idProduct          │ 0x4001      │
+├───────────────────┼─────────────┤
+│bcdDevice          │ 0x100       │
+├───────────────────┼─────────────┤
+│iManufacturer      │ 0x1         │
+├───────────────────┼─────────────┤
+│iProduct           │ 0x2         │
+├───────────────────┼─────────────┤
+│iSerialNumber      │ 0x3         │
+├───────────────────┼─────────────┤
+│bNumConfigurations │ 0x1         │
+└───────────────────┴─────────────┘
+[0;32mI (3298) TinyUSB: TinyUSB Driver installed[0m
+[0;32mI (3302) usb_cdc: USB CDC initialized successfully[0m
+[0;32mI (3306) main: USB CDC initialized successfully[0m
+[0;32mI (3311) main: ========================================[0m
+[0;32mI (3316) main: Hardware Initialization Starting[0m
+[0;32mI (3320) main: ========================================[0m
+[0;32mI (3325) gpio_hal: Initializing GPIO HAL[0m
+[0;32mI (3329) gpio: GPIO[4]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3337) gpio: GPIO[5]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3345) gpio: GPIO[6]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3354) gpio: GPIO[7]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3362) gpio: GPIO[15]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3370) gpio: GPIO[16]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3379) gpio: GPIO[17]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3387) gpio: GPIO[13]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3396) gpio: GPIO[1]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3404) gpio: GPIO[2]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3412) gpio: GPIO[40]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3421) gpio: GPIO[41]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3429) gpio: GPIO[42]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3437) gpio: GPIO[38]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3446) gpio: GPIO[39]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3454) gpio: GPIO[47]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3463) gpio: GPIO[48]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3471) gpio_hal: GPIO HAL initialized successfully[0m
+[0;32mI (3476) i2c_hal: Initializing I2C0: SDA=8, SCL=18, freq=400000 Hz[0m
+[0;32mI (3482) i2c_hal: I2C0 initialized successfully[0m
+[0;32mI (3486) main: MCP23017 #0 (0x20) IODIR_A=0xFF[0m
+[0;32mI (3490) main: MCP23017 #1 (0x21) IODIR_A=0xFF[0m
+[0;32mI (3494) i2c_hal: Initializing I2C1: SDA=14, SCL=21, freq=400000 Hz[0m
+[0;32mI (3501) i2c_hal: I2C1 initialized successfully[0m
+[0;32mI (3532) main: OLED initialized with test pattern[0m
+[0;32mI (3532) i2c_hal: Scanning I2C0 bus...[0m
+[0;32mI (3536) i2c_hal: I2C0: Found device at 0x20[0m
+[0;32mI (3536) i2c_hal: I2C0: Found device at 0x21[0m
+[0;32mI (3549) i2c_hal: I2C0 scan complete: 2 device(s) found[0m
+[0;32mI (3549) main: I2C bus isolation verified: I2C0 still operational[0m
+[0;32mI (3549) spi_hal: Initializing SPI1: MOSI=11, SCLK=12, CS=10[0m
+[0;32mI (3555) gpio: GPIO[9]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3562) spi_hal: SPI initialized successfully, OE pin=9 (disabled)[0m
+[0;32mI (3568) tpic6b595: Initializing TPIC6B595 driver[0m
+[0;32mI (3573) spi_hal: SR outputs ENABLED[0m
+[0;32mI (3576) tpic6b595: TPIC6B595 driver initialized, 40-bit chain ready[0m
+[0;32mI (3582) main: TPIC6B595 shift register initialized (test skipped)[0m
+[0;32mI (3588) main: ========================================[0m
+[0;32mI (3593) main: Hardware Initialization: ALL PASSED[0m
+[0;32mI (3597) main: ========================================[0m
+[0;32mI (3602) main: Creating FreeRTOS tasks...[0m
+[0;32mI (3606) tasks: Task safety started on core 0[0m
+[0;32mI (3610) tasks: Task usb_rx started on core 0[0m
+[0;32mI (3614) tasks: Task usb_tx started on core 0[0m
+[0;32mI (3618) tasks: Task cmd_exec started on core 0[0m
+[0;32mI (3623) tasks: Task i2c_mon started on core 0[0m
+[0;32mI (3627) tasks: Task idle_mon started on core 0[0m
+[0;32mI (3631) tasks: Task motion_X (axis 0) started on core 1[0m
+[0;32mI (3632) tasks: Task motion_B (axis 4) started on core 1[0m
+[0;32mI (3631) tasks: Task motion_Z (axis 2) started on core 1[0m
+[0;32mI (3632) tasks: Task motion_C (axis 5) started on core 1[0m
+[0;32mI (3631) tasks: Task motion_Y (axis 1) started on core 1[0m
+[0;32mI (3632) tasks: Task motion_D (axis 6) started on core 1[0m
+[0;32mI (3631) tasks: Task motion_A (axis 3) started on core 1[0m
+[0;32mI (3632) tasks: Task motion_E (axis 7) started on core 1[0m
+[0;32mI (3631) main: YaRobot Control Unit - All tasks started[0m
+[0;32mI (3671) tasks: Task display started on core 1[0m
+[0;32mI (3676) main_task: Returned from app_main()[0m

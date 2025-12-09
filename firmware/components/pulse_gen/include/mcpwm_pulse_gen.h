@@ -28,9 +28,9 @@
 #include "driver/mcpwm_gen.h"
 #include "driver/pulse_cnt.h"
 #include "driver/gpio.h"
+#include "esp_timer.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
-#include "freertos/task.h"
 #include <atomic>
 
 /**
@@ -169,9 +169,8 @@ private:
     int64_t last_completed_position_;       ///< Position at last move completion (stable)
     int32_t pcnt_at_last_completion_;       ///< PCNT hardware value at completion (stable)
 
-    // Profile update task
-    TaskHandle_t profile_task_handle_;
-    std::atomic<bool> task_should_exit_;
+    // Profile update timer (esp_timer for guaranteed timing)
+    esp_timer_handle_t profile_timer_;
 
     // Callback
     MotionCompleteCallback completion_callback_;
@@ -195,9 +194,8 @@ private:
     esp_err_t configurePcntWatchPoint(int32_t target_pulses);
     int64_t readPcntCount() const;
 
-    // Profile update task
-    static void profileTaskEntry(void* arg);
-    void profileTaskLoop();
+    // Profile update timer callback
+    static void profileTimerCallback(void* arg);
     void updateProfile();
 
     // PCNT callbacks (static trampolines) - ISR SAFE

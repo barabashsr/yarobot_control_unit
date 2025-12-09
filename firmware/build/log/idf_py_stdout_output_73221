@@ -1,0 +1,796 @@
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x8 (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x15a0
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xd20
+load:0x403cb700,len:0x2ee4
+entry 0x403c8928
+[0;32mI (27) boot: ESP-IDF v5.4-dirty 2nd stage bootloader[0m
+[0;32mI (27) boot: compile time Dec  6 2025 20:10:08[0m
+[0;32mI (27) boot: Multicore bootloader[0m
+[0;32mI (27) boot: chip revision: v0.2[0m
+[0;32mI (30) boot: efuse block revision: v1.3[0m
+[0;32mI (34) boot.esp32s3: Boot SPI Speed : 80MHz[0m
+[0;32mI (38) boot.esp32s3: SPI Mode       : DIO[0m
+[0;32mI (41) boot.esp32s3: SPI Flash Size : 16MB[0m
+[0;32mI (45) boot: Enabling RNG early entropy source...[0m
+[0;32mI (50) boot: Partition Table:[0m
+[0;32mI (52) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (59) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (65) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (72) boot:  2 factory          factory app      00 00 00010000 00300000[0m
+[0;32mI (78) boot:  3 storage          Unknown data     01 82 00310000 00100000[0m
+[0;32mI (85) boot: End of partition table[0m
+[0;32mI (88) esp_image: segment 0: paddr=00010020 vaddr=3c040020 size=17988h ( 96648) map[0m
+[0;32mI (112) esp_image: segment 1: paddr=000279b0 vaddr=3fc96e00 size=03738h ( 14136) load[0m
+[0;32mI (116) esp_image: segment 2: paddr=0002b0f0 vaddr=40374000 size=04f28h ( 20264) load[0m
+[0;32mI (121) esp_image: segment 3: paddr=00030020 vaddr=42000020 size=3d72ch (251692) map[0m
+[0;32mI (168) esp_image: segment 4: paddr=0006d754 vaddr=40378f28 size=0de1ch ( 56860) load[0m
+[0;32mI (181) esp_image: segment 5: paddr=0007b578 vaddr=600fe100 size=0001ch (    28) load[0m
+[0;32mI (188) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (189) boot: Disabling RNG early entropy source...[0m
+[0;32mI (199) octal_psram: vendor id    : 0x0d (AP)[0m
+[0;32mI (199) octal_psram: dev id       : 0x02 (generation 3)[0m
+[0;32mI (199) octal_psram: density      : 0x03 (64 Mbit)[0m
+[0;32mI (201) octal_psram: good-die     : 0x01 (Pass)[0m
+[0;32mI (205) octal_psram: Latency      : 0x01 (Fixed)[0m
+[0;32mI (210) octal_psram: VCC          : 0x01 (3V)[0m
+[0;32mI (214) octal_psram: SRF          : 0x01 (Fast Refresh)[0m
+[0;32mI (219) octal_psram: BurstType    : 0x01 (Hybrid Wrap)[0m
+[0;32mI (223) octal_psram: BurstLen     : 0x01 (32 Byte)[0m
+[0;32mI (228) octal_psram: Readlatency  : 0x02 (10 cycles@Fixed)[0m
+[0;32mI (233) octal_psram: DriveStrength: 0x00 (1/1)[0m
+[0;32mI (237) esp_psram: Found 8MB PSRAM device[0m
+[0;32mI (241) esp_psram: Speed: 40MHz[0m
+[0;32mI (244) cpu_start: Multicore app[0m
+[0;32mI (978) esp_psram: SPI SRAM memory test OK[0m
+[0;32mI (987) cpu_start: Pro cpu start user code[0m
+[0;32mI (992) cpu_start: cpu freq: 240000000 Hz[0m
+[0;32mI (992) app_init: Application information:[0m
+[0;32mI (992) app_init: Project name:     yarobot_control_unit[0m
+[0;32mI (997) app_init: App version:      d717750-dirty[0m
+[0;32mI (1001) app_init: Compile time:     Dec  9 2025 11:03:04[0m
+[0;32mI (1006) app_init: ELF file SHA256:  58c079307...[0m
+[0;32mI (1011) app_init: ESP-IDF:          v5.4-dirty[0m
+[0;32mI (1015) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (1019) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (1023) efuse_init: Chip rev:         v0.2[0m
+[0;32mI (1027) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (1034) heap_init: At 3FC9C808 len 0004CF08 (307 KiB): RAM[0m
+[0;32mI (1039) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM[0m
+[0;32mI (1044) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM[0m
+[0;32mI (1049) heap_init: At 600FE11C len 00001ECC (7 KiB): RTCRAM[0m
+[0;32mI (1055) esp_psram: Adding pool of 8192K of PSRAM memory to heap allocator[0m
+[0;32mI (1062) spi_flash: detected chip: boya[0m
+[0;32mI (1065) spi_flash: flash io: dio[0m
+[0;32mI (1068) sleep_gpio: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (1074) sleep_gpio: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (1081) main_task: Started on CPU0[0m
+[0;32mI (1084) esp_psram: Reserving pool of 32K of internal memory for DMA/internal allocations[0m
+[0;32mI (1092) main_task: Calling app_main()[0m
+[0;32mI (3095) main: Hello from app_main[0m
+[0;32mI (3095) main: PSRAM detected: 8388608 bytes (8.0 MB)[0m
+[0;32mI (3095) main: Firmware: YAROBOT_CONTROL_UNIT v1.0.0[0m
+[0;32mI (3096) main: Axes: 8 (Servos:5, Steppers:2, Discrete:1)[0m
+[0;32mI (3101) main: GPIO X_STEP: 4, I2C MCP0: 0x20[0m
+[0;32mI (3105) main: Initializing USB CDC interface...[0m
+[0;32mI (3110) usb_cdc: Initializing USB CDC interface[0m
+[0;33mW (3114) tusb_desc: No Device descriptor provided, using default.[0m
+[0;33mW (3120) tusb_desc: No FullSpeed configuration descriptor provided, using default.[0m
+[0;33mW (3127) tusb_desc: No String descriptors provided, using default.[0m
+[0;32mI (3133) tusb_desc: [0m
+┌─────────────────────────────────┐
+│  USB Device Descriptor Summary  │
+├───────────────────┬─────────────┤
+│bDeviceClass       │ 239         │
+├───────────────────┼─────────────┤
+│bDeviceSubClass    │ 2           │
+├───────────────────┼─────────────┤
+│bDeviceProtocol    │ 1           │
+├───────────────────┼─────────────┤
+│bMaxPacketSize0    │ 64          │
+├───────────────────┼─────────────┤
+│idVendor           │ 0x303a      │
+├───────────────────┼─────────────┤
+│idProduct          │ 0x4001      │
+├───────────────────┼─────────────┤
+│bcdDevice          │ 0x100       │
+├───────────────────┼─────────────┤
+│iManufacturer      │ 0x1         │
+├───────────────────┼─────────────┤
+│iProduct           │ 0x2         │
+├───────────────────┼─────────────┤
+│iSerialNumber      │ 0x3         │
+├───────────────────┼─────────────┤
+│bNumConfigurations │ 0x1         │
+└───────────────────┴─────────────┘
+[0;32mI (3301) TinyUSB: TinyUSB Driver installed[0m
+[0;32mI (3304) usb_cdc: USB CDC initialized successfully[0m
+[0;32mI (3308) main: USB CDC initialized successfully[0m
+[0;32mI (3313) main: ========================================[0m
+[0;32mI (3318) main: Hardware Initialization Starting[0m
+[0;32mI (3322) main: ========================================[0m
+[0;32mI (3327) gpio_hal: Initializing GPIO HAL[0m
+[0;32mI (3331) gpio: GPIO[4]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3339) gpio: GPIO[5]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3347) gpio: GPIO[6]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3356) gpio: GPIO[7]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3364) gpio: GPIO[15]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3372) gpio: GPIO[16]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3381) gpio: GPIO[17]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3389) gpio: GPIO[13]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3398) gpio: GPIO[1]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3406) gpio: GPIO[2]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3414) gpio: GPIO[40]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3423) gpio: GPIO[41]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3431) gpio: GPIO[42]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3439) gpio: GPIO[38]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3448) gpio: GPIO[39]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3456) gpio: GPIO[47]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3465) gpio: GPIO[48]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3473) gpio_hal: GPIO HAL initialized successfully[0m
+[0;32mI (3478) i2c_hal: Initializing I2C0: SDA=8, SCL=18, freq=400000 Hz[0m
+[0;32mI (3484) i2c_hal: I2C0 initialized successfully[0m
+[0;32mI (3488) main: MCP23017 #0 (0x20) IODIR_A=0xFF[0m
+[0;32mI (3492) main: MCP23017 #1 (0x21) IODIR_A=0xFF[0m
+[0;32mI (3496) i2c_hal: Initializing I2C1: SDA=14, SCL=21, freq=400000 Hz[0m
+[0;32mI (3503) i2c_hal: I2C1 initialized successfully[0m
+[0;32mI (3534) main: OLED initialized with test pattern[0m
+[0;32mI (3534) i2c_hal: Scanning I2C0 bus...[0m
+[0;32mI (3538) i2c_hal: I2C0: Found device at 0x20[0m
+[0;32mI (3538) i2c_hal: I2C0: Found device at 0x21[0m
+[0;32mI (3551) i2c_hal: I2C0 scan complete: 2 device(s) found[0m
+[0;32mI (3551) main: I2C bus isolation verified: I2C0 still operational[0m
+[0;32mI (3551) spi_hal: Initializing SPI1: MOSI=11, SCLK=12, CS=10[0m
+[0;32mI (3557) gpio: GPIO[9]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3564) spi_hal: SPI initialized successfully, OE pin=9 (disabled)[0m
+[0;32mI (3570) tpic6b595: Initializing TPIC6B595 driver[0m
+[0;32mI (3575) spi_hal: SR outputs ENABLED[0m
+[0;32mI (3578) tpic6b595: TPIC6B595 driver initialized, 40-bit chain ready[0m
+[0;32mI (3584) main: TPIC6B595 shift register initialized (test skipped)[0m
+[0;32mI (3590) main: ========================================[0m
+[0;32mI (3595) main: Hardware Initialization: ALL PASSED[0m
+[0;32mI (3599) main: ========================================[0m
+[0;32mI (3604) main: Creating FreeRTOS tasks...[0m
+[0;32mI (3608) tasks: Task safety started on core 0[0m
+[0;32mI (3612) tasks: Task usb_rx started on core 0[0m
+[0;32mI (3616) tasks: Task usb_tx started on core 0[0m
+[0;32mI (3620) tasks: Task cmd_exec started on core 0[0m
+[0;32mI (3625) tasks: Task i2c_mon started on core 0[0m
+[0;32mI (3629) tasks: Task idle_mon started on core 0[0m
+[0;32mI (3633) tasks: Task motion_X (axis 0) started on core 1[0m
+[0;32mI (3634) tasks: Task motion_B (axis 4) started on core 1[0m
+[0;32mI (3633) tasks: Task motion_Z (axis 2) started on core 1[0m
+[0;32mI (3634) tasks: Task motion_C (axis 5) started on core 1[0m
+[0;32mI (3633) tasks: Task motion_Y (axis 1) started on core 1[0m
+[0;32mI (3634) tasks: Task motion_D (axis 6) started on core 1[0m
+[0;32mI (3633) tasks: Task motion_A (axis 3) started on core 1[0m
+[0;32mI (3634) tasks: Task motion_E (axis 7) started on core 1[0m
+[0;32mI (3633) main: YaRobot Control Unit - All tasks started[0m
+[0;32mI (3674) tasks: Task display started on core 1[0m
+[0;32mI (3678) main_task: Returned from app_main()[0m
+[0;32mI (13815) usb_cdc: USB CDC connected (DTR=1, RTS=1)[0m
+[0;32mI (13816) tasks: USB CDC connection state: connected[0m
+[0;32mI (18495) CMD_EXEC: Initialized with 4 built-in commands[0m
+[0;32mI (18495) EVENT_MGR: Event processor task started[0m
+[0;32mI (18495) EVENT_MGR: Initialized (queue=32, max_subs=8)[0m
+[0;32mI (18498) tasks: Command executor initialized[0m
+[0;32mI (18502) motor_system: ========================================[0m
+[0;32mI (18508) motor_system: Motor System Initialization Starting[0m
+[0;32mI (18513) motor_system: ========================================[0m
+[0;33mW (18519) tpic6b595: Already initialized[0m
+[0;32mI (18523) motor_system: Axis configurations initialized[0m
+[0;32mI (18528) RMT_PULSE: Initializing RMT channel 0 on GPIO 4 (step)[0m
+[0;32mI (18534) RMT_PULSE: RMT channel 0 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (18541) RMT_PULSE: Initializing RMT channel 1 on GPIO 6 (step)[0m
+[0;32mI (18535) RMT_PULSE: Ramp task started for channel 0[0m
+[0;32mI (18547) RMT_PULSE: RMT channel 1 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (18559) RMT_PULSE: Initializing RMT channel 2 on GPIO 7 (step)[0m
+[0;32mI (18552) RMT_PULSE: Ramp task started for channel 1[0m
+[0;32mI (18565) RMT_PULSE: RMT channel 2 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (18577) RMT_PULSE: Initializing RMT channel 3 on GPIO 15 (step)[0m
+[0;32mI (18570) RMT_PULSE: Ramp task started for channel 2[0m
+[0;32mI (18583) RMT_PULSE: RMT channel 3 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (18595) MCPWM_PULSE: Initializing MCPWM timer 0 on GPIO 5 with PCNT unit 0[0m
+[0;32mI (18602) gpio: GPIO[5]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;33mW (18611) MCPWM_PULSE: DEBUG init: MCPWM generator created on GPIO 5 with io_loop_back=true[0m
+[0;32mI (18618) MCPWM_PULSE: GPIO 5 input enabled for PCNT loopback, settling for 700000 µs[0m
+[0;32mI (18588) RMT_PULSE: Ramp task started for channel 3[0m
+[0;32mI (19326) MCPWM_PULSE: GPIO 5 loopback settled and ready[0m
+[0;33mW (19326) MCPWM_PULSE: DEBUG init: Creating PCNT channel on GPIO 5[0m
+[0;32mI (19327) MCPWM_PULSE: PCNT started for continuous position tracking (baseline: 0)[0m
+[0;32mI (19333) MCPWM_PULSE: MCPWM timer 0 with PCNT unit 0 initialized successfully[0m
+[0;32mI (19333) MCPWM_PULSE: Profile task started for timer 0[0m
+[0;32mI (19340) MCPWM_PULSE: Initializing MCPWM timer 1 on GPIO 16 with PCNT unit 1[0m
+[0;32mI (19352) gpio: GPIO[16]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;33mW (19361) MCPWM_PULSE: DEBUG init: MCPWM generator created on GPIO 16 with io_loop_back=true[0m
+[0;32mI (19369) MCPWM_PULSE: GPIO 16 input enabled for PCNT loopback, settling for 700000 µs[0m
+[0;32mI (20076) MCPWM_PULSE: GPIO 16 loopback settled and ready[0m
+[0;33mW (20077) MCPWM_PULSE: DEBUG init: Creating PCNT channel on GPIO 16[0m
+[0;32mI (20077) MCPWM_PULSE: PCNT started for continuous position tracking (baseline: 0)[0m
+[0;32mI (20084) MCPWM_PULSE: MCPWM timer 1 with PCNT unit 1 initialized successfully[0m
+[0;32mI (20084) MCPWM_PULSE: Profile task started for timer 1[0m
+[0;32mI (20091) LEDC_PULSE: Initializing LEDC timer 2, channel 2 on GPIO 17[0m
+[0;32mI (20102) gpio: GPIO[17]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (20110) LEDC_PULSE: Configured GPIO 17 for PCNT internal loopback[0m
+[0;32mI (20117) LEDC_PULSE: LEDC timer 2 initialized successfully[0m
+[0;32mI (20117) LEDC_PULSE: Completion task started for LEDC timer 2[0m
+[0;32mI (20122) motor_system: All pulse generators initialized[0m
+[0;32mI (20132) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (20137) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (20141) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (20146) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (20150) TIME_TRACKER: Time tracker initialized with travel time 1000 ms[0m
+[0;32mI (20157) motor_system: All position trackers initialized[0m
+[0;32mI (20162) motor_system: Pulse generators wired to position trackers[0m
+[0;32mI (20168) motor_system: Motor objects created[0m
+[0;32mI (20172) motor_base: Axis 0 initialized (0.556 pulses/unit)[0m
+[0;32mI (20177) motor_base: Axis 1 initialized (0.556 pulses/unit)[0m
+[0;32mI (20183) motor_base: Axis 2 initialized (0.556 pulses/unit)[0m
+[0;32mI (20188) motor_base: Axis 3 initialized (0.556 pulses/unit)[0m
+[0;32mI (20193) motor_base: Axis 4 initialized (0.556 pulses/unit)[0m
+[0;32mI (20199) motor_base: Axis 5 initialized (0.556 pulses/unit)[0m
+[0;32mI (20204) LEDC_PULSE: setPositionTracker: tracker=0x3fc9b634 (PcntTracker for hardware PCNT)[0m
+[0;32mI (20212) motor_base: Axis 6 initialized (0.556 pulses/unit)[0m
+[0;33mW (20218) TIME_TRACKER: Time tracker already initialized[0m
+[0;32mI (20223) discrete_axis: Axis 7 initialized (discrete actuator, travel time 1000 ms)[0m
+[0;32mI (20230) motor_system: All motor objects initialized[0m
+[0;32mI (20235) MOTION_CTRL: Initialized with 8 axes[0m
+[0;32mI (20239) motor_system: Motion controller initialized with 8 axes[0m
+[0;32mI (20245) MOVE_HDL: Registered MOVE handler[0m
+[0;32mI (20249) MOVR_HDL: Registered MOVR handler[0m
+[0;32mI (20253) EN_HDL: Registered EN handler[0m
+[0;32mI (20256) POS_HDL: Registered POS handler[0m
+[0;32mI (20260) VEL_HDL: Registered VEL handler[0m
+[0;32mI (20264) STOP_HDL: Registered STOP handler[0m
+[0;32mI (20268) motor_system: Command handlers registered (MOVE, MOVR, EN, POS, VEL, STOP)[0m
+[0;32mI (20275) motor_system: ========================================[0m
+[0;32mI (20281) motor_system: Motor System Initialization: SUCCESS[0m
+[0;32mI (20286) motor_system:   Servos: 5 (X, Y, Z, A, B)[0m
+[0;32mI (20291) motor_system:   Steppers: 2 (C, D)[0m
+[0;32mI (20295) motor_system:   Discrete: 1 (E)[0m
+[0;32mI (20299) motor_system: ========================================[0m
+[0;32mI (20304) CMD_EXEC: CMD: MODE -[0m
+OK READY
+[0;32mI (23678) CMD_EXEC: CMD: EN Y 1.0000[0m
+[0;32mI (23679) motor_base: Axis 1 enabled[0m
+OK
+[0;32mI (28259) CMD_EXEC: CMD: MOVE Y 100.0000[0m
+[0;33mW (28259) motor_base: DEBUG Axis 1: moveAbsolute(pos=100.0000, vel=1080.0000)[0m
+[0;33mW (28260) motor_base: DEBUG Axis 1: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (28266) motor_base: DEBUG Axis 1: current_pos=0.0000, target_pos=100.0000[0m
+[0;33mW (28272) motor_base: DEBUG Axis 1: setting direction=FWD[0m
+[0;33mW (28278) motor_base: DEBUG Axis 1: pulses_per_unit=0.56, pulses=55, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (28286) motor_base: DEBUG Axis 1: calling pulse_gen_->startMove(pulses=55, freq=600.0, accel=6000.0)[0m
+[0;33mW (28295) MCPWM_PULSE: DEBUG startMove: pulses=55, max_vel=600.0 Hz, accel=6000.0, dir=FWD[0m
+[0;33mW (28303) MCPWM_PULSE: DEBUG PLANNING: PCNT at startMove entry = 0 (end of planning phase)[0m
+[0;33mW (28311) MCPWM_PULSE: DEBUG startMove: profile calculated: accel=27, cruise=0, decel=28, cruise_vel=569.2[0m
+[0;33mW (28320) MCPWM_PULSE: DEBUG startMove: move_start_position=0, direction=FWD[0m
+[0;33mW (28327) MCPWM_PULSE: DEBUG startMove: PCNT baseline = 0 (continuous counting, never cleared)[0m
+[0;33mW (28335) MCPWM_PULSE: DEBUG startMove: watch point target = 0 + 55 = 55 (absolute PCNT value)[0m
+[0;33mW (28344) MCPWM_PULSE: DEBUG startMove: configuring PCNT watch point for absolute count 55[0m
+[0;33mW (28352) MCPWM_PULSE: DEBUG startMove: setting initial freq=300 Hz[0m
+[0;33mW (28358) MCPWM_PULSE: DEBUG startMove: Restored generator HIGH action for pulse generation[0m
+[0;33mW (28366) MCPWM_PULSE: DEBUG PLANNING: PCNT after HIGH action = 0 (continuous counting)[0m
+[0;33mW (28373) MCPWM_PULSE: DEBUG startMove: starting MCPWM timer (PCNT continuously running)[0m
+[0;33mW (28381) MCPWM_PULSE: DEBUG PLANNING: PCNT after MCPWM start = 0 (should be ~30 at 300Hz)[0m
+[0;33mW (28389) MCPWM_PULSE: DEBUG startMove: completed successfully[0m
+[0;33mW (28395) motor_base: DEBUG Axis 1: moveAbsolute completed, state=MOVING[0m
+OK
+[0;33mW (28525) MCPWM_PULSE: updateProfile: STOP - pcnt=56 >= target=55[0m
+[0;33mW (28525) MCPWM_PULSE: DEBUG: Reconfigured generator to force GPIO LOW when stopped[0m
+[0;33mW (28527) MCPWM_PULSE: updateProfile: COMPLETED - actual_pcnt=56, start=0, new_abs=56[0m
+[0;33mW (28535) MCPWM_PULSE: DEBUG: Updated stable reference - last_pos=56, pcnt_hw=56[0m
+[0;33mW (28542) MCPWM_PULSE: DEBUG PLANNING: PCNT after stop = 56 (should equal 56)[0m
+[0;33mW (28549) motor_base: DEBUG Axis 1: onMotionComplete(total_pulses=56)[0m
+[0;33mW (28555) motor_base: DEBUG Axis 1: before sync: pulse_count=0, tracker_pos=56[0m
+[0;33mW (28562) motor_base: DEBUG Axis 1: after sync: pulse_count=56[0m
+[0;33mW (28568) motor_base: Axis 1: motion complete at position 100.8000[0m
+[0;32mI (32632) CMD_EXEC: CMD: MOVE Y 360.0000[0m
+[0;33mW (32632) motor_base: DEBUG Axis 1: moveAbsolute(pos=360.0000, vel=1080.0000)[0m
+[0;33mW (32633) motor_base: DEBUG Axis 1: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (32639) motor_base: DEBUG Axis 1: current_pos=100.8000, target_pos=360.0000[0m
+[0;33mW (32645) motor_base: DEBUG Axis 1: setting direction=FWD[0m
+[0;33mW (32651) motor_base: DEBUG Axis 1: pulses_per_unit=0.56, pulses=144, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (32659) motor_base: DEBUG Axis 1: calling pulse_gen_->startMove(pulses=144, freq=600.0, accel=6000.0)[0m
+[0;33mW (32668) MCPWM_PULSE: DEBUG startMove: pulses=144, max_vel=600.0 Hz, accel=6000.0, dir=FWD[0m
+[0;33mW (32676) MCPWM_PULSE: DEBUG PLANNING: PCNT at startMove entry = 56 (end of planning phase)[0m
+[0;33mW (32684) MCPWM_PULSE: DEBUG startMove: profile calculated: accel=29, cruise=86, decel=29, cruise_vel=600.0[0m
+[0;33mW (32694) MCPWM_PULSE: DEBUG startMove: move_start_position=56, direction=FWD[0m
+[0;33mW (32701) MCPWM_PULSE: DEBUG startMove: PCNT baseline = 56 (continuous counting, never cleared)[0m
+[0;33mW (32709) MCPWM_PULSE: DEBUG startMove: watch point target = 56 + 144 = 200 (absolute PCNT value)[0m
+[0;33mW (32718) MCPWM_PULSE: DEBUG startMove: configuring PCNT watch point for absolute count 200[0m
+[0;33mW (32726) MCPWM_PULSE: DEBUG startMove: setting initial freq=300 Hz[0m
+[0;33mW (32732) MCPWM_PULSE: DEBUG startMove: Restored generator HIGH action for pulse generation[0m
+[0;33mW (32740) MCPWM_PULSE: DEBUG PLANNING: PCNT after HIGH action = 56 (continuous counting)[0m
+[0;33mW (32748) MCPWM_PULSE: DEBUG startMove: starting MCPWM timer (PCNT continuously running)[0m
+[0;33mW (32756) MCPWM_PULSE: DEBUG PLANNING: PCNT after MCPWM start = 56 (should be ~30 at 300Hz)[0m
+[0;33mW (32764) MCPWM_PULSE: DEBUG startMove: completed successfully[0m
+[0;33mW (32769) motor_base: DEBUG Axis 1: moveAbsolute completed, state=MOVING[0m
+OK
+[0;33mW (33573) MCPWM_PULSE: DEBUG updateProfile: pcnt=84, target=144, freq=600.0, state=2[0m
+[0;33mW (33694) MCPWM_PULSE: updateProfile: STOP - pcnt=144 >= target=144[0m
+[0;33mW (33694) MCPWM_PULSE: DEBUG: Reconfigured generator to force GPIO LOW when stopped[0m
+[0;33mW (33696) MCPWM_PULSE: updateProfile: COMPLETED - actual_pcnt=144, start=56, new_abs=200[0m
+[0;33mW (33704) MCPWM_PULSE: DEBUG: Updated stable reference - last_pos=200, pcnt_hw=200[0m
+[0;33mW (33712) MCPWM_PULSE: DEBUG PLANNING: PCNT after stop = 200 (should equal 144)[0m
+[0;33mW (33719) motor_base: DEBUG Axis 1: onMotionComplete(total_pulses=200)[0m
+[0;33mW (33725) motor_base: DEBUG Axis 1: before sync: pulse_count=56, tracker_pos=200[0m
+[0;33mW (33732) motor_base: DEBUG Axis 1: after sync: pulse_count=200[0m
+[0;33mW (33738) motor_base: Axis 1: motion complete at position 360.0000[0m
+[0;32mI (37296) CMD_EXEC: CMD: MOVE Y 0.0000[0m
+[0;33mW (37296) motor_base: DEBUG Axis 1: moveAbsolute(pos=0.0000, vel=1080.0000)[0m
+[0;33mW (37297) motor_base: DEBUG Axis 1: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (37302) motor_base: DEBUG Axis 1: current_pos=360.0000, target_pos=0.0000[0m
+[0;33mW (37309) motor_base: DEBUG Axis 1: setting direction=REV[0m
+[0;33mW (37314) motor_base: DEBUG Axis 1: pulses_per_unit=0.56, pulses=200, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (37322) motor_base: DEBUG Axis 1: calling pulse_gen_->startMove(pulses=-200, freq=600.0, accel=6000.0)[0m
+[0;33mW (37332) MCPWM_PULSE: DEBUG startMove: pulses=-200, max_vel=600.0 Hz, accel=6000.0, dir=REV[0m
+[0;33mW (37340) MCPWM_PULSE: DEBUG PLANNING: PCNT at startMove entry = 200 (end of planning phase)[0m
+[0;33mW (37348) MCPWM_PULSE: DEBUG startMove: profile calculated: accel=29, cruise=142, decel=29, cruise_vel=600.0[0m
+[0;33mW (37358) MCPWM_PULSE: DEBUG startMove: move_start_position=200, direction=REV[0m
+[0;33mW (37364) MCPWM_PULSE: DEBUG startMove: PCNT baseline = 200 (continuous counting, never cleared)[0m
+[0;33mW (37373) MCPWM_PULSE: DEBUG startMove: watch point target = 200 + 200 = 400 (absolute PCNT value)[0m
+[0;33mW (37382) MCPWM_PULSE: DEBUG startMove: configuring PCNT watch point for absolute count 400[0m
+[0;33mW (37390) MCPWM_PULSE: DEBUG startMove: setting initial freq=300 Hz[0m
+[0;33mW (37396) MCPWM_PULSE: DEBUG startMove: Restored generator HIGH action for pulse generation[0m
+[0;33mW (37404) MCPWM_PULSE: DEBUG PLANNING: PCNT after HIGH action = 200 (continuous counting)[0m
+[0;33mW (37412) MCPWM_PULSE: DEBUG startMove: starting MCPWM timer (PCNT continuously running)[0m
+[0;33mW (37420) MCPWM_PULSE: DEBUG PLANNING: PCNT after MCPWM start = 200 (should be ~30 at 300Hz)[0m
+[0;33mW (37428) MCPWM_PULSE: DEBUG startMove: completed successfully[0m
+[0;33mW (37433) motor_base: DEBUG Axis 1: moveAbsolute completed, state=MOVING[0m
+OK
+[0;33mW (37803) MCPWM_PULSE: updateProfile: STOP - pcnt=201 >= target=200[0m
+[0;33mW (37803) MCPWM_PULSE: DEBUG: Reconfigured generator to force GPIO LOW when stopped[0m
+[0;33mW (37806) MCPWM_PULSE: updateProfile: COMPLETED - actual_pcnt=201, start=200, new_abs=-1[0m
+[0;33mW (37813) MCPWM_PULSE: DEBUG: Updated stable reference - last_pos=-1, pcnt_hw=401[0m
+[0;33mW (37821) MCPWM_PULSE: DEBUG PLANNING: PCNT after stop = 401 (should equal 201)[0m
+[0;33mW (37828) motor_base: DEBUG Axis 1: onMotionComplete(total_pulses=-1)[0m
+[0;33mW (37834) motor_base: DEBUG Axis 1: before sync: pulse_count=200, tracker_pos=-1[0m
+[0;33mW (37841) motor_base: DEBUG Axis 1: after sync: pulse_count=-1[0m
+[0;33mW (37846) motor_base: Axis 1: motion complete at position -1.8000[0m
+[0;32mI (48530) CMD_EXEC: CMD: MOVE Y 100.0000[0m
+[0;33mW (48530) motor_base: DEBUG Axis 1: moveAbsolute(pos=100.0000, vel=1080.0000)[0m
+[0;33mW (48531) motor_base: DEBUG Axis 1: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (48537) motor_base: DEBUG Axis 1: current_pos=-1.8000, target_pos=100.0000[0m
+[0;33mW (48543) motor_base: DEBUG Axis 1: setting direction=FWD[0m
+[0;33mW (48549) motor_base: DEBUG Axis 1: pulses_per_unit=0.56, pulses=56, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (48557) motor_base: DEBUG Axis 1: calling pulse_gen_->startMove(pulses=56, freq=600.0, accel=6000.0)[0m
+[0;33mW (48566) MCPWM_PULSE: DEBUG startMove: pulses=56, max_vel=600.0 Hz, accel=6000.0, dir=FWD[0m
+[0;33mW (48574) MCPWM_PULSE: DEBUG PLANNING: PCNT at startMove entry = 401 (end of planning phase)[0m
+[0;33mW (48582) MCPWM_PULSE: DEBUG startMove: profile calculated: accel=28, cruise=0, decel=28, cruise_vel=579.7[0m
+[0;33mW (48591) MCPWM_PULSE: DEBUG startMove: move_start_position=-1, direction=FWD[0m
+[0;33mW (48598) MCPWM_PULSE: DEBUG startMove: PCNT baseline = 401 (continuous counting, never cleared)[0m
+[0;33mW (48607) MCPWM_PULSE: DEBUG startMove: watch point target = 401 + 56 = 457 (absolute PCNT value)[0m
+[0;33mW (48615) MCPWM_PULSE: DEBUG startMove: configuring PCNT watch point for absolute count 457[0m
+[0;33mW (48623) MCPWM_PULSE: DEBUG startMove: setting initial freq=300 Hz[0m
+[0;33mW (48630) MCPWM_PULSE: DEBUG startMove: Restored generator HIGH action for pulse generation[0m
+[0;33mW (48638) MCPWM_PULSE: DEBUG PLANNING: PCNT after HIGH action = 401 (continuous counting)[0m
+[0;33mW (48645) MCPWM_PULSE: DEBUG startMove: starting MCPWM timer (PCNT continuously running)[0m
+[0;33mW (48653) MCPWM_PULSE: DEBUG PLANNING: PCNT after MCPWM start = 401 (should be ~30 at 300Hz)[0m
+[0;33mW (48661) MCPWM_PULSE: DEBUG startMove: completed successfully[0m
+[0;33mW (48667) motor_base: DEBUG Axis 1: moveAbsolute completed, state=MOVING[0m
+OK
+[0;33mW (48792) MCPWM_PULSE: updateProfile: STOP - pcnt=56 >= target=56[0m
+[0;33mW (48792) MCPWM_PULSE: DEBUG: Reconfigured generator to force GPIO LOW when stopped[0m
+[0;33mW (48794) MCPWM_PULSE: updateProfile: COMPLETED - actual_pcnt=56, start=-1, new_abs=55[0m
+[0;33mW (48802) MCPWM_PULSE: DEBUG: Updated stable reference - last_pos=55, pcnt_hw=458[0m
+[0;33mW (48809) MCPWM_PULSE: DEBUG PLANNING: PCNT after stop = 458 (should equal 56)[0m
+[0;33mW (48816) motor_base: DEBUG Axis 1: onMotionComplete(total_pulses=55)[0m
+[0;33mW (48822) motor_base: DEBUG Axis 1: before sync: pulse_count=-1, tracker_pos=55[0m
+[0;33mW (48829) motor_base: DEBUG Axis 1: after sync: pulse_count=55[0m
+[0;33mW (48835) motor_base: Axis 1: motion complete at position 99.0000[0m
+[0;32mI (58314) CMD_EXEC: CMD: MOVE Y 0.0000[0m
+[0;33mW (58314) motor_base: DEBUG Axis 1: moveAbsolute(pos=0.0000, vel=1080.0000)[0m
+[0;33mW (58314) motor_base: DEBUG Axis 1: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (58320) motor_base: DEBUG Axis 1: current_pos=99.0000, target_pos=0.0000[0m
+[0;33mW (58327) motor_base: DEBUG Axis 1: setting direction=REV[0m
+[0;33mW (58332) motor_base: DEBUG Axis 1: pulses_per_unit=0.56, pulses=55, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (58340) motor_base: DEBUG Axis 1: calling pulse_gen_->startMove(pulses=-55, freq=600.0, accel=6000.0)[0m
+[0;33mW (58349) MCPWM_PULSE: DEBUG startMove: pulses=-55, max_vel=600.0 Hz, accel=6000.0, dir=REV[0m
+[0;33mW (58357) MCPWM_PULSE: DEBUG PLANNING: PCNT at startMove entry = 458 (end of planning phase)[0m
+[0;33mW (58366) MCPWM_PULSE: DEBUG startMove: profile calculated: accel=27, cruise=0, decel=28, cruise_vel=569.2[0m
+[0;33mW (58375) MCPWM_PULSE: DEBUG startMove: move_start_position=55, direction=REV[0m
+[0;33mW (58382) MCPWM_PULSE: DEBUG startMove: PCNT baseline = 458 (continuous counting, never cleared)[0m
+[0;33mW (58390) MCPWM_PULSE: DEBUG startMove: watch point target = 458 + 55 = 513 (absolute PCNT value)[0m
+[0;33mW (58399) MCPWM_PULSE: DEBUG startMove: configuring PCNT watch point for absolute count 513[0m
+[0;33mW (58407) MCPWM_PULSE: DEBUG startMove: setting initial freq=300 Hz[0m
+[0;33mW (58413) MCPWM_PULSE: DEBUG startMove: Restored generator HIGH action for pulse generation[0m
+[0;33mW (58421) MCPWM_PULSE: DEBUG PLANNING: PCNT after HIGH action = 458 (continuous counting)[0m
+[0;33mW (58429) MCPWM_PULSE: DEBUG startMove: starting MCPWM timer (PCNT continuously running)[0m
+[0;33mW (58437) MCPWM_PULSE: DEBUG PLANNING: PCNT after MCPWM start = 458 (should be ~30 at 300Hz)[0m
+[0;33mW (58445) MCPWM_PULSE: DEBUG startMove: completed successfully[0m
+[0;33mW (58451) motor_base: DEBUG Axis 1: moveAbsolute completed, state=MOVING[0m
+OK
+[0;33mW (58741) MCPWM_PULSE: DEBUG updateProfile: pcnt=15, target=55, freq=424.3, state=3[0m
+[0;33mW (59242) MCPWM_PULSE: updateProfile: STOP - pcnt=56 >= target=55[0m
+[0;33mW (59242) MCPWM_PULSE: DEBUG: Reconfigured generator to force GPIO LOW when stopped[0m
+[0;33mW (59244) MCPWM_PULSE: updateProfile: COMPLETED - actual_pcnt=56, start=55, new_abs=-1[0m
+[0;33mW (59252) MCPWM_PULSE: DEBUG: Updated stable reference - last_pos=-1, pcnt_hw=514[0m
+[0;33mW (59259) MCPWM_PULSE: DEBUG PLANNING: PCNT after stop = 514 (should equal 56)[0m
+[0;33mW (59266) motor_base: DEBUG Axis 1: onMotionComplete(total_pulses=-1)[0m
+[0;33mW (59272) motor_base: DEBUG Axis 1: before sync: pulse_count=55, tracker_pos=-1[0m
+[0;33mW (59279) motor_base: DEBUG Axis 1: after sync: pulse_count=-1[0m
+[0;33mW (59285) motor_base: Axis 1: motion complete at position -1.8000[0m
+[0;32mI (65307) CMD_EXEC: CMD: MOVE Y 360.0000[0m
+[0;33mW (65307) motor_base: DEBUG Axis 1: moveAbsolute(pos=360.0000, vel=1080.0000)[0m
+[0;33mW (65308) motor_base: DEBUG Axis 1: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (65314) motor_base: DEBUG Axis 1: current_pos=-1.8000, target_pos=360.0000[0m
+[0;33mW (65320) motor_base: DEBUG Axis 1: setting direction=FWD[0m
+[0;33mW (65326) motor_base: DEBUG Axis 1: pulses_per_unit=0.56, pulses=201, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (65334) motor_base: DEBUG Axis 1: calling pulse_gen_->startMove(pulses=201, freq=600.0, accel=6000.0)[0m
+[0;33mW (65343) MCPWM_PULSE: DEBUG startMove: pulses=201, max_vel=600.0 Hz, accel=6000.0, dir=FWD[0m
+[0;33mW (65351) MCPWM_PULSE: DEBUG PLANNING: PCNT at startMove entry = 514 (end of planning phase)[0m
+[0;33mW (65360) MCPWM_PULSE: DEBUG startMove: profile calculated: accel=29, cruise=143, decel=29, cruise_vel=600.0[0m
+[0;33mW (65369) MCPWM_PULSE: DEBUG startMove: move_start_position=-1, direction=FWD[0m
+[0;33mW (65376) MCPWM_PULSE: DEBUG startMove: PCNT baseline = 514 (continuous counting, never cleared)[0m
+[0;33mW (65384) MCPWM_PULSE: DEBUG startMove: watch point target = 514 + 201 = 715 (absolute PCNT value)[0m
+[0;33mW (65393) MCPWM_PULSE: DEBUG startMove: configuring PCNT watch point for absolute count 715[0m
+[0;33mW (65401) MCPWM_PULSE: DEBUG startMove: setting initial freq=300 Hz[0m
+[0;33mW (65407) MCPWM_PULSE: DEBUG startMove: Restored generator HIGH action for pulse generation[0m
+[0;33mW (65415) MCPWM_PULSE: DEBUG PLANNING: PCNT after HIGH action = 514 (continuous counting)[0m
+[0;33mW (65423) MCPWM_PULSE: DEBUG startMove: starting MCPWM timer (PCNT continuously running)[0m
+[0;33mW (65431) MCPWM_PULSE: DEBUG PLANNING: PCNT after MCPWM start = 514 (should be ~30 at 300Hz)[0m
+[0;33mW (65439) MCPWM_PULSE: DEBUG startMove: completed successfully[0m
+[0;33mW (65445) motor_base: DEBUG Axis 1: moveAbsolute completed, state=MOVING[0m
+OK
+[0;33mW (65811) MCPWM_PULSE: updateProfile: STOP - pcnt=202 >= target=201[0m
+[0;33mW (65811) MCPWM_PULSE: DEBUG: Reconfigured generator to force GPIO LOW when stopped[0m
+[0;33mW (65814) MCPWM_PULSE: updateProfile: COMPLETED - actual_pcnt=202, start=-1, new_abs=201[0m
+[0;33mW (65821) MCPWM_PULSE: DEBUG: Updated stable reference - last_pos=201, pcnt_hw=716[0m
+[0;33mW (65829) MCPWM_PULSE: DEBUG PLANNING: PCNT after stop = 716 (should equal 202)[0m
+[0;33mW (65836) motor_base: DEBUG Axis 1: onMotionComplete(total_pulses=201)[0m
+[0;33mW (65842) motor_base: DEBUG Axis 1: before sync: pulse_count=-1, tracker_pos=201[0m
+[0;33mW (65849) motor_base: DEBUG Axis 1: after sync: pulse_count=201[0m
+[0;33mW (65855) motor_base: Axis 1: motion complete at position 361.8000[0m
+[0;32mI (71662) CMD_EXEC: CMD: MOVE Y 300.0000[0m
+[0;33mW (71662) motor_base: DEBUG Axis 1: moveAbsolute(pos=300.0000, vel=1080.0000)[0m
+[0;33mW (71663) motor_base: DEBUG Axis 1: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (71669) motor_base: DEBUG Axis 1: current_pos=361.8000, target_pos=300.0000[0m
+[0;33mW (71675) motor_base: DEBUG Axis 1: setting direction=REV[0m
+[0;33mW (71681) motor_base: DEBUG Axis 1: pulses_per_unit=0.56, pulses=34, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (71689) motor_base: DEBUG Axis 1: calling pulse_gen_->startMove(pulses=-34, freq=600.0, accel=6000.0)[0m
+[0;33mW (71698) MCPWM_PULSE: DEBUG startMove: pulses=-34, max_vel=600.0 Hz, accel=6000.0, dir=REV[0m
+[0;33mW (71706) MCPWM_PULSE: DEBUG PLANNING: PCNT at startMove entry = 716 (end of planning phase)[0m
+[0;33mW (71715) MCPWM_PULSE: DEBUG startMove: profile calculated: accel=17, cruise=0, decel=17, cruise_vel=451.7[0m
+[0;33mW (71724) MCPWM_PULSE: DEBUG startMove: move_start_position=201, direction=REV[0m
+[0;33mW (71731) MCPWM_PULSE: DEBUG startMove: PCNT baseline = 716 (continuous counting, never cleared)[0m
+[0;33mW (71739) MCPWM_PULSE: DEBUG startMove: watch point target = 716 + 34 = 750 (absolute PCNT value)[0m
+[0;33mW (71748) MCPWM_PULSE: DEBUG startMove: configuring PCNT watch point for absolute count 750[0m
+[0;33mW (71756) MCPWM_PULSE: DEBUG startMove: setting initial freq=300 Hz[0m
+[0;33mW (71762) MCPWM_PULSE: DEBUG startMove: Restored generator HIGH action for pulse generation[0m
+[0;33mW (71770) MCPWM_PULSE: DEBUG PLANNING: PCNT after HIGH action = 716 (continuous counting)[0m
+[0;33mW (71778) MCPWM_PULSE: DEBUG startMove: starting MCPWM timer (PCNT continuously running)[0m
+[0;33mW (71786) MCPWM_PULSE: DEBUG PLANNING: PCNT after MCPWM start = 716 (should be ~30 at 300Hz)[0m
+[0;33mW (71794) MCPWM_PULSE: DEBUG startMove: completed successfully[0m
+[0;33mW (71799) motor_base: DEBUG Axis 1: moveAbsolute completed, state=MOVING[0m
+OK
+[0;33mW (71861) MCPWM_PULSE: DEBUG updateProfile: pcnt=29, target=34, freq=379.5, state=3[0m
+[0;33mW (71882) MCPWM_PULSE: updateProfile: STOP - pcnt=35 >= target=34[0m
+[0;33mW (71882) MCPWM_PULSE: DEBUG: Reconfigured generator to force GPIO LOW when stopped[0m
+[0;33mW (71884) MCPWM_PULSE: updateProfile: COMPLETED - actual_pcnt=35, start=201, new_abs=166[0m
+[0;33mW (71892) MCPWM_PULSE: DEBUG: Updated stable reference - last_pos=166, pcnt_hw=751[0m
+[0;33mW (71899) MCPWM_PULSE: DEBUG PLANNING: PCNT after stop = 751 (should equal 35)[0m
+[0;33mW (71906) motor_base: DEBUG Axis 1: onMotionComplete(total_pulses=166)[0m
+[0;33mW (71913) motor_base: DEBUG Axis 1: before sync: pulse_count=201, tracker_pos=166[0m
+[0;33mW (71920) motor_base: DEBUG Axis 1: after sync: pulse_count=166[0m
+[0;33mW (71925) motor_base: Axis 1: motion complete at position 298.8000[0m
+[0;32mI (88136) CMD_EXEC: CMD: MOVE Y 0.0000[0m
+[0;33mW (88136) motor_base: DEBUG Axis 1: moveAbsolute(pos=0.0000, vel=1080.0000)[0m
+[0;33mW (88136) motor_base: DEBUG Axis 1: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (88142) motor_base: DEBUG Axis 1: current_pos=298.8000, target_pos=0.0000[0m
+[0;33mW (88149) motor_base: DEBUG Axis 1: setting direction=REV[0m
+[0;33mW (88154) motor_base: DEBUG Axis 1: pulses_per_unit=0.56, pulses=166, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (88162) motor_base: DEBUG Axis 1: calling pulse_gen_->startMove(pulses=-166, freq=600.0, accel=6000.0)[0m
+[0;33mW (88172) MCPWM_PULSE: DEBUG startMove: pulses=-166, max_vel=600.0 Hz, accel=6000.0, dir=REV[0m
+[0;33mW (88180) MCPWM_PULSE: DEBUG PLANNING: PCNT at startMove entry = 751 (end of planning phase)[0m
+[0;33mW (88188) MCPWM_PULSE: DEBUG startMove: profile calculated: accel=29, cruise=108, decel=29, cruise_vel=600.0[0m
+[0;33mW (88198) MCPWM_PULSE: DEBUG startMove: move_start_position=166, direction=REV[0m
+[0;33mW (88204) MCPWM_PULSE: DEBUG startMove: PCNT baseline = 751 (continuous counting, never cleared)[0m
+[0;33mW (88213) MCPWM_PULSE: DEBUG startMove: watch point target = 751 + 166 = 917 (absolute PCNT value)[0m
+[0;33mW (88222) MCPWM_PULSE: DEBUG startMove: configuring PCNT watch point for absolute count 917[0m
+[0;33mW (88230) MCPWM_PULSE: DEBUG startMove: setting initial freq=300 Hz[0m
+[0;33mW (88236) MCPWM_PULSE: DEBUG startMove: Restored generator HIGH action for pulse generation[0m
+[0;33mW (88244) MCPWM_PULSE: DEBUG PLANNING: PCNT after HIGH action = 751 (continuous counting)[0m
+[0;33mW (88252) MCPWM_PULSE: DEBUG startMove: starting MCPWM timer (PCNT continuously running)[0m
+[0;33mW (88260) MCPWM_PULSE: DEBUG PLANNING: PCNT after MCPWM start = 751 (should be ~30 at 300Hz)[0m
+[0;33mW (88268) MCPWM_PULSE: DEBUG startMove: completed successfully[0m
+[0;33mW (88273) motor_base: DEBUG Axis 1: moveAbsolute completed, state=MOVING[0m
+OK
+[0;33mW (88591) MCPWM_PULSE: updateProfile: STOP - pcnt=167 >= target=166[0m
+[0;33mW (88591) MCPWM_PULSE: DEBUG: Reconfigured generator to force GPIO LOW when stopped[0m
+[0;33mW (88594) MCPWM_PULSE: updateProfile: COMPLETED - actual_pcnt=167, start=166, new_abs=-1[0m
+[0;33mW (88601) MCPWM_PULSE: DEBUG: Updated stable reference - last_pos=-1, pcnt_hw=918[0m
+[0;33mW (88609) MCPWM_PULSE: DEBUG PLANNING: PCNT after stop = 918 (should equal 167)[0m
+[0;33mW (88616) motor_base: DEBUG Axis 1: onMotionComplete(total_pulses=-1)[0m
+[0;33mW (88622) motor_base: DEBUG Axis 1: before sync: pulse_count=166, tracker_pos=-1[0m
+[0;33mW (88629) motor_base: DEBUG Axis 1: after sync: pulse_count=-1[0m
+[0;33mW (88634) motor_base: Axis 1: motion complete at position -1.8000[0m
+[0;32mI (96660) CMD_EXEC: CMD: [B[B[B[B[B Y 149.0000[0m
+ERROR E001 Invalid command
+[0;32mI (103191) CMD_EXEC: CMD: MOVE Y 149.0000[0m
+[0;33mW (103191) motor_base: DEBUG Axis 1: moveAbsolute(pos=149.0000, vel=1080.0000)[0m
+[0;33mW (103191) motor_base: DEBUG Axis 1: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (103198) motor_base: DEBUG Axis 1: current_pos=-1.8000, target_pos=149.0000[0m
+[0;33mW (103205) motor_base: DEBUG Axis 1: setting direction=FWD[0m
+[0;33mW (103210) motor_base: DEBUG Axis 1: pulses_per_unit=0.56, pulses=83, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (103218) motor_base: DEBUG Axis 1: calling pulse_gen_->startMove(pulses=83, freq=600.0, accel=6000.0)[0m
+[0;33mW (103228) MCPWM_PULSE: DEBUG startMove: pulses=83, max_vel=600.0 Hz, accel=6000.0, dir=FWD[0m
+[0;33mW (103236) MCPWM_PULSE: DEBUG PLANNING: PCNT at startMove entry = 918 (end of planning phase)[0m
+[0;33mW (103244) MCPWM_PULSE: DEBUG startMove: profile calculated: accel=29, cruise=25, decel=29, cruise_vel=600.0[0m
+[0;33mW (103253) MCPWM_PULSE: DEBUG startMove: move_start_position=-1, direction=FWD[0m
+[0;33mW (103260) MCPWM_PULSE: DEBUG startMove: PCNT baseline = 918 (continuous counting, never cleared)[0m
+[0;33mW (103269) MCPWM_PULSE: DEBUG startMove: watch point target = 918 + 83 = 1001 (absolute PCNT value)[0m
+[0;33mW (103278) MCPWM_PULSE: DEBUG startMove: configuring PCNT watch point for absolute count 1001[0m
+[0;33mW (103286) MCPWM_PULSE: DEBUG startMove: setting initial freq=300 Hz[0m
+[0;33mW (103292) MCPWM_PULSE: DEBUG startMove: Restored generator HIGH action for pulse generation[0m
+[0;33mW (103300) MCPWM_PULSE: DEBUG PLANNING: PCNT after HIGH action = 918 (continuous counting)[0m
+[0;33mW (103308) MCPWM_PULSE: DEBUG startMove: starting MCPWM timer (PCNT continuously running)[0m
+[0;33mW (103316) MCPWM_PULSE: DEBUG PLANNING: PCNT after MCPWM start = 918 (should be ~30 at 300Hz)[0m
+[0;33mW (103324) MCPWM_PULSE: DEBUG startMove: completed successfully[0m
+[0;33mW (103330) motor_base: DEBUG Axis 1: moveAbsolute completed, state=MOVING[0m
+OK
+[0;33mW (103500) MCPWM_PULSE: updateProfile: STOP - pcnt=83 >= target=83[0m
+[0;33mW (103500) MCPWM_PULSE: DEBUG: Reconfigured generator to force GPIO LOW when stopped[0m
+[0;33mW (103503) MCPWM_PULSE: updateProfile: COMPLETED - actual_pcnt=83, start=-1, new_abs=82[0m
+[0;33mW (103510) MCPWM_PULSE: DEBUG: Updated stable reference - last_pos=82, pcnt_hw=1001[0m
+[0;33mW (103518) MCPWM_PULSE: DEBUG PLANNING: PCNT after stop = 1001 (should equal 83)[0m
+[0;33mW (103525) motor_base: DEBUG Axis 1: onMotionComplete(total_pulses=82)[0m
+[0;33mW (103531) motor_base: DEBUG Axis 1: before sync: pulse_count=-1, tracker_pos=82[0m
+[0;33mW (103538) motor_base: DEBUG Axis 1: after sync: pulse_count=82[0m
+[0;33mW (103544) motor_base: Axis 1: motion complete at position 147.6000[0m
+[0;32mI (109917) CMD_EXEC: CMD: MOVE Y 0.0000[0m
+[0;33mW (109917) motor_base: DEBUG Axis 1: moveAbsolute(pos=0.0000, vel=1080.0000)[0m
+[0;33mW (109917) motor_base: DEBUG Axis 1: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (109923) motor_base: DEBUG Axis 1: current_pos=147.6000, target_pos=0.0000[0m
+[0;33mW (109930) motor_base: DEBUG Axis 1: setting direction=REV[0m
+[0;33mW (109935) motor_base: DEBUG Axis 1: pulses_per_unit=0.56, pulses=82, freq_hz=600.0, accel=6000.0[0m
+[0;33mW (109944) motor_base: DEBUG Axis 1: calling pulse_gen_->startMove(pulses=-82, freq=600.0, accel=6000.0)[0m
+[0;33mW (109953) MCPWM_PULSE: DEBUG startMove: pulses=-82, max_vel=600.0 Hz, accel=6000.0, dir=REV[0m
+[0;33mW (109961) MCPWM_PULSE: DEBUG PLANNING: PCNT at startMove entry = 1001 (end of planning phase)[0m
+[0;33mW (109970) MCPWM_PULSE: DEBUG startMove: profile calculated: accel=29, cruise=24, decel=29, cruise_vel=600.0[0m
+[0;33mW (109979) MCPWM_PULSE: DEBUG startMove: move_start_position=82, direction=REV[0m
+[0;33mW (109986) MCPWM_PULSE: DEBUG startMove: PCNT baseline = 1001 (continuous counting, never cleared)[0m
+[0;33mW (109995) MCPWM_PULSE: DEBUG startMove: watch point target = 1001 + 82 = 1083 (absolute PCNT value)[0m
+[0;33mW (110004) MCPWM_PULSE: DEBUG startMove: configuring PCNT watch point for absolute count 1083[0m
+[0;33mW (110012) MCPWM_PULSE: DEBUG startMove: setting initial freq=300 Hz[0m
+[0;33mW (110018) MCPWM_PULSE: DEBUG startMove: Restored generator HIGH action for pulse generation[0m
+[0;33mW (110026) MCPWM_PULSE: DEBUG PLANNING: PCNT after HIGH action = 1001 (continuous counting)[0m
+[0;33mW (110034) MCPWM_PULSE: DEBUG startMove: starting MCPWM timer (PCNT continuously running)[0m
+[0;33mW (110042) MCPWM_PULSE: DEBUG PLANNING: PCNT after MCPWM start = 1001 (should be ~30 at 300Hz)[0m
+[0;33mW (110050) MCPWM_PULSE: DEBUG startMove: completed successfully[0m
+[0;33mW (110056) motor_base: DEBUG Axis 1: moveAbsolute completed, state=MOVING[0m
+OK
+[0;33mW (110470) MCPWM_PULSE: DEBUG updateProfile: pcnt=16, target=82, freq=438.2, state=2[0m
+[0;33mW (110891) MCPWM_PULSE: updateProfile: STOP - pcnt=83 >= target=82[0m
+[0;33mW (110891) MCPWM_PULSE: DEBUG: Reconfigured generator to force GPIO LOW when stopped[0m
+[0;33mW (110893) MCPWM_PULSE: updateProfile: COMPLETED - actual_pcnt=83, start=82, new_abs=-1[0m
+[0;33mW (110901) MCPWM_PULSE: DEBUG: Updated stable reference - last_pos=-1, pcnt_hw=1084[0m
+[0;33mW (110909) MCPWM_PULSE: DEBUG PLANNING: PCNT after stop = 1084 (should equal 83)[0m
+[0;33mW (110916) motor_base: DEBUG Axis 1: onMotionComplete(total_pulses=-1)[0m
+[0;33mW (110922) motor_base: DEBUG Axis 1: before sync: pulse_count=82, tracker_pos=-1[0m
+[0;33mW (110929) motor_base: DEBUG Axis 1: after sync: pulse_count=-1[0m
+[0;33mW (110935) motor_base: Axis 1: motion complete at position -1.8000[0m
+[0;32mI (331313) CMD_EXEC: CMD: VEL Y 400.0000[0m
+[0;33mW (331313) motor_base: DEBUG Axis 1: moveVelocity(vel=400.0000)[0m
+[0;33mW (331314) motor_base: DEBUG Axis 1: clamped velocity=400.0000 (max=1080.0000)[0m
+[0;33mW (331318) motor_base: DEBUG Axis 1: setting direction=FWD[0m
+[0;33mW (331324) motor_base: DEBUG Axis 1: freq_hz=222.2, accel=6000.0[0m
+[0;33mW (331329) motor_base: DEBUG Axis 1: calling pulse_gen_->startVelocity(freq=222.2, accel=6000.0)[0m
+[0;33mW (331338) MCPWM_PULSE: DEBUG startVelocity: move_start_position=-1, direction=FWD[0m
+[0;33mW (331345) MCPWM_PULSE: DEBUG startVelocity: PCNT baseline = 1084 (continuous counting)[0m
+[1;31mE (331353) pcnt: pcnt_unit_remove_watch_point(663): watch point 32767 not added yet[0m
+[0;33mW (331360) MCPWM_PULSE: DEBUG startVelocity: Restored generator HIGH action[0m
+[0;33mW (331367) motor_base: DEBUG Axis 1: moveVelocity completed, state=MOVING[0m
+OK
+[0;33mW (331941) MCPWM_PULSE: DEBUG updateProfile: pcnt=125, target=2147483647, freq=222.2, state=2[0m
+[0;33mW (332942) MCPWM_PULSE: DEBUG updateProfile: pcnt=347, target=2147483647, freq=222.2, state=2[0m
+[0;33mW (333942) MCPWM_PULSE: DEBUG updateProfile: pcnt=570, target=2147483647, freq=222.2, state=2[0m
+[0;33mW (334943) MCPWM_PULSE: DEBUG updateProfile: pcnt=792, target=2147483647, freq=222.2, state=2[0m
+[0;32mI (335894) CMD_EXEC: CMD: VEL Y 1000.0000[0m
+[0;33mW (335894) motor_base: DEBUG Axis 1: moveVelocity(vel=1000.0000)[0m
+[0;33mW (335895) motor_base: DEBUG Axis 1: clamped velocity=1000.0000 (max=1080.0000)[0m
+[0;33mW (335900) motor_base: DEBUG Axis 1: setting direction=FWD[0m
+[0;33mW (335905) motor_base: DEBUG Axis 1: freq_hz=555.6, accel=6000.0[0m
+[0;33mW (335911) motor_base: DEBUG Axis 1: calling pulse_gen_->startVelocity(freq=555.6, accel=6000.0)[0m
+[0;33mW (335919) MCPWM_PULSE: DEBUG startVelocity: move_start_position=1005, direction=FWD[0m
+[0;33mW (335926) MCPWM_PULSE: DEBUG startVelocity: PCNT baseline = 2094 (continuous counting)[0m
+[1;31mE (335934) pcnt: pcnt_unit_remove_watch_point(663): watch point 32767 not added yet[0m
+[0;33mW (335942) MCPWM_PULSE: DEBUG startVelocity: Restored generator HIGH action[0m
+[0;33mW (335944) MCPWM_PULSE: DEBUG updateProfile: pcnt=0, target=2147483647, freq=0.0, state=2[0m
+[0;33mW (335948) motor_base: DEBUG Axis 1: moveVelocity completed, state=MOVING[0m
+OK
+[0;33mW (336956) MCPWM_PULSE: DEBUG updateProfile: pcnt=212, target=2147483647, freq=555.6, state=2[0m
+[0;33mW (337957) MCPWM_PULSE: DEBUG updateProfile: pcnt=771, target=2147483647, freq=555.6, state=2[0m
+[0;33mW (338957) MCPWM_PULSE: DEBUG updateProfile: pcnt=1330, target=2147483647, freq=555.6, state=2[0m
+[0;33mW (339957) MCPWM_PULSE: DEBUG updateProfile: pcnt=1889, target=2147483647, freq=555.6, state=2[0m
+[0;33mW (340957) MCPWM_PULSE: DEBUG updateProfile: pcnt=2447, target=2147483647, freq=555.6, state=2[0m
+[0;33mW (341958) MCPWM_PULSE: DEBUG updateProfile: pcnt=3007, target=2147483647, freq=555.6, state=2[0m
+[0;32mI (342623) CMD_EXEC: CMD: VEL Y 400.0000[0m
+[0;33mW (342623) motor_base: DEBUG Axis 1: moveVelocity(vel=400.0000)[0m
+[0;33mW (342623) motor_base: DEBUG Axis 1: clamped velocity=400.0000 (max=1080.0000)[0m
+[0;33mW (342628) motor_base: DEBUG Axis 1: setting direction=FWD[0m
+[0;33mW (342634) motor_base: DEBUG Axis 1: freq_hz=222.2, accel=6000.0[0m
+[0;33mW (342639) motor_base: DEBUG Axis 1: calling pulse_gen_->startVelocity(freq=222.2, accel=6000.0)[0m
+[0;33mW (342648) MCPWM_PULSE: DEBUG startVelocity: move_start_position=4396, direction=FWD[0m
+[0;33mW (342655) MCPWM_PULSE: DEBUG startVelocity: PCNT baseline = 5490 (continuous counting)[0m
+[1;31mE (342663) pcnt: pcnt_unit_remove_watch_point(663): watch point 32767 not added yet[0m
+[0;33mW (342670) MCPWM_PULSE: DEBUG startVelocity: Restored generator HIGH action[0m
+[0;33mW (342677) motor_base: DEBUG Axis 1: moveVelocity completed, state=MOVING[0m
+OK
+[0;33mW (342959) MCPWM_PULSE: DEBUG updateProfile: pcnt=66, target=2147483647, freq=222.2, state=2[0m
+[0;33mW (343960) MCPWM_PULSE: DEBUG updateProfile: pcnt=289, target=2147483647, freq=222.2, state=2[0m
+[0;33mW (344960) MCPWM_PULSE: DEBUG updateProfile: pcnt=511, target=2147483647, freq=222.2, state=2[0m
+[0;33mW (345961) MCPWM_PULSE: DEBUG updateProfile: pcnt=733, target=2147483647, freq=222.2, state=2[0m
+[0;32mI (346454) CMD_EXEC: CMD: VEL Y 1000.0000[0m
+[0;33mW (346454) motor_base: DEBUG Axis 1: moveVelocity(vel=1000.0000)[0m
+[0;33mW (346454) motor_base: DEBUG Axis 1: clamped velocity=1000.0000 (max=1080.0000)[0m
+[0;33mW (346460) motor_base: DEBUG Axis 1: setting direction=FWD[0m
+[0;33mW (346465) motor_base: DEBUG Axis 1: freq_hz=555.6, accel=6000.0[0m
+[0;33mW (346470) motor_base: DEBUG Axis 1: calling pulse_gen_->startVelocity(freq=555.6, accel=6000.0)[0m
+[0;33mW (346479) MCPWM_PULSE: DEBUG startVelocity: move_start_position=5250, direction=FWD[0m
+[0;33mW (346486) MCPWM_PULSE: DEBUG startVelocity: PCNT baseline = 6339 (continuous counting)[0m
+[1;31mE (346494) pcnt: pcnt_unit_remove_watch_point(663): watch point 32767 not added yet[0m
+[0;33mW (346502) MCPWM_PULSE: DEBUG startVelocity: Restored generator HIGH action[0m
+[0;33mW (346508) motor_base: DEBUG Axis 1: moveVelocity completed, state=MOVING[0m
+OK
+[0;33mW (346962) MCPWM_PULSE: DEBUG updateProfile: pcnt=0, target=2147483647, freq=555.6, state=2[0m
+[0;33mW (347963) MCPWM_PULSE: DEBUG updateProfile: pcnt=463, target=2147483647, freq=555.6, state=2[0m
+[0;33mW (348963) MCPWM_PULSE: DEBUG updateProfile: pcnt=1022, target=2147483647, freq=555.6, state=2[0m
+[0;33mW (349963) MCPWM_PULSE: DEBUG updateProfile: pcnt=1581, target=2147483647, freq=555.6, state=2[0m
+[0;33mW (350964) MCPWM_PULSE: DEBUG updateProfile: pcnt=2140, target=2147483647, freq=555.6, state=2[0m
+[0;33mW (351965) MCPWM_PULSE: DEBUG updateProfile: pcnt=2699, target=2147483647, freq=555.6, state=2[0m
+[0;33mW (352966) MCPWM_PULSE: DEBUG updateProfile: pcnt=3258, target=2147483647, freq=555.6, state=2[0m
+[0;33mW (353966) MCPWM_PULSE: DEBUG updateProfile: pcnt=3817, target=2147483647, freq=555.6, state=2[0m
+[0;32mI (353995) CMD_EXEC: CMD: VEL Y 200.0000[0m
+[0;33mW (353995) motor_base: DEBUG Axis 1: moveVelocity(vel=200.0000)[0m
+[0;33mW (353995) motor_base: DEBUG Axis 1: clamped velocity=200.0000 (max=1080.0000)[0m
+[0;33mW (354000) motor_base: DEBUG Axis 1: setting direction=FWD[0m
+[0;33mW (354006) motor_base: DEBUG Axis 1: freq_hz=111.1, accel=6000.0[0m
+[0;33mW (354011) motor_base: DEBUG Axis 1: calling pulse_gen_->startVelocity(freq=111.1, accel=6000.0)[0m
+[0;33mW (354020) MCPWM_PULSE: DEBUG startVelocity: move_start_position=9094, direction=FWD[0m
+[0;33mW (354027) MCPWM_PULSE: DEBUG startVelocity: PCNT baseline = 10190 (continuous counting)[0m
+[1;31mE (354035) pcnt: pcnt_unit_remove_watch_point(663): watch point 32767 not added yet[0m
+[0;33mW (354042) MCPWM_PULSE: DEBUG startVelocity: Restored generator HIGH action[0m
+[0;33mW (354049) motor_base: DEBUG Axis 1: moveVelocity completed, state=MOVING[0m
+OK
+[0;33mW (354967) MCPWM_PULSE: DEBUG updateProfile: pcnt=104, target=2147483647, freq=111.1, state=2[0m
+[0;33mW (355968) MCPWM_PULSE: DEBUG updateProfile: pcnt=215, target=2147483647, freq=111.1, state=2[0m
+[0;33mW (356968) MCPWM_PULSE: DEBUG updateProfile: pcnt=326, target=2147483647, freq=111.1, state=2[0m
+[0;33mW (357969) MCPWM_PULSE: DEBUG updateProfile: pcnt=437, target=2147483647, freq=111.1, state=2[0m
+[0;33mW (358970) MCPWM_PULSE: DEBUG updateProfile: pcnt=549, target=2147483647, freq=111.1, state=2[0m
+[0;32mI (359706) CMD_EXEC: CMD: VEL Y 3000.0000[0m
+[0;33mW (359706) motor_base: DEBUG Axis 1: moveVelocity(vel=3000.0000)[0m
+[0;33mW (359706) motor_base: DEBUG Axis 1: clamped velocity=1080.0000 (max=1080.0000)[0m
+[0;33mW (359712) motor_base: DEBUG Axis 1: setting direction=FWD[0m
+[0;33mW (359717) motor_base: DEBUG Axis 1: freq_hz=600.0, accel=6000.0[0m
+[0;33mW (359723) motor_base: DEBUG Axis 1: calling pulse_gen_->startVelocity(freq=600.0, accel=6000.0)[0m
+[0;33mW (359731) MCPWM_PULSE: DEBUG startVelocity: move_start_position=9736, direction=FWD[0m
+[0;33mW (359738) MCPWM_PULSE: DEBUG startVelocity: PCNT baseline = 10823 (continuous counting)[0m
+[1;31mE (359746) pcnt: pcnt_unit_remove_watch_point(663): watch point 32767 not added yet[0m
+[0;33mW (359754) MCPWM_PULSE: DEBUG startVelocity: Restored generator HIGH action[0m
+[0;33mW (359760) motor_base: DEBUG Axis 1: moveVelocity completed, state=MOVING[0m
+OK
+[0;33mW (359971) MCPWM_PULSE: DEBUG updateProfile: pcnt=0, target=2147483647, freq=600.0, state=2[0m
+[0;33mW (360972) MCPWM_PULSE: DEBUG updateProfile: pcnt=357, target=2147483647, freq=600.0, state=2[0m
+[0;33mW (361972) MCPWM_PULSE: DEBUG updateProfile: pcnt=960, target=2147483647, freq=600.0, state=2[0m
+[0;33mW (362972) MCPWM_PULSE: DEBUG updateProfile: pcnt=1562, target=2147483647, freq=600.0, state=2[0m
+[0;33mW (363972) MCPWM_PULSE: DEBUG updateProfile: pcnt=2165, target=2147483647, freq=600.0, state=2[0m
+[0;33mW (364972) MCPWM_PULSE: DEBUG updateProfile: pcnt=2767, target=2147483647, freq=600.0, state=2[0m
+[0;33mW (365972) MCPWM_PULSE: DEBUG updateProfile: pcnt=3369, target=2147483647, freq=600.0, state=2[0m
+[0;33mW (366972) MCPWM_PULSE: DEBUG updateProfile: pcnt=3972, target=2147483647, freq=600.0, state=2[0m
+[0;33mW (367973) MCPWM_PULSE: DEBUG updateProfile: pcnt=4575, target=2147483647, freq=600.0, state=2[0m
+[0;32mI (368077) CMD_EXEC: CMD: STOP -[0m
+OK
+[0;33mW (368154) MCPWM_PULSE: updateProfile: STOPPING COMPLETE - pcnt=4667 >= target=4666[0m
+[0;33mW (368154) MCPWM_PULSE: DEBUG STOPPING: Reconfigured generator to force GPIO LOW[0m
+[0;33mW (368158) MCPWM_PULSE: updateProfile: STOP DONE - actual_pcnt=4667, start=9736, new_abs=14403[0m
+[0;33mW (368166) MCPWM_PULSE: DEBUG: Updated stable reference (STOPPING) - last_pos=14403, pcnt_hw=15490[0m
+[0;33mW (368175) motor_base: DEBUG Axis 1: onMotionComplete(total_pulses=14403)[0m
+[0;33mW (368181) motor_base: DEBUG Axis 1: before sync: pulse_count=-1, tracker_pos=14403[0m
+[0;33mW (368189) motor_base: DEBUG Axis 1: after sync: pulse_count=14403[0m
+[0;33mW (368194) motor_base: Axis 1: motion complete at position 25925.3984[0m
+[0;32mI (3093) main: Hello from app_main[0m
+[0;32mI (3093) main: PSRAM detected: 8388608 bytes (8.0 MB)[0m
+[0;32mI (3093) main: Firmware: YAROBOT_CONTROL_UNIT v1.0.0[0m
+[0;32mI (3094) main: Axes: 8 (Servos:5, Steppers:2, Discrete:1)[0m
+[0;32mI (3099) main: GPIO X_STEP: 4, I2C MCP0: 0x20[0m
+[0;32mI (3103) main: Initializing USB CDC interface...[0m
+[0;32mI (3108) usb_cdc: Initializing USB CDC interface[0m
+[0;33mW (3112) tusb_desc: No Device descriptor provided, using default.[0m
+[0;33mW (3118) tusb_desc: No FullSpeed configuration descriptor provided, using default.[0m
+[0;33mW (3125) tusb_desc: No String descriptors provided, using default.[0m
+[0;32mI (3131) tusb_desc: [0m
+┌─────────────────────────────────┐
+│  USB Device Descriptor Summary  │
+├───────────────────┬─────────────┤
+│bDeviceClass       │ 239         │
+├───────────────────┼─────────────┤
+│bDeviceSubClass    │ 2           │
+├───────────────────┼─────────────┤
+│bDeviceProtocol    │ 1           │
+├───────────────────┼─────────────┤
+│bMaxPacketSize0    │ 64          │
+├───────────────────┼─────────────┤
+│idVendor           │ 0x303a      │
+├───────────────────┼─────────────┤
+│idProduct          │ 0x4001      │
+├───────────────────┼─────────────┤
+│bcdDevice          │ 0x100       │
+├───────────────────┼─────────────┤
+│iManufacturer      │ 0x1         │
+├───────────────────┼─────────────┤
+│iProduct           │ 0x2         │
+├───────────────────┼─────────────┤
+│iSerialNumber      │ 0x3         │
+├───────────────────┼─────────────┤
+│bNumConfigurations │ 0x1         │
+└───────────────────┴─────────────┘
+[0;32mI (3299) TinyUSB: TinyUSB Driver installed[0m
+[0;32mI (3302) usb_cdc: USB CDC initialized successfully[0m
+[0;32mI (3306) main: USB CDC initialized successfully[0m
+[0;32mI (3311) main: ========================================[0m
+[0;32mI (3316) main: Hardware Initialization Starting[0m
+[0;32mI (3320) main: ========================================[0m
+[0;32mI (3325) gpio_hal: Initializing GPIO HAL[0m
+[0;32mI (3329) gpio: GPIO[4]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3337) gpio: GPIO[5]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3345) gpio: GPIO[6]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3354) gpio: GPIO[7]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3362) gpio: GPIO[15]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3370) gpio: GPIO[16]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3379) gpio: GPIO[17]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3387) gpio: GPIO[13]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3396) gpio: GPIO[1]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3404) gpio: GPIO[2]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3412) gpio: GPIO[40]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3421) gpio: GPIO[41]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3429) gpio: GPIO[42]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3437) gpio: GPIO[38]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3446) gpio: GPIO[39]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3454) gpio: GPIO[47]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3463) gpio: GPIO[48]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3471) gpio_hal: GPIO HAL initialized successfully[0m
+[0;32mI (3476) i2c_hal: Initializing I2C0: SDA=8, SCL=18, freq=400000 Hz[0m
+[0;32mI (3482) i2c_hal: I2C0 initialized successfully[0m
+[0;32mI (3486) main: MCP23017 #0 (0x20) IODIR_A=0xFF[0m
+[0;32mI (3490) main: MCP23017 #1 (0x21) IODIR_A=0xFF[0m
+[0;32mI (3494) i2c_hal: Initializing I2C1: SDA=14, SCL=21, freq=400000 Hz[0m
+[0;32mI (3501) i2c_hal: I2C1 initialized successfully[0m
+[0;32mI (3532) main: OLED initialized with test pattern[0m
+[0;32mI (3533) i2c_hal: Scanning I2C0 bus...[0m
+[0;32mI (3536) i2c_hal: I2C0: Found device at 0x20[0m
+[0;32mI (3537) i2c_hal: I2C0: Found device at 0x21[0m
+[0;32mI (3549) i2c_hal: I2C0 scan complete: 2 device(s) found[0m
+[0;32mI (3549) main: I2C bus isolation verified: I2C0 still operational[0m
+[0;32mI (3550) spi_hal: Initializing SPI1: MOSI=11, SCLK=12, CS=10[0m
+[0;32mI (3555) gpio: GPIO[9]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3563) spi_hal: SPI initialized successfully, OE pin=9 (disabled)[0m
+[0;32mI (3569) tpic6b595: Initializing TPIC6B595 driver[0m
+[0;32mI (3573) spi_hal: SR outputs ENABLED[0m
+[0;32mI (3577) tpic6b595: TPIC6B595 driver initialized, 40-bit chain ready[0m
+[0;32mI (3583) main: TPIC6B595 shift register initialized (test skipped)[0m
+[0;32mI (3588) main: ========================================[0m
+[0;32mI (3593) main: Hardware Initialization: ALL PASSED[0m
+[0;32mI (3598) main: ========================================[0m
+[0;32mI (3603) main: Creating FreeRTOS tasks...[0m
+[0;32mI (3607) tasks: Task safety started on core 0[0m
+[0;32mI (3611) tasks: Task usb_rx started on core 0[0m
+[0;32mI (3615) tasks: Task usb_tx started on core 0[0m
+[0;32mI (3619) tasks: Task cmd_exec started on core 0[0m
+[0;32mI (3623) tasks: Task i2c_mon started on core 0[0m
+[0;32mI (3627) tasks: Task idle_mon started on core 0[0m
+[0;32mI (3632) tasks: Task motion_X (axis 0) started on core 1[0m
+[0;32mI (3632) tasks: Task motion_B (axis 4) started on core 1[0m
+[0;32mI (3632) tasks: Task motion_Z (axis 2) started on core 1[0m
+[0;32mI (3632) tasks: Task motion_C (axis 5) started on core 1[0m
+[0;32mI (3632) tasks: Task motion_Y (axis 1) started on core 1[0m
+[0;32mI (3632) tasks: Task motion_D (axis 6) started on core 1[0m
+[0;32mI (3632) tasks: Task motion_A (axis 3) started on core 1[0m
+[0;32mI (3632) tasks: Task motion_E (axis 7) started on core 1[0m
+[0;32mI (3632) main: YaRobot Control Unit - All tasks started[0m
+[0;32mI (3672) tasks: Task display started on core 1[0m
+[0;32mI (3677) main_task: Returned from app_main()[0m

@@ -80,8 +80,7 @@ McpwmPulseGenerator::McpwmPulseGenerator(int timer_id, int gpio_num, int pcnt_un
     , move_start_pcnt_count_(0)
     , last_completed_position_(0)
     , pcnt_at_last_completion_(0)
-    , profile_task_handle_(nullptr)
-    , task_should_exit_(false)
+    , profile_timer_(nullptr)
     , completion_callback_(nullptr)
     , callback_mutex_(nullptr)
     , completion_notified_(false)
@@ -93,13 +92,11 @@ McpwmPulseGenerator::McpwmPulseGenerator(int timer_id, int gpio_num, int pcnt_un
 
 McpwmPulseGenerator::~McpwmPulseGenerator()
 {
-    // Signal task to exit
-    if (profile_task_handle_) {
-        task_should_exit_.store(true, std::memory_order_release);
-        xTaskNotify(profile_task_handle_, NOTIFY_EXIT_BIT, eSetBits);
-        // Wait for task to exit
-        vTaskDelay(pdMS_TO_TICKS(100));
-        profile_task_handle_ = nullptr;
+    // Stop and delete profile timer
+    if (profile_timer_) {
+        esp_timer_stop(profile_timer_);  // Stop if running
+        esp_timer_delete(profile_timer_);
+        profile_timer_ = nullptr;
     }
 
     if (initialized_) {
@@ -364,8 +361,13 @@ esp_err_t McpwmPulseGenerator::init()
     }
 
     // Initialize PCNT baseline for continuous counting
-    move_start_pcnt_count_ = 0;
-    ESP_LOGI(TAG, "PCNT started for continuous position tracking");
+    // Read current PCNT to establish baseline (may have spurious edges from startup)
+    int init_pcnt_count = 0;
+    pcnt_unit_get_count(pcnt_unit_, &init_pcnt_count);
+    move_start_pcnt_count_ = init_pcnt_count;
+    pcnt_at_last_completion_ = init_pcnt_count;  // Initialize stable reference
+    last_completed_position_ = 0;
+    ESP_LOGI(TAG, "PCNT started for continuous position tracking (baseline: %d)", init_pcnt_count);
 
     // Enable MCPWM timer
     ret = mcpwm_timer_enable(timer_handle_);
@@ -387,21 +389,24 @@ esp_err_t McpwmPulseGenerator::init()
     }
 
     // =========================================================================
-    // Create Profile Update Task
+    // Create Profile Update Timer (esp_timer for guaranteed timing)
     // =========================================================================
-    char task_name[20];
-    snprintf(task_name, sizeof(task_name), "mcpwm_prof_%d", timer_id_);
-    BaseType_t xret = xTaskCreatePinnedToCore(
-        profileTaskEntry,
-        task_name,
-        PROFILE_TASK_STACK,
-        this,
-        PROFILE_TASK_PRIORITY,
-        &profile_task_handle_,
-        1  // Pin to core 1 (motion core)
-    );
-    if (xret != pdPASS) {
-        ESP_LOGE(TAG, "Failed to create profile task");
+    // Create periodic timer for profile updates (20ms default)
+    // Timer starts/stops with motion - created here but not started yet
+    char timer_name[20];
+    snprintf(timer_name, sizeof(timer_name), "mcpwm_prof_%d", timer_id_);
+
+    const esp_timer_create_args_t timer_args = {
+        .callback = profileTimerCallback,
+        .arg = this,
+        .dispatch_method = ESP_TIMER_TASK,  // Dispatch from esp_timer task (allows longer callbacks)
+        .name = timer_name,
+        .skip_unhandled_events = false  // Don't skip events if callback takes longer than period
+    };
+
+    ret = esp_timer_create(&timer_args, &profile_timer_);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to create profile timer: %s", esp_err_to_name(ret));
         mcpwm_timer_disable(timer_handle_);
         pcnt_del_channel(pcnt_channel_);
         pcnt_del_unit(pcnt_unit_);
@@ -415,7 +420,7 @@ esp_err_t McpwmPulseGenerator::init()
         cmpr_handle_ = nullptr;
         oper_handle_ = nullptr;
         timer_handle_ = nullptr;
-        return ESP_ERR_NO_MEM;
+        return ret;
     }
 
     initialized_ = true;
@@ -425,65 +430,48 @@ esp_err_t McpwmPulseGenerator::init()
 }
 
 // ============================================================================
-// Profile Update Task
+// Profile Update Timer Callback (esp_timer for guaranteed timing)
 // ============================================================================
 
-void McpwmPulseGenerator::profileTaskEntry(void* arg)
+void McpwmPulseGenerator::profileTimerCallback(void* arg)
 {
     McpwmPulseGenerator* self = static_cast<McpwmPulseGenerator*>(arg);
-    self->profileTaskLoop();
-}
 
-void McpwmPulseGenerator::profileTaskLoop()
-{
-    ESP_LOGI(TAG, "Profile task started for timer %d", timer_id_);
-
-    while (!task_should_exit_.load(std::memory_order_acquire)) {
-        uint32_t notification = 0;
-        if (xTaskNotifyWait(0, UINT32_MAX, &notification, pdMS_TO_TICKS(TIMING_POSITION_UPDATE_LATENCY_MS)) == pdTRUE) {
-            if (notification & NOTIFY_EXIT_BIT) {
-                break;
-            }
-            if (notification & NOTIFY_COMPLETE_BIT) {
-                notifyCompletion();
-            }
-        }
-
-        // Always update position continuously (PCNT runs continuously)
-        // Profile updates (frequency changes) only when running
-        McpwmProfileState current = state_.load(std::memory_order_acquire);
-
-        // Update position continuously using STABLE reference (NO RACE)
-        // Uses last_completed_position_ and pcnt_at_last_completion_ which are
-        // ONLY updated in completion handlers - no mid-move changes!
-        int count = 0;
-        if (pcnt_unit_) {
-            pcnt_unit_get_count(pcnt_unit_, &count);
-        }
-        int32_t overflows = overflow_count_.load(std::memory_order_relaxed);
-        int32_t hw_pcnt = count + (overflows * PCNT_HIGH_LIMIT);
-
-        // Calculate position delta from last completion (STABLE reference point)
-        int32_t pcnt_delta = hw_pcnt - pcnt_at_last_completion_;
-        bool current_dir = direction_;  // Read current direction (not atomic, but OK here)
-        int64_t position_delta = current_dir ? pcnt_delta : -pcnt_delta;
-
-        // Update absolute position (SINGLE SOURCE OF TRUTH)
-        int64_t new_position = last_completed_position_ + position_delta;
-        absolute_position_.store(new_position, std::memory_order_relaxed);
-
-        // Also update pulse_count_ for profile tracking (relative to move start)
-        int64_t current_count = readPcntCount();
-        pulse_count_.store(current_count, std::memory_order_relaxed);
-
-        // Update motion profile if running
-        if (current != McpwmProfileState::IDLE) {
-            updateProfile();
-        }
+    // CRITICAL: Always read PCNT and update position (even when IDLE)
+    // This ensures:
+    // 1. Position queries work correctly when IDLE
+    // 2. Guaranteed 20ms update interval (no FreeRTOS scheduler delays!)
+    // 3. Position-based acceleration gets accurate position
+    //
+    // Update position continuously using STABLE reference (NO RACE)
+    // Uses last_completed_position_ and pcnt_at_last_completion_ which are
+    // ONLY updated in completion handlers - no mid-move changes!
+    int count = 0;
+    if (self->pcnt_unit_) {
+        pcnt_unit_get_count(self->pcnt_unit_, &count);
     }
+    int32_t overflows = self->overflow_count_.load(std::memory_order_relaxed);
+    int32_t hw_pcnt = count + (overflows * PCNT_HIGH_LIMIT);
 
-    ESP_LOGI(TAG, "Profile task exiting for timer %d", timer_id_);
-    vTaskDelete(nullptr);
+    // Calculate position delta from last completion (STABLE reference point)
+    int32_t pcnt_delta = hw_pcnt - self->pcnt_at_last_completion_;
+    bool current_dir = self->direction_;  // Read current direction (not atomic, but OK here)
+    int64_t position_delta = current_dir ? pcnt_delta : -pcnt_delta;
+
+    // Update absolute position (SINGLE SOURCE OF TRUTH)
+    int64_t new_position = self->last_completed_position_ + position_delta;
+    self->absolute_position_.store(new_position, std::memory_order_relaxed);
+
+    // Also update pulse_count_ for profile tracking (relative to move start)
+    // Use SAME hw_pcnt reading to avoid race condition (no second PCNT read!)
+    int64_t current_count = hw_pcnt - self->move_start_pcnt_count_;
+    self->pulse_count_.store(current_count, std::memory_order_relaxed);
+
+    // Only update motion profile when running (frequency changes, state transitions)
+    McpwmProfileState current = self->state_.load(std::memory_order_acquire);
+    if (current != McpwmProfileState::IDLE) {
+        self->updateProfile();
+    }
 }
 
 void McpwmPulseGenerator::updateProfile()
@@ -569,6 +557,9 @@ void McpwmPulseGenerator::updateProfile()
         ESP_LOGW(TAG, "DEBUG PLANNING: PCNT after stop = %d (should equal %lld)",
                  count_after_stop, (long long)actual_pulses);
 
+        // Stop profile update timer
+        esp_timer_stop(profile_timer_);
+
         state_.store(McpwmProfileState::IDLE, std::memory_order_release);
         current_velocity_.store(0.0f, std::memory_order_relaxed);
 
@@ -621,6 +612,9 @@ void McpwmPulseGenerator::updateProfile()
         ESP_LOGW(TAG, "DEBUG: Updated stable reference (STOPPING) - last_pos=%lld, pcnt_hw=%ld",
                  (long long)last_completed_position_, (long)pcnt_at_last_completion_);
 
+        // Stop profile update timer
+        esp_timer_stop(profile_timer_);
+
         state_.store(McpwmProfileState::IDLE, std::memory_order_release);
         current_velocity_.store(0.0f, std::memory_order_relaxed);
 
@@ -641,40 +635,50 @@ void McpwmPulseGenerator::updateProfile()
     float velocity;
 
     if (current_state == McpwmProfileState::ACCELERATING) {
-        // Calculate time-based velocity: v = v0 + a*t
-        uint64_t elapsed_us = esp_timer_get_time() - motion_start_time_;
-        float elapsed_sec = static_cast<float>(elapsed_us) / 1000000.0f;
-        float time_based_velocity = MIN_MOTION_START_FREQ + (profile_.acceleration * elapsed_sec);
+        // CRITICAL FIX: Position-based acceleration (FastAccelStepper method)
+        // v² = v0² + 2×a×s - immune to task scheduling delays!
+        // Velocity calculated from actual PCNT position, not elapsed time.
 
-        // Also calculate position-based velocity for deceleration phase check
-        float position_based_velocity = velocityAtPosition(current_count);
+        // Use absolute distance traveled to avoid NaN from sqrt(negative)
+        float distance_traveled = std::fabs(static_cast<float>(current_count));  // From PCNT hardware
+        float v0_squared = MIN_MOTION_START_FREQ * MIN_MOTION_START_FREQ;
+        float v_squared = v0_squared + (2.0f * profile_.acceleration * distance_traveled);
 
-        // Use the LOWER of time-based and position-based to ensure we don't overshoot
-        // during triangular profiles, but use time-based for startup responsiveness
-        float target_velocity = std::min(time_based_velocity, profile_.cruise_velocity);
-
-        // If position says we should be decelerating, respect that
-        if (current_count >= profile_.accel_pulses) {
-            target_velocity = position_based_velocity;
+        // Ensure v_squared is non-negative before sqrt (safety check)
+        if (v_squared < v0_squared) {
+            v_squared = v0_squared;
         }
+
+        float position_based_velocity = sqrtf(v_squared);
+
+        // Clamp to cruise velocity
+        float target_velocity = fmin(position_based_velocity, profile_.cruise_velocity);
 
         // Clamp to safe range
         if (target_velocity < MIN_MOTION_START_FREQ) {
             target_velocity = MIN_MOTION_START_FREQ;
         }
-        if (target_velocity > profile_.cruise_velocity) {
-            target_velocity = profile_.cruise_velocity;
-        }
 
-        // Smooth ramping toward target
+        // Apply smooth ramping (prevents abrupt frequency changes)
         if (target_velocity > current_freq) {
-            velocity = std::min(target_velocity, current_freq + MAX_FREQ_CHANGE_PER_MS);
+            velocity = fmin(target_velocity, current_freq + MAX_FREQ_CHANGE_PER_MS);
         } else {
-            velocity = std::max(target_velocity, current_freq - MAX_FREQ_CHANGE_PER_MS);
+            velocity = fmax(target_velocity, current_freq - MAX_FREQ_CHANGE_PER_MS);
         }
 
-        // Check if we've reached cruise velocity
-        if (velocity >= profile_.cruise_velocity - 1.0f) {
+        // Check for state transitions
+        // 1. If we've reached end of acceleration phase → cruise or decelerate
+        if (current_count >= profile_.accel_pulses) {
+            if (profile_.cruise_pulses > 0 || mode_ == McpwmMotionMode::VELOCITY) {
+                // Has cruise phase (or velocity mode) → transition to CRUISING
+                state_.store(McpwmProfileState::CRUISING, std::memory_order_release);
+            } else {
+                // No cruise phase (triangular profile) → start decelerating
+                state_.store(McpwmProfileState::DECELERATING, std::memory_order_release);
+            }
+        }
+        // 2. If velocity has reached cruise velocity → transition to CRUISING
+        else if (velocity >= profile_.cruise_velocity - 1.0f) {
             if (profile_.cruise_pulses > 0 || mode_ == McpwmMotionMode::VELOCITY) {
                 state_.store(McpwmProfileState::CRUISING, std::memory_order_release);
             } else {
@@ -746,6 +750,37 @@ esp_err_t McpwmPulseGenerator::startMove(int32_t pulses, float max_velocity, flo
     direction_ = (pulses > 0);
     int32_t abs_pulses = std::abs(pulses);
 
+    // CRITICAL FIX: If already running, just update move target (smooth transition)
+    // Don't re-initialize hardware - this was causing motor to stop!
+    McpwmProfileState current_state = state_.load(std::memory_order_acquire);
+    if (current_state != McpwmProfileState::IDLE) {
+        ESP_LOGW(TAG, "startMove: Already running, updating target smoothly (no hardware re-init)");
+
+        // Update direction if needed
+        if (direction_ != last_direction_) {
+            uint8_t axis = (timer_id_ == MCPWM_TIMER_Y) ? SR_AXIS_Y : SR_AXIS_C;
+            sr_set_direction(axis, direction_);
+            sr_update();
+            ets_delay_us(TIMING_DIR_SETUP_US);
+            last_direction_ = direction_;
+        }
+
+        // Update profile for new target
+        mode_ = McpwmMotionMode::POSITION;
+        calculateTrapezoidalProfile(abs_pulses, max_velocity, acceleration);
+
+        // Reset motion start time for new acceleration calculation
+        motion_start_time_ = 0;
+        completion_notified_.store(false, std::memory_order_relaxed);
+
+        // Transition to ACCELERATING for smooth ramp
+        state_.store(McpwmProfileState::ACCELERATING, std::memory_order_release);
+
+        // NO hardware re-initialization - motor keeps running!
+        return ESP_OK;
+    }
+
+    // If IDLE, do full hardware initialization
     ESP_LOGW(TAG, "DEBUG startMove: pulses=%ld, max_vel=%.1f Hz, accel=%.1f, dir=%s",
              (long)pulses, max_velocity, acceleration, direction_ ? "FWD" : "REV");
 
@@ -853,6 +888,15 @@ esp_err_t McpwmPulseGenerator::startMove(int32_t pulses, float max_velocity, flo
         return ret;
     }
 
+    // Start profile update timer for smooth acceleration (esp_timer guarantees timing)
+    ret = esp_timer_start_periodic(profile_timer_, TIMING_POSITION_UPDATE_LATENCY_MS * 1000);
+    if (ret != ESP_OK) {
+        mcpwm_timer_start_stop(timer_handle_, MCPWM_TIMER_STOP_EMPTY);
+        state_.store(McpwmProfileState::IDLE, std::memory_order_release);
+        ESP_LOGE(TAG, "Failed to start profile timer: %s", esp_err_to_name(ret));
+        return ret;
+    }
+
     // DEBUG: Check PCNT shortly after MCPWM start
     esp_rom_delay_us(100);  // 100µs delay to let a few edges occur
     int count_after_mcpwm = 0;
@@ -880,6 +924,39 @@ esp_err_t McpwmPulseGenerator::startVelocity(float velocity, float acceleration)
         return ESP_ERR_INVALID_ARG;
     }
 
+    // CRITICAL FIX: If already running, just update velocity target (smooth transition)
+    // Don't re-initialize hardware - this was causing motor to stop on every VEL command!
+    McpwmProfileState current_state = state_.load(std::memory_order_acquire);
+    if (current_state != McpwmProfileState::IDLE) {
+        ESP_LOGW(TAG, "startVelocity: Already running, updating velocity smoothly (no hardware re-init)");
+
+        // Update direction if needed
+        direction_ = (velocity >= 0);
+        if (direction_ != last_direction_) {
+            uint8_t axis = (timer_id_ == MCPWM_TIMER_Y) ? SR_AXIS_Y : SR_AXIS_C;
+            sr_set_direction(axis, direction_);
+            sr_update();
+            ets_delay_us(TIMING_DIR_SETUP_US);
+            last_direction_ = direction_;
+        }
+
+        // Update profile parameters for smooth ramp to new velocity
+        mode_ = McpwmMotionMode::VELOCITY;
+        calculateVelocityProfile(abs_velocity, acceleration);
+
+        // Reset motion start time to recalculate acceleration from current velocity
+        motion_start_time_ = 0;
+        completion_notified_.store(false, std::memory_order_relaxed);
+
+        // Transition to ACCELERATING to ramp to new velocity
+        state_.store(McpwmProfileState::ACCELERATING, std::memory_order_release);
+
+        // NO hardware re-initialization - motor keeps running!
+        // Profile task will smoothly ramp to new velocity
+        return ESP_OK;
+    }
+
+    // If IDLE, do full hardware initialization
     direction_ = (velocity >= 0);
 
     ESP_LOGD(TAG, "startVelocity: vel=%.1f, accel=%.1f, dir=%s",
@@ -940,6 +1017,15 @@ esp_err_t McpwmPulseGenerator::startVelocity(float velocity, float acceleration)
     if (ret != ESP_OK) {
         state_.store(McpwmProfileState::IDLE, std::memory_order_release);
         ESP_LOGE(TAG, "Failed to start MCPWM timer: %s", esp_err_to_name(ret));
+        return ret;
+    }
+
+    // Start profile update timer for smooth acceleration (esp_timer guarantees timing)
+    ret = esp_timer_start_periodic(profile_timer_, TIMING_POSITION_UPDATE_LATENCY_MS * 1000);
+    if (ret != ESP_OK) {
+        mcpwm_timer_start_stop(timer_handle_, MCPWM_TIMER_STOP_EMPTY);
+        state_.store(McpwmProfileState::IDLE, std::memory_order_release);
+        ESP_LOGE(TAG, "Failed to start profile timer: %s", esp_err_to_name(ret));
         return ret;
     }
 
@@ -1024,6 +1110,9 @@ void McpwmPulseGenerator::stopImmediate()
              (long long)last_completed_position_, (long)pcnt_at_last_completion_);
 
     // NOTE: Keep PCNT running continuously for position tracking (don't stop it)
+
+    // Stop profile update timer
+    esp_timer_stop(profile_timer_);
 
     // Clear state
     state_.store(McpwmProfileState::IDLE, std::memory_order_release);
@@ -1210,6 +1299,8 @@ esp_err_t McpwmPulseGenerator::setFrequency(float frequency)
     }
 
     // Update comparator for 50% duty cycle
+    // NO DELAY - MCPWM peripheral handles period/duty updates correctly without glitches
+    // Previous delay was CAUSING the jerky motion by blocking for milliseconds
     uint32_t compare_value = (period_ticks * MCPWM_DUTY_CYCLE_PERCENT) / 100;
     return mcpwm_comparator_set_compare_value(cmpr_handle_, compare_value);
 }
@@ -1313,18 +1404,12 @@ bool McpwmPulseGenerator::handlePcntReachISR(const pcnt_watch_event_data_t* even
     absolute_position_.store(move_start_position_ + delta, std::memory_order_relaxed);
     pulse_count_.store(target, std::memory_order_relaxed);
 
-    // Update state to IDLE so task loop stops
+    // Update state to IDLE so timer callback stops processing
     state_.store(McpwmProfileState::IDLE, std::memory_order_release);
     current_velocity_.store(0.0f, std::memory_order_relaxed);
 
-    // Signal completion to task
-    if (profile_task_handle_) {
-        BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-        xTaskNotifyFromISR(profile_task_handle_, NOTIFY_COMPLETE_BIT,
-                           eSetBits, &xHigherPriorityTaskWoken);
-        return xHigherPriorityTaskWoken == pdTRUE;
-    }
-
+    // Note: PCNT watch point callback is disabled - this function is not used
+    // Profile timer callback (profileTimerCallback) detects completion via state/position checks
     return false;
 }
 
