@@ -14,6 +14,7 @@
 #include "response_formatter.h"
 #include "config_commands.h"
 #include "config_limits.h"
+#include "brake_controller.h"
 
 #include "esp_log.h"
 
@@ -43,6 +44,11 @@ static esp_err_t stop_all_axes(MotionController* controller)
                 result = ret;  // Return last error, but continue
             } else {
                 ESP_LOGD(TAG, "Stopped axis %d", i);
+            }
+
+            // Story 4-5: Start idle timer for BRAKE_ON_IDLE axes
+            if (brake_has_hardware(i)) {
+                brake_on_motion_stop(i);
             }
         }
     }
@@ -95,10 +101,17 @@ esp_err_t handle_stop(const ParsedCommand* cmd, char* response, size_t resp_len)
         return format_error(response, resp_len, ERR_CONFIGURATION, MSG_CONFIGURATION);
     }
 
+    uint8_t axis_idx = static_cast<uint8_t>(axis_id);
+
     // Execute stop (AC13, AC15)
     // - AC13: Controlled deceleration if moving
     // - AC15: OK returned even if already stopped
     esp_err_t ret = motor->stop();
+
+    // Story 4-5: Start idle timer for BRAKE_ON_IDLE axes
+    if (brake_has_hardware(axis_idx)) {
+        brake_on_motion_stop(axis_idx);
+    }
 
     // Return OK even if motor wasn't moving (AC15)
     // ESP_ERR_INVALID_STATE means "not moving" which is fine

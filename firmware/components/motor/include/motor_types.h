@@ -114,6 +114,17 @@ struct AxisConfig {
     char alias[LIMIT_ALIAS_MAX_LENGTH + 1];
 
     /**
+     * @brief Brake control strategy for this axis
+     *
+     * Determines when brakes engage/release. Only applicable to servo axes
+     * (X, Y, Z, A, B) that have brake hardware. Stepper axes (C, D) and
+     * discrete axis (E) ignore this field.
+     *
+     * @see BrakeStrategy enum in config_defaults.h
+     */
+    BrakeStrategy brake_strategy;
+
+    /**
      * @brief Calculate pulses per SI unit
      *
      * @return pulses_per_rev / units_per_rev (pulses per meter or radian)
@@ -139,6 +150,7 @@ struct AxisConfig {
         cfg.backlash = DEFAULT_BACKLASH;
         cfg.home_offset = DEFAULT_HOME_OFFSET;
         cfg.alias[0] = '\0';
+        cfg.brake_strategy = DEFAULT_BRAKE_STRATEGY_HORIZ;  // Default to E-stop only
         return cfg;
     }
 

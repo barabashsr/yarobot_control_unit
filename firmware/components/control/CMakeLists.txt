@@ -11,14 +11,19 @@ idf_component_register(
         "command_executor/position_handler.cpp"
         "command_executor/velocity_handler.cpp"
         "command_executor/stop_handler.cpp"
+        "command_executor/brake_handler.cpp"
         "motion_controller/motion_controller.cpp"
         "motor_system/motor_system.cpp"
+        "safety_monitor/safety_monitor.c"
+        "safety_monitor/lim_handler.c"
+        "safety_monitor/brake_controller.c"
     # NOTE: test_pulse_cmd.cpp removed - was creating duplicate RMT/MCPWM/LEDC instances
     INCLUDE_DIRS
         "tasks/include"
         "command_executor/include"
         "motion_controller/include"
         "motor_system/include"
+        "safety_monitor/include"
     REQUIRES
         config
         command_parser
@@ -29,6 +34,8 @@ idf_component_register(
         pulse_gen
         position
         motor
+        mcp23017_wrapper
+        tpic6b595
     PRIV_REQUIRES
         esp_tinyusb
         esp_timer

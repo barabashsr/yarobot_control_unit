@@ -1,0 +1,162 @@
+<story-context id="4-1-mcp23017-io-expander-driver" v="1.0">
+  <metadata>
+    <epicId>4</epicId>
+    <storyId>1</storyId>
+    <title>MCP23017 I/O Expander Driver</title>
+    <status>drafted</status>
+    <generatedAt>2025-12-17</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/4-1-mcp23017-io-expander-driver.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>MCP23017 I2C expanders operational</iWant>
+    <soThat>I can read limit switches and control additional I/O</soThat>
+    <tasks>
+      <task id="1" ac="1">Add espressif/mcp23017 component via IDF Component Manager</task>
+      <task id="2" ac="1,2">Create MCP23017 wrapper/initialization component</task>
+      <task id="3" ac="3">Configure interrupt-on-change for MCP0 (limit switches)</task>
+      <task id="4" ac="4">Configure interrupt-on-change for MCP1 Port A (ALARM_INPUT)</task>
+      <task id="5" ac="3,4">Implement ESP32 GPIO ISR for MCP interrupts</task>
+      <task id="6" ac="5">Implement port read functions with timeout</task>
+      <task id="7" ac="1-5">Add configuration headers (config_i2c.h, config_gpio.h, config_timing.h)</task>
+      <task id="8" ac="1,2">Unit tests for MCP23017 initialization</task>
+      <task id="9" ac="3,4">Integration test - interrupt latency measurement</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1">Both MCP23017 devices respond at addresses 0x20 and 0x21 on I2C0, init returns ESP_OK</ac>
+    <ac id="2">All ports configured as inputs (IODIR=0xFF) with pull-ups enabled (GPPU=0xFF)</ac>
+    <ac id="3">MCP0 interrupt-on-change fires within 1ms, ISR signals safety_monitor_task via task notification</ac>
+    <ac id="4">MCP1 Port A (ALARM_INPUT) interrupt-on-change notifies safety_monitor_task</ac>
+    <ac id="5">mcp23017_read_port() completes within 500us at 400kHz I2C</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/sprint-artifacts/tech-spec-epic-4.md" title="Epic 4 Tech Spec" section="Story 4.1: MCP23017 I/O Expander Driver">
+        Defines AC1-AC5, MCP23017 pin mapping, espressif/mcp23017 API, and performance requirements.
+      </doc>
+      <doc path="docs/epics.md" title="Epics" section="Story 4.1">
+        User story definition, API signatures, expander configuration, interrupt configuration, prerequisites.
+      </doc>
+      <doc path="docs/architecture.md" title="Architecture" section="Dual-Core Separation, I2C Configuration">
+        Core 0 for safety monitoring, I2C bus sharing with mutex, header-only configuration mandate.
+      </doc>
+      <doc path="docs/bmm-workflow-status.yaml" title="Workflow Status" section="mandatory_constraints">
+        Header-only configuration requirement: all GPIO pins, I2C addresses, timing values must be in config headers.
+      </doc>
+    </docs>
+
+    <code>
+      <artifact path="firmware/components/config/include/config_i2c.h" kind="header" symbol="I2C_ADDR_MCP23017_0, I2C_ADDR_MCP23017_1" lines="1-207">
+        Already defines MCP23017 addresses (0x20, 0x21) and all pin mappings (limit switches, ALARM_INPUT, InPos). Use these constants, do not recreate.
+      </artifact>
+      <artifact path="firmware/components/config/include/config_gpio.h" kind="header" symbol="GPIO_MCP0_INTA, GPIO_MCP0_INTB, GPIO_MCP1_INTA, GPIO_MCP1_INTB" lines="132-148">
+        Already defines MCP interrupt GPIO pins (47, 48, 39, 38). Use these constants for ISR configuration.
+      </artifact>
+      <artifact path="firmware/components/config/include/config_timing.h" kind="header" symbol="TIMING_I2C_POLL_MS, TIMING_I2C_TIMEOUT_MS" lines="77-88">
+        Defines I2C timing constants. Add TIMING_I2C_READ_TIMEOUT_US (500) for AC5 if not present.
+      </artifact>
+      <artifact path="firmware/components/yarobot_hal/i2c_hal/include/i2c_hal.h" kind="header" symbol="i2c_hal_init, i2c_hal_write_read, i2c_hal_scan_bus" lines="1-119">
+        Existing I2C HAL - provides bus abstraction. MCP23017 wrapper should use this or espressif/mcp23017 component (which uses i2c_bus internally).
+      </artifact>
+      <artifact path="firmware/components/yarobot_hal/i2c_hal/i2c_hal.c" kind="source" symbol="i2c_hal_init" lines="*">
+        I2C HAL implementation. Currently stub - may need full implementation for I2C0 initialization if not done by espressif/mcp23017.
+      </artifact>
+      <artifact path="firmware/components/events/event_manager/include/event_manager.h" kind="header" symbol="event_publish_from_isr, EventCallback" lines="1-147">
+        Event system for ISR-safe event publishing. Use event_publish_from_isr() in MCP interrupt handlers.
+      </artifact>
+      <artifact path="firmware/components/events/event_manager/event_manager.c" kind="source" symbol="event_publish_from_isr" lines="*">
+        Event manager implementation. Already proven in Epic 3 motion events.
+      </artifact>
+    </code>
+
+    <dependencies>
+      <dependency name="espressif/mcp23017" version=">=0.1.1" source="ESP Component Registry">
+        MCP23017 I2C GPIO expander driver. Add via: idf.py add-dependency espressif/mcp23017
+      </dependency>
+      <dependency name="espressif/i2c_bus" version="*" source="ESP Component Registry (auto-dependency)">
+        I2C bus abstraction - pulled automatically by mcp23017 component.
+      </dependency>
+      <dependency name="ESP-IDF" version="5.4 LTS" source="Espressif">
+        Framework with I2C driver, GPIO, FreeRTOS task notifications.
+      </dependency>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint type="mandatory" source="docs/bmm-workflow-status.yaml">
+      HEADER-ONLY CONFIGURATION: All hardware values (GPIO pins, I2C addresses, timing) MUST use config_*.h constants. No magic numbers in source.
+    </constraint>
+    <constraint type="mandatory" source="docs/architecture.md">
+      DUAL-CORE SEPARATION: MCP23017 operations run on Core 0 from safety_monitor_task (priority 24). Core 1 reserved for motion control.
+    </constraint>
+    <constraint type="mandatory" source="docs/sprint-artifacts/tech-spec-epic-4.md">
+      INTERRUPT-DRIVEN SAFETY: Limit switch detection uses interrupts, not polling. Polling at 5ms is fallback only.
+    </constraint>
+    <constraint type="pattern" source="docs/architecture.md">
+      I2C MUTEX: All I2C transactions must be mutex-protected for thread safety.
+    </constraint>
+    <constraint type="pattern" source="Story 3-11">
+      TASK NOTIFICATION PATTERN: ISRs use xTaskNotifyFromISR() to wake tasks. Do not call blocking functions from ISR.
+    </constraint>
+    <constraint type="performance" source="docs/sprint-artifacts/tech-spec-epic-4.md">
+      AC5: Read operations must complete within 500us at 400kHz I2C.
+    </constraint>
+    <constraint type="performance" source="docs/sprint-artifacts/tech-spec-epic-4.md">
+      AC3: Interrupt latency must be less than 1ms from switch change to ISR execution.
+    </constraint>
+  </constraints>
+
+  <interfaces>
+    <interface name="espressif/mcp23017 API" kind="I2C driver" path="managed_components/espressif__mcp23017/">
+      <signature>esp_err_t mcp23017_init(mcp23017_handle_t *handle, i2c_port_t port, uint8_t addr)</signature>
+      <signature>esp_err_t mcp23017_set_direction(mcp23017_handle_t handle, uint8_t port, uint8_t dir)</signature>
+      <signature>esp_err_t mcp23017_set_pullup(mcp23017_handle_t handle, uint8_t port, uint8_t pullup)</signature>
+      <signature>esp_err_t mcp23017_read_port(mcp23017_handle_t handle, uint8_t port, uint8_t *value)</signature>
+      <signature>esp_err_t mcp23017_set_interrupt_on_change(mcp23017_handle_t handle, uint8_t port, uint8_t mask)</signature>
+      <signature>esp_err_t mcp23017_get_interrupt_flag(mcp23017_handle_t handle, uint8_t port, uint8_t *flags)</signature>
+      <signature>esp_err_t mcp23017_get_interrupt_capture(mcp23017_handle_t handle, uint8_t port, uint8_t *capture)</signature>
+    </interface>
+    <interface name="event_manager" kind="Pub/Sub" path="firmware/components/events/event_manager/">
+      <signature>esp_err_t event_publish_from_isr(const Event* event, BaseType_t* woken)</signature>
+      <note>Use for ISR-safe event publishing from MCP interrupt handlers</note>
+    </interface>
+    <interface name="FreeRTOS Task Notification" kind="RTOS primitive" path="freertos/task.h">
+      <signature>BaseType_t xTaskNotifyFromISR(TaskHandle_t task, uint32_t value, eNotifyAction action, BaseType_t *woken)</signature>
+      <note>Use to wake safety_monitor_task from MCP GPIO ISR</note>
+    </interface>
+    <interface name="i2c_hal" kind="HAL" path="firmware/components/yarobot_hal/i2c_hal/">
+      <signature>esp_err_t i2c_hal_init(i2c_port_t port, gpio_num_t sda, gpio_num_t scl, uint32_t freq_hz)</signature>
+      <signature>esp_err_t i2c_hal_write_read(i2c_port_t port, uint8_t addr, const uint8_t *wr, size_t wr_len, uint8_t *rd, size_t rd_len)</signature>
+      <note>Alternative to espressif component if direct control needed</note>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+      Unit tests use ESP-IDF Unity framework. Integration tests require actual MCP23017 hardware.
+      Test files follow pattern: test/test_*.c for unit, test/integration/*/ for integration.
+      Hardware tests use oscilloscope for timing verification.
+    </standards>
+    <locations>
+      <location>firmware/components/drivers/mcp23017_wrapper/test/</location>
+      <location>firmware/test/integration/mcp23017/</location>
+    </locations>
+    <ideas>
+      <idea ac="1">Test I2C scan finds both addresses 0x20 and 0x21</idea>
+      <idea ac="1">Test init returns ESP_OK for valid addresses, ESP_ERR_NOT_FOUND for invalid</idea>
+      <idea ac="2">Test direction registers read back 0xFF after configuration</idea>
+      <idea ac="2">Test pull-up registers (GPPU) read back 0xFF after configuration</idea>
+      <idea ac="3">Test interrupt flag (INTF) set when input toggles</idea>
+      <idea ac="3">Test interrupt capture (INTCAP) captures port state</idea>
+      <idea ac="3">Measure time from input change to ISR execution - must be less than 1ms</idea>
+      <idea ac="4">Test ALARM_INPUT (MCP1 Port A) change triggers MCP1_INTA interrupt</idea>
+      <idea ac="5">Measure mcp23017_read_port() latency - must be less than 500us at 400kHz</idea>
+      <idea ac="5">Test read timeout handling when I2C bus is stuck</idea>
+    </ideas>
+  </tests>
+</story-context>

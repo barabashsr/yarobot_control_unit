@@ -32,6 +32,30 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
 #include <atomic>
+#include <cstdint>
+
+/**
+ * @defgroup mcpwm_pcnt_constants PCNT Configuration Constants
+ * @brief Hardware limits and overflow handling for PCNT counter
+ * @{
+ */
+
+/** @brief PCNT high limit (16-bit signed max) */
+static constexpr int16_t MCPWM_PCNT_HIGH_LIMIT = INT16_MAX;
+
+/** @brief PCNT low limit (16-bit signed min) */
+static constexpr int16_t MCPWM_PCNT_LOW_LIMIT = INT16_MIN;
+
+/**
+ * @brief PCNT overflow range for position accumulation
+ *
+ * With accum_count=false, the PCNT counter wraps from 32767 to 0.
+ * Each overflow represents 32768 pulses (0 to 32767 inclusive).
+ * This value is added to the accumulated position on each overflow detection.
+ */
+static constexpr int32_t MCPWM_PCNT_OVERFLOW_RANGE = 32768;
+
+/** @} */ // end mcpwm_pcnt_constants
 
 /**
  * @brief Motion profile state machine states (shared with RMT)
@@ -111,6 +135,7 @@ public:
     int64_t getPulseCount() const override;
     float getCurrentVelocity() const override;
     void setCompletionCallback(MotionCompleteCallback cb) override;
+    void setErrorCallback(MotionErrorCallback cb) override;
     void setPositionTracker(IPositionTracker* tracker) override;
 
     // IPositionTracker interface implementation
@@ -169,11 +194,15 @@ private:
     int64_t last_completed_position_;       ///< Position at last move completion (stable)
     int32_t pcnt_at_last_completion_;       ///< PCNT hardware value at completion (stable)
 
+    // Task-based overflow detection (replaces disabled ISR-based overflow handling)
+    int32_t prev_raw_pcnt_count_;            ///< Previous raw PCNT reading for overflow detection
+
     // Profile update timer (esp_timer for guaranteed timing)
     esp_timer_handle_t profile_timer_;
 
     // Callback
     MotionCompleteCallback completion_callback_;
+    MotionErrorCallback error_callback_;  ///< Called on motion errors (Story 3.11 AC4)
     SemaphoreHandle_t callback_mutex_;
     std::atomic<bool> completion_notified_;  ///< Prevents double completion callback
     uint64_t motion_start_time_;              ///< For time-based acceleration

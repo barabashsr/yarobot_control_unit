@@ -644,7 +644,7 @@ static esp_err_t handle_pulse_test(const ParsedCommand* cmd, char* response, siz
         // Create generator if needed
         if (s_ledc_gen == nullptr) {
             ESP_LOGI(TAG, "Creating LedcPulseGenerator for PULSE on axis D (GPIO %d)", gpio);
-            s_ledc_gen = new LedcPulseGenerator(gpio, LEDC_TIMER_D, LEDC_CHANNEL_D);
+            s_ledc_gen = new LedcPulseGenerator(gpio, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
             ret = s_ledc_gen->init();
             if (ret != ESP_OK) {
                 ESP_LOGE(TAG, "Failed to init LedcPulseGenerator: %s", esp_err_to_name(ret));
@@ -841,7 +841,7 @@ static esp_err_t handle_move_test(const ParsedCommand* cmd, char* response, size
         if (s_ledc_gen == nullptr) {
             ESP_LOGI(TAG, "Creating LedcPulseGenerator for axis D (timer=%d, channel=%d, gpio=%d)",
                      LEDC_TIMER_D, LEDC_CHANNEL_D, gpio);
-            s_ledc_gen = new LedcPulseGenerator(gpio, LEDC_TIMER_D, LEDC_CHANNEL_D);
+            s_ledc_gen = new LedcPulseGenerator(gpio, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
             ret = s_ledc_gen->init();
             if (ret != ESP_OK) {
                 ESP_LOGE(TAG, "Failed to init LedcPulseGenerator: %s", esp_err_to_name(ret));

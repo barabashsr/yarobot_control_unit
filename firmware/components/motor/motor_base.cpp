@@ -11,6 +11,7 @@
 #include "motor_base.h"
 #include "config_timing.h"
 #include "config_defaults.h"
+#include "event_manager.h"
 #include "esp_log.h"
 #include "esp_timer.h"
 #include "freertos/FreeRTOS.h"
@@ -82,6 +83,12 @@ esp_err_t MotorBase::init()
     pulse_gen_->setCompletionCallback(
         [this](int64_t total_pulses) {
             this->onMotionComplete(total_pulses);
+        });
+
+    // Register error callback with pulse generator (Story 3.11 AC4)
+    pulse_gen_->setErrorCallback(
+        [this](IPulseGenerator::MotionError error, int64_t pulses_completed) {
+            this->onMotionError(error, pulses_completed);
         });
 
     // Reset position tracker to zero
@@ -444,6 +451,31 @@ void MotorBase::onMotionComplete(int64_t total_pulses)
 
     ESP_LOGW(TAG, "Axis %d: motion complete at position %.4f",
              axis_id_, getPosition());
+}
+
+void MotorBase::onMotionError(IPulseGenerator::MotionError error, int64_t pulses_completed)
+{
+    ESP_LOGE(TAG, "Axis %d: motion error (code=%d, pulses_completed=%lld)",
+             axis_id_, static_cast<int>(error), (long long)pulses_completed);
+
+    // Sync position from tracker (we may have moved some distance)
+    syncPositionFromTracker();
+
+    // Transition to ERROR state (AC4)
+    state_.store(AXIS_STATE_ERROR, std::memory_order_release);
+
+    // Publish EVT_MOTION_ERROR event (AC4)
+    Event event = {
+        .type = EVTTYPE_MOTION_ERROR,
+        .axis = axis_id_,
+        .data = { .error_code = static_cast<uint8_t>(error) },
+        .timestamp = esp_timer_get_time()
+    };
+
+    esp_err_t ret = event_publish(&event);
+    if (ret != ESP_OK) {
+        ESP_LOGW(TAG, "Axis %d: failed to publish motion error event: 0x%x", axis_id_, ret);
+    }
 }
 
 float MotorBase::velocityToFrequency(float velocity_si) const

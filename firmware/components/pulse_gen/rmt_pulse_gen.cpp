@@ -328,6 +328,11 @@ void RmtPulseGenerator::fillQueue()
         recalculateRamp();
     }
 
+    // Throttle debug logging to once per second
+    static uint32_t last_debug_log_ms = 0;
+    uint32_t now_ms = xTaskGetTickCount() * portTICK_PERIOD_MS;
+    bool should_log = (now_ms - last_debug_log_ms >= 1000);
+
     int cmds_added = 0;
 
     // Calculate current queue depth
@@ -358,7 +363,7 @@ void RmtPulseGenerator::fillQueue()
         cmds_added++;
         queue_depth++;  // Track queue depth as we add
 
-        if (cmds_added <= 3) {
+        if (should_log && cmds_added <= 3) {
             ESP_LOGW(TAG, "DEBUG fillQueue cmd[%d]: ticks=%u, steps=%u, flags=0x%02X",
                      cmds_added, cmd.ticks, cmd.steps, cmd.flags);
         }
@@ -370,9 +375,10 @@ void RmtPulseGenerator::fillQueue()
         }
     }
 
-    if (cmds_added > 0) {
+    if (cmds_added > 0 && should_log) {
         ESP_LOGW(TAG, "DEBUG fillQueue: added %d cmds, queue_space=%u, ticks_in_queue=%lu",
                  cmds_added, queueSpace(), (unsigned long)ticksInQueue());
+        last_debug_log_ms = now_ms;
     }
 }
 
@@ -1179,6 +1185,11 @@ float RmtPulseGenerator::getCurrentVelocity() const
 void RmtPulseGenerator::setCompletionCallback(MotionCompleteCallback cb)
 {
     completion_callback_ = cb;
+}
+
+void RmtPulseGenerator::setErrorCallback(MotionErrorCallback cb)
+{
+    error_callback_ = cb;
 }
 
 void RmtPulseGenerator::setPositionTracker(IPositionTracker* tracker)

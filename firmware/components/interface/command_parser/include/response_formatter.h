@@ -54,6 +54,8 @@ typedef enum {
     EVTTYPE_WIDTH_MEASURED,
     /** @brief System boot event */
     EVTTYPE_BOOT,
+    /** @brief Brake state changed (Story 4-5) */
+    EVTTYPE_BRAKE_CHANGED,
 } EventType;
 
 /** @} */ // end event_types
@@ -101,6 +103,8 @@ typedef struct {
         bool estop_active;
         /** @brief Mode name string for mode changed events */
         const char* mode_name;
+        /** @brief Brake engaged state (true=engaged, false=released) */
+        bool brake_engaged;
     } data;
 
     /** @brief Event timestamp (microseconds since boot) */

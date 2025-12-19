@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<story-context id="3-11-motion-completion-events" v="1.0">
+  <metadata>
+    <epicId>3</epicId>
+    <storyId>11</storyId>
+    <title>Motion Completion Events</title>
+    <status>ready-for-dev</status>
+    <generatedAt>2025-12-17</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/3-11-motion-completion-events.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>user</asA>
+    <iWant>notification when motion completes</iWant>
+    <soThat>I can sequence operations without polling</soThat>
+    <tasks>
+      <task id="1" ac="1,2">Verify existing motion complete infrastructure</task>
+      <task id="2" ac="7">Wire USB TX task event subscription</task>
+      <task id="3" ac="4">Implement EVT_MOTION_ERROR generation</task>
+      <task id="4" ac="3,10">Verify STOP command event generation</task>
+      <task id="5" ac="10">Add velocity mode completion event</task>
+      <task id="6" ac="5">Add timing verification test</task>
+      <task id="7" ac="6">Add event ordering verification test</task>
+      <task id="8" ac="8">Add all-axes event test</task>
+      <task id="9" ac="9">Add position accuracy test</task>
+      <task id="10" ac="11">Add spurious event test</task>
+      <task id="11" ac="1,9">Integration test - MOVE to EVENT DONE</task>
+      <task id="12" ac="3">Integration test - STOP during motion</task>
+      <task id="13" ac="12">Code review - No Magic Numbers</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1" title="Motion Complete Event - Successful Move">
+      <given>CMD_MOVE command is executing</given>
+      <when>motion completes successfully</when>
+      <then>event published: EVENT DONE axis position</then>
+    </ac>
+    <ac id="2" title="Motion Complete Event - Successful Relative Move">
+      <given>CMD_MOVR command is executing</given>
+      <when>motion completes successfully</when>
+      <then>event published: EVENT DONE axis position</then>
+    </ac>
+    <ac id="3" title="Motion Complete Event - STOP Command">
+      <given>motion stopped by CMD_STOP command</given>
+      <when>axis comes to rest</when>
+      <then>event published: EVENT DONE axis position</then>
+    </ac>
+    <ac id="4" title="Motion Error Event">
+      <given>motion encounters error (pulse generator failure, communication error)</given>
+      <when>error occurs</when>
+      <then>event published: EVENT ERROR axis code; axis state transitions to ERROR</then>
+    </ac>
+    <ac id="5" title="Event Timing">
+      <given>any motion event condition occurs</given>
+      <when>event is generated</when>
+      <then>event published within TIMING_CMD_RESPONSE_MS (10ms)</then>
+    </ac>
+    <ac id="6" title="Event Ordering">
+      <given>multiple events are generated</given>
+      <when>events delivered to host</when>
+      <then>events delivered in chronological order (no reordering)</then>
+    </ac>
+    <ac id="7" title="USB TX Integration">
+      <given>usb_tx_task is running</given>
+      <when>EVT_MOTION_COMPLETE or EVT_MOTION_ERROR published</when>
+      <then>usb_tx_task formats and sends to host using format_event()</then>
+    </ac>
+    <ac id="8" title="All Axes Supported">
+      <given>any axis (X,Y,Z,A,B,C,D,E) is moving</given>
+      <when>motion completes</when>
+      <then>correct axis character appears in event</then>
+    </ac>
+    <ac id="9" title="Position Accuracy in Event">
+      <given>axis completes motion</given>
+      <when>EVENT DONE generated</when>
+      <then>position matches motor->getPosition() to 3 decimal places</then>
+    </ac>
+    <ac id="10" title="Velocity Mode Stop">
+      <given>VEL command active (velocity mode)</given>
+      <when>STOP command received</when>
+      <then>EVENT DONE published after deceleration completes</then>
+    </ac>
+    <ac id="11" title="No Spurious Events">
+      <given>axis is IDLE and not moving</given>
+      <when>no motion in progress</when>
+      <then>no EVT_MOTION_COMPLETE events generated</then>
+    </ac>
+    <ac id="12" title="Configuration - No Magic Numbers">
+      <given>all event generation code</given>
+      <when>reviewed</when>
+      <then>all constants come from config_*.h headers</then>
+    </ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/sprint-artifacts/tech-spec-epic-3.md" title="Epic 3 Technical Specification">
+        <section>Story 3.11 Motion Completion Events</section>
+        <snippet>Defines AC for motion complete events, error events, timing requirements, and USB TX integration.</snippet>
+      </doc>
+      <doc path="docs/epics.md" title="Epic Breakdown">
+        <section>Epic 3: Motor Control Core - Story 3.11</section>
+        <snippet>Story definition: Events EVT_MOTION_COMPLETE, EVT_MOTION_ERROR, EVT_LIMIT with timing 10ms.</snippet>
+      </doc>
+      <doc path="docs/sprint-artifacts/3-10-cmd-vel-stop-en-pos.md" title="Previous Story - VEL/STOP/EN/POS">
+        <section>Hardware Testing Sessions 2-4</section>
+        <snippet>Critical patterns: Position is a Promise, Two-Phase Completion, onTransmitDone callback. Position tracking architecture essential for event timing.</snippet>
+      </doc>
+      <doc path="docs/sprint-artifacts/3-9-motion-controller-cmd-move-movr.md" title="Motion Controller Story">
+        <section>Implementation Notes</section>
+        <snippet>MotionController::onMotionComplete() implementation at lines 335-351. Publishes EVTTYPE_MOTION_COMPLETE.</snippet>
+      </doc>
+    </docs>
+
+    <code>
+      <file path="firmware/components/control/motion_controller/motion_controller.cpp" kind="controller">
+        <symbol>MotionController::onMotionComplete</symbol>
+        <lines>335-351</lines>
+        <reason>Static callback that publishes EVTTYPE_MOTION_COMPLETE - primary entry point for motion events</reason>
+      </file>
+      <file path="firmware/components/control/motion_controller/include/motion_controller.h" kind="header">
+        <symbol>MotionController</symbol>
+        <lines>47-230</lines>
+        <reason>Class declaration with onMotionComplete static method, motor array, axis lookup methods</reason>
+      </file>
+      <file path="firmware/components/events/event_manager/include/event_manager.h" kind="header">
+        <symbol>event_publish, event_subscribe, event_publish_from_isr</symbol>
+        <lines>74-128</lines>
+        <reason>Event pub/sub API - event_subscribe needed for USB TX task, event_publish_from_isr for ISR context</reason>
+      </file>
+      <file path="firmware/components/events/event_manager/event_manager.c" kind="implementation">
+        <symbol>event_processor_task</symbol>
+        <lines>396-404</lines>
+        <reason>Event processor that delivers events to subscribers - already calls format_event()</reason>
+      </file>
+      <file path="firmware/components/interface/command_parser/include/response_formatter.h" kind="header">
+        <symbol>EventType, Event, format_event</symbol>
+        <lines>40-210</lines>
+        <reason>Event type enum (EVTTYPE_MOTION_COMPLETE, EVTTYPE_MOTION_ERROR), Event struct, format_event() API</reason>
+      </file>
+      <file path="firmware/components/interface/command_parser/response_formatter.c" kind="implementation">
+        <symbol>format_event</symbol>
+        <lines>105-123</lines>
+        <reason>Formats events to "EVENT DONE X 0.100" string - already handles EVTTYPE_MOTION_COMPLETE</reason>
+      </file>
+      <file path="firmware/components/control/tasks/task_stubs.c" kind="task">
+        <symbol>usb_tx_task</symbol>
+        <lines>80-105</lines>
+        <reason>USB TX task - needs event subscription added for EVTTYPE_MOTION_COMPLETE and EVTTYPE_MOTION_ERROR</reason>
+      </file>
+      <file path="firmware/components/config/include/config_commands.h" kind="config">
+        <symbol>CMD_*, ERR_*, EVT_*</symbol>
+        <lines>1-80</lines>
+        <reason>Command protocol definitions, error codes, event type strings - NO MAGIC NUMBERS requirement</reason>
+      </file>
+      <file path="firmware/components/config/include/config_timing.h" kind="config">
+        <symbol>TIMING_CMD_RESPONSE_MS</symbol>
+        <reason>10ms timing requirement for event delivery (AC5)</reason>
+      </file>
+      <file path="firmware/components/config/include/config_axes.h" kind="config">
+        <symbol>AXIS_*, AXIS_CHAR_*</symbol>
+        <reason>Axis identifiers and character mappings for event formatting</reason>
+      </file>
+      <file path="firmware/components/motor/include/i_motor.h" kind="interface">
+        <symbol>IMotor::setMotionCompleteCallback</symbol>
+        <reason>Callback registration interface used by MotionController to receive completion events</reason>
+      </file>
+      <file path="firmware/components/control/command_executor/stop_handler.cpp" kind="handler">
+        <symbol>StopHandler</symbol>
+        <reason>STOP command handler - must trigger motion complete event after deceleration (AC3, AC10)</reason>
+      </file>
+      <file path="firmware/components/pulse_gen/rmt_pulse_gen.cpp" kind="driver">
+        <symbol>onTransmitDone</symbol>
+        <lines>varies</lines>
+        <reason>RMT completion callback - triggers motion_complete_callback_ which leads to event publish</reason>
+      </file>
+    </code>
+
+    <dependencies>
+      <ecosystem name="ESP-IDF">
+        <package name="esp-idf" version="5.3.1">ESP32 development framework</package>
+        <package name="freertos">FreeRTOS kernel for task management</package>
+        <package name="tinyusb">USB CDC communication</package>
+      </ecosystem>
+      <ecosystem name="Project Components">
+        <package name="event_manager">Pub/sub event system</package>
+        <package name="response_formatter">Protocol formatting</package>
+        <package name="motion_controller">Motor coordination</package>
+        <package name="pulse_gen">RMT/MCPWM/LEDC pulse generation</package>
+      </ecosystem>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint type="mandatory" source="architecture">NO MAGIC NUMBERS: All numeric constants MUST come from config_*.h headers. Zero tolerance.</constraint>
+    <constraint type="mandatory" source="architecture">SI UNITS: All positions in meters/radians, velocities in m/s or rad/s.</constraint>
+    <constraint type="mandatory" source="tech-spec">TIMING: Events must be published within 10ms of condition occurring (TIMING_CMD_RESPONSE_MS).</constraint>
+    <constraint type="mandatory" source="architecture">THREAD SAFETY: Motor callbacks may fire from ISR context - use event_publish_from_isr() when appropriate.</constraint>
+    <constraint type="mandatory" source="architecture">DUAL-CORE: Event processing runs on Core 0, motion control on Core 1. Event queue decouples them.</constraint>
+    <constraint type="pattern" source="3-10">POSITION TRACKING: Position is a Promise - updated at queue time, not ISR time.</constraint>
+    <constraint type="pattern" source="3-10">TWO-PHASE COMPLETION: Motion complete fires from onTransmitDone(), not encodeCallback().</constraint>
+    <constraint type="compile" source="CMakeLists">WERROR: All code must compile without warnings (-Werror enabled).</constraint>
+  </constraints>
+
+  <interfaces>
+    <interface name="event_subscribe" kind="function">
+      <signature>esp_err_t event_subscribe(EventType type, EventCallback callback, void* ctx)</signature>
+      <path>firmware/components/events/event_manager/include/event_manager.h:74</path>
+      <usage>Subscribe USB TX task to EVTTYPE_MOTION_COMPLETE and EVTTYPE_MOTION_ERROR</usage>
+    </interface>
+    <interface name="event_publish" kind="function">
+      <signature>esp_err_t event_publish(const Event* event)</signature>
+      <path>firmware/components/events/event_manager/include/event_manager.h:110</path>
+      <usage>Publish events from task context</usage>
+    </interface>
+    <interface name="event_publish_from_isr" kind="function">
+      <signature>esp_err_t event_publish_from_isr(const Event* event, BaseType_t* woken)</signature>
+      <path>firmware/components/events/event_manager/include/event_manager.h:128</path>
+      <usage>Publish events from ISR context (motor callbacks)</usage>
+    </interface>
+    <interface name="format_event" kind="function">
+      <signature>esp_err_t format_event(char* buf, size_t len, const Event* event)</signature>
+      <path>firmware/components/interface/command_parser/include/response_formatter.h:210</path>
+      <usage>Format Event struct to "EVENT DONE X 0.100" string</usage>
+    </interface>
+    <interface name="EventType" kind="enum">
+      <signature>EVTTYPE_MOTION_COMPLETE, EVTTYPE_MOTION_ERROR, EVTTYPE_LIMIT_TRIGGERED, ...</signature>
+      <path>firmware/components/interface/command_parser/include/response_formatter.h:40-57</path>
+      <usage>Event type identifiers for publish/subscribe</usage>
+    </interface>
+    <interface name="Event" kind="struct">
+      <signature>struct { EventType type; uint8_t axis; union { float position; uint8_t error_code; ... } data; int64_t timestamp; }</signature>
+      <path>firmware/components/interface/command_parser/include/response_formatter.h:83-108</path>
+      <usage>Event data structure passed to event_publish()</usage>
+    </interface>
+    <interface name="MotionCompleteCallback" kind="typedef">
+      <signature>typedef void (*MotionCompleteCallback)(uint8_t axis, float position)</signature>
+      <path>firmware/components/motor/include/i_motor.h</path>
+      <usage>Callback signature for motor completion notifications</usage>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+      ESP-IDF Unity test framework. Tests in component/test/ directories.
+      Run with `idf.py -T component_name test`. Mock objects for hardware dependencies.
+      All tests must pass before story completion. Hardware integration tests on real ESP32S3.
+    </standards>
+    <locations>
+      <location>firmware/components/control/motion_controller/test/</location>
+      <location>firmware/components/control/command_executor/test/</location>
+      <location>firmware/components/events/event_manager/test/</location>
+    </locations>
+    <ideas>
+      <idea ac="1,2">Test MOVE/MOVR triggers EVENT DONE with correct axis and position</idea>
+      <idea ac="3">Test STOP during motion triggers EVENT DONE after deceleration</idea>
+      <idea ac="4">Test motor error condition triggers EVENT ERROR with correct code</idea>
+      <idea ac="5">Test event timestamp within 10ms of motion complete callback</idea>
+      <idea ac="6">Test rapid sequential moves produce events in correct order</idea>
+      <idea ac="7">Test event_subscribe wires callback, format_event produces correct string</idea>
+      <idea ac="8">Test all 8 axes (X,Y,Z,A,B,C,D,E) produce correct axis char in event</idea>
+      <idea ac="9">Test position in EVENT DONE matches motor->getPosition() to 0.001</idea>
+      <idea ac="10">Test VEL mode + STOP produces EVENT DONE with final position</idea>
+      <idea ac="11">Test no events generated when axis is IDLE</idea>
+      <idea ac="12">Grep for hardcoded numbers - verify all from config headers</idea>
+    </ideas>
+  </tests>
+
+  <previousStoryLearnings>
+    <learning source="3-10" topic="Position Tracking">
+      Position is updated at queue time (pushCommand), not ISR time. position_tracker_ reflects
+      where motor WILL BE after queued commands. pulse_count_ stays cumulative for stopImmediate() sync.
+    </learning>
+    <learning source="3-10" topic="Two-Phase Completion">
+      Phase 1: Queue empty, set rmt_stopped_, fill final pause.
+      Phase 2: Next callback sees rmt_stopped_, return done=true.
+      Phase 3: onTransmitDone callback fires, motion truly complete.
+      Completion callback fires from onTransmitDone(), not encodeCallback().
+    </learning>
+    <learning source="3-10" topic="Direction Handling">
+      target_pos always positive. queue_end_.position positive for FWD, negative for REV.
+      FWD: remaining = target_pos - queue_end_.position
+      REV: remaining = target_pos + queue_end_.position
+    </learning>
+    <learning source="3-10" topic="Key Files">
+      stop_handler.cpp for STOP command, velocity_handler.cpp for VEL,
+      enable_handler.cpp for EN, position_handler.cpp for POS.
+    </learning>
+  </previousStoryLearnings>
+</story-context>

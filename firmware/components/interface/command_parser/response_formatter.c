@@ -178,6 +178,17 @@ esp_err_t format_event(char* buf, size_t len, const Event* event)
                                RESP_EVENT, axis_char, event->data.width);
             break;
 
+        case EVTTYPE_BRAKE_CHANGED:
+            // Format: EVENT BRAKE <axis> ENGAGED|RELEASED
+            axis_char = index_to_axis(event->axis);
+            if (axis_char == '\0') {
+                return ESP_ERR_INVALID_ARG;
+            }
+            written = snprintf(buf, len, "%s %s %c %s" RESP_TERMINATOR,
+                               RESP_EVENT, EVT_BRAKE, axis_char,
+                               event->data.brake_engaged ? "ENGAGED" : "RELEASED");
+            break;
+
         default:
             return ESP_ERR_INVALID_ARG;
     }

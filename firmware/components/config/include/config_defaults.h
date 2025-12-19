@@ -51,14 +51,52 @@
  *
  * 200 pulses/rev matches common servo driver PA14 settings.
  */
+// ORIGINAL VALUES (restore tomorrow):
+// #define DEFAULT_PULSES_PER_REV      200.0f
+// #define DEFAULT_UNITS_PER_REV       360.0f
+
+// HARDWARE TEST CONFIG (2025-12-18) - units in mm
 #define DEFAULT_PULSES_PER_REV      200.0f
+#define DEFAULT_UNITS_PER_REV       360.0f
+
+// ============================================================================
+// PER-AXIS HARDWARE TEST CONFIGURATION (2025-12-18)
+// ============================================================================
+// X axis: 350mm stroke, 10000 pulses/rev
+#define X_AXIS_PULSES_PER_REV       10000.0f
+#define X_AXIS_UNITS_PER_REV        350.0f   // mm
+
+// Y axis: 48mm stroke, 10000 pulses/rev
+#define Y_AXIS_PULSES_PER_REV       10000.0f
+#define Y_AXIS_UNITS_PER_REV        48.0f    // mm
+
+// Z axis: 5mm stroke, 312 pulses/rev
+#define Z_AXIS_PULSES_PER_REV       312.0f
+#define Z_AXIS_UNITS_PER_REV        5.0f     // mm
+
+// A axis: 3.8mm stroke, 625 pulses/rev (10000/16)
+#define A_AXIS_PULSES_PER_REV       625.0f
+#define A_AXIS_UNITS_PER_REV        3.8f     // mm
+
+// B axis: 72mm stroke, 10000 pulses/rev
+#define B_AXIS_PULSES_PER_REV       10000.0f
+#define B_AXIS_UNITS_PER_REV        72.0f    // mm
+
+// C axis: 48mm stroke, 3200 pulses/rev (200*16)
+#define C_AXIS_PULSES_PER_REV       3200.0f
+#define C_AXIS_UNITS_PER_REV        48.0f    // mm
+
+// D axis: 48mm stroke, 3200 pulses/rev (same as C)
+#define D_AXIS_PULSES_PER_REV       3200.0f
+#define D_AXIS_UNITS_PER_REV        48.0f    // mm
+// ============================================================================
 
 /**
  * @brief Default units per revolution (degrees)
  *
  * 360 degrees per revolution for human-readable positions.
  */
-#define DEFAULT_UNITS_PER_REV       360.0f
+// Already defined above in hardware test section
 
 /** @brief Default axis type (false = linear, true = rotary) */
 #define DEFAULT_IS_ROTARY           false
@@ -199,6 +237,85 @@
 #define DEFAULT_ZSIG_ENABLED            true
 
 /** @} */ // end zsignal_defaults
+
+/**
+ * @defgroup limit_defaults Limit Switch Defaults
+ * @brief Default values for limit switch configuration
+ * @{
+ */
+
+/**
+ * @brief Default limit switch polarity
+ *
+ * 0 = NO (normally open): switch closes circuit when triggered
+ * 1 = NC (normally closed): switch opens circuit when triggered
+ */
+#define DEFAULT_LIMIT_POLARITY          0
+
+/** @} */ // end limit_defaults
+
+/**
+ * @defgroup brake_strategy Brake Control Strategy
+ * @brief Per-axis brake engagement strategy configuration
+ * @{
+ */
+
+/**
+ * @brief Brake control strategy enumeration
+ *
+ * Defines when brakes engage/release for each axis. Servo axes (X, Y, Z, A, B)
+ * have electromagnetic spring-applied brakes. Stepper axes (C, D) and discrete
+ * axis (E) have no brake hardware.
+ *
+ * @note Active-low brake outputs: SR bit = 0 means brake ENGAGED (spring applied),
+ *       SR bit = 1 means brake RELEASED (electromagnet powered).
+ */
+typedef enum {
+    /**
+     * @brief Engage brake when axis is disabled (default for vertical axes)
+     *
+     * On EN X 0: Engage brake -> wait TIMING_BRAKE_ENGAGE_MS -> clear enable bit
+     * On EN X 1: Set enable bit -> wait TIMING_BRAKE_RELEASE_MS -> release brake
+     */
+    BRAKE_ON_DISABLE = 0,
+
+    /**
+     * @brief Engage brake only during E-stop (default for horizontal axes)
+     *
+     * Normal disable (EN X 0) does NOT engage brake.
+     * E-stop engages brake via sr_emergency_disable_all().
+     */
+    BRAKE_ON_ESTOP = 1,
+
+    /**
+     * @brief Engage brake after idle timeout
+     *
+     * Axis remains enabled but brake engages after TIMING_IDLE_TIMEOUT_S.
+     * Brake releases automatically before motion commands.
+     * Publishes EVENT BRAKE <axis> ENGAGED when idle brake engages.
+     */
+    BRAKE_ON_IDLE = 2,
+
+    /**
+     * @brief Manual brake control via BRAKE command only
+     *
+     * Brake state only changes via explicit BRAKE <axis> <0|1> command.
+     * Other axes reject BRAKE command with ERR_BRAKE_AUTO.
+     */
+    BRAKE_MANUAL = 3
+} BrakeStrategy;
+
+/**
+ * @brief Default brake strategy for Z axis (vertical - needs holding)
+ */
+#define DEFAULT_BRAKE_STRATEGY_Z        BRAKE_ON_DISABLE
+
+/**
+ * @brief Default brake strategy for horizontal servo axes (X, Y, A, B)
+ */
+#define DEFAULT_BRAKE_STRATEGY_HORIZ    BRAKE_ON_ESTOP
+
+/** @} */ // end brake_strategy
 
 /**
  * @defgroup format_defaults Position Display Format Constants

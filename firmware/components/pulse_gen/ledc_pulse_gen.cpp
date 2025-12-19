@@ -39,11 +39,20 @@ static constexpr uint64_t PROFILE_UPDATE_INTERVAL_US = 1000;
 // Constructor / Destructor
 // ============================================================================
 
-LedcPulseGenerator::LedcPulseGenerator(int gpio_num, ledc_timer_t timer, ledc_channel_t channel)
+LedcPulseGenerator::LedcPulseGenerator(int gpio_num, ledc_timer_t timer, ledc_channel_t channel, int pcnt_unit_id)
     : gpio_num_(gpio_num)
     , timer_(timer)
     , channel_(channel)
+    , pcnt_unit_id_(pcnt_unit_id)
     , initialized_(false)
+    , pcnt_unit_(nullptr)
+    , pcnt_channel_(nullptr)
+    , overflow_count_(0)
+    , prev_raw_pcnt_count_(0)
+    , pcnt_start_(0)
+    , last_completed_position_(0)
+    , pcnt_at_last_completion_(0)
+    , absolute_position_(0)
     , state_(LedcProfileState::IDLE)
     , mode_(LedcMotionMode::POSITION)
     , profile_{}
@@ -81,6 +90,17 @@ LedcPulseGenerator::~LedcPulseGenerator()
             esp_timer_stop(profile_timer_);
             esp_timer_delete(profile_timer_);
             profile_timer_ = nullptr;
+        }
+
+        // Clean up PCNT
+        if (pcnt_channel_) {
+            pcnt_del_channel(pcnt_channel_);
+            pcnt_channel_ = nullptr;
+        }
+        if (pcnt_unit_) {
+            pcnt_unit_stop(pcnt_unit_);
+            pcnt_del_unit(pcnt_unit_);
+            pcnt_unit_ = nullptr;
         }
 
         // Stop LEDC
@@ -158,6 +178,75 @@ esp_err_t LedcPulseGenerator::init()
         ESP_LOGE(TAG, "Failed to configure LEDC channel: %s", esp_err_to_name(ret));
         return ret;
     }
+
+    // =========================================================================
+    // PCNT Unit Configuration for hardware position tracking
+    // =========================================================================
+    pcnt_unit_config_t pcnt_unit_config = {};
+    pcnt_unit_config.high_limit = LIMIT_PCNT_HIGH_LIMIT;
+    pcnt_unit_config.low_limit = LIMIT_PCNT_LOW_LIMIT;
+    pcnt_unit_config.flags.accum_count = false;  // Manual overflow handling
+
+    ret = pcnt_new_unit(&pcnt_unit_config, &pcnt_unit_);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to create PCNT unit: %s", esp_err_to_name(ret));
+        return ret;
+    }
+
+    // PCNT Channel Configuration - count rising edges on GPIO
+    pcnt_chan_config_t pcnt_chan_config = {};
+    pcnt_chan_config.edge_gpio_num = gpio_num_;
+    pcnt_chan_config.level_gpio_num = -1;  // No level control GPIO
+
+    ret = pcnt_new_channel(pcnt_unit_, &pcnt_chan_config, &pcnt_channel_);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to create PCNT channel: %s", esp_err_to_name(ret));
+        pcnt_del_unit(pcnt_unit_);
+        pcnt_unit_ = nullptr;
+        return ret;
+    }
+
+    // Configure edge actions: count on rising edge only
+    ret = pcnt_channel_set_edge_action(pcnt_channel_,
+                                       PCNT_CHANNEL_EDGE_ACTION_INCREASE,  // Rising edge
+                                       PCNT_CHANNEL_EDGE_ACTION_HOLD);     // Falling edge
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to set PCNT edge action: %s", esp_err_to_name(ret));
+        pcnt_del_channel(pcnt_channel_);
+        pcnt_del_unit(pcnt_unit_);
+        pcnt_channel_ = nullptr;
+        pcnt_unit_ = nullptr;
+        return ret;
+    }
+
+    // Enable and start PCNT
+    ret = pcnt_unit_enable(pcnt_unit_);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to enable PCNT unit: %s", esp_err_to_name(ret));
+        pcnt_del_channel(pcnt_channel_);
+        pcnt_del_unit(pcnt_unit_);
+        pcnt_channel_ = nullptr;
+        pcnt_unit_ = nullptr;
+        return ret;
+    }
+
+    ret = pcnt_unit_start(pcnt_unit_);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to start PCNT unit: %s", esp_err_to_name(ret));
+        pcnt_del_channel(pcnt_channel_);
+        pcnt_del_unit(pcnt_unit_);
+        pcnt_channel_ = nullptr;
+        pcnt_unit_ = nullptr;
+        return ret;
+    }
+
+    // Initialize PCNT baseline for overflow detection
+    int init_pcnt_count = 0;
+    pcnt_unit_get_count(pcnt_unit_, &init_pcnt_count);
+    prev_raw_pcnt_count_ = init_pcnt_count;
+    overflow_count_.store(0, std::memory_order_relaxed);
+
+    ESP_LOGI(TAG, "PCNT unit %d initialized for hardware position tracking", pcnt_unit_id_);
 
     // =========================================================================
     // Profile Update Timer (esp_timer) - updates LEDC frequency and accumulates pulses
@@ -259,10 +348,57 @@ void LedcPulseGenerator::handleProfileUpdate()
     int64_t current_count = pulse_count_.fetch_add(pulses_this_interval, std::memory_order_relaxed) + pulses_this_interval;
     profile_.current_pulse = current_count;
 
-    // Check for completion in position mode
-    if (mode_ == LedcMotionMode::POSITION && current_count >= profile_.target_pulses) {
+    // Task-based overflow detection: detect when 16-bit PCNT wraps from ~32767 to ~0
+    int hw_pcnt_raw = 0;
+    if (pcnt_unit_) {
+        pcnt_unit_get_count(pcnt_unit_, &hw_pcnt_raw);
+
+        // Delta-based overflow detection: large negative jump means counter wrapped
+        int32_t delta = hw_pcnt_raw - prev_raw_pcnt_count_;
+        if (delta < -30000) {
+            overflow_count_.fetch_add(1, std::memory_order_relaxed);
+            ESP_LOGW(TAG, "PCNT overflow detected: prev=%ld, curr=%d, delta=%ld, overflow_count=%ld",
+                     (long)prev_raw_pcnt_count_, hw_pcnt_raw, (long)delta,
+                     (long)overflow_count_.load(std::memory_order_relaxed));
+        }
+        prev_raw_pcnt_count_ = hw_pcnt_raw;
+    }
+
+    // Calculate absolute PCNT with overflow contribution (raw hardware count)
+    int32_t overflows = overflow_count_.load(std::memory_order_relaxed);
+    int32_t hw_pcnt = hw_pcnt_raw + (overflows * LIMIT_PCNT_OVERFLOW_RANGE);
+
+    // Calculate position delta from last completion (STABLE reference point)
+    // Apply direction sign: forward = positive delta, reverse = negative delta
+    int32_t pcnt_delta = hw_pcnt - pcnt_at_last_completion_;
+    bool current_dir = direction_;  // Read current direction
+    int64_t position_delta = current_dir ? pcnt_delta : -pcnt_delta;
+
+    // Update absolute position (SINGLE SOURCE OF TRUTH for position queries)
+    int64_t new_position = last_completed_position_ + position_delta;
+    absolute_position_.store(new_position, std::memory_order_relaxed);
+
+    // Calculate relative PCNT progress since move started (for profile completion check)
+    // Note: PCNT always counts up, so progress is always positive
+    int64_t pcnt_progress = hw_pcnt - static_cast<int32_t>(pcnt_start_);
+
+    // DEBUG: Log position tracking (every 1 second)
+    static int debug_counter = 0;
+    if (pcnt_unit_ && ++debug_counter % 1000 == 0) {
+        ESP_LOGW(TAG, "DEBUG updateProfile: pos=%lld, hw_pcnt=%ld, progress=%lld, target=%lld, freq=%.1f, state=%d, dir=%s",
+                 (long long)new_position, (long)hw_pcnt, (long long)pcnt_progress, (long long)profile_.target_pulses,
+                 velocity, (int)current_state, current_dir ? "FWD" : "REV");
+    }
+
+    // Check for completion in position mode - use relative PCNT progress
+    // target_pulses is the number of pulses to generate, pcnt_progress is pulses since move started
+    if (mode_ == LedcMotionMode::POSITION && pcnt_progress >= profile_.target_pulses) {
         // Stop output
         stopPulseOutput();
+
+        // Save reference points for next move (direction-aware position tracking)
+        last_completed_position_ = absolute_position_.load(std::memory_order_relaxed);
+        pcnt_at_last_completion_ = hw_pcnt;
 
         // Update state
         state_.store(LedcProfileState::IDLE, std::memory_order_release);
@@ -276,7 +412,9 @@ void LedcPulseGenerator::handleProfileUpdate()
     }
 
     // Calculate target velocity at current position for profile following
-    float target_velocity = velocityAtPosition(current_count);
+    // Use pcnt_progress (hardware PCNT) instead of current_count (software estimate)
+    // because software estimate is unreliable due to integer truncation at low frequencies
+    float target_velocity = velocityAtPosition(pcnt_progress);
 
     // Clamp velocity to LEDC limits
     if (target_velocity < LIMIT_LEDC_MIN_FREQ_HZ) {
@@ -289,7 +427,7 @@ void LedcPulseGenerator::handleProfileUpdate()
         target_velocity = profile_.cruise_velocity;
     }
 
-    // Update state machine
+    // Update state machine based on pcnt_progress
     if (current_state == LedcProfileState::ACCELERATING &&
         target_velocity >= profile_.cruise_velocity - 1.0f) {
         if (profile_.cruise_pulses > 0 || mode_ == LedcMotionMode::VELOCITY) {
@@ -299,7 +437,7 @@ void LedcPulseGenerator::handleProfileUpdate()
         }
     } else if (current_state == LedcProfileState::CRUISING &&
                mode_ == LedcMotionMode::POSITION &&
-               current_count >= profile_.accel_pulses + profile_.cruise_pulses) {
+               pcnt_progress >= profile_.accel_pulses + profile_.cruise_pulses) {
         state_.store(LedcProfileState::DECELERATING, std::memory_order_release);
     }
 
@@ -356,12 +494,26 @@ esp_err_t LedcPulseGenerator::startMove(int32_t pulses, float max_velocity, floa
     mode_ = LedcMotionMode::POSITION;
     calculateTrapezoidalProfile(abs_pulses, max_velocity, acceleration);
 
+    // Record starting raw PCNT for relative completion check (pulses generated)
+    // Note: pcnt_start_ stores raw hw_pcnt (with overflow), not direction-aware position
+    if (pcnt_unit_) {
+        int count = 0;
+        pcnt_unit_get_count(pcnt_unit_, &count);
+        int32_t overflows = overflow_count_.load(std::memory_order_relaxed);
+        pcnt_start_ = count + (overflows * LIMIT_PCNT_OVERFLOW_RANGE);
+    }
+    ESP_LOGW(TAG, "DEBUG startMove: pcnt_start=%lld, target_pulses=%lld",
+             (long long)pcnt_start_, (long long)profile_.target_pulses);
+
     // Reset counters - start with minimum frequency (will ramp up)
     pulse_count_.store(0, std::memory_order_relaxed);
     current_velocity_.store(static_cast<float>(LIMIT_LEDC_MIN_FREQ_HZ), std::memory_order_relaxed);
     start_time_us_ = esp_timer_get_time();
     profile_.current_pulse = 0;
     profile_.current_velocity = LIMIT_LEDC_MIN_FREQ_HZ;
+
+    // Note: Do NOT reset overflow_count_ here - it tracks absolute position across moves
+    // Only reset() should clear the overflow history
 
     // Set direction on PcntTracker before motion (hardware PCNT handles position)
     if (position_tracker_) {
@@ -420,12 +572,23 @@ esp_err_t LedcPulseGenerator::startVelocity(float velocity, float acceleration)
     mode_ = LedcMotionMode::VELOCITY;
     calculateVelocityProfile(abs_velocity, acceleration);
 
+    // Record starting raw PCNT for relative tracking (pulses generated)
+    if (pcnt_unit_) {
+        int count = 0;
+        pcnt_unit_get_count(pcnt_unit_, &count);
+        int32_t overflows = overflow_count_.load(std::memory_order_relaxed);
+        pcnt_start_ = count + (overflows * LIMIT_PCNT_OVERFLOW_RANGE);
+    }
+
     // Reset counters - start with minimum frequency (will ramp up)
     pulse_count_.store(0, std::memory_order_relaxed);
     current_velocity_.store(static_cast<float>(LIMIT_LEDC_MIN_FREQ_HZ), std::memory_order_relaxed);
     start_time_us_ = esp_timer_get_time();
     profile_.current_pulse = 0;
     profile_.current_velocity = LIMIT_LEDC_MIN_FREQ_HZ;
+
+    // Note: Do NOT reset overflow_count_ here - it tracks absolute position across moves
+    // Only reset() should clear the overflow history
 
     // Set direction on PcntTracker before motion (hardware PCNT handles position)
     if (position_tracker_) {
@@ -464,10 +627,19 @@ esp_err_t LedcPulseGenerator::stop(float deceleration)
     float current_vel = current_velocity_.load(std::memory_order_relaxed);
     float stop_pulses = (current_vel * current_vel) / (2.0f * deceleration);
 
-    // Update profile for stopping
-    int64_t current_pos = pulse_count_.load(std::memory_order_relaxed);
-    profile_.target_pulses = static_cast<int32_t>(current_pos + stop_pulses);
+    // Update pcnt_start_ to current raw PCNT and set target as relative pulses
+    // This makes the completion check work correctly: (hw_pcnt - pcnt_start_) >= target
+    if (pcnt_unit_) {
+        int count = 0;
+        pcnt_unit_get_count(pcnt_unit_, &count);
+        int32_t overflows = overflow_count_.load(std::memory_order_relaxed);
+        pcnt_start_ = count + (overflows * LIMIT_PCNT_OVERFLOW_RANGE);
+    }
+    profile_.target_pulses = static_cast<int64_t>(stop_pulses);
     profile_.decel_pulses = static_cast<int32_t>(stop_pulses);
+
+    ESP_LOGW(TAG, "DEBUG stop: pcnt_start=%lld, stop_pulses=%.1f, target=%lld",
+             (long long)pcnt_start_, stop_pulses, (long long)profile_.target_pulses);
 
     // Switch mode to position for target-based stop
     mode_ = LedcMotionMode::POSITION;
@@ -488,14 +660,20 @@ void LedcPulseGenerator::stopImmediate()
     // Stop output immediately
     stopPulseOutput();
 
-    // Read final count
-    int64_t final_count = pulse_count_.load(std::memory_order_relaxed);
+    // Save reference points for next move (direction-aware position tracking)
+    last_completed_position_ = absolute_position_.load(std::memory_order_relaxed);
+    if (pcnt_unit_) {
+        int count = 0;
+        pcnt_unit_get_count(pcnt_unit_, &count);
+        int32_t overflows = overflow_count_.load(std::memory_order_relaxed);
+        pcnt_at_last_completion_ = count + (overflows * LIMIT_PCNT_OVERFLOW_RANGE);
+    }
 
     // Clear state
     state_.store(LedcProfileState::IDLE, std::memory_order_release);
     current_velocity_.store(0.0f, std::memory_order_relaxed);
 
-    ESP_LOGD(TAG, "Immediate stop complete, final count: %lld", (long long)final_count);
+    ESP_LOGD(TAG, "Immediate stop complete, position: %lld", (long long)last_completed_position_);
 
     // Note: Do NOT fire completion callback on immediate stop
 }
@@ -511,7 +689,9 @@ bool LedcPulseGenerator::isRunning() const
 
 int64_t LedcPulseGenerator::getPulseCount() const
 {
-    return pulse_count_.load(std::memory_order_relaxed);
+    // Return direction-aware absolute position (updated in handleProfileUpdate)
+    // This accounts for direction: forward movements increase position, reverse decrease
+    return absolute_position_.load(std::memory_order_relaxed);
 }
 
 float LedcPulseGenerator::getCurrentVelocity() const
@@ -523,6 +703,14 @@ void LedcPulseGenerator::setCompletionCallback(MotionCompleteCallback cb)
 {
     if (xSemaphoreTake(callback_mutex_, pdMS_TO_TICKS(100)) == pdTRUE) {
         completion_callback_ = cb;
+        xSemaphoreGive(callback_mutex_);
+    }
+}
+
+void LedcPulseGenerator::setErrorCallback(MotionErrorCallback cb)
+{
+    if (xSemaphoreTake(callback_mutex_, pdMS_TO_TICKS(100)) == pdTRUE) {
+        error_callback_ = cb;
         xSemaphoreGive(callback_mutex_);
     }
 }
@@ -541,7 +729,14 @@ void LedcPulseGenerator::setPositionTracker(IPositionTracker* tracker)
 
 esp_err_t LedcPulseGenerator::reset(int64_t position)
 {
-    // LEDC uses software pulse counting, no PCNT hardware to clear
+    // Clear hardware PCNT counter
+    if (pcnt_unit_) {
+        pcnt_unit_clear_count(pcnt_unit_);
+    }
+    // Reset overflow tracking
+    overflow_count_.store(0, std::memory_order_relaxed);
+    prev_raw_pcnt_count_ = 0;
+    // Also reset software estimate
     pulse_count_.store(position, std::memory_order_relaxed);
     return ESP_OK;
 }
@@ -605,7 +800,7 @@ void LedcPulseGenerator::calculateVelocityProfile(float velocity, float accelera
     profile_.max_velocity = velocity;
     profile_.acceleration = acceleration;
     profile_.deceleration = acceleration;
-    profile_.target_pulses = INT32_MAX;  // Continuous mode
+    profile_.target_pulses = INT64_MAX;  // Continuous mode (velocity)
     profile_.cruise_velocity = velocity;
     profile_.is_triangular = false;
 

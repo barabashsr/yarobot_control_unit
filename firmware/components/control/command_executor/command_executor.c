@@ -12,6 +12,8 @@
 #include "config.h"              // For FIRMWARE_NAME, FIRMWARE_VERSION_STRING
 #include "config_commands.h"
 #include "config_limits.h"
+#include "safety_monitor.h"      // For E-stop reset (Story 4-4)
+#include "brake_controller.h"    // For brake status (Story 4-5)
 
 #include <string.h>
 #include <strings.h>  // For strcasecmp
@@ -56,6 +58,8 @@ static esp_err_t handle_echo(const ParsedCommand* cmd, char* response, size_t re
 static esp_err_t handle_info(const ParsedCommand* cmd, char* response, size_t resp_len);
 static esp_err_t handle_stat(const ParsedCommand* cmd, char* response, size_t resp_len);
 static esp_err_t handle_mode(const ParsedCommand* cmd, char* response, size_t resp_len);
+static esp_err_t handle_rst(const ParsedCommand* cmd, char* response, size_t resp_len);
+static esp_err_t handle_test(const ParsedCommand* cmd, char* response, size_t resp_len);
 
 /* ==========================================================================
  * Built-in Command Table
@@ -67,6 +71,8 @@ static const CommandEntry s_builtin_commands[] = {
     { CMD_INFO, handle_info, STATE_ANY },
     { CMD_STAT, handle_stat, STATE_ANY },
     { CMD_MODE, handle_mode, STATE_ANY },
+    { CMD_RST,  handle_rst,  STATE_ANY },  // Story 4-4: E-stop reset
+    { CMD_TEST, handle_test, STATE_ANY },  // Story 4-4: Test injection
 };
 
 #define BUILTIN_COUNT (sizeof(s_builtin_commands) / sizeof(s_builtin_commands[0]))
@@ -257,6 +263,12 @@ esp_err_t dispatch_command(const ParsedCommand* cmd, char* response, size_t resp
 
     // Check state permission
     if (!is_state_allowed(entry->allowed_states)) {
+        // Story 4-4: If in ESTOP mode, return specific E-stop error (AC4)
+        if (s_current_state == STATE_ESTOP) {
+            ESP_LOGD(TAG, "Command '%s' blocked: emergency stop active", cmd->verb);
+            format_error(response, resp_len, ERR_EMERGENCY_STOP, MSG_EMERGENCY_STOP);
+            return ESP_ERR_INVALID_STATE;
+        }
         ESP_LOGD(TAG, "Command blocked in state 0x%02X (allowed: 0x%02X)",
                  s_current_state, (unsigned)entry->allowed_states);
         format_error(response, resp_len, ERR_MODE_BLOCKED, MSG_MODE_BLOCKED);
@@ -340,6 +352,17 @@ static esp_err_t handle_stat(const ParsedCommand* cmd, char* response, size_t re
         int err = 0;     // no error
         int lim = 0x00;  // no limits active (bit0=min, bit1=max)
 
+        // Story 4-5: Include brake status for axes with brake hardware
+        int8_t axis_idx = axis_to_index(cmd->axis);
+        if (axis_idx >= 0 && brake_has_hardware((uint8_t)axis_idx)) {
+            // Axis has brake - include BRK field
+            int brk = brake_get_state((uint8_t)axis_idx) ? 1 : 0;
+            return format_ok_data(response, resp_len,
+                                  "%c POS:%.3f EN:%d MOV:%d ERR:%d LIM:%02X BRK:%d",
+                                  cmd->axis, pos, en, mov, err, lim, brk);
+        }
+
+        // No brake hardware (C, D, E) - standard format
         return format_ok_data(response, resp_len,
                               "%c POS:%.3f EN:%d MOV:%d ERR:%d LIM:%02X",
                               cmd->axis, pos, en, mov, err, lim);
@@ -356,8 +379,8 @@ static esp_err_t handle_stat(const ParsedCommand* cmd, char* response, size_t re
         default:           mode_str = "UNKNOWN"; break;
     }
 
-    // E-stop placeholder until Epic 4
-    int estop = 0;
+    // Story 4-4: Real E-stop status from safety monitor
+    int estop = safety_monitor_is_estop_active() ? 1 : 0;
 
     // Uptime in milliseconds from boot (AC7)
     int64_t uptime_ms = esp_timer_get_time() / 1000;
@@ -506,4 +529,106 @@ static esp_err_t handle_mode(const ParsedCommand* cmd, char* response, size_t re
     // No valid parameter
     format_error(response, resp_len, ERR_INVALID_PARAMETER, MSG_INVALID_PARAMETER);
     return ESP_ERR_INVALID_ARG;
+}
+
+/**
+ * @brief Handle RST command (Story 4-4)
+ *
+ * Attempts to reset from E-stop state to IDLE.
+ *
+ * Prerequisites (AC5):
+ * - System must be in E-stop mode
+ * - E-stop button must be released
+ *
+ * On success:
+ * - Transitions to IDLE mode
+ * - Re-enables shift register outputs
+ * - Returns "OK"
+ *
+ * On failure:
+ * - If not in E-stop: ERROR E012 "Command blocked in current mode"
+ * - If button pressed: ERROR E034 "E-stop button still pressed"
+ */
+static esp_err_t handle_rst(const ParsedCommand* cmd, char* response, size_t resp_len)
+{
+    (void)cmd;  // No parameters used
+
+    // Check if in E-stop mode
+    if (!safety_monitor_is_estop_active()) {
+        ESP_LOGD(TAG, "RST called but not in E-stop mode");
+        format_error(response, resp_len, ERR_MODE_BLOCKED, MSG_MODE_BLOCKED);
+        return ESP_ERR_INVALID_STATE;
+    }
+
+    // Check if button is still pressed
+    if (safety_monitor_is_estop_button_pressed()) {
+        ESP_LOGW(TAG, "RST failed: E-stop button still pressed");
+        format_error(response, resp_len, ERR_ESTOP_ACTIVE, MSG_ESTOP_ACTIVE);
+        return ESP_ERR_INVALID_STATE;
+    }
+
+    // Attempt E-stop reset
+    esp_err_t ret = safety_monitor_reset_estop();
+    if (ret != ESP_OK) {
+        ESP_LOGW(TAG, "E-stop reset failed: %s", esp_err_to_name(ret));
+        format_error(response, resp_len, ERR_ESTOP_ACTIVE, MSG_ESTOP_ACTIVE);
+        return ret;
+    }
+
+    ESP_LOGI(TAG, "E-stop reset successful");
+    return format_ok(response, resp_len);
+}
+
+/**
+ * @brief Handle TEST command (Story 4-4)
+ *
+ * Test injection commands for E-stop simulation.
+ *
+ * Usage:
+ *   TEST ESTOP          - Simulate E-stop button press
+ *   TEST TESTMODE_ON    - Enable E-stop test mode (use simulated button)
+ *   TEST TESTMODE_OFF   - Disable E-stop test mode (use real GPIO)
+ *   TEST BTN_PRESS      - Set simulated button to PRESSED
+ *   TEST BTN_RELEASE    - Set simulated button to RELEASED
+ */
+static esp_err_t handle_test(const ParsedCommand* cmd, char* response, size_t resp_len)
+{
+    // Require string parameter
+    if (!cmd->has_str_param) {
+        return format_error(response, resp_len, ERR_INVALID_PARAMETER,
+            "Usage: TEST ESTOP|TESTMODE_ON|TESTMODE_OFF|BTN_PRESS|BTN_RELEASE");
+    }
+
+    // TEST ESTOP - simulate button press
+    if (strcasecmp(cmd->str_param, "ESTOP") == 0) {
+        safety_monitor_inject_estop();
+        return format_ok_data(response, resp_len, "E-stop injected");
+    }
+
+    // TEST TESTMODE_ON - enable test mode
+    if (strcasecmp(cmd->str_param, "TESTMODE_ON") == 0) {
+        safety_monitor_set_estop_test_mode(true);
+        return format_ok_data(response, resp_len, "Test mode enabled");
+    }
+
+    // TEST TESTMODE_OFF - disable test mode
+    if (strcasecmp(cmd->str_param, "TESTMODE_OFF") == 0) {
+        safety_monitor_set_estop_test_mode(false);
+        return format_ok_data(response, resp_len, "Test mode disabled");
+    }
+
+    // TEST BTN_PRESS - simulate button pressed
+    if (strcasecmp(cmd->str_param, "BTN_PRESS") == 0) {
+        safety_monitor_set_test_button_state(true);
+        return format_ok_data(response, resp_len, "Button pressed");
+    }
+
+    // TEST BTN_RELEASE - simulate button released
+    if (strcasecmp(cmd->str_param, "BTN_RELEASE") == 0) {
+        safety_monitor_set_test_button_state(false);
+        return format_ok_data(response, resp_len, "Button released");
+    }
+
+    return format_error(response, resp_len, ERR_INVALID_PARAMETER,
+        "Unknown: ESTOP|TESTMODE_ON|TESTMODE_OFF|BTN_PRESS|BTN_RELEASE");
 }

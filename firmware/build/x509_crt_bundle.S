@@ -1,4 +1,4 @@
-/* * Data converted from /Users/sergeybarabash/robo/yarobot_control_unit/firmware/build/esp-idf/mbedtls/x509_crt_bundle
+/* * Data converted from /home/akhmedov/yarobot_control_unit/firmware/build/esp-idf/mbedtls/x509_crt_bundle
  */
 .data
 #if !defined (__APPLE__) && !defined (__linux__)

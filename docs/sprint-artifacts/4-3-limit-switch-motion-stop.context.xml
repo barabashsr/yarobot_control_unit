@@ -1,0 +1,175 @@
+<story-context id="4-3-limit-switch-motion-stop" v="1.0">
+  <metadata>
+    <epicId>4</epicId>
+    <storyId>3</storyId>
+    <title>Limit Switch Motion Stop</title>
+    <status>ready-for-dev</status>
+    <generatedAt>2025-12-17</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/4-3-limit-switch-motion-stop.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>user</asA>
+    <iWant>motion to stop automatically when limit switches activate</iWant>
+    <soThat>axes don't crash into mechanical stops</soThat>
+    <tasks>
+      <task id="1" ac="1,2">Extend safety_monitor with motion stop integration</task>
+      <task id="2" ac="7">Implement EndSwitchMode configuration</task>
+      <task id="3" ac="3">Implement direction blocking logic</task>
+      <task id="4" ac="4">Implement velocity jog limit stop</task>
+      <task id="5" ac="5">Implement soft limit validation</task>
+      <task id="6" ac="6">Implement both-limits FAULT detection</task>
+      <task id="7" ac="1-6">Add error codes and messages</task>
+      <task id="8" ac="1-7">Unit tests for limit stop logic</task>
+      <task id="9" ac="1-7">Integration tests</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1">Motion stops immediately when limit activates (HARD_STOP mode) with controlled deceleration</ac>
+    <ac id="2">Limit event published within 10ms: EVENT LIMIT axis MIN/MAX, EVENT DONE axis position</ac>
+    <ac id="3">Motion away from limit allowed, motion toward active limit rejected with ERR_LIMIT_ACTIVE</ac>
+    <ac id="4">Velocity jog stops on limit activation in travel direction</ac>
+    <ac id="5">Soft limits prevent motion beyond configured bounds with ERR_POSITION_LIMIT</ac>
+    <ac id="6">Both limits active triggers FAULT state with EVENT FAULT axis BOTH_LIMITS</ac>
+    <ac id="7">EndSwitchMode per switch: NONE, HARD_STOP, RESTRICT, EVENT_ONLY</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/sprint-artifacts/tech-spec-epic-4.md" title="Epic 4 Tech Spec" section="Story 4.3">
+        Defines AC11-15, LimitStopController module, behavioral decisions ADR-021 through ADR-024, and limit switch detection workflow.
+      </doc>
+      <doc path="docs/epics.md" title="Epics" section="Story 4.3">
+        User story definition with acceptance criteria, API examples, and technical notes for limit switch motion stop.
+      </doc>
+      <doc path="docs/sprint-artifacts/4-2-limit-switch-monitoring.md" title="Previous Story" section="Dev Notes">
+        Learnings from Story 4-2: safety_monitor component, limit state API, task notification pattern, debounce implementation.
+      </doc>
+      <doc path="docs/bmm-workflow-status.yaml" title="Workflow Status" section="mandatory_constraints">
+        Header-only configuration requirement: all configurable values must be in header files, no hardcoded values.
+      </doc>
+    </docs>
+
+    <code>
+      <file path="firmware/components/control/safety_monitor/include/safety_monitor.h" kind="header">
+        <symbol>safety_monitor_init</symbol>
+        <symbol>safety_monitor_get_axis_limits</symbol>
+        <symbol>safety_monitor_get_limit_state</symbol>
+        <symbol>safety_monitor_inject_test_state</symbol>
+        <reason>Core safety monitor API - extend with motion stop integration</reason>
+      </file>
+      <file path="firmware/components/control/motion_controller/include/motion_controller.h" kind="header">
+        <symbol>MotionController::stopAxis</symbol>
+        <symbol>MotionController::moveAbsolute</symbol>
+        <symbol>MotionController::moveRelative</symbol>
+        <symbol>MotionController::moveAxisVelocity</symbol>
+        <reason>Motion controller interface - call stopAxis() on limit, add soft limit validation</reason>
+      </file>
+      <file path="firmware/components/events/event_manager/include/event_manager.h" kind="header">
+        <symbol>event_publish</symbol>
+        <symbol>event_publish_from_isr</symbol>
+        <symbol>EventCallback</symbol>
+        <reason>Event publishing API for LIMIT, DONE, and FAULT events</reason>
+      </file>
+      <file path="firmware/components/config/include/config_commands.h" kind="header">
+        <symbol>EndSwitchMode</symbol>
+        <symbol>ERR_POSITION_LIMIT</symbol>
+        <symbol>EVT_LIMIT_TRIGGERED</symbol>
+        <symbol>EVT_SWITCH_FAULT</symbol>
+        <reason>EndSwitchMode enum already defined (lines 420-432), error codes exist, event types defined</reason>
+      </file>
+      <file path="firmware/components/config/include/config_limits.h" kind="header">
+        <symbol>LIMIT_NUM_AXES</symbol>
+        <reason>Add soft limit constants DEFAULT_LIMIT_MIN, DEFAULT_LIMIT_MAX per axis</reason>
+      </file>
+      <file path="firmware/components/config/include/config_timing.h" kind="header">
+        <symbol>TIMING_DEBOUNCE_MS</symbol>
+        <reason>Debounce timing already configured for limit switch filtering</reason>
+      </file>
+      <file path="firmware/components/control/command_executor/include/move_handler.h" kind="header">
+        <reason>May need to integrate soft limit check before move execution</reason>
+      </file>
+      <file path="firmware/components/control/command_executor/include/velocity_handler.h" kind="header">
+        <reason>May need to integrate limit stop for velocity mode</reason>
+      </file>
+    </code>
+
+    <dependencies>
+      <platform>ESP-IDF 5.4 LTS</platform>
+      <component name="espressif/mcp23017">MCP23017 I2C GPIO expander driver</component>
+      <component name="FreeRTOS">Task notifications, mutexes, queues</component>
+      <internal name="safety_monitor">Limit switch monitoring (Story 4-2)</internal>
+      <internal name="motion_controller">Motor motion control (Story 3-9)</internal>
+      <internal name="event_manager">Event pub/sub system (Story 2-7)</internal>
+      <internal name="tpic6b595">Shift register driver for outputs</internal>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint type="mandatory" source="bmm-workflow-status.yaml">
+      HEADER-ONLY CONFIGURATION: Every configurable value MUST be defined in a header file.
+      No magic numbers in source code. Use defined constants: GPIO_*, TIMING_*, LIMIT_*, CMD_*, ERR_*, etc.
+    </constraint>
+    <constraint type="architecture" source="tech-spec-epic-4.md">
+      DUAL-CORE SEPARATION: safety_monitor_task runs on Core 0 at priority 24 (highest).
+      Must not block or call Core 1 motion control directly. Use thread-safe interfaces.
+    </constraint>
+    <constraint type="behavioral" source="ADR-022">
+      ALWAYS STOP FIRST: When limit triggers, always stop motion first before evaluating direction.
+      Eliminates velocity-check race conditions.
+    </constraint>
+    <constraint type="behavioral" source="ADR-023">
+      CONTROLLED DECELERATION: Never hard stop. Use controlled deceleration via stopAxis() to prevent mechanical damage.
+    </constraint>
+    <constraint type="behavioral" source="ADR-024">
+      BOTH-LIMITS FAULT: If MIN and MAX are both active simultaneously, enter FAULT state (likely wiring/sensor failure).
+    </constraint>
+    <constraint type="performance" source="tech-spec-epic-4.md">
+      EVENT LATENCY: Limit event must be published within 10ms of switch activation.
+    </constraint>
+  </constraints>
+
+  <interfaces>
+    <interface name="safety_monitor_stop_axis_motion" kind="function" path="firmware/components/control/safety_monitor/">
+      <signature>esp_err_t safety_monitor_stop_axis_motion(uint8_t axis)</signature>
+      <description>NEW: Stop motion on specified axis due to limit activation</description>
+    </interface>
+    <interface name="safety_monitor_is_direction_blocked" kind="function" path="firmware/components/control/safety_monitor/">
+      <signature>bool safety_monitor_is_direction_blocked(uint8_t axis, int8_t direction)</signature>
+      <description>NEW: Check if motion in direction is blocked by active limit</description>
+    </interface>
+    <interface name="MotionController::stopAxis" kind="method" path="firmware/components/control/motion_controller/">
+      <signature>esp_err_t stopAxis(uint8_t axis)</signature>
+      <description>EXISTING: Stop motion with controlled deceleration</description>
+    </interface>
+    <interface name="event_publish" kind="function" path="firmware/components/events/event_manager/">
+      <signature>esp_err_t event_publish(const Event* event)</signature>
+      <description>EXISTING: Publish EVENT LIMIT, EVENT DONE, EVENT FAULT</description>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+      Unit tests in firmware/components/control/safety_monitor/test/.
+      Integration tests in firmware/test/integration/safety_monitor/.
+      Use Unity framework. Follow existing test patterns from Story 4-2.
+      Use safety_monitor_inject_test_state() for testing without physical switches.
+      Timing tests require oscilloscope for accurate &lt;10ms validation.
+    </standards>
+    <locations>
+      <location>firmware/components/control/safety_monitor/test/</location>
+      <location>firmware/test/integration/safety_monitor/</location>
+    </locations>
+    <ideas>
+      <idea ac="1">Test: Inject limit state, verify motion_controller->stopAxis() called within 10ms</idea>
+      <idea ac="2">Test: Verify EVENT LIMIT and EVENT DONE published with correct format</idea>
+      <idea ac="3">Test: MOVE toward active limit returns ERR_LIMIT_ACTIVE, MOVE away succeeds</idea>
+      <idea ac="4">Test: VEL command stops when limit activates in travel direction</idea>
+      <idea ac="5">Test: MOVE beyond soft limit returns ERR_POSITION_LIMIT without starting motion</idea>
+      <idea ac="6">Test: Both MIN and MAX active triggers FAULT state, blocks all motion</idea>
+      <idea ac="7">Test: Each EndSwitchMode (NONE, HARD_STOP, RESTRICT, EVENT_ONLY) behaves correctly</idea>
+    </ideas>
+  </tests>
+</story-context>

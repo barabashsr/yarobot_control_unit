@@ -48,6 +48,14 @@
 #include "velocity_handler.h"
 #include "stop_handler.h"
 
+// Safety monitor (Story 4-2)
+#include "safety_monitor.h"
+#include "mcp23017_wrapper.h"
+
+// Brake controller (Story 4-5)
+#include "brake_controller.h"
+#include "brake_handler.h"
+
 static const char* TAG = "motor_system";
 
 // ============================================================================
@@ -70,7 +78,7 @@ static McpwmPulseGenerator s_mcpwm_y(MCPWM_TIMER_Y, GPIO_Y_STEP, PCNT_UNIT_Y);
 static McpwmPulseGenerator s_mcpwm_c(MCPWM_TIMER_C, GPIO_C_STEP, PCNT_UNIT_C);
 
 /** @brief LEDC pulse generator for D axis */
-static LedcPulseGenerator s_ledc_d(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+static LedcPulseGenerator s_ledc_d(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
 
 /** @} */ // end pulse_generators
 
@@ -154,38 +162,83 @@ static bool s_initialized = false;
 // ============================================================================
 
 /**
- * @brief Initialize axis configurations with default values
+ * @brief Initialize axis configurations with hardware test values
+ *
+ * @note Uses per-axis defines from config_defaults.h for hardware testing.
+ *       Original code commented below for restoration.
  */
 static void init_axis_configs(void)
 {
-    // Linear servo axes (X, Y, Z) - meters
+    // ========================================================================
+    // ORIGINAL CODE (uncomment to restore default behavior):
+    // ========================================================================
+    // // Linear servo axes (X, Y, Z) - meters
+    // s_config_x = AxisConfig::createDefaultLinear();
+    // s_config_x.alias[0] = 'X'; s_config_x.alias[1] = '\0';
+    // s_config_y = AxisConfig::createDefaultLinear();
+    // s_config_y.alias[0] = 'Y'; s_config_y.alias[1] = '\0';
+    // s_config_z = AxisConfig::createDefaultLinear();
+    // s_config_z.alias[0] = 'Z'; s_config_z.alias[1] = '\0';
+    // // Rotary servo axes (A, B) - radians
+    // s_config_a = AxisConfig::createDefaultRotary();
+    // s_config_a.alias[0] = 'A'; s_config_a.alias[1] = '\0';
+    // s_config_b = AxisConfig::createDefaultRotary();
+    // s_config_b.alias[0] = 'B'; s_config_b.alias[1] = '\0';
+    // // Stepper axes (C, D) - linear defaults
+    // s_config_c = AxisConfig::createDefaultLinear();
+    // s_config_c.alias[0] = 'C'; s_config_c.alias[1] = '\0';
+    // s_config_d = AxisConfig::createDefaultLinear();
+    // s_config_d.alias[0] = 'D'; s_config_d.alias[1] = '\0';
+    // ========================================================================
+
+    // HARDWARE TEST CONFIG (2025-12-18) - per-axis values from config_defaults.h
+
+    // X axis: 350mm stroke, 10000 pulses/rev
     s_config_x = AxisConfig::createDefaultLinear();
+    s_config_x.pulses_per_rev = X_AXIS_PULSES_PER_REV;
+    s_config_x.units_per_rev = X_AXIS_UNITS_PER_REV;
     s_config_x.alias[0] = 'X';
     s_config_x.alias[1] = '\0';
 
+    // Y axis: 48mm stroke, 10000 pulses/rev
     s_config_y = AxisConfig::createDefaultLinear();
+    s_config_y.pulses_per_rev = Y_AXIS_PULSES_PER_REV;
+    s_config_y.units_per_rev = Y_AXIS_UNITS_PER_REV;
     s_config_y.alias[0] = 'Y';
     s_config_y.alias[1] = '\0';
 
+    // Z axis: 5mm stroke, 312 pulses/rev
     s_config_z = AxisConfig::createDefaultLinear();
+    s_config_z.pulses_per_rev = Z_AXIS_PULSES_PER_REV;
+    s_config_z.units_per_rev = Z_AXIS_UNITS_PER_REV;
     s_config_z.alias[0] = 'Z';
     s_config_z.alias[1] = '\0';
 
-    // Rotary servo axes (A, B) - radians
-    s_config_a = AxisConfig::createDefaultRotary();
+    // A axis: 3.8mm stroke, 625 pulses/rev
+    s_config_a = AxisConfig::createDefaultLinear();
+    s_config_a.pulses_per_rev = A_AXIS_PULSES_PER_REV;
+    s_config_a.units_per_rev = A_AXIS_UNITS_PER_REV;
     s_config_a.alias[0] = 'A';
     s_config_a.alias[1] = '\0';
 
-    s_config_b = AxisConfig::createDefaultRotary();
+    // B axis: 72mm stroke, 10000 pulses/rev
+    s_config_b = AxisConfig::createDefaultLinear();
+    s_config_b.pulses_per_rev = B_AXIS_PULSES_PER_REV;
+    s_config_b.units_per_rev = B_AXIS_UNITS_PER_REV;
     s_config_b.alias[0] = 'B';
     s_config_b.alias[1] = '\0';
 
-    // Stepper axes (C, D) - linear defaults
+    // C axis: 48mm stroke, 3200 pulses/rev
     s_config_c = AxisConfig::createDefaultLinear();
+    s_config_c.pulses_per_rev = C_AXIS_PULSES_PER_REV;
+    s_config_c.units_per_rev = C_AXIS_UNITS_PER_REV;
     s_config_c.alias[0] = 'C';
     s_config_c.alias[1] = '\0';
 
+    // D axis: 48mm stroke, 3200 pulses/rev
     s_config_d = AxisConfig::createDefaultLinear();
+    s_config_d.pulses_per_rev = D_AXIS_PULSES_PER_REV;
+    s_config_d.units_per_rev = D_AXIS_UNITS_PER_REV;
     s_config_d.alias[0] = 'D';
     s_config_d.alias[1] = '\0';
 
@@ -495,7 +548,21 @@ static esp_err_t register_command_handlers(void)
         return ret;
     }
 
-    ESP_LOGI(TAG, "Command handlers registered (MOVE, MOVR, EN, POS, VEL, STOP)");
+    // Register LIM handler (Story 4-2)
+    ret = lim_handler_register();
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to register LIM handler: %s", esp_err_to_name(ret));
+        return ret;
+    }
+
+    // Register BRAKE handler (Story 4-5)
+    ret = brake_handler_register();
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to register BRAKE handler: %s", esp_err_to_name(ret));
+        return ret;
+    }
+
+    ESP_LOGI(TAG, "Command handlers registered (MOVE, MOVR, EN, POS, VEL, STOP, LIM, BRAKE)");
     return ESP_OK;
 }
 
@@ -522,6 +589,16 @@ esp_err_t motor_system_init(void)
     if (ret != ESP_OK) {
         ESP_LOGE(TAG, "Failed to init shift register: %s", esp_err_to_name(ret));
         return ret;
+    }
+
+    // Step 1b: Initialize MCP23017 I/O expanders (Story 4-2)
+    // Required for limit switch monitoring
+    ret = mcp23017_wrapper_init();
+    if (ret != ESP_OK && ret != ESP_ERR_INVALID_STATE) {
+        // ESP_ERR_INVALID_STATE means already initialized (OK)
+        ESP_LOGW(TAG, "MCP23017 wrapper init failed: %s - limit switches unavailable",
+                 esp_err_to_name(ret));
+        // Continue in degraded mode - motion still works without limit monitoring
     }
 
     // Step 2: Initialize axis configurations
@@ -564,6 +641,23 @@ esp_err_t motor_system_init(void)
     ret = register_command_handlers();
     if (ret != ESP_OK) {
         return ret;
+    }
+
+    // Step 10: Initialize safety monitor (Story 4-2)
+    // Creates safety_monitor_task for limit switch monitoring
+    ret = safety_monitor_init();
+    if (ret != ESP_OK && ret != ESP_ERR_INVALID_STATE) {
+        ESP_LOGW(TAG, "Safety monitor init failed: %s - limit monitoring unavailable",
+                 esp_err_to_name(ret));
+        // Continue in degraded mode
+    }
+
+    // Step 11: Initialize brake controller (Story 4-5)
+    ret = brake_controller_init();
+    if (ret != ESP_OK && ret != ESP_ERR_INVALID_STATE) {
+        ESP_LOGW(TAG, "Brake controller init failed: %s - brake control unavailable",
+                 esp_err_to_name(ret));
+        // Continue in degraded mode
     }
 
     s_initialized = true;

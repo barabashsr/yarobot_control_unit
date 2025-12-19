@@ -1,0 +1,243 @@
+<story-context id="4-5-brake-control-system" v="1.0">
+  <metadata>
+    <epicId>4</epicId>
+    <storyId>5</storyId>
+    <title>Brake Control System</title>
+    <status>ready-for-dev</status>
+    <generatedAt>2025-12-18</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/4-5-brake-control-system.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer</asA>
+    <iWant>configurable brake control strategies</iWant>
+    <soThat>vertical axes don't fall when motors are disabled</soThat>
+    <tasks>
+      <task id="1" ac="1,2,3,4,6">Define BrakeStrategy enum and configuration</task>
+      <task id="2" ac="5">Add brake timing constants</task>
+      <task id="3" ac="1,2,3,4,5">Implement BrakeController module</task>
+      <task id="4" ac="1,5">Integrate with EN command (BRAKE_ON_DISABLE)</task>
+      <task id="5" ac="2">Integrate with E-stop (BRAKE_ON_ESTOP)</task>
+      <task id="6" ac="3">Implement idle timeout for BRAKE_ON_IDLE</task>
+      <task id="7" ac="4">Implement CMD_BRAKE command handler</task>
+      <task id="8" ac="4,9">Add brake error codes and messages</task>
+      <task id="9" ac="8">Update STAT command for brake status</task>
+      <task id="10" ac="3">Brake release before motion</task>
+      <task id="11" ac="1-5">Unit tests for BrakeController</task>
+      <task id="12" ac="1-9">Integration tests</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1" techSpecRef="AC21">BRAKE_ON_DISABLE engages brake before motor disable, releases after enable</ac>
+    <ac id="2" techSpecRef="AC22">BRAKE_ON_ESTOP engages only on E-stop via sr_emergency_disable_all()</ac>
+    <ac id="3" techSpecRef="AC23">BRAKE_ON_IDLE engages after TIMING_IDLE_TIMEOUT_S, releases before motion</ac>
+    <ac id="4" techSpecRef="AC24">BRAKE_MANUAL allows CMD_BRAKE control; auto-managed axes reject manual</ac>
+    <ac id="5" techSpecRef="AC25">Timing sequence: engage before disable, release after enable</ac>
+    <ac id="6">Per-axis independent brake strategy configuration</ac>
+    <ac id="7" frRef="FR15">Power loss fail-safe: all brakes engage mechanically</ac>
+    <ac id="8">STAT command includes BRAKES: field showing state per servo axis</ac>
+    <ac id="9">Stepper axes (C, D) and E-axis return ERR_AXIS_NO_BRAKE</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-4.md</path>
+        <title>Epic 4 Technical Specification</title>
+        <section>Story 4.5: Brake Control System</section>
+        <snippet>AC21-AC25 define brake strategy behaviors. BrakeController module in safety_monitor component. Active-low brake outputs via shift register.</snippet>
+      </doc>
+      <doc>
+        <path>docs/epics.md</path>
+        <title>Epics and Stories</title>
+        <section>Story 4.5: Brake Control System</section>
+        <snippet>Four brake strategies: BRAKE_ON_DISABLE, BRAKE_ON_ESTOP, BRAKE_ON_IDLE, BRAKE_MANUAL. FR14 and FR15 requirements.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/4-4-emergency-stop-system.md</path>
+        <title>Story 4-4: Emergency Stop System</title>
+        <section>Dev Agent Record</section>
+        <snippet>sr_emergency_disable_all() already clears EN bits AND engages all brakes. Task notification pattern for async events. Test injection APIs available.</snippet>
+      </doc>
+    </docs>
+
+    <code>
+      <artifact>
+        <path>firmware/components/control/safety_monitor/include/safety_monitor.h</path>
+        <kind>header</kind>
+        <symbol>safety_monitor API</symbol>
+        <lines>1-459</lines>
+        <reason>Existing safety monitor API. BrakeController integrates here. E-stop APIs already handle brake engagement.</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/control/safety_monitor/safety_monitor.c</path>
+        <kind>source</kind>
+        <symbol>safety_monitor_task, estop_isr_handler</symbol>
+        <reason>Integration point for BRAKE_ON_ESTOP. E-stop already engages brakes via sr_emergency_disable_all().</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/drivers/tpic6b595/include/tpic6b595.h</path>
+        <kind>header</kind>
+        <symbol>sr_set_brake(axis, release)</symbol>
+        <lines>93-104</lines>
+        <reason>CRITICAL: Brake control API already exists! sr_set_brake(axis, release) controls shift register brake bits.</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/drivers/tpic6b595/tpic6b595.c</path>
+        <kind>source</kind>
+        <symbol>sr_set_brake, sr_emergency_disable_all</symbol>
+        <reason>Brake bit manipulation implementation. sr_emergency_disable_all() is ISR-safe.</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/config/include/config_sr.h</path>
+        <kind>header</kind>
+        <symbol>SR_X_BRAKE, SR_BRAKE_BIT(axis), SR_ALL_BRAKE_REL</symbol>
+        <lines>42-108, 198-212, 285-291</lines>
+        <reason>Brake bit positions: SR_X_BRAKE=2, SR_Y_BRAKE=6, SR_Z_BRAKE=10, SR_A_BRAKE=14, SR_B_BRAKE=18. Active-low: 0=engaged, 1=released.</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/config/include/config_timing.h</path>
+        <kind>header</kind>
+        <symbol>TIMING_BRAKE_ENGAGE_MS, TIMING_BRAKE_RELEASE_MS, TIMING_IDLE_TIMEOUT_S</symbol>
+        <lines>32-36, 109</lines>
+        <reason>ALREADY DEFINED: TIMING_BRAKE_ENGAGE_MS=50, TIMING_BRAKE_RELEASE_MS=30, TIMING_IDLE_TIMEOUT_S=300. No need to add timing constants.</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/config/include/config_commands.h</path>
+        <kind>header</kind>
+        <symbol>CMD_BRAKE, EndSwitchMode</symbol>
+        <lines>50-51, 438-455</lines>
+        <reason>ALREADY DEFINED: CMD_BRAKE="BRAKE". EndSwitchMode enum pattern to follow for BrakeStrategy.</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/control/command_executor/command_executor.c</path>
+        <kind>source</kind>
+        <symbol>en_handler, stat_handler</symbol>
+        <reason>Modify en_handler for BRAKE_ON_DISABLE integration. Extend stat_handler for BRAKES: field.</reason>
+      </artifact>
+      <artifact>
+        <path>firmware/components/control/command_executor/include/command_executor.h</path>
+        <kind>header</kind>
+        <symbol>command_executor API</symbol>
+        <reason>Register brake_handler for CMD_BRAKE command.</reason>
+      </artifact>
+    </code>
+
+    <dependencies>
+      <esp-idf>
+        <component>freertos</component>
+        <component>esp_timer</component>
+        <component>driver (spi_master, gpio)</component>
+      </esp-idf>
+      <custom-components>
+        <component>tpic6b595</component>
+        <component>safety_monitor</component>
+        <component>command_executor</component>
+        <component>event_manager</component>
+        <component>config</component>
+      </custom-components>
+    </dependencies>
+  </artifacts>
+
+  <interfaces>
+    <interface>
+      <name>sr_set_brake</name>
+      <kind>function</kind>
+      <signature>esp_err_t sr_set_brake(uint8_t axis, bool release)</signature>
+      <path>firmware/components/drivers/tpic6b595/include/tpic6b595.h:104</path>
+      <notes>axis 0-6 (X-D have brakes, E has no brake). release=true releases brake, release=false engages. Updates shadow only - call sr_update() to latch.</notes>
+    </interface>
+    <interface>
+      <name>sr_update</name>
+      <kind>function</kind>
+      <signature>esp_err_t sr_update(void)</signature>
+      <path>firmware/components/drivers/tpic6b595/include/tpic6b595.h:140</path>
+      <notes>Thread-safe. Latches shadow register to hardware outputs.</notes>
+    </interface>
+    <interface>
+      <name>sr_emergency_disable_all</name>
+      <kind>function</kind>
+      <signature>void sr_emergency_disable_all(void)</signature>
+      <path>firmware/components/drivers/tpic6b595/include/tpic6b595.h:159</path>
+      <notes>ISR-safe. Sets OE HIGH, clears shadow to zeros (all brakes engaged), shifts zeros. Completes within 100us.</notes>
+    </interface>
+    <interface>
+      <name>safety_monitor_is_estop_active</name>
+      <kind>function</kind>
+      <signature>bool safety_monitor_is_estop_active(void)</signature>
+      <path>firmware/components/control/safety_monitor/include/safety_monitor.h:249</path>
+      <notes>Returns true if system is in E-stop mode.</notes>
+    </interface>
+    <interface>
+      <name>event_publish (proposed)</name>
+      <kind>function</kind>
+      <signature>void event_publish(const char* event_type, ...)</signature>
+      <path>firmware/components/events/event_manager/include/event_manager.h</path>
+      <notes>Use for EVENT BRAKE axis ENGAGED/RELEASED notifications.</notes>
+    </interface>
+  </interfaces>
+
+  <constraints>
+    <constraint source="architecture" critical="true">
+      Header-Only Configuration: Every configurable value MUST be in a header file. No magic numbers in source.
+    </constraint>
+    <constraint source="architecture" critical="true">
+      Dual-Core Separation: Core 0 handles communication and safety (safety_monitor_task at priority 24). Core 1 handles motion.
+    </constraint>
+    <constraint source="tech-spec" critical="true">
+      Active-Low Brake Logic: SR bit = 0 means brake ENGAGED (spring applied). SR bit = 1 means brake RELEASED (electromagnet powered).
+    </constraint>
+    <constraint source="tech-spec" critical="true">
+      Fail-Safe Design: Power loss causes all outputs to float LOW, engaging all brakes mechanically.
+    </constraint>
+    <constraint source="tech-spec">
+      Brake Timing Critical: MUST engage brake BEFORE removing motor torque (TIMING_BRAKE_ENGAGE_MS delay). MUST wait TIMING_BRAKE_RELEASE_MS after enabling before releasing brake.
+    </constraint>
+    <constraint source="story-4-4">
+      sr_emergency_disable_all() Already Handles Brakes: E-stop ISR already engages all brakes. BRAKE_ON_ESTOP should NOT duplicate this behavior on normal disable.
+    </constraint>
+    <constraint source="config_sr.h">
+      Stepper Axes Have No Brakes: C, D stepper axes have brake bits not connected to hardware. E-axis marked as having brake in SR but verify hardware.
+    </constraint>
+  </constraints>
+
+  <tests>
+    <standards>
+      ESP-IDF Unity test framework. Component-level unit tests in each component's test/ folder. Integration tests in firmware/test/integration/. Mock HAL dependencies for unit tests. Use TEST command for hardware-in-loop testing.
+    </standards>
+    <locations>
+      <location>firmware/components/control/safety_monitor/test/test_brake_controller.c (new)</location>
+      <location>firmware/test/integration/safety_monitor/test_brake_system.c (new)</location>
+    </locations>
+    <ideas>
+      <idea ac="1">Test BRAKE_ON_DISABLE: disable axis, verify brake engages before EN bit cleared (timing via mock/spy)</idea>
+      <idea ac="2">Test BRAKE_ON_ESTOP: disable axis normally, verify brake NOT engaged; then trigger E-stop, verify brake engaged</idea>
+      <idea ac="3">Test BRAKE_ON_IDLE: enable axis, wait idle timeout, verify brake engaged and EVENT published; send motion, verify brake released</idea>
+      <idea ac="4">Test BRAKE_MANUAL: verify BRAKE command works when strategy=MANUAL, rejected with ERR_BRAKE_AUTO otherwise</idea>
+      <idea ac="5">Test timing sequence with mock timers: engage delay before disable, release delay after enable</idea>
+      <idea ac="6">Test per-axis independence: Z=BRAKE_ON_DISABLE, X=BRAKE_ON_ESTOP, verify independent behavior</idea>
+      <idea ac="8">Test STAT includes BRAKES: field with correct format</idea>
+      <idea ac="9">Test BRAKE C 1 returns ERR_AXIS_NO_BRAKE</idea>
+    </ideas>
+  </tests>
+
+  <implementationNotes>
+    <note priority="high">
+      EXISTING INFRASTRUCTURE: sr_set_brake(), TIMING_BRAKE_ENGAGE_MS, TIMING_BRAKE_RELEASE_MS, CMD_BRAKE are ALREADY defined. Tasks 2 and 7 are partially complete.
+    </note>
+    <note priority="high">
+      BrakeStrategy Enum Location: Add to config_defaults.h following EndSwitchMode pattern in config_commands.h.
+    </note>
+    <note priority="medium">
+      BRAKE_ON_IDLE Timer: Use esp_timer for per-axis idle timeout. Reset on MOVE, MOVR, VEL commands. Callback notifies BrakeController to engage.
+    </note>
+    <note priority="medium">
+      EN Command Integration: Wrap existing en_handler logic. On disable: engage brake -> delay -> clear enable. On enable: set enable -> delay -> release brake.
+    </note>
+    <note priority="low">
+      E-Axis Brake: config_sr.h defines SR_E_BRAKE but tpic6b595.h says E has no brake (line 97). Verify with hardware. Currently reject BRAKE E commands.
+    </note>
+  </implementationNotes>
+</story-context>

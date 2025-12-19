@@ -1,0 +1,168 @@
+<story-context id="4-4-emergency-stop-system" v="1.0">
+  <metadata>
+    <epicId>4</epicId>
+    <storyId>4</storyId>
+    <title>Emergency Stop System</title>
+    <status>ready-for-dev</status>
+    <generatedAt>2025-12-18</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/4-4-emergency-stop-system.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>user</asA>
+    <iWant>E-stop to immediately disable all motors</iWant>
+    <soThat>I can quickly stop all motion in an emergency</soThat>
+    <tasks>
+      <task id="1" ac="1,7">Configure GPIO_E_STOP interrupt - falling edge, input with pull-up, register ISR</task>
+      <task id="2" ac="1,2,7">Implement E-stop ISR - call sr_emergency_disable_all(), set GPIO_SR_OE HIGH, notify task</task>
+      <task id="3" ac="3,6">Extend safety_monitor_task - NOTIFY_ESTOP handling, MODE_ESTOP, mark axes UNHOMED, publish event</task>
+      <task id="4" ac="4">Implement mode checking in motion command handlers - reject MOVE/MOVR/VEL/HOME in ESTOP mode</task>
+      <task id="5" ac="5">Implement RST command handler - check button released, clear ESTOP, transition to IDLE</task>
+      <task id="6" ac="4,5">Add error codes: ERR_EMERGENCY_STOP, ERR_ESTOP_ACTIVE, MSG_EMERGENCY_STOP, MSG_ESTOP_ACTIVE</task>
+      <task id="7" ac="5">E-stop release detection - poll GPIO state in RST handler</task>
+      <task id="8" ac="1-7">Unit tests for E-stop logic in test_safety_monitor.c</task>
+      <task id="9" ac="1-7">Integration tests in test/integration/safety_monitor/test_estop_system.c</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1" priority="critical">E-Stop Response Within 1ms - ISR calls sr_emergency_disable_all(), clears enables, engages brakes, tristates outputs</ac>
+    <ac id="2" priority="critical">All Brakes Engage on E-Stop - SR_X_BRAKE..SR_B_BRAKE = 0 (active-low) immediately</ac>
+    <ac id="3" priority="high">ESTOP Event Published - EVENT ESTOP ACTIVE via event_manager, system mode = MODE_ESTOP</ac>
+    <ac id="4" priority="high">Motion Commands Rejected in ESTOP Mode - MOVE/MOVR/VEL/HOME return ERROR ERR_EMERGENCY_STOP</ac>
+    <ac id="5" priority="high">RST Clears E-Stop Only If Button Released - check GPIO_E_STOP high before clearing</ac>
+    <ac id="6" priority="medium">All Axes Marked UNHOMED on E-Stop - position potentially lost</ac>
+    <ac id="7" priority="medium">Hardware Interrupt Configuration - GPIO falling edge, ISR notifies task via xTaskNotifyFromISR</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/sprint-artifacts/tech-spec-epic-4.md" title="Epic 4 Tech Spec" section="Story 4.4 Emergency Stop System">
+        AC16-AC20 definitions, E-Stop Response Flow diagram, NFR12 response time requirement (&lt;1ms)
+      </doc>
+      <doc path="docs/epics.md" title="Epics" section="Story 4.4: Emergency Stop System">
+        User story, acceptance criteria, prerequisites (Story 3.1 shift register, Story 2.6 mode management)
+      </doc>
+      <doc path="docs/sprint-artifacts/4-3-limit-switch-motion-stop.md" title="Previous Story" section="Dev Agent Record">
+        Task notification pattern, event publishing pattern, test injection pattern
+      </doc>
+      <doc path="docs/architecture.md" title="Architecture" section="Dual-Core Separation">
+        Core 0 handles safety monitoring at priority 24, Core 1 handles motion control
+      </doc>
+    </docs>
+
+    <code>
+      <file path="firmware/components/control/safety_monitor/safety_monitor.c" kind="service" reason="Main file to extend with E-stop ISR and NOTIFY_ESTOP handling">
+        <symbol>safety_monitor_task</symbol>
+        <symbol>safety_monitor_init</symbol>
+      </file>
+      <file path="firmware/components/control/safety_monitor/include/safety_monitor.h" kind="header" reason="Add E-stop API declarations">
+        <symbol>safety_monitor_init</symbol>
+        <symbol>safety_monitor_is_direction_blocked</symbol>
+      </file>
+      <file path="firmware/components/drivers/tpic6b595/tpic6b595.c" kind="driver" reason="Contains sr_emergency_disable_all() ISR-safe function">
+        <symbol>sr_emergency_disable_all</symbol>
+        <symbol>sr_enable_outputs</symbol>
+      </file>
+      <file path="firmware/components/drivers/tpic6b595/include/tpic6b595.h" kind="header" reason="sr_emergency_disable_all() API">
+        <symbol lines="159">sr_emergency_disable_all</symbol>
+      </file>
+      <file path="firmware/components/config/include/config_gpio.h" kind="config" reason="GPIO_E_STOP (GPIO13), GPIO_SR_OE (GPIO9) definitions">
+        <symbol lines="157">GPIO_E_STOP</symbol>
+        <symbol lines="94">GPIO_SR_OE</symbol>
+      </file>
+      <file path="firmware/components/config/include/config_commands.h" kind="config" reason="CMD_RST already defined, add ERR_EMERGENCY_STOP, ERR_ESTOP_ACTIVE">
+        <symbol lines="96">CMD_RST</symbol>
+      </file>
+      <file path="firmware/components/events/event_manager/include/event_manager.h" kind="header" reason="event_publish() API for ESTOP events">
+        <symbol>event_publish</symbol>
+        <symbol>event_publish_from_isr</symbol>
+      </file>
+      <file path="firmware/components/control/command_executor/command_executor.c" kind="service" reason="Add RST command handler, add ESTOP mode check to motion commands">
+        <symbol>command_executor_init</symbol>
+      </file>
+      <file path="firmware/components/control/motion_controller/motion_controller.cpp" kind="controller" reason="Motion commands need ESTOP mode check">
+        <symbol>MotionController</symbol>
+      </file>
+      <file path="firmware/test/integration/safety_monitor/test_limit_motion_stop.c" kind="test" reason="Template for E-stop integration tests">
+        <symbol>test_limit_motion_stop</symbol>
+      </file>
+      <file path="firmware/components/control/safety_monitor/test/test_safety_monitor.c" kind="test" reason="Add E-stop unit tests here">
+        <symbol>test_safety_monitor</symbol>
+      </file>
+    </code>
+
+    <dependencies>
+      <framework name="ESP-IDF" version="5.4">
+        <component>driver/gpio.h</component>
+        <component>esp_err.h</component>
+        <component>freertos/FreeRTOS.h</component>
+        <component>freertos/task.h</component>
+      </framework>
+      <internal>
+        <component path="components/drivers/tpic6b595">Shift register driver (Story 3.1)</component>
+        <component path="components/events/event_manager">Event pub/sub system (Story 2.7)</component>
+        <component path="components/control/safety_monitor">Limit monitoring (Stories 4.2, 4.3)</component>
+      </internal>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint type="timing" priority="critical">E-stop ISR must complete within 1ms (NFR12)</constraint>
+    <constraint type="timing" priority="critical">sr_emergency_disable_all() completes in &lt;100µs</constraint>
+    <constraint type="safety" priority="critical">ISR-safe: no mutex, no I2C, no logging in E-stop ISR</constraint>
+    <constraint type="safety" priority="critical">Fail-safe: brakes active-low, power loss = engaged</constraint>
+    <constraint type="architecture" priority="high">safety_monitor_task runs on Core 0 at priority 24</constraint>
+    <constraint type="architecture" priority="high">E-stop GPIO is independent of I2C bus</constraint>
+    <constraint type="config" priority="mandatory">All values from config headers - no magic numbers</constraint>
+    <constraint type="config" priority="mandatory">Use GPIO_E_STOP, not GPIO_NUM_13</constraint>
+    <constraint type="config" priority="mandatory">Use TIMING_ESTOP_RESPONSE_MS from config_timing.h</constraint>
+  </constraints>
+
+  <interfaces>
+    <interface name="sr_emergency_disable_all" kind="function" path="firmware/components/drivers/tpic6b595/include/tpic6b595.h">
+      <signature>void sr_emergency_disable_all(void)</signature>
+      <note>ISR-safe, does NOT use mutex, completes in &lt;100µs</note>
+    </interface>
+    <interface name="sr_enable_outputs" kind="function" path="firmware/components/drivers/tpic6b595/include/tpic6b595.h">
+      <signature>esp_err_t sr_enable_outputs(void)</signature>
+      <note>Re-enable outputs after emergency disable</note>
+    </interface>
+    <interface name="event_publish" kind="function" path="firmware/components/events/event_manager/include/event_manager.h">
+      <signature>esp_err_t event_publish(const Event* event)</signature>
+    </interface>
+    <interface name="event_publish_from_isr" kind="function" path="firmware/components/events/event_manager/include/event_manager.h">
+      <signature>esp_err_t event_publish_from_isr(const Event* event, BaseType_t* woken)</signature>
+    </interface>
+    <interface name="xTaskNotifyFromISR" kind="function" path="freertos/task.h">
+      <signature>BaseType_t xTaskNotifyFromISR(TaskHandle_t xTaskToNotify, uint32_t ulValue, eNotifyAction eAction, BaseType_t *pxHigherPriorityTaskWoken)</signature>
+    </interface>
+    <interface name="gpio_isr_handler_add" kind="function" path="driver/gpio.h">
+      <signature>esp_err_t gpio_isr_handler_add(gpio_num_t gpio_num, gpio_isr_t isr_handler, void *args)</signature>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+      ESP-IDF Unity test framework. Unit tests in component test/ directories.
+      Integration tests in firmware/test/integration/. Hardware timing tests require
+      oscilloscope for &lt;1ms validation. Use safety_monitor_inject_test_state() for
+      testing without physical hardware.
+    </standards>
+    <locations>
+      <location>firmware/components/control/safety_monitor/test/</location>
+      <location>firmware/test/integration/safety_monitor/</location>
+    </locations>
+    <ideas>
+      <idea ac="1">Test ISR notification triggers ESTOP handling in safety_monitor_task</idea>
+      <idea ac="2">Test sr_emergency_disable_all() clears all enable bits and engages brakes</idea>
+      <idea ac="3">Test EVENT ESTOP ACTIVE published with correct format</idea>
+      <idea ac="4">Test MOVE/MOVR/VEL/HOME commands rejected with ERR_EMERGENCY_STOP in ESTOP mode</idea>
+      <idea ac="5">Test RST succeeds when GPIO_E_STOP high, fails when low</idea>
+      <idea ac="6">Test all axes marked UNHOMED after E-stop activation</idea>
+      <idea ac="7">Test GPIO interrupt configured correctly (falling edge)</idea>
+      <idea timing="true">Oscilloscope test: GPIO fall to SR latch &lt;1ms</idea>
+    </ideas>
+  </tests>
+</story-context>

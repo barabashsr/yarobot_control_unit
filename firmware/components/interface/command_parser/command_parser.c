@@ -33,7 +33,8 @@ static bool command_expects_string_param(const char* verb)
 {
     return (strcmp(verb, CMD_ALIAS) == 0 ||
             strcmp(verb, CMD_ECHO) == 0 ||
-            strcmp(verb, CMD_MODE) == 0);
+            strcmp(verb, CMD_MODE) == 0 ||
+            strcmp(verb, CMD_TEST) == 0);
 }
 
 /**

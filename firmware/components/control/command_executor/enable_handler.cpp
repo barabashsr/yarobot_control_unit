@@ -14,6 +14,7 @@
 #include "response_formatter.h"
 #include "config_commands.h"
 #include "config_limits.h"
+#include "brake_controller.h"
 
 #include "esp_log.h"
 
@@ -85,7 +86,24 @@ esp_err_t handle_enable(const ParsedCommand* cmd, char* response, size_t resp_le
     //   - If idle, motor->enable(false) just disables (AC3)
     // When enabling (enable=true):
     //   - State changes from DISABLED to IDLE (AC1)
-    esp_err_t ret = motor->enable(enable);
+
+    // Story 4-5: Brake integration for BRAKE_ON_DISABLE strategy
+    // On disable: Engage brake BEFORE disabling motor (holds axis in position)
+    // On enable: Release brake AFTER enabling motor (motor can hold first)
+    esp_err_t ret;
+    uint8_t axis_idx = static_cast<uint8_t>(axis_id);
+
+    if (!enable && brake_has_hardware(axis_idx)) {
+        // Disabling: Engage brake first, wait for it to hold, then disable motor
+        brake_on_axis_disable(axis_idx);
+    }
+
+    ret = motor->enable(enable);
+
+    if (enable && ret == ESP_OK && brake_has_hardware(axis_idx)) {
+        // Enabling: Motor is now enabled, release brake after delay
+        brake_on_axis_enable(axis_idx);
+    }
 
     if (ret == ESP_OK) {
         ESP_LOGD(TAG, "Axis %c %s", cmd->axis, enable ? "enabled" : "disabled");

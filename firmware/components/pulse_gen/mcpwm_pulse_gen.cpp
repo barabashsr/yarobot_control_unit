@@ -47,9 +47,10 @@ static constexpr float MAX_FREQ_CHANGE_PER_MS = 1000.0f;
 // Higher than LIMIT_MIN_PULSE_FREQ_HZ for better motor startup
 static constexpr float MIN_MOTION_START_FREQ = 300.0f;
 
-// PCNT high limit for watch point (16-bit signed max)
-static constexpr int16_t PCNT_HIGH_LIMIT = INT16_MAX;
-static constexpr int16_t PCNT_LOW_LIMIT = INT16_MIN;
+// PCNT constants are defined in mcpwm_pulse_gen.h:
+// - MCPWM_MCPWM_PCNT_HIGH_LIMIT: 16-bit signed max (32767)
+// - MCPWM_MCPWM_PCNT_LOW_LIMIT: 16-bit signed min (-32768)
+// - MCPWM_MCPWM_PCNT_OVERFLOW_RANGE: pulses per overflow (32768)
 
 // ============================================================================
 // Constructor / Destructor
@@ -80,6 +81,7 @@ McpwmPulseGenerator::McpwmPulseGenerator(int timer_id, int gpio_num, int pcnt_un
     , move_start_pcnt_count_(0)
     , last_completed_position_(0)
     , pcnt_at_last_completion_(0)
+    , prev_raw_pcnt_count_(0)
     , profile_timer_(nullptr)
     , completion_callback_(nullptr)
     , callback_mutex_(nullptr)
@@ -274,8 +276,8 @@ esp_err_t McpwmPulseGenerator::init()
     // PCNT Unit Configuration
     // =========================================================================
     pcnt_unit_config_t pcnt_unit_config = {};
-    pcnt_unit_config.high_limit = PCNT_HIGH_LIMIT;
-    pcnt_unit_config.low_limit = PCNT_LOW_LIMIT;
+    pcnt_unit_config.high_limit = MCPWM_PCNT_HIGH_LIMIT;
+    pcnt_unit_config.low_limit = MCPWM_PCNT_LOW_LIMIT;
     // NOTE: Do NOT use accum_count=true - it prevents pcnt_unit_clear_count() from
     // actually resetting the counter, causing stale counts to persist between moves.
     // We handle overflow tracking manually with overflow_count_.
@@ -365,6 +367,7 @@ esp_err_t McpwmPulseGenerator::init()
     int init_pcnt_count = 0;
     pcnt_unit_get_count(pcnt_unit_, &init_pcnt_count);
     move_start_pcnt_count_ = init_pcnt_count;
+    prev_raw_pcnt_count_ = init_pcnt_count;  // Initialize for overflow detection
     pcnt_at_last_completion_ = init_pcnt_count;  // Initialize stable reference
     last_completed_position_ = 0;
     ESP_LOGI(TAG, "PCNT started for continuous position tracking (baseline: %d)", init_pcnt_count);
@@ -450,8 +453,26 @@ void McpwmPulseGenerator::profileTimerCallback(void* arg)
     if (self->pcnt_unit_) {
         pcnt_unit_get_count(self->pcnt_unit_, &count);
     }
+
+    // Task-based overflow detection: detect when 16-bit PCNT wraps from +32767 to -32768
+    // This replaces the disabled ISR-based overflow handling.
+    // Detection method: if count DECREASED by more than 30000, it must be a wrap-around.
+    // Normal counting only increases (PCNT configured for increment on rising edge).
+    // A wrap from +32767 to -32768 looks like a decrease of ~65535.
+    int32_t delta = count - self->prev_raw_pcnt_count_;
+    if (delta < -30000) {
+        // Overflow detected! Count wrapped from positive to negative.
+        self->overflow_count_.fetch_add(1, std::memory_order_relaxed);
+        ESP_LOGW(TAG, "PCNT overflow detected: prev=%ld, curr=%d, delta=%ld, overflow_count=%ld",
+                 (long)self->prev_raw_pcnt_count_, count, (long)delta,
+                 (long)self->overflow_count_.load(std::memory_order_relaxed));
+    }
+    self->prev_raw_pcnt_count_ = count;
+
     int32_t overflows = self->overflow_count_.load(std::memory_order_relaxed);
-    int32_t hw_pcnt = count + (overflows * PCNT_HIGH_LIMIT);
+    // Calculate absolute PCNT: raw count + (overflows * MCPWM_PCNT_OVERFLOW_RANGE)
+    // Note: PCNT wraps from +32767 to -32768, so each overflow adds 65536 (full 16-bit range)
+    int32_t hw_pcnt = count + (overflows * MCPWM_PCNT_OVERFLOW_RANGE);
 
     // Calculate position delta from last completion (STABLE reference point)
     int32_t pcnt_delta = hw_pcnt - self->pcnt_at_last_completion_;
@@ -547,7 +568,7 @@ void McpwmPulseGenerator::updateProfile()
         int count_hw = 0;
         pcnt_unit_get_count(pcnt_unit_, &count_hw);
         int32_t overflows_hw = overflow_count_.load(std::memory_order_relaxed);
-        pcnt_at_last_completion_ = count_hw + (overflows_hw * PCNT_HIGH_LIMIT);
+        pcnt_at_last_completion_ = count_hw + (overflows_hw * MCPWM_PCNT_OVERFLOW_RANGE);
         ESP_LOGW(TAG, "DEBUG: Updated stable reference - last_pos=%lld, pcnt_hw=%ld",
                  (long long)last_completed_position_, (long)pcnt_at_last_completion_);
 
@@ -608,7 +629,7 @@ void McpwmPulseGenerator::updateProfile()
         int count_hw = 0;
         pcnt_unit_get_count(pcnt_unit_, &count_hw);
         int32_t overflows_hw = overflow_count_.load(std::memory_order_relaxed);
-        pcnt_at_last_completion_ = count_hw + (overflows_hw * PCNT_HIGH_LIMIT);
+        pcnt_at_last_completion_ = count_hw + (overflows_hw * MCPWM_PCNT_OVERFLOW_RANGE);
         ESP_LOGW(TAG, "DEBUG: Updated stable reference (STOPPING) - last_pos=%lld, pcnt_hw=%ld",
                  (long long)last_completed_position_, (long)pcnt_at_last_completion_);
 
@@ -828,6 +849,7 @@ esp_err_t McpwmPulseGenerator::startMove(int32_t pulses, float max_velocity, flo
     int current_pcnt = 0;
     pcnt_unit_get_count(pcnt_unit_, &current_pcnt);
     move_start_pcnt_count_ = current_pcnt;
+    prev_raw_pcnt_count_ = current_pcnt;  // Initialize for overflow detection
     ESP_LOGW(TAG, "DEBUG startMove: PCNT baseline = %ld (continuous counting, never cleared)", (long)move_start_pcnt_count_);
 
     // Calculate absolute watch point target: current PCNT + relative pulses
@@ -992,10 +1014,11 @@ esp_err_t McpwmPulseGenerator::startVelocity(float velocity, float acceleration)
     int current_pcnt = 0;
     pcnt_unit_get_count(pcnt_unit_, &current_pcnt);
     move_start_pcnt_count_ = current_pcnt;
+    prev_raw_pcnt_count_ = current_pcnt;  // Initialize for overflow detection
     ESP_LOGW(TAG, "DEBUG startVelocity: PCNT baseline = %ld (continuous counting)", (long)move_start_pcnt_count_);
 
     // Remove any existing watch points (no target in velocity mode)
-    pcnt_unit_remove_watch_point(pcnt_unit_, PCNT_HIGH_LIMIT);
+    pcnt_unit_remove_watch_point(pcnt_unit_, MCPWM_PCNT_HIGH_LIMIT);
 
     // Set initial frequency
     setFrequency(LIMIT_MIN_PULSE_FREQ_HZ);
@@ -1105,7 +1128,7 @@ void McpwmPulseGenerator::stopImmediate()
     int count_hw = 0;
     pcnt_unit_get_count(pcnt_unit_, &count_hw);
     int32_t overflows_hw = overflow_count_.load(std::memory_order_relaxed);
-    pcnt_at_last_completion_ = count_hw + (overflows_hw * PCNT_HIGH_LIMIT);
+    pcnt_at_last_completion_ = count_hw + (overflows_hw * MCPWM_PCNT_OVERFLOW_RANGE);
     ESP_LOGW(TAG, "DEBUG: Updated stable reference (stopImmediate) - last_pos=%lld, pcnt_hw=%ld",
              (long long)last_completed_position_, (long)pcnt_at_last_completion_);
 
@@ -1147,6 +1170,14 @@ void McpwmPulseGenerator::setCompletionCallback(MotionCompleteCallback cb)
 {
     if (xSemaphoreTake(callback_mutex_, pdMS_TO_TICKS(100)) == pdTRUE) {
         completion_callback_ = cb;
+        xSemaphoreGive(callback_mutex_);
+    }
+}
+
+void McpwmPulseGenerator::setErrorCallback(MotionErrorCallback cb)
+{
+    if (xSemaphoreTake(callback_mutex_, pdMS_TO_TICKS(100)) == pdTRUE) {
+        error_callback_ = cb;
         xSemaphoreGive(callback_mutex_);
     }
 }
@@ -1337,7 +1368,7 @@ int64_t McpwmPulseGenerator::readPcntCount() const
 
     // Add overflow contribution for absolute PCNT count
     int32_t overflows = overflow_count_.load(std::memory_order_relaxed);
-    int64_t absolute_pcnt = static_cast<int64_t>(count) + (static_cast<int64_t>(overflows) * PCNT_HIGH_LIMIT);
+    int64_t absolute_pcnt = static_cast<int64_t>(count) + (static_cast<int64_t>(overflows) * MCPWM_PCNT_OVERFLOW_RANGE);
 
     // Return relative position for current move (pulses since move start)
     // PCNT runs continuously, so we subtract the baseline count from move start
@@ -1365,8 +1396,8 @@ bool McpwmPulseGenerator::handlePcntReachISR(const pcnt_watch_event_data_t* even
     // DEBUG: Log that ISR was called (use ROM printf which is ISR-safe)
     ets_printf("PCNT ISR: watch_point=%d, target=%ld\n", watch_point, (long)target);
 
-    // Check if this is an overflow event (watch point at PCNT_HIGH_LIMIT)
-    if (watch_point == PCNT_HIGH_LIMIT && target > PCNT_HIGH_LIMIT) {
+    // Check if this is an overflow event (watch point at MCPWM_PCNT_HIGH_LIMIT)
+    if (watch_point == MCPWM_PCNT_HIGH_LIMIT && target > MCPWM_PCNT_HIGH_LIMIT) {
         // Increment overflow counter
         int32_t new_overflow = overflow_count_.fetch_add(1, std::memory_order_relaxed) + 1;
 
@@ -1374,15 +1405,15 @@ bool McpwmPulseGenerator::handlePcntReachISR(const pcnt_watch_event_data_t* even
         pcnt_unit_clear_count(pcnt_unit_);
 
         // Calculate remaining pulses after this overflow
-        int64_t total_counted = static_cast<int64_t>(new_overflow) * PCNT_HIGH_LIMIT;
+        int64_t total_counted = static_cast<int64_t>(new_overflow) * MCPWM_PCNT_OVERFLOW_RANGE;
         int64_t remaining = target - total_counted;
 
         ets_printf("PCNT overflow: count=%ld, remaining=%lld\n", (long)new_overflow, (long long)remaining);
 
         // If remaining is less than HIGH_LIMIT, set watch point for final count
-        if (remaining > 0 && remaining < PCNT_HIGH_LIMIT) {
+        if (remaining > 0 && remaining < MCPWM_PCNT_HIGH_LIMIT) {
             // Remove overflow watch point
-            pcnt_unit_remove_watch_point(pcnt_unit_, PCNT_HIGH_LIMIT);
+            pcnt_unit_remove_watch_point(pcnt_unit_, MCPWM_PCNT_HIGH_LIMIT);
             // Add final watch point
             pcnt_unit_add_watch_point(pcnt_unit_, static_cast<int>(remaining));
         }

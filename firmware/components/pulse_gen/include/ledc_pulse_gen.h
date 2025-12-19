@@ -25,6 +25,7 @@
 #include "config_peripherals.h"
 #include "driver/ledc.h"
 #include "driver/gpio.h"
+#include "driver/pulse_cnt.h"
 #include "esp_timer.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
@@ -54,7 +55,7 @@ enum class LedcMotionMode {
  * @brief Trapezoidal motion profile parameters
  */
 struct LedcTrapezoidalProfile {
-    int32_t target_pulses;      ///< Total pulses to generate (position mode)
+    int64_t target_pulses;      ///< Target PCNT position for completion (absolute, supports overflow)
     float max_velocity;         ///< Peak velocity (pulses/second)
     float acceleration;         ///< Acceleration rate (pulses/second^2)
     float deceleration;         ///< Deceleration rate (pulses/second^2)
@@ -93,8 +94,9 @@ public:
      * @param gpio_num GPIO pin for STEP output (use GPIO_D_STEP)
      * @param timer LEDC timer index (use LEDC_TIMER_D)
      * @param channel LEDC channel index (use LEDC_CHANNEL_D)
+     * @param pcnt_unit_id PCNT unit index for hardware position tracking (use PCNT_UNIT_D)
      */
-    LedcPulseGenerator(int gpio_num, ledc_timer_t timer, ledc_channel_t channel);
+    LedcPulseGenerator(int gpio_num, ledc_timer_t timer, ledc_channel_t channel, int pcnt_unit_id);
 
     ~LedcPulseGenerator() override;
 
@@ -108,6 +110,7 @@ public:
     int64_t getPulseCount() const override;
     float getCurrentVelocity() const override;
     void setCompletionCallback(MotionCompleteCallback cb) override;
+    void setErrorCallback(MotionErrorCallback cb) override;
     void setPositionTracker(IPositionTracker* tracker) override;
 
     // IPositionTracker interface implementation
@@ -140,7 +143,20 @@ private:
     int gpio_num_;
     ledc_timer_t timer_;
     ledc_channel_t channel_;
+    int pcnt_unit_id_;
     bool initialized_;
+
+    // PCNT hardware for position tracking
+    pcnt_unit_handle_t pcnt_unit_;
+    pcnt_channel_handle_t pcnt_channel_;
+    std::atomic<int32_t> overflow_count_;    ///< Number of PCNT overflows
+    int32_t prev_raw_pcnt_count_;            ///< Previous raw PCNT reading for overflow detection
+    int64_t pcnt_start_;                     ///< PCNT position at start of current move (for relative completion check)
+
+    // Direction-aware position tracking (same pattern as McpwmPulseGenerator)
+    int64_t last_completed_position_;        ///< Absolute position at last motion completion
+    int32_t pcnt_at_last_completion_;        ///< Raw PCNT value at last motion completion
+    std::atomic<int64_t> absolute_position_; ///< Current absolute position (direction-aware)
 
     // Motion state
     std::atomic<LedcProfileState> state_;
@@ -167,6 +183,7 @@ private:
     TaskHandle_t completion_task_handle_;
     std::atomic<bool> task_should_exit_;
     MotionCompleteCallback completion_callback_;
+    MotionErrorCallback error_callback_;  ///< Called on motion errors (Story 3.11 AC4)
     SemaphoreHandle_t callback_mutex_;
 
     // Profile calculation

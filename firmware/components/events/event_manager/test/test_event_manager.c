@@ -461,3 +461,256 @@ TEST_CASE("double initialization is safe", "[event_manager]")
     };
     TEST_ASSERT_EQUAL(ESP_OK, event_publish(&event));
 }
+
+/* ==========================================================================
+ * Story 3-11: Motion Completion Events Tests
+ * ========================================================================== */
+
+/* Helpers for Story 3-11 tests */
+static uint64_t s_event_receive_time = 0;
+
+static void timing_callback(const Event* event, void* ctx)
+{
+    (void)ctx;
+    if (event != NULL) {
+        s_received_event = *event;
+        s_event_receive_time = esp_timer_get_time();
+    }
+    s_callback_count++;
+
+    if (s_callback_sem != NULL) {
+        xSemaphoreGive(s_callback_sem);
+    }
+}
+
+/**
+ * Story 3-11 Task 6: Event timing verification
+ * Given motion completes, when event is published,
+ * then event is delivered within 10ms of motion complete
+ */
+TEST_CASE("3-11 Task 6: Event delivered within 10ms", "[event_manager][story-3-11]")
+{
+    reset_test_state();
+    s_callback_sem = xSemaphoreCreateBinary();
+    TEST_ASSERT_NOT_NULL(s_callback_sem);
+
+    TEST_ASSERT_EQUAL(ESP_OK, event_manager_init());
+    TEST_ASSERT_EQUAL(ESP_OK, event_subscribe(EVTTYPE_MOTION_COMPLETE, timing_callback, NULL));
+
+    // Record publish time
+    uint64_t publish_time = esp_timer_get_time();
+
+    // Publish motion complete event
+    Event event = {
+        .type = EVTTYPE_MOTION_COMPLETE,
+        .axis = 0,
+        .data.position = 100.0f,
+        .timestamp = publish_time
+    };
+    TEST_ASSERT_EQUAL(ESP_OK, event_publish(&event));
+
+    // Wait for callback
+    TEST_ASSERT_TRUE(wait_for_callback(pdMS_TO_TICKS(100)));
+
+    // Verify timing - event should be delivered within 10ms (10000us)
+    uint64_t latency_us = s_event_receive_time - publish_time;
+    TEST_ASSERT_TRUE_MESSAGE(latency_us < 10000,
+        "Event delivery exceeded 10ms latency requirement");
+
+    // Cleanup
+    event_unsubscribe(EVTTYPE_MOTION_COMPLETE, timing_callback);
+    vSemaphoreDelete(s_callback_sem);
+    s_callback_sem = NULL;
+}
+
+/**
+ * Story 3-11 Task 7: Event ordering verification
+ * (Covered by existing AC7 test, but adding explicit motion event ordering test)
+ */
+TEST_CASE("3-11 Task 7: Motion events preserve FIFO order", "[event_manager][story-3-11]")
+{
+    static uint8_t received_axes[8] = {0};
+    static int axis_idx = 0;
+
+    void motion_order_callback(const Event* event, void* ctx) {
+        (void)ctx;
+        if (axis_idx < 8) {
+            received_axes[axis_idx++] = event->axis;
+        }
+    }
+
+    axis_idx = 0;
+    memset(received_axes, 0xFF, sizeof(received_axes));
+
+    TEST_ASSERT_EQUAL(ESP_OK, event_manager_init());
+    TEST_ASSERT_EQUAL(ESP_OK, event_subscribe(EVTTYPE_MOTION_COMPLETE, motion_order_callback, NULL));
+
+    // Publish events for axes 0-7 in order
+    for (uint8_t i = 0; i < 8; i++) {
+        Event event = {
+            .type = EVTTYPE_MOTION_COMPLETE,
+            .axis = i,
+            .data.position = (float)i * 10.0f,
+            .timestamp = esp_timer_get_time()
+        };
+        TEST_ASSERT_EQUAL(ESP_OK, event_publish(&event));
+    }
+
+    // Wait for processing
+    vTaskDelay(pdMS_TO_TICKS(100));
+
+    // Verify FIFO order - axes should be 0, 1, 2, 3, 4, 5, 6, 7
+    for (uint8_t i = 0; i < 8; i++) {
+        TEST_ASSERT_EQUAL_MESSAGE(i, received_axes[i], "Event FIFO order violated");
+    }
+
+    // Cleanup
+    event_unsubscribe(EVTTYPE_MOTION_COMPLETE, motion_order_callback);
+}
+
+/**
+ * Story 3-11 Task 8: All axes generate motion complete events
+ */
+TEST_CASE("3-11 Task 8: All 8 axes generate motion complete events", "[event_manager][story-3-11]")
+{
+    static bool axis_received[8] = {false};
+    static int total_received = 0;
+
+    void all_axes_callback(const Event* event, void* ctx) {
+        (void)ctx;
+        if (event->axis < 8) {
+            axis_received[event->axis] = true;
+            total_received++;
+        }
+    }
+
+    total_received = 0;
+    memset(axis_received, 0, sizeof(axis_received));
+
+    TEST_ASSERT_EQUAL(ESP_OK, event_manager_init());
+    TEST_ASSERT_EQUAL(ESP_OK, event_subscribe(EVTTYPE_MOTION_COMPLETE, all_axes_callback, NULL));
+
+    // Publish motion complete events for all 8 axes
+    for (uint8_t axis = 0; axis < 8; axis++) {
+        Event event = {
+            .type = EVTTYPE_MOTION_COMPLETE,
+            .axis = axis,
+            .data.position = (float)axis * 100.0f,
+            .timestamp = esp_timer_get_time()
+        };
+        TEST_ASSERT_EQUAL(ESP_OK, event_publish(&event));
+    }
+
+    // Wait for processing
+    vTaskDelay(pdMS_TO_TICKS(100));
+
+    // Verify all axes received events
+    TEST_ASSERT_EQUAL(8, total_received);
+    for (uint8_t axis = 0; axis < 8; axis++) {
+        TEST_ASSERT_TRUE_MESSAGE(axis_received[axis], "Axis did not receive event");
+    }
+
+    // Cleanup
+    event_unsubscribe(EVTTYPE_MOTION_COMPLETE, all_axes_callback);
+}
+
+/**
+ * Story 3-11 Task 9: Position accuracy in event matches actual position
+ */
+TEST_CASE("3-11 Task 9: Position value in event is accurate", "[event_manager][story-3-11]")
+{
+    reset_test_state();
+    s_callback_sem = xSemaphoreCreateBinary();
+    TEST_ASSERT_NOT_NULL(s_callback_sem);
+
+    TEST_ASSERT_EQUAL(ESP_OK, event_manager_init());
+    TEST_ASSERT_EQUAL(ESP_OK, event_subscribe(EVTTYPE_MOTION_COMPLETE, test_callback, NULL));
+
+    // Test position values
+    float test_positions[] = {0.0f, 100.0f, -50.5f, 12345.678f, 0.001f};
+
+    for (size_t i = 0; i < sizeof(test_positions) / sizeof(test_positions[0]); i++) {
+        reset_test_state();
+
+        Event event = {
+            .type = EVTTYPE_MOTION_COMPLETE,
+            .axis = 0,
+            .data.position = test_positions[i],
+            .timestamp = esp_timer_get_time()
+        };
+        TEST_ASSERT_EQUAL(ESP_OK, event_publish(&event));
+
+        // Wait for callback
+        TEST_ASSERT_TRUE(wait_for_callback(pdMS_TO_TICKS(100)));
+
+        // Verify position is preserved exactly
+        TEST_ASSERT_EQUAL_FLOAT(test_positions[i], s_received_event.data.position);
+    }
+
+    // Cleanup
+    event_unsubscribe(EVTTYPE_MOTION_COMPLETE, test_callback);
+    vSemaphoreDelete(s_callback_sem);
+    s_callback_sem = NULL;
+}
+
+/**
+ * Story 3-11 Task 10: No spurious events
+ * Verify that no motion complete events are generated when motion doesn't happen
+ */
+TEST_CASE("3-11 Task 10: No spurious motion events", "[event_manager][story-3-11]")
+{
+    reset_test_state();
+    s_callback_sem = xSemaphoreCreateBinary();
+    TEST_ASSERT_NOT_NULL(s_callback_sem);
+
+    TEST_ASSERT_EQUAL(ESP_OK, event_manager_init());
+    TEST_ASSERT_EQUAL(ESP_OK, event_subscribe(EVTTYPE_MOTION_COMPLETE, test_callback, NULL));
+
+    // Don't publish any events - just wait
+    vTaskDelay(pdMS_TO_TICKS(100));
+
+    // Verify no callbacks were invoked
+    TEST_ASSERT_EQUAL_MESSAGE(0, s_callback_count, "Spurious motion event detected");
+
+    // Cleanup
+    event_unsubscribe(EVTTYPE_MOTION_COMPLETE, test_callback);
+    vSemaphoreDelete(s_callback_sem);
+    s_callback_sem = NULL;
+}
+
+/**
+ * Story 3-11 Task 3: Motion error events (AC4)
+ * Given motion error occurs, when error event is published,
+ * then subscriber receives EVENT ERROR with axis and error code
+ */
+TEST_CASE("3-11 AC4: Motion error event delivery", "[event_manager][story-3-11]")
+{
+    reset_test_state();
+    s_callback_sem = xSemaphoreCreateBinary();
+    TEST_ASSERT_NOT_NULL(s_callback_sem);
+
+    TEST_ASSERT_EQUAL(ESP_OK, event_manager_init());
+    TEST_ASSERT_EQUAL(ESP_OK, event_subscribe(EVTTYPE_MOTION_ERROR, test_callback, NULL));
+
+    // Publish motion error event
+    Event event = {
+        .type = EVTTYPE_MOTION_ERROR,
+        .axis = 2,  // Z axis
+        .data.error_code = 8,  // ERR_MOTOR_FAULT
+        .timestamp = esp_timer_get_time()
+    };
+    TEST_ASSERT_EQUAL(ESP_OK, event_publish(&event));
+
+    // Wait for callback
+    TEST_ASSERT_TRUE(wait_for_callback(pdMS_TO_TICKS(100)));
+
+    // Verify event data
+    TEST_ASSERT_EQUAL(EVTTYPE_MOTION_ERROR, s_received_event.type);
+    TEST_ASSERT_EQUAL(2, s_received_event.axis);
+    TEST_ASSERT_EQUAL(8, s_received_event.data.error_code);
+
+    // Cleanup
+    event_unsubscribe(EVTTYPE_MOTION_ERROR, test_callback);
+    vSemaphoreDelete(s_callback_sem);
+    s_callback_sem = NULL;
+}

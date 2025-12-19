@@ -675,9 +675,11 @@ Add to `config_limits.h`:
 > Position must be queryable at any time during motion with < 10ms latency.
 > This is achieved differently per peripheral type:
 >
-> - **PCNT (Y, C, D)**: Hardware counts every pulse - always real-time (D uses GPIO internal loopback)
-> - **RMT (X, Z, A, B)**: SoftwareTracker updated on each DMA buffer completion (~1ms at typical speeds)
+> - **PCNT (Y, C, D)**: Hardware counts every pulse with task-based overflow detection (D uses GPIO internal loopback)
+> - **RMT (X, Z, A, B)**: Encoder callback updates position atomically (~10ms max latency at all frequencies)
 > - **Time-based (E)**: TimeTracker interpolates binary position (0/1) based on elapsed time
+>
+> See ADRs: `docs/architecture-changes/pcnt-overflow-handling.md`, `docs/architecture-changes/fastaccelstepper-migration-strategy.md`
 
 **Position Update Architecture:**
 
@@ -686,20 +688,23 @@ Add to `config_limits.h`:
 │                     Position Tracking Flow [IMPLEMENTED]            │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
-│   RMT Axes (X, Z, A, B):                                           │
-│   ┌──────────────┐    TX-done ISR    ┌──────────────┐              │
-│   │ RMT DMA      │ ────────────────► │ Software     │              │
-│   │ Buffer Done  │   addPulses(N)    │ Tracker      │              │
-│   │ (~512 sym)   │   (ISR-safe)      │ (atomic)     │              │
+│   RMT Axes (X, Z, A, B) - Encoder Callback Pattern:                │
+│   ┌──────────────┐    Encoder ISR    ┌──────────────┐              │
+│   │ RMT Callback │ ────────────────► │ atomic       │              │
+│   │ Encoder      │   pulse_count_++  │ pulse_count_ │              │
+│   │ (24 sym/cb)  │   (ISR-safe)      │ (int64)      │              │
 │   └──────────────┘                   └──────────────┘              │
+│   Position latency: 200kHz→0.16ms | 50kHz→0.64ms | 1kHz→10ms      │
 │                                                                     │
-│   MCPWM Axes (Y, C) + LEDC Axis (D):                               │
-│   ┌──────────────┐    Hardware       ┌──────────────┐              │
-│   │ PCNT Unit    │ ────────────────► │ PCNT         │              │
-│   │ (overflow    │   Every pulse     │ Tracker      │              │
-│   │  ISR ±32767) │                   │ (int64 acc)  │              │
+│   MCPWM Axes (Y, C) + LEDC Axis (D) - Task-Based Overflow:         │
+│   ┌──────────────┐    Task reads     ┌──────────────┐              │
+│   │ PCNT Unit    │ ────────────────► │ Overflow     │              │
+│   │ (16-bit hw)  │   Delta detect    │ Accumulator  │              │
+│   │ wraps 0-32767│   if <-30000      │ (int32)      │              │
 │   └──────────────┘                   └──────────────┘              │
+│   Position = raw_count + (overflow_count * 32768)                  │
 │   Note: D axis uses GPIO internal loopback (LEDC out + PCNT in)    │
+│   Note: ISR-based overflow DISABLED due to stale watch point bugs  │
 │                                                                     │
 │   E Axis (Discrete):                                               │
 │   ┌──────────────┐    Time elapsed   ┌──────────────┐              │
@@ -717,29 +722,34 @@ Add to `config_limits.h`:
 
 **Pulse Generator Position Tracker Integration:**
 
-The `IPulseGenerator` interface includes `setPositionTracker(IPositionTracker*)` method. When a tracker is set:
+The `IPulseGenerator` interface includes `setPositionTracker(IPositionTracker*)` method. Position tracking is now integrated directly into pulse generators:
 
-| Implementation | Update Trigger | Update Method | Typical Latency |
-|----------------|----------------|---------------|-----------------|
-| **RmtPulseGenerator** | TX-done ISR (each buffer) | `addPulses(completed_symbols)` in `handleTxDoneISR()` | ~1ms (512 symbols) |
-| **LedcPulseGenerator** | N/A | PCNT via GPIO internal loopback handles tracking | Real-time |
-| **McpwmPulseGenerator** | N/A | Stores pointer but doesn't use it (PCNT handles tracking) | Real-time |
+| Implementation | Position Tracking | Update Method | Typical Latency |
+|----------------|-------------------|---------------|-----------------|
+| **RmtPulseGenerator** | Encoder callback | `pulse_count_` incremented in encoder ISR | ~0.2-10ms |
+| **LedcPulseGenerator** | Integrated PCNT | Hardware PCNT + task-based overflow | Real-time |
+| **McpwmPulseGenerator** | Integrated PCNT | Hardware PCNT + task-based overflow | Real-time |
 
-**D Axis Position Tracking (Story 3.5c):**
+**D Axis Position Tracking (Story 3.5c + ADR Updates):**
 - D axis uses hardware PCNT via GPIO internal loopback (GPIO_D_STEP configured as `GPIO_MODE_INPUT_OUTPUT`)
 - LEDC output and PCNT input share the same GPIO - no external wiring required
-- Time-based accumulation code removed from LedcPulseGenerator in Story 3.5c
 - Uses PCNT_UNIT_D (unit 2) for hardware counting
+- Direction-aware position tracking: `position_delta = direction ? +pcnt_delta : -pcnt_delta`
+- Overflow counter persists across moves (NOT reset in startMove/startVelocity)
 
-**Position Tracker Implementations:**
+**Position Tracking Implementations (Updated per ADRs):**
 
-| Tracker | Axes | Data Type | Thread Safety | Overflow Handling |
-|---------|------|-----------|---------------|-------------------|
-| `PcntTracker` | Y, C, D | `std::atomic<int64_t>` | ISR-safe atomics | Watch points at ±32767, ISR accumulator |
-| `SoftwareTracker` | X, Z, A, B | `std::atomic<int64_t>` | ISR-safe atomics | 64-bit, no overflow |
-| `TimeTracker` | E | `std::atomic<int64_t>` | Atomic position | Binary (0 or 1) only |
+| Tracking Method | Axes | Overflow Handling | Direction Handling |
+|-----------------|------|-------------------|-------------------|
+| Encoder callback | X, Z, A, B | 64-bit atomic, no overflow | Sign applied in profile generator |
+| PCNT + task delta | Y, C | Task-based delta detection (threshold -30000) | Software sign: `last_completed_position_ + signed_delta` |
+| PCNT + task delta | D | Same as Y, C (via LedcPulseGenerator) | Same pattern as McpwmPulseGenerator |
+| Time-based | E | Binary (0 or 1) only | N/A |
 
-This ensures position is always queryable during motion, with maximum latency determined by buffer size (RMT) or real-time (PCNT for Y/C/D).
+> **Key ADR Finding:** PCNT with `accum_count=false` wraps from 32767 → 0 (NOT to -32768). Each overflow represents 32768 pulses, not 65536.
+> ISR-based overflow detection was disabled due to stale watch point bugs causing position corruption.
+
+This ensures position is always queryable during motion, with maximum latency <10ms for all axis types.
 
 ### SI Units Convention (ROS2 Compatible)
 

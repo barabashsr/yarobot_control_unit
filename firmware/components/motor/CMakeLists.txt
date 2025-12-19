@@ -13,4 +13,5 @@ idf_component_register(
         tpic6b595
         esp_timer
         freertos
+        event_manager
 )

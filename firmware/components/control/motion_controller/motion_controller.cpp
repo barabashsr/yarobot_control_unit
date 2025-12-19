@@ -11,10 +11,13 @@
 #include "config_defaults.h"
 #include "config_axes.h"
 #include "config_limits.h"
+#include "config_commands.h"
+#include "safety_monitor.h"
 
 #include "esp_log.h"
 #include "esp_timer.h"
 #include <cctype>
+#include <cmath>
 
 static const char* TAG = "MOTION_CTRL";
 
@@ -143,6 +146,23 @@ esp_err_t MotionController::moveAbsolute(uint8_t axis, float position, float vel
     if (!motor->isEnabled()) {
         ESP_LOGD(TAG, "Axis %d not enabled", axis);
         return ESP_ERR_INVALID_STATE;
+    }
+
+    // Story 4-3: Check if axis is faulted (both limits active)
+    if (safety_monitor_is_axis_faulted(axis)) {
+        ESP_LOGW(TAG, "Axis %d is faulted (both limits active)", axis);
+        return ESP_ERR_INVALID_STATE;
+    }
+
+    // Story 4-3: Check direction blocking by active limit switches
+    float current = motor->getPosition();
+    float delta = position - current;
+    if (std::fabs(delta) > 0.0001f) {  // Non-zero movement
+        int8_t direction = (delta > 0) ? 1 : -1;
+        if (safety_monitor_is_direction_blocked(axis, direction)) {
+            ESP_LOGW(TAG, "Axis %d direction %+d blocked by limit", axis, direction);
+            return ESP_ERR_INVALID_STATE;
+        }
     }
 
     // Use default velocity if not specified (AC10)
@@ -276,6 +296,22 @@ esp_err_t MotionController::moveAxisVelocity(uint8_t axis, float velocity)
         return ESP_ERR_INVALID_STATE;
     }
 
+    // Story 4-3: Check if axis is faulted (both limits active)
+    if (safety_monitor_is_axis_faulted(axis)) {
+        ESP_LOGW(TAG, "Axis %d is faulted (both limits active)", axis);
+        return ESP_ERR_INVALID_STATE;
+    }
+
+    // Story 4-3: Check direction blocking by active limit switches
+    // Velocity sign determines direction: positive = MAX direction, negative = MIN direction
+    if (std::fabs(velocity) > 0.0001f) {  // Non-zero velocity
+        int8_t direction = (velocity > 0) ? 1 : -1;
+        if (safety_monitor_is_direction_blocked(axis, direction)) {
+            ESP_LOGW(TAG, "Axis %d velocity direction %+d blocked by limit", axis, direction);
+            return ESP_ERR_INVALID_STATE;
+        }
+    }
+
     return motor->moveVelocity(velocity);
 }
 
@@ -349,3 +385,44 @@ void MotionController::onMotionComplete(uint8_t axis, float position)
         ESP_LOGW(TAG, "Failed to publish motion complete event: 0x%x", ret);
     }
 }
+
+/* ==========================================================================
+ * C Wrapper Functions (Story 4-3)
+ * ========================================================================== */
+
+extern "C" {
+
+esp_err_t motion_controller_stop_axis(uint8_t axis)
+{
+    MotionController* mc = getMotionController();
+    if (mc == nullptr || !mc->isInitialized()) {
+        return ESP_ERR_INVALID_STATE;
+    }
+    return mc->stopAxis(axis);
+}
+
+bool motion_controller_is_initialized(void)
+{
+    MotionController* mc = getMotionController();
+    return (mc != nullptr && mc->isInitialized());
+}
+
+esp_err_t motion_controller_get_position(uint8_t axis, float* position)
+{
+    MotionController* mc = getMotionController();
+    if (mc == nullptr || !mc->isInitialized()) {
+        return ESP_ERR_INVALID_STATE;
+    }
+    return mc->getAxisPosition(axis, position);
+}
+
+esp_err_t motion_controller_stop_all_axes(void)
+{
+    MotionController* mc = getMotionController();
+    if (mc == nullptr || !mc->isInitialized()) {
+        return ESP_ERR_INVALID_STATE;
+    }
+    return mc->stopAllAxes();
+}
+
+} // extern "C"

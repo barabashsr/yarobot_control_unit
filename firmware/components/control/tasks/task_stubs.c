@@ -35,16 +35,7 @@ static const char* TAG = "tasks";
 /** @brief Command input buffer size */
 #define CMD_BUF_SIZE 64
 
-void safety_monitor_task(void* arg)
-{
-    (void)arg;
-    ESP_LOGI(TAG, "Task %s started on core %d", pcTaskGetName(NULL), xPortGetCoreID());
-
-    for (;;) {
-        // Placeholder - real implementation in Epic 4
-        vTaskDelay(pdMS_TO_TICKS(1000));
-    }
-}
+// safety_monitor_task is now implemented in safety_monitor/safety_monitor.c (Story 4-2)
 
 void usb_rx_task(void* arg)
 {

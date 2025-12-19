@@ -82,6 +82,9 @@
 /** @brief I2C transaction timeout (ms) */
 #define TIMING_I2C_TIMEOUT_MS       50
 
+/** @brief I2C single read operation timeout (us) - AC5 requirement */
+#define TIMING_I2C_READ_TIMEOUT_US  500
+
 /** @brief Number of I2C retries on failure */
 #define TIMING_I2C_RETRY_COUNT      3
 
@@ -95,6 +98,9 @@
 
 /** @brief E-stop switch debounce time (ms) */
 #define TIMING_ESTOP_DEBOUNCE_MS    5
+
+/** @brief E-stop response time maximum (ms) - NFR12 requirement */
+#define TIMING_ESTOP_RESPONSE_MS    1
 
 /** @brief Limit switch debounce time (ms) */
 #define TIMING_LIMIT_DEBOUNCE_MS    10

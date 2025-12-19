@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<story-context id="4-2-limit-switch-monitoring" v="1.0">
+  <metadata>
+    <epicId>4</epicId>
+    <storyId>2</storyId>
+    <title>Limit Switch Monitoring</title>
+    <status>drafted</status>
+    <generatedAt>2025-12-17</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/4-2-limit-switch-monitoring.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>user</asA>
+    <iWant>limit switches monitored continuously</iWant>
+    <soThat>motion stops before mechanical damage occurs</soThat>
+    <tasks>
+      <task id="1" ac="1-5">Create safety_monitor component</task>
+      <task id="2" ac="1,2">Implement limit switch state cache</task>
+      <task id="3" ac="3">Implement safety_monitor_task</task>
+      <task id="4" ac="4">Implement debounce filtering</task>
+      <task id="5" ac="5">Implement polarity inversion</task>
+      <task id="6" ac="1,2">Implement CMD_LIM command handler</task>
+      <task id="7" ac="1-5">Add configuration constants</task>
+      <task id="8" ac="1-5">Unit tests for safety_monitor</task>
+      <task id="9" ac="3">Integration test - interrupt response</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <criterion id="AC1">All 14 limit switches readable via LIM command (response: OK X:00 Y:00...)</criterion>
+    <criterion id="AC2">Single axis limit query (LIM X returns OK X MIN:0 MAX:0)</criterion>
+    <criterion id="AC3">Interrupt triggers within 1ms of switch change, ISR notifies safety_monitor_task</criterion>
+    <criterion id="AC4">Debounce filtering prevents false triggers (TIMING_DEBOUNCE_MS)</criterion>
+    <criterion id="AC5">Polarity inversion configurable per switch (NO/NC)</criterion>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/sprint-artifacts/tech-spec-epic-4.md" title="Epic 4 Tech Spec" section="Story 4.2: Limit Switch Monitoring">
+        AC6-AC10 definitions: All 14 limit switches readable, interrupt triggers within 1ms, debounce filtering, polarity inversion, LIM command format.
+      </doc>
+      <doc path="docs/epics.md" title="Epics" section="Story 4.2: Limit Switch Monitoring">
+        User story and technical notes including limit switch mapping, polling/interrupt behavior, CMD_LIM format, and prerequisites.
+      </doc>
+      <doc path="docs/sprint-artifacts/4-1-mcp23017-io-expander-driver.md" title="Story 4-1" section="Dev Agent Record">
+        MCP23017 wrapper API, task notification patterns, interrupt handler registration, config constants defined.
+      </doc>
+      <doc path="docs/architecture.md" title="Architecture" section="Dual-Core Separation">
+        Core 0: safety_monitor_task at priority 24. Core 1: motion control. Use task notifications for cross-core communication.
+      </doc>
+    </docs>
+
+    <code>
+      <!-- MCP23017 Wrapper (Story 4-1 - REUSE) -->
+      <file path="firmware/components/drivers/mcp23017_wrapper/include/mcp23017_wrapper.h" kind="header" reason="MCP23017 API for reading limit switches">
+        <interface name="mcp23017_wrapper_init" signature="esp_err_t mcp23017_wrapper_init(void)"/>
+        <interface name="mcp23017_wrapper_read_port" signature="esp_err_t mcp23017_wrapper_read_port(mcp_device_t device, mcp_port_t port, uint8_t *value)"/>
+        <interface name="mcp23017_wrapper_read_all" signature="esp_err_t mcp23017_wrapper_read_all(mcp_device_t device, uint16_t *value)"/>
+        <interface name="mcp23017_wrapper_get_int_capture" signature="esp_err_t mcp23017_wrapper_get_int_capture(mcp_device_t device, uint16_t *capture)"/>
+        <interface name="mcp23017_wrapper_register_notify_task" signature="esp_err_t mcp23017_wrapper_register_notify_task(TaskHandle_t task_handle)"/>
+        <interface name="mcp23017_wrapper_install_isr" signature="esp_err_t mcp23017_wrapper_install_isr(void)"/>
+      </file>
+      <file path="firmware/components/drivers/mcp23017_wrapper/mcp23017_wrapper.c" kind="source" reason="Reference implementation for I2C reads and ISR handling"/>
+
+      <!-- Task Framework -->
+      <file path="firmware/components/control/tasks/include/task_defs.h" kind="header" reason="Task function declarations including safety_monitor_task">
+        <interface name="safety_monitor_task" signature="void safety_monitor_task(void* arg)" notes="Priority 24, Core 0"/>
+      </file>
+      <file path="firmware/components/control/tasks/task_stubs.c" kind="source" lines="38-47" reason="Current stub implementation to replace"/>
+
+      <!-- Command Executor -->
+      <file path="firmware/components/control/command_executor/include/command_executor.h" kind="header" reason="Command registration and dispatch API">
+        <interface name="cmd_executor_register" signature="esp_err_t cmd_executor_register(const CommandEntry* entry)"/>
+        <interface name="dispatch_command" signature="esp_err_t dispatch_command(const ParsedCommand* cmd, char* response, size_t resp_len)"/>
+        <interface name="SystemState" signature="enum { STATE_IDLE, STATE_READY, STATE_CONFIG, STATE_ESTOP, STATE_ERROR, STATE_ANY }"/>
+      </file>
+      <file path="firmware/components/control/command_executor/command_executor.c" kind="source" reason="Reference for registering new command handlers"/>
+
+      <!-- Configuration Headers -->
+      <file path="firmware/components/config/include/config_i2c.h" kind="config" reason="MCP23017 addresses and pin mappings to add">
+        <constant name="I2C_ADDR_MCP23017_0" value="0x20" defined="true"/>
+        <constant name="I2C_ADDR_MCP23017_1" value="0x21" defined="true"/>
+        <constant name="MCP0_X_LIMIT_MIN" value="0" defined="true"/>
+        <constant name="MCP0_X_LIMIT_MAX" value="1" defined="true"/>
+      </file>
+      <file path="firmware/components/config/include/config_timing.h" kind="config" reason="Add TIMING_DEBOUNCE_MS">
+        <constant name="TIMING_I2C_READ_TIMEOUT_US" value="500" defined="true"/>
+        <constant name="TIMING_DEBOUNCE_MS" value="10" defined="false" notes="TO ADD"/>
+      </file>
+      <file path="firmware/components/config/include/config_defaults.h" kind="config" reason="Add DEFAULT_LIMIT_POLARITY">
+        <constant name="DEFAULT_LIMIT_POLARITY" value="0" defined="false" notes="TO ADD: 0=NO, 1=NC"/>
+      </file>
+
+      <!-- Event Manager -->
+      <file path="firmware/components/events/event_manager/include/event_manager.h" kind="header" reason="Event publishing for limit switch events"/>
+
+      <!-- Existing Handler Examples -->
+      <file path="firmware/components/control/command_executor/enable_handler.cpp" kind="source" reason="Reference for command handler implementation pattern"/>
+    </code>
+
+    <dependencies>
+      <framework name="ESP-IDF" version="5.4 LTS"/>
+      <component name="espressif/mcp23017" version="0.1.1" source="ESP Component Registry"/>
+      <component name="espressif/i2c_bus" source="mcp23017 dependency"/>
+      <component name="FreeRTOS" source="ESP-IDF bundled" notes="Task notifications, mutexes"/>
+      <component name="Unity" source="ESP-IDF bundled" notes="Unit testing framework"/>
+    </dependencies>
+  </artifacts>
+
+  <interfaces>
+    <!-- Interfaces to IMPLEMENT in this story -->
+    <interface name="safety_monitor_init" kind="function" path="firmware/components/control/safety_monitor/safety_monitor.h">
+      <signature>esp_err_t safety_monitor_init(void)</signature>
+      <notes>Initialize safety monitor, register for MCP notifications, start task</notes>
+    </interface>
+    <interface name="safety_monitor_get_limit_state" kind="function" path="firmware/components/control/safety_monitor/safety_monitor.h">
+      <signature>uint16_t safety_monitor_get_limit_state(void)</signature>
+      <notes>Return cached 16-bit limit state (2 bits per axis x 8 axes)</notes>
+    </interface>
+    <interface name="safety_monitor_get_axis_limits" kind="function" path="firmware/components/control/safety_monitor/safety_monitor.h">
+      <signature>esp_err_t safety_monitor_get_axis_limits(uint8_t axis, bool *min_active, bool *max_active)</signature>
+      <notes>Get limit state for single axis</notes>
+    </interface>
+    <interface name="CMD_LIM" kind="command" path="firmware/components/control/command_executor/">
+      <signature>LIM [axis]</signature>
+      <response>OK X:00 Y:00 Z:01 A:00 B:00 C:10 D:00 E:--</response>
+      <response>OK X MIN:0 MAX:0 (single axis)</response>
+    </interface>
+
+    <!-- Interfaces to USE from Story 4-1 -->
+    <interface name="MCP_NOTIFY_LIMIT" kind="constant" path="firmware/components/drivers/mcp23017_wrapper/include/mcp23017_wrapper.h">
+      <value>(MCP_NOTIFY_MCP0_INTA | MCP_NOTIFY_MCP0_INTB)</value>
+      <notes>Use for xTaskNotifyWait() bit mask in safety_monitor_task</notes>
+    </interface>
+  </interfaces>
+
+  <constraints>
+    <constraint type="architecture">safety_monitor_task runs on Core 0 at priority 24 (highest)</constraint>
+    <constraint type="architecture">Use task notifications (not queues) for ISR-to-task communication</constraint>
+    <constraint type="architecture">MCP23017 reads must use mcp23017_wrapper (thread-safe, mutex-protected)</constraint>
+    <constraint type="config">No magic numbers - all pin mappings in config_i2c.h</constraint>
+    <constraint type="config">All timing values in config_timing.h</constraint>
+    <constraint type="safety">Interrupt-driven primary detection, polling as fallback only</constraint>
+    <constraint type="testing">Unit tests in component test/ directory, integration tests in firmware/test/integration/</constraint>
+  </constraints>
+
+  <tests>
+    <standards>
+      Unity framework for unit tests. Hardware-dependent tests use TEST_IGNORE_MESSAGE for graceful skip.
+      Follow patterns established in test_mcp23017_wrapper.c for interrupt/hardware tests.
+      Integration tests measure timing with esp_timer_get_time().
+    </standards>
+    <locations>
+      <location>firmware/components/control/safety_monitor/test/</location>
+      <location>firmware/test/integration/safety_monitor/</location>
+    </locations>
+    <ideas>
+      <idea ac="1,2">Test LIM command returns correct format for all axes and single axis</idea>
+      <idea ac="3">Test interrupt notification received within 1ms of simulated input change</idea>
+      <idea ac="3">Test cache updates correctly on interrupt notification</idea>
+      <idea ac="4">Test debounce filters rapid state changes to single event</idea>
+      <idea ac="5">Test polarity inversion correctly inverts NC switch readings</idea>
+      <idea ac="1-5">Test E axis returns "--" (no limits)</idea>
+    </ideas>
+  </tests>
+</story-context>

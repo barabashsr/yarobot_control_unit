@@ -118,6 +118,23 @@ public:
     using MotionCompleteCallback = std::function<void(int64_t total_pulses)>;
 
     /**
+     * @brief Error codes for motion errors (Story 3.11 AC4)
+     */
+    enum class MotionError : uint8_t {
+        NONE = 0,           ///< No error
+        BUFFER_UNDERRUN = 8, ///< Buffer underrun (matches ERR_MOTOR_FAULT numeric code)
+        PERIPHERAL_ERROR = 9, ///< RMT/MCPWM/LEDC peripheral error (matches ERR_COMMUNICATION)
+        TIMEOUT = 31,        ///< Operation timeout (matches ERR_SYSTEM_ERROR)
+    };
+
+    /**
+     * @brief Callback type for motion error notification (Story 3.11 AC4)
+     * @param error Error code indicating what went wrong
+     * @param pulses_completed Number of pulses generated before error
+     */
+    using MotionErrorCallback = std::function<void(MotionError error, int64_t pulses_completed)>;
+
+    /**
      * @brief Set callback for motion completion
      *
      * The callback is invoked when motion completes normally (all pulses sent
@@ -126,6 +143,17 @@ public:
      * @param cb Callback function, or nullptr to clear
      */
     virtual void setCompletionCallback(MotionCompleteCallback cb) = 0;
+
+    /**
+     * @brief Set callback for motion errors (Story 3.11 AC4)
+     *
+     * The callback is invoked when an error occurs during motion, such as
+     * buffer underrun, peripheral failure, or timeout. The axis should
+     * transition to ERROR state when this fires.
+     *
+     * @param cb Callback function, or nullptr to clear
+     */
+    virtual void setErrorCallback(MotionErrorCallback cb) = 0;
 
     /**
      * @brief Set position tracker for real-time position updates during motion

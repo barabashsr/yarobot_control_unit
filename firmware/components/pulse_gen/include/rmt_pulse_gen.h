@@ -71,6 +71,7 @@ public:
     int64_t getPulseCount() const override;
     float getCurrentVelocity() const override;
     void setCompletionCallback(MotionCompleteCallback cb) override;
+    void setErrorCallback(MotionErrorCallback cb) override;
     void setPositionTracker(IPositionTracker* tracker) override;
 
     /**
@@ -143,6 +144,7 @@ private:
     // ============================================================
 
     MotionCompleteCallback completion_callback_{nullptr};
+    MotionErrorCallback error_callback_{nullptr};  ///< Called on motion errors (Story 3.11 AC4)
     IPositionTracker* position_tracker_{nullptr};  ///< Called from encoder ISR
 
     // ============================================================

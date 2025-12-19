@@ -45,14 +45,14 @@ static void tearDown(void)
 
 TEST_CASE("init returns ESP_OK for D-axis channel", "[ledc_pulse_gen][AC1]")
 {
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     TEST_ASSERT_EQUAL(ESP_OK, gen.init());
 }
 
 TEST_CASE("init with LEDC_TIMER_D and LEDC_CHANNEL_D from config", "[ledc_pulse_gen][AC1]")
 {
     // Verify config constants are used
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     TEST_ASSERT_EQUAL(ESP_OK, gen.init());
     TEST_ASSERT_EQUAL(LEDC_TIMER_D, gen.getTimer());
     TEST_ASSERT_EQUAL(LEDC_CHANNEL_D, gen.getChannel());
@@ -64,7 +64,7 @@ TEST_CASE("init with LEDC_TIMER_D and LEDC_CHANNEL_D from config", "[ledc_pulse_
 
 TEST_CASE("startMove generates pulses with trapezoidal profile", "[ledc_pulse_gen][AC2]")
 {
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     TEST_ASSERT_EQUAL(ESP_OK, gen.init());
 
     gen.setCompletionCallback(test_completion_callback);
@@ -94,7 +94,7 @@ TEST_CASE("startMove generates pulses with trapezoidal profile", "[ledc_pulse_ge
 
 TEST_CASE("software counter tracks pulse count accurately", "[ledc_pulse_gen][AC3]")
 {
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     TEST_ASSERT_EQUAL(ESP_OK, gen.init());
 
     gen.setCompletionCallback(test_completion_callback);
@@ -120,7 +120,7 @@ TEST_CASE("software counter tracks pulse count accurately", "[ledc_pulse_gen][AC
 
 TEST_CASE("completion callback fires with correct pulse count", "[ledc_pulse_gen][AC4]")
 {
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     TEST_ASSERT_EQUAL(ESP_OK, gen.init());
 
     gen.setCompletionCallback(test_completion_callback);
@@ -146,7 +146,7 @@ TEST_CASE("completion callback fires with correct pulse count", "[ledc_pulse_gen
 
 TEST_CASE("direction change respects TIMING_DIR_SETUP_US delay", "[ledc_pulse_gen][AC5]")
 {
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     TEST_ASSERT_EQUAL(ESP_OK, gen.init());
 
     gen.setCompletionCallback(test_completion_callback);
@@ -179,7 +179,7 @@ TEST_CASE("direction change respects TIMING_DIR_SETUP_US delay", "[ledc_pulse_ge
 
 TEST_CASE("startVelocity generates continuous pulses until stop", "[ledc_pulse_gen][AC6]")
 {
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     TEST_ASSERT_EQUAL(ESP_OK, gen.init());
 
     // As per AC6: 10kHz velocity, 100k accel
@@ -210,7 +210,7 @@ TEST_CASE("startVelocity generates continuous pulses until stop", "[ledc_pulse_g
 
 TEST_CASE("stop decelerates gracefully", "[ledc_pulse_gen][AC7]")
 {
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     TEST_ASSERT_EQUAL(ESP_OK, gen.init());
 
     gen.setCompletionCallback(test_completion_callback);
@@ -241,7 +241,7 @@ TEST_CASE("stop decelerates gracefully", "[ledc_pulse_gen][AC7]")
 
 TEST_CASE("stopImmediate stops quickly without callback", "[ledc_pulse_gen][AC8]")
 {
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     TEST_ASSERT_EQUAL(ESP_OK, gen.init());
 
     gen.setCompletionCallback(test_completion_callback);
@@ -269,7 +269,7 @@ TEST_CASE("stopImmediate stops quickly without callback", "[ledc_pulse_gen][AC8]
 
 TEST_CASE("isRunning returns correct state during motion lifecycle", "[ledc_pulse_gen][AC9]")
 {
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     TEST_ASSERT_EQUAL(ESP_OK, gen.init());
 
     // Initially idle
@@ -290,7 +290,7 @@ TEST_CASE("isRunning returns correct state during motion lifecycle", "[ledc_puls
 
 TEST_CASE("getCurrentVelocity returns frequency during motion", "[ledc_pulse_gen][AC10]")
 {
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     TEST_ASSERT_EQUAL(ESP_OK, gen.init());
 
     TEST_ASSERT_EQUAL(ESP_OK, gen.startVelocity(20000.0f, 100000.0f));
@@ -311,7 +311,7 @@ TEST_CASE("getCurrentVelocity returns frequency during motion", "[ledc_pulse_gen
 
 TEST_CASE("getPulseCount returns running count during motion", "[ledc_pulse_gen][AC11]")
 {
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     TEST_ASSERT_EQUAL(ESP_OK, gen.init());
 
     TEST_ASSERT_EQUAL(ESP_OK, gen.startVelocity(10000.0f, 100000.0f));
@@ -332,7 +332,7 @@ TEST_CASE("getPulseCount returns running count during motion", "[ledc_pulse_gen]
 
 TEST_CASE("startMove accepts LIMIT_LEDC_MIN_FREQ_HZ (10 Hz)", "[ledc_pulse_gen][AC12]")
 {
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     TEST_ASSERT_EQUAL(ESP_OK, gen.init());
 
     TEST_ASSERT_EQUAL(ESP_OK, gen.startMove(10, static_cast<float>(LIMIT_LEDC_MIN_FREQ_HZ), 10.0f));
@@ -341,7 +341,7 @@ TEST_CASE("startMove accepts LIMIT_LEDC_MIN_FREQ_HZ (10 Hz)", "[ledc_pulse_gen][
 
 TEST_CASE("startMove accepts LIMIT_LEDC_MAX_FREQ_HZ (75 kHz)", "[ledc_pulse_gen][AC12]")
 {
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     TEST_ASSERT_EQUAL(ESP_OK, gen.init());
 
     TEST_ASSERT_EQUAL(ESP_OK, gen.startMove(1000, static_cast<float>(LIMIT_LEDC_MAX_FREQ_HZ), 500000.0f));
@@ -350,7 +350,7 @@ TEST_CASE("startMove accepts LIMIT_LEDC_MAX_FREQ_HZ (75 kHz)", "[ledc_pulse_gen]
 
 TEST_CASE("startMove rejects frequency above LIMIT_LEDC_MAX_FREQ_HZ", "[ledc_pulse_gen][AC12]")
 {
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     TEST_ASSERT_EQUAL(ESP_OK, gen.init());
 
     // Above LEDC limit should be rejected
@@ -359,7 +359,7 @@ TEST_CASE("startMove rejects frequency above LIMIT_LEDC_MAX_FREQ_HZ", "[ledc_pul
 
 TEST_CASE("startMove rejects zero velocity", "[ledc_pulse_gen][AC12]")
 {
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     TEST_ASSERT_EQUAL(ESP_OK, gen.init());
 
     TEST_ASSERT_EQUAL(ESP_ERR_INVALID_ARG, gen.startMove(1000, 0.0f, 100000.0f));
@@ -367,7 +367,7 @@ TEST_CASE("startMove rejects zero velocity", "[ledc_pulse_gen][AC12]")
 
 TEST_CASE("startMove rejects negative velocity", "[ledc_pulse_gen][AC12]")
 {
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     TEST_ASSERT_EQUAL(ESP_OK, gen.init());
 
     TEST_ASSERT_EQUAL(ESP_ERR_INVALID_ARG, gen.startMove(1000, -100.0f, 100000.0f));
@@ -375,7 +375,7 @@ TEST_CASE("startMove rejects negative velocity", "[ledc_pulse_gen][AC12]")
 
 TEST_CASE("startMove rejects zero acceleration", "[ledc_pulse_gen][AC12]")
 {
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     TEST_ASSERT_EQUAL(ESP_OK, gen.init());
 
     TEST_ASSERT_EQUAL(ESP_ERR_INVALID_ARG, gen.startMove(1000, 10000.0f, 0.0f));
@@ -431,7 +431,7 @@ TEST_CASE("LIMIT_LEDC_MAX_FREQ_HZ is defined", "[ledc_pulse_gen][AC13]")
 
 TEST_CASE("startMove with zero pulses returns ESP_OK immediately", "[ledc_pulse_gen][edge]")
 {
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     TEST_ASSERT_EQUAL(ESP_OK, gen.init());
 
     TEST_ASSERT_EQUAL(ESP_OK, gen.startMove(0, 10000.0f, 100000.0f));
@@ -440,7 +440,7 @@ TEST_CASE("startMove with zero pulses returns ESP_OK immediately", "[ledc_pulse_
 
 TEST_CASE("startMove handles negative pulses (reverse direction)", "[ledc_pulse_gen][edge]")
 {
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     TEST_ASSERT_EQUAL(ESP_OK, gen.init());
 
     gen.setCompletionCallback(test_completion_callback);
@@ -462,7 +462,7 @@ TEST_CASE("startMove handles negative pulses (reverse direction)", "[ledc_pulse_
 
 TEST_CASE("triangular profile for short moves", "[ledc_pulse_gen][edge]")
 {
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     TEST_ASSERT_EQUAL(ESP_OK, gen.init());
 
     gen.setCompletionCallback(test_completion_callback);
@@ -487,7 +487,7 @@ TEST_CASE("triangular profile for short moves", "[ledc_pulse_gen][edge]")
 
 TEST_CASE("startMove fails if not initialized", "[ledc_pulse_gen][error]")
 {
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     // Don't call init()
 
     TEST_ASSERT_EQUAL(ESP_ERR_INVALID_STATE, gen.startMove(1000, 10000.0f, 100000.0f));
@@ -495,7 +495,7 @@ TEST_CASE("startMove fails if not initialized", "[ledc_pulse_gen][error]")
 
 TEST_CASE("startVelocity fails if not initialized", "[ledc_pulse_gen][error]")
 {
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     // Don't call init()
 
     TEST_ASSERT_EQUAL(ESP_ERR_INVALID_STATE, gen.startVelocity(10000.0f, 100000.0f));
@@ -503,7 +503,7 @@ TEST_CASE("startVelocity fails if not initialized", "[ledc_pulse_gen][error]")
 
 TEST_CASE("stop fails if not running", "[ledc_pulse_gen][error]")
 {
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     TEST_ASSERT_EQUAL(ESP_OK, gen.init());
 
     TEST_ASSERT_EQUAL(ESP_ERR_INVALID_STATE, gen.stop(100000.0f));
@@ -511,7 +511,7 @@ TEST_CASE("stop fails if not running", "[ledc_pulse_gen][error]")
 
 TEST_CASE("stop fails with invalid deceleration", "[ledc_pulse_gen][error]")
 {
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     TEST_ASSERT_EQUAL(ESP_OK, gen.init());
 
     TEST_ASSERT_EQUAL(ESP_OK, gen.startVelocity(10000.0f, 100000.0f));
@@ -532,7 +532,7 @@ TEST_CASE("stop fails with invalid deceleration", "[ledc_pulse_gen][error]")
 
 TEST_CASE("startVelocity accepts LIMIT_LEDC_MIN_FREQ_HZ", "[ledc_pulse_gen][boundary]")
 {
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     TEST_ASSERT_EQUAL(ESP_OK, gen.init());
 
     TEST_ASSERT_EQUAL(ESP_OK, gen.startVelocity(static_cast<float>(LIMIT_LEDC_MIN_FREQ_HZ), 10.0f));
@@ -541,7 +541,7 @@ TEST_CASE("startVelocity accepts LIMIT_LEDC_MIN_FREQ_HZ", "[ledc_pulse_gen][boun
 
 TEST_CASE("startVelocity accepts LIMIT_LEDC_MAX_FREQ_HZ", "[ledc_pulse_gen][boundary]")
 {
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     TEST_ASSERT_EQUAL(ESP_OK, gen.init());
 
     TEST_ASSERT_EQUAL(ESP_OK, gen.startVelocity(static_cast<float>(LIMIT_LEDC_MAX_FREQ_HZ), 500000.0f));
@@ -550,7 +550,7 @@ TEST_CASE("startVelocity accepts LIMIT_LEDC_MAX_FREQ_HZ", "[ledc_pulse_gen][boun
 
 TEST_CASE("startVelocity rejects velocity above LIMIT_LEDC_MAX_FREQ_HZ", "[ledc_pulse_gen][boundary]")
 {
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     TEST_ASSERT_EQUAL(ESP_OK, gen.init());
 
     TEST_ASSERT_EQUAL(ESP_ERR_INVALID_ARG, gen.startVelocity(100000.0f, 500000.0f));
@@ -558,7 +558,7 @@ TEST_CASE("startVelocity rejects velocity above LIMIT_LEDC_MAX_FREQ_HZ", "[ledc_
 
 TEST_CASE("startVelocity allows negative velocity (reverse direction)", "[ledc_pulse_gen][boundary]")
 {
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     TEST_ASSERT_EQUAL(ESP_OK, gen.init());
 
     // Negative velocity = reverse direction
@@ -575,7 +575,7 @@ TEST_CASE("startVelocity allows negative velocity (reverse direction)", "[ledc_p
 
 TEST_CASE("setPositionTracker sets tracker and updates position during motion", "[ledc_pulse_gen][position_tracking]")
 {
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     TEST_ASSERT_EQUAL(ESP_OK, gen.init());
 
     SoftwareTracker tracker;
@@ -612,7 +612,7 @@ TEST_CASE("setPositionTracker sets tracker and updates position during motion", 
 
 TEST_CASE("position tracker direction is set before motion", "[ledc_pulse_gen][position_tracking]")
 {
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     TEST_ASSERT_EQUAL(ESP_OK, gen.init());
 
     SoftwareTracker tracker;
@@ -654,7 +654,7 @@ TEST_CASE("position tracker direction is set before motion", "[ledc_pulse_gen][p
 
 TEST_CASE("position updates occur periodically during motion", "[ledc_pulse_gen][position_tracking]")
 {
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     TEST_ASSERT_EQUAL(ESP_OK, gen.init());
 
     SoftwareTracker tracker;
@@ -684,7 +684,7 @@ TEST_CASE("position updates occur periodically during motion", "[ledc_pulse_gen]
 
 TEST_CASE("null tracker does not crash", "[ledc_pulse_gen][position_tracking]")
 {
-    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D);
+    LedcPulseGenerator gen(GPIO_D_STEP, LEDC_TIMER_D, LEDC_CHANNEL_D, PCNT_UNIT_D);
     TEST_ASSERT_EQUAL(ESP_OK, gen.init());
 
     // Don't set tracker (remains null)

@@ -28,6 +28,37 @@ This document provides the complete epic and story breakdown for yarobot_control
 
 ---
 
+## Architecture Decision Records (ADR) Traceability
+
+This section tracks architectural changes documented in `docs/architecture-changes/` and their impact on stories.
+
+| ADR | Date | Status | Affected Stories | Summary |
+|-----|------|--------|------------------|---------|
+| `fastaccelstepper-migration-strategy.md` | 2025-12-06 | Approved | 3.2, 3.5 | RMT refactored to callback encoder pattern (no DMA). Position tracking via encoder callback. All 4 RMT channels usable simultaneously. |
+| `pcnt-overflow-handling.md` | 2025-12-16 | Implemented | 3.3, 3.5 | Task-based PCNT overflow detection for Y axis. ISR approach disabled due to bugs. PCNT wraps 32767→0. |
+| `ledc-integrated-pcnt.md` | 2025-12-17 | Implemented | 3.4, 3.5 | D-axis now uses hardware PCNT (was software estimation). Constructor change with pcnt_unit_id parameter. |
+| `ledc-direction-aware-position.md` | 2025-12-17 | Implemented | 3.4 | Direction-aware position tracking for D-axis matching MCPWM pattern. Bug fixes for stuck velocity, position in reverse. |
+| `rmt-encoder-refactor.md` | 2025-12-06 | Superseded | - | Draft superseded by fastaccelstepper-migration-strategy.md |
+
+### Key Architectural Decisions
+
+1. **RMT Pulse Generation (X, Z, A, B):** FastAccelStepper callback encoder pattern replaces DMA streaming. Position tracked in encoder callback (no PCNT - ESP32-S3 only has 4 units).
+
+2. **PCNT Overflow Handling (Y, C, D):** Task-based delta detection (threshold -30000) replaces buggy ISR-based watch points. Counter wraps 32767→0 (32768 values per overflow).
+
+3. **Direction-Aware Position:** Formula: `last_completed_position_ + (direction ? +pcnt_delta : -pcnt_delta)`. Overflow counter persists across moves.
+
+### PCNT Unit Allocation
+
+| PCNT Unit | Axis | Pulse Generator |
+|-----------|------|-----------------|
+| 0 | Y | McpwmPulseGenerator |
+| 1 | C | McpwmPulseGenerator |
+| 2 | D | LedcPulseGenerator |
+| 3 | Spare | Reserved |
+
+---
+
 ## Functional Requirements Inventory
 
 **Motor Control Capabilities (FR1-FR10):**
@@ -920,7 +951,7 @@ uint64_t sr_get_state(void);                              // Read current 40-bit
 
 **As a** developer,
 **I want** RMT-based pulse generation for servo axes,
-**So that** I can generate precise STEP pulses up to 500 kHz with DMA streaming.
+**So that** I can generate precise STEP pulses up to 500 kHz with all 4 RMT channels operating simultaneously.
 
 **Acceptance Criteria:**
 
@@ -946,15 +977,37 @@ public:
 };
 ```
 
-**Status: DONE** - Implemented in Story 3-2 with streaming double-buffer RMT architecture.
+**Status: DONE** - Implemented with FastAccelStepper callback encoder pattern (Story 3-9c refactor).
 
-**RMT Implementation:**
+> **ADR Reference:** `docs/architecture-changes/fastaccelstepper-migration-strategy.md`
+
+**RMT Implementation (Callback Encoder Pattern):**
 **Given** I call `startMove(10000, 200000, 1000000)` (10000 pulses, 200kHz max velocity, 1M accel)
-**When** RMT generates pulses
+**When** RMT generates pulses via callback encoder
 **Then** exactly 10000 pulses are output with ±1% timing accuracy
 **And** pulse width is 50% duty cycle (±5%)
 **And** generation stops automatically after pulse_count reached
 **And** callback fires on completion with total_pulses count
+
+**Mid-Motion Blending (NEW):**
+**Given** motion is in progress
+**When** I call `startMove()` with a new target
+**Then** the new profile blends smoothly from current velocity
+**And** no "axis busy" error is returned
+**And** blend response latency is <10ms
+
+**Position Tracking (Encoder Callback):**
+**Given** ESP32-S3 has only 4 PCNT units (used by Y, C, D axes)
+**When** RMT generates pulses
+**Then** position is tracked in encoder callback via atomic `pulse_count_`
+**And** position update latency is bounded (<10ms at all frequencies)
+
+| Frequency | Steps/Command | Position Update Latency |
+|-----------|---------------|-------------------------|
+| 200 kHz | 32 | 0.16 ms |
+| 50 kHz | 32 | 0.64 ms |
+| 10 kHz | 32 | 3.2 ms |
+| 1 kHz | 10 | 10 ms |
 
 **Frequency Range:**
 **And** frequencies from LIMIT_MIN_PULSE_FREQ_HZ (1) to LIMIT_MAX_PULSE_FREQ_HZ (500000) are supported
@@ -970,10 +1023,11 @@ public:
 
 **Technical Notes:**
 - Implement in `firmware/components/pulse_gen/rmt_pulse_gen.cpp`
-- Use RMT TX with DMA (esp_rmt_new_tx_channel)
-- Use RMT encoder for pulse pattern generation
-- DMA streaming double-buffer for unlimited motion length
-- End-of-transmission callback for completion event
+- **Architecture:** FastAccelStepper callback encoder pattern (NOT DMA streaming)
+- RMT config: `with_dma=false`, `mem_block_symbols=48`, `resolution_hz=16MHz`
+- Command queue: 32-entry ring buffer filled by ramp generator task
+- Position tracking: Software-based in encoder callback (no PCNT for RMT axes)
+- All 4 RMT channels usable simultaneously (resolved previous channel exhaustion)
 - FR2: Up to 500 kHz pulse generation (200 kHz default max)
 
 ---
@@ -982,7 +1036,7 @@ public:
 
 **As a** developer,
 **I want** MCPWM-based pulse generation for Y and C axes with hardware pulse counting,
-**So that** I can generate STEP pulses and track position via PCNT.
+**So that** I can generate STEP pulses and track position via PCNT with continuous overflow handling.
 
 **Acceptance Criteria:**
 
@@ -1002,13 +1056,36 @@ public:
 **When** MCPWM generates pulses
 **Then** pulses are output at 25kHz
 **And** PCNT_UNIT_Y counts pulses internally for position tracking
-**And** generation stops after 5000 pulses (via PCNT limit callback)
+**And** generation stops after 5000 pulses (via profile completion check)
+
+**PCNT Overflow Handling (Implemented):**
+
+> **ADR Reference:** `docs/architecture-changes/pcnt-overflow-handling.md`
+
+**Given** PCNT is a 16-bit counter (range 0-32767 with `accum_count=false`)
+**When** counter exceeds 32767 pulses
+**Then** task-based overflow detection tracks wrap-around
+**And** position formula: `raw_count + (overflow_count * 32768)`
+**And** continuous position tracking works for unlimited motion length
+
+| Detection Method | Approach | Rationale |
+|------------------|----------|-----------|
+| ISR-based | **Disabled** | Caused stale watch point bugs and position corruption |
+| Task-based delta | **Implemented** | Runs in profileTimerCallback (50 Hz), detects large negative deltas |
+
+**Key Discovery:** With `accum_count=false`, PCNT wraps from 32767 → 0 (NOT to -32768). Each overflow represents 32768 pulses.
+
+**Direction-Aware Position:**
+**Given** motion direction is tracked in software (`direction_` member)
+**When** position is calculated
+**Then** `position_delta = direction ? +pcnt_delta : -pcnt_delta`
+**And** absolute position uses stable reference points (`last_completed_position_`, `pcnt_at_last_completion_`)
 
 **PCNT Integration:**
 **Given** MCPWM is generating pulses
 **When** I query pulse count
-**Then** PCNT_UNIT_Y or PCNT_UNIT_C returns accurate count
-**And** count direction reflects forward/reverse motion
+**Then** PCNT_UNIT_Y or PCNT_UNIT_C returns accurate count with overflow accumulation
+**And** count direction reflects forward/reverse motion via software sign application
 
 **C-Axis Stepper Specifics:**
 **Given** C axis is a stepper (not servo)
@@ -1020,8 +1097,9 @@ public:
 **Technical Notes:**
 - Implement in `firmware/components/pulse_gen/mcpwm_pulse_gen.cpp`
 - ESP-IDF v5.x: Use `io_loop_back` in PCNT and MCPWM config for internal routing
-- Reference: https://esp32.com/viewtopic.php?t=30817
-- PCNT high/low limits trigger stop and callback
+- PCNT overflow: Task-based delta detection (threshold -30000 for wrap detection)
+- New constant: `MCPWM_PCNT_OVERFLOW_RANGE = 32768`
+- Profile update interval: 20ms (50 Hz) - sufficient for overflow detection at pulse rates up to ~1.5 MHz
 - Y axis: servo with PCNT backup counting
 - C axis: stepper relying on PCNT for position
 
@@ -1030,36 +1108,71 @@ public:
 ### Story 3.4: LEDC Pulse Generator (D Axis)
 
 **As a** developer,
-**I want** LEDC-based pulse generation for D axis stepper,
-**So that** the discrete stepper can generate motion pulses.
+**I want** LEDC-based pulse generation for D axis stepper with hardware PCNT position tracking,
+**So that** the discrete stepper can generate motion pulses with accurate hardware-based position feedback.
 
 **Acceptance Criteria:**
 
-**Given** LEDC_TIMER and LEDC_CHANNEL_D are configured
+**Given** LEDC_TIMER, LEDC_CHANNEL_D, and PCNT_UNIT_D are configured
 **When** I request pulse generation
 **Then** STEP pulses are generated on GPIO_D_STEP
 
-**LEDC Implementation (implements IPulseGenerator):**
-**Given** I call `start(10000, 2000)` on D axis
-**When** LEDC generates pulses
-**Then** pulses are output at 10kHz
-**And** software counter tracks pulse count
-**And** generation stops after 2000 pulses (via timer interrupt)
+> **ADR References:**
+> - `docs/architecture-changes/ledc-integrated-pcnt.md` (PCNT integration)
+> - `docs/architecture-changes/ledc-direction-aware-position.md` (Direction-aware tracking)
 
-**Software Position Tracking:**
-**Given** no hardware PCNT for D axis
-**When** motion runs
-**Then** software counter increments per pulse (timer-based)
-**And** position accuracy is maintained within tolerance
+**LEDC Implementation (implements IPulseGenerator):**
+**Given** I call `startMove(10000, 2000, 1000)` on D axis
+**When** LEDC generates pulses
+**Then** pulses are output with trapezoidal profile
+**And** hardware PCNT tracks pulse count (not software estimation)
+**And** generation stops after target pulses reached
+
+**Constructor Change (Breaking):**
+```cpp
+// OLD: LedcPulseGenerator(int gpio_num, ledc_timer_t timer, ledc_channel_t channel);
+// NEW: LedcPulseGenerator(int gpio_num, ledc_timer_t timer, ledc_channel_t channel, int pcnt_unit_id);
+```
+
+**Hardware PCNT Integration:**
+**Given** GPIO_D_STEP is configured as GPIO_MODE_INPUT_OUTPUT (internal loopback)
+**When** LEDC generates pulses
+**Then** PCNT_UNIT_D (unit 2) counts rising edges via internal GPIO matrix routing
+**And** position is read from hardware, not software estimation
+**And** drift from timing inaccuracies is eliminated
+
+**PCNT Overflow Handling:**
+**Given** PCNT is a 16-bit counter (same as MCPWM)
+**When** counter exceeds 32767 pulses
+**Then** task-based overflow detection tracks wrap-around (same pattern as McpwmPulseGenerator)
+**And** position formula: `raw_count + (overflow_count * LIMIT_PCNT_OVERFLOW_RANGE)`
+**And** overflow counter persists across moves (NOT reset in `startMove()`/`startVelocity()`)
+
+**Direction-Aware Position Tracking:**
+**Given** PCNT only counts rising edges (doesn't know direction)
+**When** motion runs in reverse
+**Then** direction is applied in software during position calculation
+**And** formula: `position_delta = direction ? +pcnt_delta : -pcnt_delta`
+**And** absolute position: `last_completed_position_ + position_delta`
+
+**Bug Fixes Implemented:**
+| Issue | Root Cause | Fix |
+|-------|------------|-----|
+| Velocity stuck at 100 Hz | Software estimate integer truncation | Use hardware PCNT for `velocityAtPosition()` |
+| Position increasing in reverse | PCNT doesn't know direction | Apply direction sign in software |
+| Stop command not working | Completion check used software estimate (0) | Use `pcnt_progress` from hardware |
+| Overflow count reset | `startMove()` incorrectly reset overflow | Only `reset()` clears overflow history |
 
 **Prerequisites:** Story 3.1
 
 **Technical Notes:**
 - Implement in `firmware/components/pulse_gen/ledc_pulse_gen.cpp`
-- LEDC provides frequency generation
-- Use high-resolution timer for pulse counting
-- Less precise than RMT/MCPWM but sufficient for D axis stepper
-- Could alternatively use GPIO + timer for manual pulse generation
+- **Constructor:** Now requires `pcnt_unit_id` parameter (PCNT_UNIT_D = 2)
+- **Position tracking:** Hardware PCNT with overflow handling (same pattern as MCPWM)
+- **Direction tracking:** Software-based, applied during position calculation
+- **Profile update interval:** 1ms (faster than MCPWM's 20ms)
+- **New members:** `last_completed_position_`, `pcnt_at_last_completion_`, `absolute_position_`
+- **Type change:** `LedcTrapezoidalProfile::target_pulses` changed from `int32_t` to `int64_t`
 
 ---
 
@@ -1067,7 +1180,7 @@ public:
 
 **As a** developer,
 **I want** position tracking abstractions,
-**So that** each motor type can track position appropriately.
+**So that** each motor type can track position appropriately with unified overflow handling.
 
 **Acceptance Criteria:**
 
@@ -1083,19 +1196,48 @@ public:
 };
 ```
 
-**PCNT Tracker (Y, C, D axes):**
+**ESP32-S3 PCNT Allocation:**
+| PCNT Unit | Axis | Pulse Generator | Notes |
+|-----------|------|-----------------|-------|
+| 0 | Y | McpwmPulseGenerator | Servo with PCNT backup |
+| 1 | C | McpwmPulseGenerator | Stepper, PCNT is primary |
+| 2 | D | LedcPulseGenerator | Stepper, PCNT is primary |
+| 3 | (Spare) | Reserved | Available for future use |
+
+**RMT Axes (X, Z, A, B) - Encoder Callback Tracking:**
+
+> **ADR Reference:** `docs/architecture-changes/fastaccelstepper-migration-strategy.md`
+
+**Given** RMT generates pulses via callback encoder
+**When** motion runs
+**Then** position is tracked in encoder callback via atomic `pulse_count_`
+**And** no hardware PCNT required (ESP32-S3 only has 4 PCNT units)
+**And** position update latency is bounded (<10ms at all frequencies)
+
+**PCNT Axes (Y, C, D) - Hardware Counting with Overflow:**
+
+> **ADR References:**
+> - `docs/architecture-changes/pcnt-overflow-handling.md`
+> - `docs/architecture-changes/ledc-integrated-pcnt.md`
+> - `docs/architecture-changes/ledc-direction-aware-position.md`
+
 **Given** PCNT unit is configured (PCNT_UNIT_Y=0, PCNT_UNIT_C=1, PCNT_UNIT_D=2)
 **When** pulses are generated
-**Then** hardware counter tracks position
-**And** `getPosition()` returns accurate pulse count
-**And** overflow handling extends range beyond 16-bit PCNT limit
-**And** D axis uses GPIO internal loopback (LEDC output → PCNT input on same GPIO)
+**Then** hardware counter tracks position with overflow handling
+**And** `getPosition()` returns: `raw_count + (overflow_count * 32768)`
+**And** direction is applied in software: `direction ? +delta : -delta`
 
-**Software Tracker (X, Z, A, B axes):**
-**Given** RMT generates pulses
-**When** motion runs
-**Then** software counter tracks commanded pulses
-**And** position updated on motion completion callback
+**Overflow Detection Pattern (Unified):**
+```cpp
+// Task-based delta detection (NOT ISR - ISR caused bugs)
+int32_t delta = current_count - prev_raw_pcnt_count_;
+if (delta < -30000) {
+    overflow_count_.fetch_add(1, std::memory_order_relaxed);
+}
+prev_raw_pcnt_count_ = current_count;
+```
+
+**Key Implementation Detail:** Overflow counter must NOT be reset in `startMove()` or `startVelocity()`. Only `reset()` should clear overflow history to maintain absolute position across moves.
 
 **Time-Based Tracker (E axis):**
 **Given** E axis is discrete actuator
@@ -1107,15 +1249,17 @@ public:
 
 **Technical Notes:**
 - Implement in `firmware/components/position/`
-- PCNT tracker wraps ESP-IDF PCNT driver
-- Software tracker uses atomic counters updated from callbacks
+- **RMT axes:** Position tracked in encoder callback (software), no external tracker needed
+- **PCNT axes:** Integrated into pulse generators (McpwmPulseGenerator, LedcPulseGenerator)
+- **Overflow handling:** Task-based delta detection, threshold -30000
+- **Direction tracking:** Software-applied sign during position calculation
 - E axis: binary state, time-based position interpolation
 - All positions stored as int64_t pulses, converted to user units via config
 
 **Implementation Notes (DONE):**
 - **IPositionTracker Interface**: Created header-only abstract interface with `init()`, `reset(int64_t)`, `getPosition()`, `setDirection(bool)` methods.
-- **PcntTracker (Y, C, D)**: Hardware PCNT-based position tracking. Uses ESP-IDF 5.x PCNT API with watch points at ±32767 for overflow detection. Overflow ISR extends 16-bit counter to int64_t via atomic accumulator. D axis uses GPIO internal loopback (GPIO_MODE_INPUT_OUTPUT) so LEDC output and PCNT input share the same GPIO.
-- **SoftwareTracker (X, Z, A, B)**: Atomic-based position tracking. Receives pulse counts via `addPulses()` method for pulse generator callbacks. Uses `std::atomic<int64_t>` for thread-safe position.
+- **PCNT Tracking (Y, C, D)**: Now integrated directly into pulse generators. Task-based overflow detection replaces buggy ISR approach. Direction-aware position calculation uses stable reference points.
+- **Encoder Callback Tracking (X, Z, A, B)**: Position tracked in RMT callback encoder. Bounded-latency updates (<10ms). No external PCNT required.
 - **TimeTracker (E)**: Time-based binary position tracking for discrete actuator. Returns 0 (retracted) or 1 (extended). Position interpolated during motion based on `TIMING_E_AXIS_TRAVEL_MS`.
 - **Config Constants**: `LIMIT_PCNT_HIGH_LIMIT` (32767), `LIMIT_PCNT_LOW_LIMIT` (-32767) in config_limits.h; `TIMING_E_AXIS_TRAVEL_MS` (1000) in config_timing.h; `PCNT_UNIT_D` (2) in config_peripherals.h.
 

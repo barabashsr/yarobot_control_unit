@@ -279,7 +279,51 @@
  */
 #define LIMIT_PCNT_LOW_LIMIT        (-32767)
 
+/**
+ * @brief PCNT overflow range for position accumulation
+ *
+ * With accum_count=false, the PCNT counter wraps from 32767 to 0.
+ * Each overflow represents 32768 pulses (0 to 32767 inclusive).
+ */
+#define LIMIT_PCNT_OVERFLOW_RANGE   32768
+
 /** @} */ // end limits_motion
+
+/**
+ * @defgroup limits_soft_limits Soft Limits (Story 4-3)
+ * @brief Per-axis position soft limits
+ *
+ * Soft limits prevent motion commands from exceeding configured bounds.
+ * Motion controller checks these before starting any move.
+ * Values in SI units (meters for linear, radians for rotary).
+ *
+ * @note Set to very large values by default (effectively disabled).
+ *       Configure per-axis via runtime commands or configuration.
+ * @{
+ */
+
+/**
+ * @brief Default minimum soft limit (meters/radians)
+ *
+ * Very negative value effectively disables minimum soft limit.
+ */
+#define DEFAULT_SOFT_LIMIT_MIN      (-1000000.0f)
+
+/**
+ * @brief Default maximum soft limit (meters/radians)
+ *
+ * Very positive value effectively disables maximum soft limit.
+ */
+#define DEFAULT_SOFT_LIMIT_MAX      (1000000.0f)
+
+/**
+ * @brief Soft limits enabled by default
+ *
+ * Set to 0 to disable soft limit checking by default.
+ */
+#define DEFAULT_SOFT_LIMITS_ENABLED 1
+
+/** @} */ // end limits_soft_limits
 
 /**
  * @defgroup limits_stack FreeRTOS Task Stack Sizes

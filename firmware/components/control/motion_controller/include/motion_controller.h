@@ -240,3 +240,57 @@ private:
 MotionController* getMotionController();
 
 #endif // MOTION_CONTROLLER_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**
+ * @defgroup motion_controller_c_api C API for Motion Controller
+ * @brief C-compatible wrappers for accessing MotionController from C code
+ * @{
+ */
+
+/**
+ * @brief Stop motion on a single axis (C wrapper)
+ *
+ * @param[in] axis Axis index (0 to LIMIT_NUM_AXES-1)
+ *
+ * @return ESP_OK on success
+ * @return ESP_ERR_INVALID_STATE if not initialized
+ * @return ESP_ERR_INVALID_ARG if axis is invalid
+ */
+esp_err_t motion_controller_stop_axis(uint8_t axis);
+
+/**
+ * @brief Stop motion on all axes immediately (C wrapper)
+ *
+ * Used by E-stop to halt all pulse generators.
+ *
+ * @return ESP_OK on success
+ * @return ESP_ERR_INVALID_STATE if not initialized
+ */
+esp_err_t motion_controller_stop_all_axes(void);
+
+/**
+ * @brief Check if motion controller is initialized (C wrapper)
+ *
+ * @return true if initialized
+ */
+bool motion_controller_is_initialized(void);
+
+/**
+ * @brief Get position of a single axis (C wrapper)
+ *
+ * @param[in] axis Axis index
+ * @param[out] position Pointer to store position value
+ *
+ * @return ESP_OK on success
+ */
+esp_err_t motion_controller_get_position(uint8_t axis, float* position);
+
+/** @} */ // end motion_controller_c_api
+
+#ifdef __cplusplus
+}
+#endif

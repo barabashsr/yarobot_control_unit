@@ -113,6 +113,9 @@
 /** @brief Clear alarm/fault */
 #define CMD_CLR             "CLR"
 
+/** @brief Query limit switch states */
+#define CMD_LIM             "LIM"
+
 /** @brief Start YAML configuration upload */
 #define CMD_CFGSTART        "CFGSTART"
 
@@ -219,6 +222,21 @@
 /** @brief System error state - requires reset */
 #define ERR_SYSTEM_ERROR            "E031"
 
+/** @brief Limit switch active - motion blocked in this direction (Story 4-3) */
+#define ERR_LIMIT_ACTIVE            "E032"
+
+/** @brief Both limits active - axis faulted (Story 4-3 ADR-024) */
+#define ERR_BOTH_LIMITS_FAULT       "E033"
+
+/** @brief E-stop button still pressed during RST (Story 4-4) */
+#define ERR_ESTOP_ACTIVE            "E034"
+
+/** @brief Brake is auto-managed - manual control rejected (Story 4-5) */
+#define ERR_BRAKE_AUTO              "E035"
+
+/** @brief Axis has no brake hardware (Story 4-5) */
+#define ERR_AXIS_NO_BRAKE           "E036"
+
 /** @} */ // end err_codes
 
 /**
@@ -290,6 +308,21 @@
 /** @brief Message for ERR_SYSTEM_ERROR */
 #define MSG_SYSTEM_ERROR            "System in error state"
 
+/** @brief Message for ERR_LIMIT_ACTIVE (Story 4-3) */
+#define MSG_LIMIT_ACTIVE            "Limit switch active - motion blocked"
+
+/** @brief Message for ERR_BOTH_LIMITS_FAULT (Story 4-3) */
+#define MSG_BOTH_LIMITS_FAULT       "Both limits active - axis faulted"
+
+/** @brief Message for ERR_ESTOP_ACTIVE (Story 4-4) */
+#define MSG_ESTOP_ACTIVE            "E-stop button still pressed"
+
+/** @brief Message for ERR_BRAKE_AUTO (Story 4-5) */
+#define MSG_BRAKE_AUTO              "Brake is auto-managed"
+
+/** @brief Message for ERR_AXIS_NO_BRAKE (Story 4-5) */
+#define MSG_AXIS_NO_BRAKE           "Axis has no brake hardware"
+
 /** @} */ // end err_messages
 
 /**
@@ -345,6 +378,9 @@
 
 /** @brief Homing paused - awaiting user command */
 #define EVT_HOMING_PAUSED           "HOMEPAUSE"
+
+/** @brief Brake state changed: "EVENT BRAKE <axis> ENGAGED|RELEASED" (Story 4-5) */
+#define EVT_BRAKE                   "BRAKE"
 
 /** @brief Boot limit scan complete */
 #define EVT_LIMITS_SCANNED          "LIMITSCAN"

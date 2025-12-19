@@ -135,6 +135,17 @@ protected:
     void onMotionComplete(int64_t total_pulses);
 
     /**
+     * @brief Handle motion error from pulse generator (Story 3.11 AC4)
+     *
+     * Called by pulse generator when a motion error occurs. Publishes
+     * EVT_MOTION_ERROR event, transitions state to ERROR, and stops motion.
+     *
+     * @param error Error code from pulse generator
+     * @param pulses_completed Pulses generated before error occurred
+     */
+    void onMotionError(IPulseGenerator::MotionError error, int64_t pulses_completed);
+
+    /**
      * @defgroup motor_helpers Protected Helper Methods
      * @brief Shared utility methods for subclasses
      * @{

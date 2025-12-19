@@ -394,8 +394,7 @@ extern "C" void app_main(void)
     ESP_LOGI(TAG, "Creating FreeRTOS tasks...");
 
     // Core 0 tasks: Communication, safety, coordination
-    xTaskCreatePinnedToCore(safety_monitor_task, "safety", STACK_SAFETY_TASK,
-                            NULL, 24, NULL, 0);
+    // Note: safety_monitor_task is created by safety_monitor_init() in motor_system_init() (Story 4-2)
     xTaskCreatePinnedToCore(usb_rx_task, "usb_rx", STACK_USB_RX_TASK,
                             NULL, 10, NULL, 0);
     xTaskCreatePinnedToCore(usb_tx_task, "usb_tx", STACK_USB_TX_TASK,
