@@ -450,6 +450,36 @@ esp_err_t safety_monitor_register_limit_callback(safety_limit_callback_t callbac
 
 /** @} */ // end limit_motion_stop
 
+/**
+ * @defgroup safety_degraded Graceful Degradation (Story 4-11)
+ * @brief I2C device offline handling
+ * @{
+ */
+
+/**
+ * @brief Check if limit monitoring is degraded
+ *
+ * Returns true if MCP23017 #0 (limit switches) is offline.
+ * When degraded, limit switch readings may not be reliable.
+ *
+ * @return true if limit monitoring is degraded
+ * @return false if limit monitoring is operational
+ */
+bool safety_monitor_is_limits_degraded(void);
+
+/**
+ * @brief Check if feedback monitoring is degraded
+ *
+ * Returns true if MCP23017 #1 (InPos/ALARM) is offline.
+ * When degraded, InPos and ALARM readings may not be reliable.
+ *
+ * @return true if feedback monitoring is degraded
+ * @return false if feedback monitoring is operational
+ */
+bool safety_monitor_is_feedback_degraded(void);
+
+/** @} */ // end safety_degraded
+
 /** @} */ // end safety_monitor
 
 #ifdef __cplusplus

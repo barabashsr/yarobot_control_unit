@@ -13,6 +13,7 @@
 #include "config_limits.h"
 #include "config_commands.h"
 #include "safety_monitor.h"
+#include "floating_switch.h"  // Story 4-9: C axis width measurement
 
 #include "esp_log.h"
 #include "esp_timer.h"
@@ -157,12 +158,19 @@ esp_err_t MotionController::moveAbsolute(uint8_t axis, float position, float vel
     // Story 4-3: Check direction blocking by active limit switches
     float current = motor->getPosition();
     float delta = position - current;
+    int8_t direction = 0;
     if (std::fabs(delta) > 0.0001f) {  // Non-zero movement
-        int8_t direction = (delta > 0) ? 1 : -1;
+        direction = (delta > 0) ? 1 : -1;
         if (safety_monitor_is_direction_blocked(axis, direction)) {
             ESP_LOGW(TAG, "Axis %d direction %+d blocked by limit", axis, direction);
             return ESP_ERR_INVALID_STATE;
         }
+    }
+
+    // Story 4-9: Notify floating switch handler when C axis starts moving
+    // This enables width reset on new closing motion (AC6)
+    if (axis == AXIS_C && direction != 0) {
+        floating_switch_on_motion_start(direction);
     }
 
     // Use default velocity if not specified (AC10)
@@ -304,12 +312,19 @@ esp_err_t MotionController::moveAxisVelocity(uint8_t axis, float velocity)
 
     // Story 4-3: Check direction blocking by active limit switches
     // Velocity sign determines direction: positive = MAX direction, negative = MIN direction
+    int8_t direction = 0;
     if (std::fabs(velocity) > 0.0001f) {  // Non-zero velocity
-        int8_t direction = (velocity > 0) ? 1 : -1;
+        direction = (velocity > 0) ? 1 : -1;
         if (safety_monitor_is_direction_blocked(axis, direction)) {
             ESP_LOGW(TAG, "Axis %d velocity direction %+d blocked by limit", axis, direction);
             return ESP_ERR_INVALID_STATE;
         }
+    }
+
+    // Story 4-9: Notify floating switch handler when C axis starts moving
+    // This enables width reset on new closing motion (AC6)
+    if (axis == AXIS_C && direction != 0) {
+        floating_switch_on_motion_start(direction);
     }
 
     return motor->moveVelocity(velocity);

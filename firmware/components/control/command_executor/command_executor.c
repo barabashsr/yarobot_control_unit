@@ -12,11 +12,16 @@
 #include "config.h"              // For FIRMWARE_NAME, FIRMWARE_VERSION_STRING
 #include "config_commands.h"
 #include "config_limits.h"
+#include "config_axes.h"         // For AXIS_HAS_SERVO_FEEDBACK (Story 4-8)
 #include "safety_monitor.h"      // For E-stop reset (Story 4-4)
 #include "brake_controller.h"    // For brake status (Story 4-5)
+#include "position_loss.h"       // For POSLOS status (Story 4-6)
+#include "servo_feedback.h"      // For INPOS status (Story 4-8)
+#include "error_manager.h"       // For ERROR state (Story 4-10)
 
 #include <string.h>
 #include <strings.h>  // For strcasecmp
+#include <stdio.h>    // For snprintf
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
 #include "esp_log.h"
@@ -349,23 +354,64 @@ static esp_err_t handle_stat(const ParsedCommand* cmd, char* response, size_t re
         float pos = 0.0f;
         int en = 0;      // not enabled
         int mov = 0;     // not moving
-        int err = 0;     // no error
         int lim = 0x00;  // no limits active (bit0=min, bit1=max)
 
         // Story 4-5: Include brake status for axes with brake hardware
+        // Story 4-8: Include INPOS status for servo axes
         int8_t axis_idx = axis_to_index(cmd->axis);
-        if (axis_idx >= 0 && brake_has_hardware((uint8_t)axis_idx)) {
-            // Axis has brake - include BRK field
-            int brk = brake_get_state((uint8_t)axis_idx) ? 1 : 0;
-            return format_ok_data(response, resp_len,
-                                  "%c POS:%.3f EN:%d MOV:%d ERR:%d LIM:%02X BRK:%d",
-                                  cmd->axis, pos, en, mov, err, lim, brk);
+        uint8_t axis_u = (axis_idx >= 0) ? (uint8_t)axis_idx : 0;
+
+        // Story 4-10 AC8: Get ERROR state from error manager
+        int err = 0;
+        char err_code[ERROR_CODE_MAX_LEN] = "";
+        if (axis_idx >= 0 && error_manager_is_initialized()) {
+            if (error_manager_is_axis_in_error(axis_u)) {
+                err = 1;
+                error_manager_get_axis_error_code(axis_u, err_code, sizeof(err_code));
+            }
         }
 
-        // No brake hardware (C, D, E) - standard format
+        // Get INPOS status for servo axes (Story 4-8 AC4)
+        bool has_inpos = (axis_idx >= 0) && AXIS_HAS_SERVO_FEEDBACK(axis_u);
+        int inpos_val = 0;
+        if (has_inpos && servo_feedback_is_initialized()) {
+            bool inpos_state = false;
+            if (servo_feedback_get_inpos(axis_u, &inpos_state) == ESP_OK) {
+                inpos_val = inpos_state ? 1 : 0;
+            }
+        }
+
+        // Story 4-10 AC8: Format ERR field - include error code if in error
+        // Format: ERR:0 (no error) or ERR:1:E041 (in error with code)
+        char err_field[32];
+        if (err && err_code[0] != '\0') {
+            snprintf(err_field, sizeof(err_field), "ERR:1:%s", err_code);
+        } else {
+            snprintf(err_field, sizeof(err_field), "ERR:%d", err);
+        }
+
+        if (axis_idx >= 0 && brake_has_hardware(axis_u)) {
+            // Axis has brake - include BRK and INPOS fields
+            int brk = brake_get_state(axis_u) ? 1 : 0;
+            if (has_inpos) {
+                return format_ok_data(response, resp_len,
+                                      "%c POS:%.3f EN:%d MOV:%d %s LIM:%02X BRK:%d INPOS:%d",
+                                      cmd->axis, pos, en, mov, err_field, lim, brk, inpos_val);
+            }
+            return format_ok_data(response, resp_len,
+                                  "%c POS:%.3f EN:%d MOV:%d %s LIM:%02X BRK:%d",
+                                  cmd->axis, pos, en, mov, err_field, lim, brk);
+        }
+
+        // No brake hardware - include INPOS for servo axes, omit for stepper/discrete
+        if (has_inpos) {
+            return format_ok_data(response, resp_len,
+                                  "%c POS:%.3f EN:%d MOV:%d %s LIM:%02X INPOS:%d",
+                                  cmd->axis, pos, en, mov, err_field, lim, inpos_val);
+        }
         return format_ok_data(response, resp_len,
-                              "%c POS:%.3f EN:%d MOV:%d ERR:%d LIM:%02X",
-                              cmd->axis, pos, en, mov, err, lim);
+                              "%c POS:%.3f EN:%d MOV:%d %s LIM:%02X",
+                              cmd->axis, pos, en, mov, err_field, lim);
     }
 
     // System status
@@ -385,9 +431,25 @@ static esp_err_t handle_stat(const ParsedCommand* cmd, char* response, size_t re
     // Uptime in milliseconds from boot (AC7)
     int64_t uptime_ms = esp_timer_get_time() / 1000;
 
+    // Story 4-5: Brake status for servo axes (AC8)
+    // Format: BRAKES:XYZAB where each position is 0 (engaged) or 1 (released)
+    char brakes[BRAKE_NUM_AXES + 1];  // Servo axes + null terminator
+    for (int i = 0; i < BRAKE_NUM_AXES; i++) {
+        brakes[i] = brake_get_state((uint8_t)i) ? '0' : '1';  // engaged=0, released=1
+    }
+    brakes[BRAKE_NUM_AXES] = '\0';
+
+    // Story 4-6 AC7: POSLOS status for servo axes
+    // Format: POSLOS:XYZAB where each position is 1 (lost) or 0 (OK)
+    char poslos[POSLOS_NUM_SERVO_AXES + 1];  // Servo axes + null terminator
+    for (int i = 0; i < POSLOS_NUM_SERVO_AXES; i++) {
+        poslos[i] = position_loss_get((uint8_t)i) ? '1' : '0';  // lost=1, ok=0
+    }
+    poslos[POSLOS_NUM_SERVO_AXES] = '\0';
+
     return format_ok_data(response, resp_len,
-                          "MODE:%s ESTOP:%d AXES:%d UPTIME:%lld",
-                          mode_str, estop, LIMIT_NUM_AXES, uptime_ms);
+                          "MODE:%s ESTOP:%d AXES:%d BRAKES:%s POSLOS:%s UPTIME:%lld",
+                          mode_str, estop, LIMIT_NUM_AXES, brakes, poslos, uptime_ms);
 }
 
 /**

@@ -22,6 +22,9 @@
  */
 
 #include "safety_monitor.h"
+#include "position_loss.h"
+#include "error_manager.h"
+#include "i2c_health_monitor.h"
 #include "mcp23017_wrapper.h"
 #include "config_i2c.h"
 #include "config_timing.h"
@@ -375,6 +378,9 @@ static void handle_limit_change(uint8_t axis, bool prev_min, bool prev_max, bool
     if (min_activated && min_mode != END_SWITCH_MODE_NONE) {
         ESP_LOGI(TAG, "MIN limit activated on axis %d, mode=%d", axis, min_mode);
 
+        // Story 4-10: Increment LIMIT error counter
+        error_manager_increment(ERR_CAT_LIMIT, axis, false);
+
         // Publish limit event for all modes except NONE
         publish_limit_event(axis, false);
 
@@ -395,6 +401,9 @@ static void handle_limit_change(uint8_t axis, bool prev_min, bool prev_max, bool
     // Handle MAX limit activation
     if (max_activated && max_mode != END_SWITCH_MODE_NONE) {
         ESP_LOGI(TAG, "MAX limit activated on axis %d, mode=%d", axis, max_mode);
+
+        // Story 4-10: Increment LIMIT error counter
+        error_manager_increment(ERR_CAT_LIMIT, axis, false);
 
         // Publish limit event for all modes except NONE
         publish_limit_event(axis, true);
@@ -559,6 +568,9 @@ static void handle_estop_activation(void)
 
     s_monitor.estop_active = true;
 
+    // Story 4-10: Increment ESTOP error counter (system-wide, axis=0xFF)
+    error_manager_increment(ERR_CAT_ESTOP, 0xFF, true);
+
     // AC3: Set system mode to ESTOP
     set_system_state(STATE_ESTOP);
     ESP_LOGE(TAG, "EMERGENCY STOP ACTIVATED");
@@ -576,6 +588,9 @@ static void handle_estop_activation(void)
 
     // AC6: Mark all axes as UNHOMED (position may be lost)
     safety_monitor_mark_all_unhomed();
+
+    // Story 4-6 AC2: Mark all servo axes as POSLOS (servos may have coasted)
+    position_loss_on_estop();
 
     // AC3: Publish ESTOP event
     Event evt = {
@@ -671,6 +686,17 @@ esp_err_t safety_monitor_init(void)
         return ESP_ERR_INVALID_STATE;
     }
 
+    esp_err_t err;
+
+    // Story 4-6: Initialize position loss detector FIRST (AC1)
+    // This is pure software state - no hardware dependency
+    // Sets all servo axes POSLOS and all axes UNHOMED on boot
+    err = position_loss_init();
+    if (err != ESP_OK && err != ESP_ERR_INVALID_STATE) {
+        ESP_LOGW(TAG, "Failed to init position loss detector: %s", esp_err_to_name(err));
+        // Continue anyway - position loss detection will be limited
+    }
+
     // Check MCP23017 wrapper is ready
     if (!mcp23017_wrapper_is_initialized()) {
         ESP_LOGE(TAG, "MCP23017 wrapper not initialized");
@@ -733,7 +759,7 @@ esp_err_t safety_monitor_init(void)
     }
 
     // Register task for notifications
-    esp_err_t err = mcp23017_wrapper_register_notify_task(s_monitor.task_handle);
+    err = mcp23017_wrapper_register_notify_task(s_monitor.task_handle);
     if (err != ESP_OK) {
         ESP_LOGW(TAG, "Failed to register notify task: %s", esp_err_to_name(err));
         // Continue anyway - polling will work
@@ -762,7 +788,7 @@ esp_err_t safety_monitor_init(void)
     }
 
     s_monitor.initialized = true;
-    ESP_LOGI(TAG, "Safety monitor initialized (with E-stop)");
+    ESP_LOGI(TAG, "Safety monitor initialized (with E-stop, position loss)");
 
     return ESP_OK;
 }
@@ -1164,4 +1190,28 @@ void safety_monitor_set_estop_test_mode(bool enable)
         s_monitor.estop_test_button_pressed = false;  // Default: released
     }
     ESP_LOGI(TAG, "TEST: E-stop test mode %s", enable ? "ENABLED" : "DISABLED");
+}
+
+// ============================================================================
+// Story 4-11: Graceful Degradation API Implementation
+// ============================================================================
+
+bool safety_monitor_is_limits_degraded(void)
+{
+    // MCP23017 #0 (0x20) handles limit switches
+    // If it's offline, limit monitoring is degraded
+    if (!i2c_health_is_initialized()) {
+        return false;  // Health monitor not running, assume OK
+    }
+    return !i2c_health_is_device_online(I2C_ADDR_MCP23017_0);
+}
+
+bool safety_monitor_is_feedback_degraded(void)
+{
+    // MCP23017 #1 (0x21) handles InPos/ALARM signals
+    // If it's offline, feedback monitoring is degraded
+    if (!i2c_health_is_initialized()) {
+        return false;  // Health monitor not running, assume OK
+    }
+    return !i2c_health_is_device_online(I2C_ADDR_MCP23017_1);
 }

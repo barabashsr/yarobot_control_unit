@@ -5,6 +5,7 @@ idf_component_register(
     SRCS
         "gpio_hal/gpio_hal.c"
         "i2c_hal/i2c_hal.c"
+        "i2c_hal/i2c_wrapper.c"
         "spi_hal/spi_hal.c"
     INCLUDE_DIRS
         "gpio_hal/include"
@@ -15,4 +16,7 @@ idf_component_register(
         esp_driver_gpio
         esp_driver_i2c
         esp_driver_spi
+    PRIV_REQUIRES
+        control
+        freertos
 )

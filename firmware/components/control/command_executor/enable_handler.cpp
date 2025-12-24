@@ -15,6 +15,7 @@
 #include "config_commands.h"
 #include "config_limits.h"
 #include "brake_controller.h"
+#include "error_manager.h"
 
 #include "esp_log.h"
 
@@ -103,6 +104,11 @@ esp_err_t handle_enable(const ParsedCommand* cmd, char* response, size_t resp_le
     if (enable && ret == ESP_OK && brake_has_hardware(axis_idx)) {
         // Enabling: Motor is now enabled, release brake after delay
         brake_on_axis_enable(axis_idx);
+    }
+
+    // Story 4-10 AC6: EN X 1 clears error state as part of enable sequence
+    if (enable && ret == ESP_OK) {
+        error_manager_clear_axis_error(axis_idx);
     }
 
     if (ret == ESP_OK) {

@@ -56,6 +56,10 @@ typedef enum {
     EVTTYPE_BOOT,
     /** @brief Brake state changed (Story 4-5) */
     EVTTYPE_BRAKE_CHANGED,
+    /** @brief Position loss detected (Story 4-6) */
+    EVTTYPE_POSLOS,
+    /** @brief Digital input state changed (Story 4-7) */
+    EVTTYPE_DIN_CHANGED,
 } EventType;
 
 /** @} */ // end event_types
@@ -105,6 +109,12 @@ typedef struct {
         const char* mode_name;
         /** @brief Brake engaged state (true=engaged, false=released) */
         bool brake_engaged;
+        /** @brief Digital input event data (Story 4-7) */
+        struct {
+            uint8_t pin;           /**< Input pin number (0-3) */
+            bool value;            /**< New input state */
+            const char* alias;     /**< Alias name (NULL if no alias) */
+        } din;
     } data;
 
     /** @brief Event timestamp (microseconds since boot) */

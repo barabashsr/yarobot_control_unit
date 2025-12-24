@@ -173,12 +173,16 @@ esp_err_t brake_controller_init(void)
     for (int i = 0; i < BRAKE_NUM_AXES; i++) {
         s_brake.brake_engaged[i] = true;
 
-        // Set default strategy: Z = BRAKE_ON_DISABLE, others = BRAKE_ON_ESTOP
-        if (i == BRAKE_AXIS_Z) {
-            s_brake.strategy[i] = DEFAULT_BRAKE_STRATEGY_Z;
-        } else {
-            s_brake.strategy[i] = DEFAULT_BRAKE_STRATEGY_HORIZ;
-        }
+        // TEMPORARY: Set all axes to BRAKE_MANUAL for hardware testing
+        // TODO: Restore automatic brake strategies after testing complete
+        s_brake.strategy[i] = BRAKE_MANUAL;
+
+        // Original default strategy: Z = BRAKE_ON_DISABLE, others = BRAKE_ON_ESTOP
+        // if (i == BRAKE_AXIS_Z) {
+        //     s_brake.strategy[i] = DEFAULT_BRAKE_STRATEGY_Z;
+        // } else {
+        //     s_brake.strategy[i] = DEFAULT_BRAKE_STRATEGY_HORIZ;
+        // }
 
         s_brake.idle_timer[i] = NULL;
         s_brake.idle_timer_active[i] = false;

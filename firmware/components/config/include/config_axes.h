@@ -100,6 +100,29 @@
 #define AXIS_IS_VALID(idx) ((idx) >= 0 && (idx) < LIMIT_NUM_AXES)
 
 /**
+ * @brief Check if axis has servo feedback (InPos signal)
+ * @param axis Axis index to check
+ * @return true for servo axes (X,Y,Z,A,B), false for stepper/discrete axes (C,D,E)
+ *
+ * Servo axes X,Y,Z,A,B have InPos (in-position) feedback signals from servo drivers.
+ * Stepper axes C,D and discrete axis E have no servo feedback hardware.
+ * @note Story 4-8: Used by servo_feedback module and INPOS command handler.
+ */
+#define AXIS_HAS_SERVO_FEEDBACK(axis) ((axis) <= AXIS_B)
+
+/**
+ * @brief Check if axis has floating switch (object width measurement)
+ * @param axis Axis index to check
+ * @return true only for C axis (picker jaw), false for all other axes
+ *
+ * Only C axis has a floating switch for object width measurement.
+ * The floating switch uses C_LIMIT_MAX input (MCP0 GPB3) and triggers
+ * width measurement during closing motion without setting error state.
+ * @note Story 4-9: Used by floating_switch module and WIDTH command handler.
+ */
+#define AXIS_HAS_FLOATING_SWITCH(axis) ((axis) == AXIS_C)
+
+/**
  * @brief Validate E axis is the last axis
  *
  * E-axis (discrete actuator) must be the last axis index.

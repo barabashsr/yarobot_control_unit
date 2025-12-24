@@ -50,6 +50,9 @@
 /** @brief Brake control */
 #define CMD_BRAKE           "BRAKE"
 
+/** @brief Acknowledge position loss (Story 4-6) */
+#define CMD_POSOK           "POSOK"
+
 /** @brief Execute homing sequence */
 #define CMD_HOME            "HOME"
 
@@ -82,6 +85,21 @@
 
 /** @brief Write digital output */
 #define CMD_DOUT            "DOUT"
+
+/** @brief Query servo InPos (in-position) status (Story 4-8) */
+#define CMD_INPOS           "INPOS"
+
+/** @brief Query C-axis floating switch width measurement (Story 4-9) */
+#define CMD_WIDTH           "WIDTH"
+
+/** @brief Query error counts (Story 4-10) */
+#define CMD_ERRCNT          "ERRCNT"
+
+/** @brief Clear error state (Story 4-10) */
+#define CMD_CLRERR          "CLRERR"
+
+/** @brief I2C health status and scan (Story 4-11) */
+#define CMD_I2C             "I2C"
 
 /** @brief Set operation mode */
 #define CMD_MODE            "MODE"
@@ -237,6 +255,30 @@
 /** @brief Axis has no brake hardware (Story 4-5) */
 #define ERR_AXIS_NO_BRAKE           "E036"
 
+/** @brief Position may be lost - homing or POSOK required (Story 4-6) */
+#define ERR_POSLOS                  "E037"
+
+/** @brief Invalid pin number for DIN/DOUT command (Story 4-7) */
+#define ERR_INVALID_PIN             "E038"
+
+/** @brief Unknown alias for DIN/DOUT command (Story 4-7) */
+#define ERR_UNKNOWN_ALIAS           "E039"
+
+/** @brief WIDTH command only supports C axis (Story 4-9) */
+#define ERR_WIDTH_C_ONLY            "E040"
+
+/** @brief Axis is in ERROR state - clear error first (Story 4-10) */
+#define ERR_AXIS_ERROR              "E041"
+
+/** @brief I2C communication failure (Story 4-10) */
+#define ERR_I2C_FAILURE             "E020"
+
+/** @brief I2C transaction timeout (Story 4-11) */
+#define ERR_I2C_TIMEOUT             "E021"
+
+/** @brief I2C device offline (Story 4-11) */
+#define ERR_I2C_DEVICE_OFFLINE      "E022"
+
 /** @} */ // end err_codes
 
 /**
@@ -323,6 +365,30 @@
 /** @brief Message for ERR_AXIS_NO_BRAKE (Story 4-5) */
 #define MSG_AXIS_NO_BRAKE           "Axis has no brake hardware"
 
+/** @brief Message for ERR_POSLOS (Story 4-6) */
+#define MSG_POSITION_UNKNOWN        "Position unknown"
+
+/** @brief Message for ERR_INVALID_PIN (Story 4-7) */
+#define MSG_PIN_OUT_OF_RANGE        "Pin out of range"
+
+/** @brief Message for ERR_UNKNOWN_ALIAS (Story 4-7) */
+#define MSG_ALIAS_NOT_FOUND         "Alias not found"
+
+/** @brief Message for ERR_WIDTH_C_ONLY (Story 4-9) */
+#define MSG_WIDTH_C_ONLY            "WIDTH only for C axis"
+
+/** @brief Message for ERR_AXIS_ERROR (Story 4-10) */
+#define MSG_CLEAR_ERROR_FIRST       "Clear error first"
+
+/** @brief Message for ERR_I2C_FAILURE (Story 4-10) */
+#define MSG_I2C_FAILURE             "I2C communication failure"
+
+/** @brief Message for ERR_I2C_TIMEOUT (Story 4-11) */
+#define MSG_I2C_TIMEOUT             "I2C transaction timeout"
+
+/** @brief Message for ERR_I2C_DEVICE_OFFLINE (Story 4-11) */
+#define MSG_I2C_DEVICE_OFFLINE      "I2C device offline"
+
 /** @} */ // end err_messages
 
 /**
@@ -382,6 +448,15 @@
 /** @brief Brake state changed: "EVENT BRAKE <axis> ENGAGED|RELEASED" (Story 4-5) */
 #define EVT_BRAKE                   "BRAKE"
 
+/** @brief Position loss detected: "EVENT POSLOS <axis>" (Story 4-6) */
+#define EVT_POSLOS                  "POSLOS"
+
+/** @brief Digital input change: "EVENT DIN DINx value" or "EVENT DIN <alias> value" (Story 4-7) */
+#define EVT_DIN                     "DIN"
+
+/** @brief Width measurement: "EVENT WIDTH C <value>" (Story 4-9) */
+#define EVT_WIDTH                   "WIDTH"
+
 /** @brief Boot limit scan complete */
 #define EVT_LIMITS_SCANNED          "LIMITSCAN"
 
@@ -390,6 +465,18 @@
 
 /** @brief Mode changed: "EVENT MODE <mode_name>" */
 #define EVT_MODE                    "MODE"
+
+/** @brief Error event: "EVENT ERROR <axis|SYSTEM> <code>" (Story 4-10) */
+#define EVT_ERROR                   "ERROR"
+
+/** @brief I2C recovered event: "EVENT I2C RECOVERED" (Story 4-11) */
+#define EVT_I2C_RECOVERED           "I2C"
+
+/** @brief Limits degraded event: "EVENT WARN LIMITS_DEGRADED" (Story 4-11) */
+#define EVT_LIMITS_DEGRADED         "LIMITS_DEGRADED"
+
+/** @brief Feedback degraded event: "EVENT WARN FEEDBACK_DEGRADED" (Story 4-11) */
+#define EVT_FEEDBACK_DEGRADED       "FEEDBACK_DEGRADED"
 
 /** @} */ // end evt_types
 
@@ -468,6 +555,40 @@ typedef enum {
 #define END_SWITCH_MODE_DEFAULT     END_SWITCH_MODE_HARD_STOP
 
 /** @} */ // end end_switch_mode
+
+/**
+ * @defgroup error_categories Error Category Enum (Story 4-10)
+ * @brief Categories for error tracking and counting
+ * @{
+ */
+
+/**
+ * @brief Error category enumeration
+ *
+ * Used by ErrorManager to track cumulative error counts per category.
+ * Each category can be incremented globally and per-axis.
+ */
+typedef enum {
+    /** @brief I2C communication failures */
+    ERR_CAT_I2C = 0,
+
+    /** @brief Motion or operation timeouts */
+    ERR_CAT_TIMEOUT = 1,
+
+    /** @brief Limit switch triggers */
+    ERR_CAT_LIMIT = 2,
+
+    /** @brief Emergency stop activations */
+    ERR_CAT_ESTOP = 3,
+
+    /** @brief Position loss events */
+    ERR_CAT_POSLOS = 4,
+
+    /** @brief Number of error categories (must be last) */
+    ERR_CAT_COUNT = 5
+} ErrorCategory;
+
+/** @} */ // end error_categories
 
 /** @} */ // end config_commands
 

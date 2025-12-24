@@ -1,0 +1,115 @@
+<story-context id="bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>4</epicId>
+    <storyId>6</storyId>
+    <title>Position Loss Detection</title>
+    <status>ready-for-dev</status>
+    <generatedAt>2025-12-19</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/4-6-position-loss-detection.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>user</asA>
+    <iWant>to know if axis position may be lost</iWant>
+    <soThat>I can re-home before continuing operation</soThat>
+    <tasks>
+      <task id="1" ac="1,2,3">Define position loss data structures - poslos_flags bitmap, homed_flags bitmap, ERR_POSLOS (E037), MSG_POSITION_UNKNOWN</task>
+      <task id="2" ac="1,2,3">Implement PositionLossDetector module - position_loss.c/h with init, set, get, get_all, on_estop functions</task>
+      <task id="3" ac="1">Initialize POSLOS on power cycle - call from safety_monitor_init(), mark servos POSLOS, publish events</task>
+      <task id="4" ac="2">Integrate with E-stop handler - call position_loss_on_estop() after E-stop, publish events for servos only</task>
+      <task id="5" ac="4,5">Implement CMD_POSOK command handler - parse POSOK [axis], clear flags, return to IDLE</task>
+      <task id="6" ac="6">Block motion on POSLOS - check in MOVE, MOVR, VEL handlers, reject with ERR_POSLOS</task>
+      <task id="7" ac="7">Update STAT command for POSLOS - add POSLOS:XYZAB field</task>
+      <task id="8" ac="8">Clear POSLOS on homing complete - position_loss_on_homing_complete() hook for Story 4.13</task>
+      <task id="9" ac="1-5">Unit tests for PositionLossDetector - test_position_loss.c</task>
+      <task id="10" ac="1-9">Integration tests - test_position_loss_integration.c</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <criterion id="AC1" techSpecRef="AC26">Power Cycle Position Loss - all axes UNHOMED, servo axes POSLOS on boot</criterion>
+    <criterion id="AC2" techSpecRef="AC27">E-Stop Position Loss - servo axes flagged POSLOS after E-stop, EVENT POSLOS published</criterion>
+    <criterion id="AC3" techSpecRef="AC28">Position Loss Event Publication - EVENT POSLOS axis published, axis state ERROR</criterion>
+    <criterion id="AC4" techSpecRef="AC29">CMD_POSOK Single Axis - POSOK X clears flag, returns IDLE, responds OK</criterion>
+    <criterion id="AC5" techSpecRef="AC29">CMD_POSOK All Axes - POSOK clears all flags, returns OK</criterion>
+    <criterion id="AC6" techSpecRef="AC30">Motion Blocked on POSLOS - MOVE/MOVR/VEL rejected with ERR_POSLOS MSG_POSITION_UNKNOWN</criterion>
+    <criterion id="AC7">STAT Shows POSLOS - response includes POSLOS:XYZAB field (1=lost, 0=OK)</criterion>
+    <criterion id="AC8">Homing Clears POSLOS - successful homing clears flag, marks axis HOMED</criterion>
+    <criterion id="AC9">Stepper Axis Handling - C,D marked UNHOMED only (no POSLOS), require HOME not POSOK</criterion>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/sprint-artifacts/tech-spec-epic-4.md" title="Epic 4 Technical Specification" section="Story 4.6: Position Loss Detection" snippet="AC26-AC30: Position loss detection on power cycle and E-stop, POSOK command, motion blocking"/>
+      <doc path="docs/epics.md" title="Epic Definitions" section="Story 4.6: Position Loss Detection" snippet="User story and acceptance criteria for position loss detection system"/>
+      <doc path="docs/sprint-artifacts/4-5-brake-control-system.md" title="Previous Story" section="Dev Agent Record" snippet="STAT command extension pattern, handler integration, error code pattern, module placement"/>
+      <doc path="docs/bmm-workflow-status.yaml" title="Workflow Status" section="mandatory_constraints" snippet="Header-only configuration requirement - all configurable values in headers"/>
+    </docs>
+    <code>
+      <file path="firmware/components/control/safety_monitor/include/safety_monitor.h" kind="header" symbol="safety_monitor_init, safety_monitor_mark_all_unhomed" reason="Integration point for POSLOS init and E-stop handling"/>
+      <file path="firmware/components/control/safety_monitor/safety_monitor.c" kind="source" symbol="safety_monitor_task, NOTIFY_ESTOP" reason="E-stop notification handling, add POSLOS calls"/>
+      <file path="firmware/components/control/safety_monitor/include/brake_controller.h" kind="header" symbol="brake_controller_init, BRAKE_NUM_AXES" reason="Pattern reference for position_loss module structure"/>
+      <file path="firmware/components/control/safety_monitor/brake_controller.c" kind="source" symbol="brake_set_state, brake_get_state" reason="Implementation pattern for state management module"/>
+      <file path="firmware/components/control/command_executor/command_executor.c" kind="source" symbol="handle_stat" lines="326-398" reason="STAT command handler - add POSLOS field following BRAKES pattern"/>
+      <file path="firmware/components/control/command_executor/move_handler.cpp" kind="handler" symbol="move_handler" reason="Add POSLOS check before motion"/>
+      <file path="firmware/components/control/command_executor/movr_handler.cpp" kind="handler" symbol="movr_handler" reason="Add POSLOS check before motion"/>
+      <file path="firmware/components/control/command_executor/velocity_handler.cpp" kind="handler" symbol="velocity_handler" reason="Add POSLOS check before motion"/>
+      <file path="firmware/components/config/include/config_commands.h" kind="config" symbol="ERR_BRAKE_AUTO, ERR_AXIS_NO_BRAKE" lines="234-238" reason="Add ERR_POSLOS (E037) and MSG_POSITION_UNKNOWN following same pattern"/>
+      <file path="firmware/components/events/event_manager/include/event_manager.h" kind="header" symbol="event_publish, Event" reason="Event publication API for EVENT POSLOS"/>
+    </code>
+    <dependencies>
+      <esp-idf version="5.4">
+        <component>freertos</component>
+        <component>esp_timer</component>
+        <component>driver</component>
+      </esp-idf>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint type="mandatory" source="bmm-workflow-status.yaml">Header-Only Configuration: All configurable values MUST be in header files. Use CMD_POSOK not "POSOK", ERR_POSLOS not "E037".</constraint>
+    <constraint type="pattern" source="brake_controller">Module Pattern: Create position_loss.c/h in safety_monitor component following brake_controller structure.</constraint>
+    <constraint type="pattern" source="command_executor.c">STAT Extension: Add POSLOS:XYZAB field following BRAKES:XYZAB pattern (lines 388-398).</constraint>
+    <constraint type="pattern" source="config_commands.h">Error Code: Add ERR_POSLOS as E037 following ERR_BRAKE_AUTO (E035), ERR_AXIS_NO_BRAKE (E036) sequence.</constraint>
+    <constraint type="axis" source="tech-spec-epic-4.md">Servo axes (X,Y,Z,A,B) get POSLOS; stepper axes (C,D) and discrete (E) do not.</constraint>
+    <constraint type="event" source="tech-spec-epic-4.md">EVENT POSLOS axis format: "EVENT POSLOS X" per axis affected.</constraint>
+  </constraints>
+
+  <interfaces>
+    <interface name="position_loss_init" kind="function" signature="esp_err_t position_loss_init(void)" path="firmware/components/control/safety_monitor/include/position_loss.h">Initialize module, set all servo axes POSLOS, all axes UNHOMED</interface>
+    <interface name="position_loss_set" kind="function" signature="esp_err_t position_loss_set(uint8_t axis, bool lost)" path="firmware/components/control/safety_monitor/include/position_loss.h">Set/clear POSLOS flag for axis</interface>
+    <interface name="position_loss_get" kind="function" signature="bool position_loss_get(uint8_t axis)" path="firmware/components/control/safety_monitor/include/position_loss.h">Query POSLOS state for axis</interface>
+    <interface name="position_loss_get_all" kind="function" signature="uint8_t position_loss_get_all(void)" path="firmware/components/control/safety_monitor/include/position_loss.h">Returns 5-bit POSLOS bitmap (servo axes only)</interface>
+    <interface name="position_loss_on_estop" kind="function" signature="void position_loss_on_estop(void)" path="firmware/components/control/safety_monitor/include/position_loss.h">Mark all servo axes POSLOS, publish events</interface>
+    <interface name="position_loss_on_homing_complete" kind="function" signature="void position_loss_on_homing_complete(uint8_t axis)" path="firmware/components/control/safety_monitor/include/position_loss.h">Clear POSLOS and set HOMED for axis</interface>
+    <interface name="CMD_POSOK" kind="command" signature="POSOK [axis]" path="firmware/components/config/include/config_commands.h">Position acknowledge command</interface>
+    <interface name="ERR_POSLOS" kind="error" signature="E037" path="firmware/components/config/include/config_commands.h">Position loss error code</interface>
+    <interface name="EVT_POSLOS" kind="event" signature="EVENT POSLOS axis" path="firmware/components/config/include/config_commands.h">Position loss event type</interface>
+  </interfaces>
+
+  <tests>
+    <standards>ESP-IDF Unity test framework. Unit tests in component test/ directories. Integration tests in firmware/test/integration/. Use safety_monitor_inject_test_state() for hardware-free testing. Follow existing test patterns in test_brake_controller.c.</standards>
+    <locations>
+      <location>firmware/components/control/safety_monitor/test/test_position_loss.c</location>
+      <location>firmware/test/integration/safety_monitor/test_position_loss_integration.c</location>
+    </locations>
+    <ideas>
+      <idea ac="AC1">test_boot_sets_all_servo_poslos - verify X,Y,Z,A,B have POSLOS after init</idea>
+      <idea ac="AC1">test_boot_sets_all_unhomed - verify all 7 axes marked UNHOMED</idea>
+      <idea ac="AC1">test_steppers_no_poslos_on_boot - verify C,D do not have POSLOS flag</idea>
+      <idea ac="AC2">test_estop_sets_servo_poslos - verify position_loss_on_estop() sets servo flags</idea>
+      <idea ac="AC2">test_estop_publishes_events - verify EVENT POSLOS published for each servo</idea>
+      <idea ac="AC3">test_poslos_event_format - verify "EVENT POSLOS X" format</idea>
+      <idea ac="AC4">test_posok_single_axis - POSOK X clears X flag only</idea>
+      <idea ac="AC5">test_posok_all_axes - POSOK clears all servo flags</idea>
+      <idea ac="AC6">test_move_blocked_on_poslos - MOVE X rejected with ERR_POSLOS</idea>
+      <idea ac="AC6">test_movr_blocked_on_poslos - MOVR X rejected</idea>
+      <idea ac="AC6">test_vel_blocked_on_poslos - VEL X rejected</idea>
+      <idea ac="AC6">test_motion_allowed_after_posok - motion works after POSOK</idea>
+      <idea ac="AC7">test_stat_shows_poslos - STAT includes POSLOS:10000 when X flagged</idea>
+      <idea ac="AC8">test_homing_clears_poslos - position_loss_on_homing_complete clears flag</idea>
+      <idea ac="AC9">test_stepper_requires_homing - C,D require HOME, not POSOK</idea>
+    </ideas>
+  </tests>
+</story-context>

@@ -1,7 +1,7 @@
 {
     "version":            "1.1",
     "project_name":       "yarobot_control_unit",
-    "project_version":    "b157636-dirty",
+    "project_version":    "8dc2cb2-dirty",
     "project_path":       "/home/akhmedov/yarobot_control_unit/firmware",
     "idf_path":           "/home/akhmedov/esp/esp-idf",
     "build_dir":          "/home/akhmedov/yarobot_control_unit/firmware/build",
@@ -175,7 +175,7 @@
             "managed_reqs": [],
             "managed_priv_reqs": [],
             "file": "/home/akhmedov/yarobot_control_unit/firmware/build/esp-idf/control/libcontrol.a",
-            "sources": [ "/home/akhmedov/yarobot_control_unit/firmware/components/control/tasks/task_stubs.c", "/home/akhmedov/yarobot_control_unit/firmware/components/control/command_executor/command_executor.c", "/home/akhmedov/yarobot_control_unit/firmware/components/control/command_executor/move_handler.cpp", "/home/akhmedov/yarobot_control_unit/firmware/components/control/command_executor/movr_handler.cpp", "/home/akhmedov/yarobot_control_unit/firmware/components/control/command_executor/enable_handler.cpp", "/home/akhmedov/yarobot_control_unit/firmware/components/control/command_executor/position_handler.cpp", "/home/akhmedov/yarobot_control_unit/firmware/components/control/command_executor/velocity_handler.cpp", "/home/akhmedov/yarobot_control_unit/firmware/components/control/command_executor/stop_handler.cpp", "/home/akhmedov/yarobot_control_unit/firmware/components/control/command_executor/brake_handler.cpp", "/home/akhmedov/yarobot_control_unit/firmware/components/control/motion_controller/motion_controller.cpp", "/home/akhmedov/yarobot_control_unit/firmware/components/control/motor_system/motor_system.cpp", "/home/akhmedov/yarobot_control_unit/firmware/components/control/safety_monitor/safety_monitor.c", "/home/akhmedov/yarobot_control_unit/firmware/components/control/safety_monitor/lim_handler.c", "/home/akhmedov/yarobot_control_unit/firmware/components/control/safety_monitor/brake_controller.c" ],
+            "sources": [ "/home/akhmedov/yarobot_control_unit/firmware/components/control/tasks/task_stubs.c", "/home/akhmedov/yarobot_control_unit/firmware/components/control/command_executor/command_executor.c", "/home/akhmedov/yarobot_control_unit/firmware/components/control/command_executor/move_handler.cpp", "/home/akhmedov/yarobot_control_unit/firmware/components/control/command_executor/movr_handler.cpp", "/home/akhmedov/yarobot_control_unit/firmware/components/control/command_executor/enable_handler.cpp", "/home/akhmedov/yarobot_control_unit/firmware/components/control/command_executor/position_handler.cpp", "/home/akhmedov/yarobot_control_unit/firmware/components/control/command_executor/velocity_handler.cpp", "/home/akhmedov/yarobot_control_unit/firmware/components/control/command_executor/stop_handler.cpp", "/home/akhmedov/yarobot_control_unit/firmware/components/control/command_executor/brake_handler.cpp", "/home/akhmedov/yarobot_control_unit/firmware/components/control/command_executor/posok_handler.cpp", "/home/akhmedov/yarobot_control_unit/firmware/components/control/command_executor/digital_io.c", "/home/akhmedov/yarobot_control_unit/firmware/components/control/command_executor/din_handler.cpp", "/home/akhmedov/yarobot_control_unit/firmware/components/control/command_executor/dout_handler.cpp", "/home/akhmedov/yarobot_control_unit/firmware/components/control/command_executor/inpos_handler.cpp", "/home/akhmedov/yarobot_control_unit/firmware/components/control/command_executor/width_handler.cpp", "/home/akhmedov/yarobot_control_unit/firmware/components/control/command_executor/errcnt_handler.cpp", "/home/akhmedov/yarobot_control_unit/firmware/components/control/command_executor/clrerr_handler.cpp", "/home/akhmedov/yarobot_control_unit/firmware/components/control/command_executor/i2c_handler.cpp", "/home/akhmedov/yarobot_control_unit/firmware/components/control/motion_controller/motion_controller.cpp", "/home/akhmedov/yarobot_control_unit/firmware/components/control/motor_system/motor_system.cpp", "/home/akhmedov/yarobot_control_unit/firmware/components/control/safety_monitor/safety_monitor.c", "/home/akhmedov/yarobot_control_unit/firmware/components/control/safety_monitor/lim_handler.c", "/home/akhmedov/yarobot_control_unit/firmware/components/control/safety_monitor/brake_controller.c", "/home/akhmedov/yarobot_control_unit/firmware/components/control/safety_monitor/position_loss.c", "/home/akhmedov/yarobot_control_unit/firmware/components/control/safety_monitor/servo_feedback.c", "/home/akhmedov/yarobot_control_unit/firmware/components/control/safety_monitor/floating_switch.c", "/home/akhmedov/yarobot_control_unit/firmware/components/control/safety_monitor/error_manager.c", "/home/akhmedov/yarobot_control_unit/firmware/components/control/safety_monitor/i2c_health_monitor.c" ],
             "include_dirs": [ "tasks/include", "command_executor/include", "motion_controller/include", "motor_system/include", "safety_monitor/include" ]
         },
         "cxx": {
@@ -1401,7 +1401,7 @@
             "type": "LIBRARY",
             "lib": "__idf_mcp23017_wrapper",
             "reqs": [ "freertos", "config", "espressif__mcp23017", "espressif__i2c_bus", "unity" ],
-            "priv_reqs": [ "log", "esp_timer", "driver" ],
+            "priv_reqs": [ "log", "esp_timer", "driver", "control" ],
             "managed_reqs": [],
             "managed_priv_reqs": [],
             "file": "/home/akhmedov/yarobot_control_unit/firmware/build/esp-idf/mcp23017_wrapper/libmcp23017_wrapper.a",
@@ -1926,11 +1926,11 @@
             "type": "LIBRARY",
             "lib": "__idf_yarobot_hal",
             "reqs": [ "config", "esp_driver_gpio", "esp_driver_i2c", "esp_driver_spi" ],
-            "priv_reqs": [],
+            "priv_reqs": [ "control", "freertos" ],
             "managed_reqs": [],
             "managed_priv_reqs": [],
             "file": "/home/akhmedov/yarobot_control_unit/firmware/build/esp-idf/yarobot_hal/libyarobot_hal.a",
-            "sources": [ "/home/akhmedov/yarobot_control_unit/firmware/components/yarobot_hal/gpio_hal/gpio_hal.c", "/home/akhmedov/yarobot_control_unit/firmware/components/yarobot_hal/i2c_hal/i2c_hal.c", "/home/akhmedov/yarobot_control_unit/firmware/components/yarobot_hal/spi_hal/spi_hal.c" ],
+            "sources": [ "/home/akhmedov/yarobot_control_unit/firmware/components/yarobot_hal/gpio_hal/gpio_hal.c", "/home/akhmedov/yarobot_control_unit/firmware/components/yarobot_hal/i2c_hal/i2c_hal.c", "/home/akhmedov/yarobot_control_unit/firmware/components/yarobot_hal/i2c_hal/i2c_wrapper.c", "/home/akhmedov/yarobot_control_unit/firmware/components/yarobot_hal/spi_hal/spi_hal.c" ],
             "include_dirs": [ "gpio_hal/include", "i2c_hal/include", "spi_hal/include" ]
         }
     },
@@ -3250,7 +3250,7 @@
             "dir": "/home/akhmedov/yarobot_control_unit/firmware/components/drivers/mcp23017_wrapper",
             "lib": "__idf_mcp23017_wrapper",
             "reqs": [ "freertos", "config", "espressif__mcp23017", "espressif__i2c_bus", "unity" ],
-            "priv_reqs": [ "log", "esp_timer", "driver" ],
+            "priv_reqs": [ "log", "esp_timer", "driver", "control" ],
             "managed_reqs": [],
             "managed_priv_reqs": [],
             "include_dirs": [ "include" ]
@@ -3418,7 +3418,7 @@
             "dir": "/home/akhmedov/yarobot_control_unit/firmware/components/yarobot_hal",
             "lib": "__idf_yarobot_hal",
             "reqs": [ "config", "esp_driver_gpio", "esp_driver_i2c", "esp_driver_spi" ],
-            "priv_reqs": [],
+            "priv_reqs": [ "control", "freertos" ],
             "managed_reqs": [],
             "managed_priv_reqs": [],
             "include_dirs": [ "gpio_hal/include", "i2c_hal/include", "spi_hal/include" ]

@@ -97,6 +97,15 @@
 /** @brief Number of NVS configuration slots */
 #define LIMIT_CONFIG_SLOTS          10
 
+/** @brief Number of error categories for error tracking (Story 4-10) */
+#define LIMIT_ERROR_CATEGORIES      5
+
+/** @brief I2C consecutive failure threshold before device marked offline (Story 4-11) */
+#define I2C_FAILURE_THRESHOLD       5
+
+/** @brief I2C consecutive success threshold before device marked recovered (Story 4-11) */
+#define I2C_RECOVERY_THRESHOLD      10
+
 /** @} */ // end limits_axis
 
 /**

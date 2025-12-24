@@ -189,6 +189,29 @@ esp_err_t format_event(char* buf, size_t len, const Event* event)
                                event->data.brake_engaged ? "ENGAGED" : "RELEASED");
             break;
 
+        case EVTTYPE_POSLOS:
+            // Format: EVENT POSLOS <axis> (Story 4-6 AC3)
+            axis_char = index_to_axis(event->axis);
+            if (axis_char == '\0') {
+                return ESP_ERR_INVALID_ARG;
+            }
+            written = snprintf(buf, len, "%s %s %c" RESP_TERMINATOR,
+                               RESP_EVENT, EVT_POSLOS, axis_char);
+            break;
+
+        case EVTTYPE_DIN_CHANGED:
+            // Format: EVENT DIN DINx value  or  EVENT DIN <alias> value (Story 4-7 AC9)
+            if (event->data.din.alias != NULL) {
+                written = snprintf(buf, len, "%s %s %s %d" RESP_TERMINATOR,
+                                   RESP_EVENT, EVT_DIN, event->data.din.alias,
+                                   event->data.din.value ? 1 : 0);
+            } else {
+                written = snprintf(buf, len, "%s %s DIN%d %d" RESP_TERMINATOR,
+                                   RESP_EVENT, EVT_DIN, event->data.din.pin,
+                                   event->data.din.value ? 1 : 0);
+            }
+            break;
+
         default:
             return ESP_ERR_INVALID_ARG;
     }

@@ -1,0 +1,239 @@
+<story-context id="4-9-c-axis-floating-switch" v="1.0">
+  <metadata>
+    <epicId>4</epicId>
+    <storyId>9</storyId>
+    <title>C-Axis Floating Switch (Object Width Measurement)</title>
+    <status>drafted</status>
+    <generatedAt>2025-12-19</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/4-9-c-axis-floating-switch.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>user</asA>
+    <iWant>to measure object width using C axis floating switch</iWant>
+    <soThat>the picker jaw can detect object size automatically</soThat>
+    <tasks>
+      <task id="1">Define floating switch configuration constants (CMD_WIDTH, AXIS_HAS_FLOATING_SWITCH macro, error codes)</task>
+      <task id="2">Create FloatingSwitchHandler module in safety_monitor component</task>
+      <task id="3">Implement floating switch detection logic (direction-aware, closing only)</task>
+      <task id="4">Implement width calculation from position at contact</task>
+      <task id="5">Implement width event publication (EVENT WIDTH C value)</task>
+      <task id="6">Implement CMD_WIDTH handler in command_executor</task>
+      <task id="7">Implement measurement reset on new close motion</task>
+      <task id="8">Integration with limit_monitor for C_LIMIT_MAX handling</task>
+      <task id="9">Unit tests for FloatingSwitchHandler</task>
+      <task id="10">Integration tests for WIDTH command</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1" ref="AC37">Floating switch detection distinct from hard limit - motion stops but no ERROR state set</ac>
+    <ac id="2" ref="AC38">Width measurement calculated on floating switch trigger as current_position</ac>
+    <ac id="3" ref="AC39">EVENT WIDTH C value published within 10ms of switch activation</ac>
+    <ac id="4" ref="AC40">WIDTH C command returns last measurement or -1.000 if none</ac>
+    <ac id="5">Floating switch only active during closing motion (negative direction)</ac>
+    <ac id="6">Width reset on new close motion start</ac>
+    <ac id="7">Invalid axis (non-C) returns error ERR_WIDTH_C_ONLY</ac>
+    <ac id="8">I2C coordination with limit_monitor via shared MCP0 Port B interrupt</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-4.md</path>
+        <title>Epic 4 Technical Specification</title>
+        <section>Story 4.9: C-Axis Floating Switch</section>
+        <snippet>AC37-AC40: Floating switch detection distinct from hard limit, width measurement calculated on trigger, EVENT WIDTH C published, GETWIDTH returns last measured width.</snippet>
+      </doc>
+      <doc>
+        <path>docs/epics.md</path>
+        <title>Epic Definitions</title>
+        <section>Story 4.9</section>
+        <snippet>Width measurement sequence: CLOSE C command triggers closing motion, floating switch activates on object contact, motion stops, width calculated from position, event published. Width = jaw_open_position - contact_position.</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/4-8-servo-feedback-processing.md</path>
+        <title>Previous Story Learnings</title>
+        <section>Dev Agent Record</section>
+        <snippet>Handler pattern from inpos_handler.cpp, MCP Port B access via mcp23017_wrapper, I2C mutex coordination, command response format OK C value.</snippet>
+      </doc>
+    </docs>
+
+    <code>
+      <file>
+        <path>firmware/components/config/include/config_i2c.h</path>
+        <kind>configuration</kind>
+        <symbol>MCP0_C_LIMIT_MAX</symbol>
+        <lines>110-111</lines>
+        <reason>C_LIMIT_MAX pin definition (GPB3) - floating switch input on MCP23017 #0 Port B</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_axes.h</path>
+        <kind>configuration</kind>
+        <symbol>AXIS_C, AXIS_HAS_SERVO_FEEDBACK</symbol>
+        <lines>47,111</lines>
+        <reason>Axis constants and macro pattern - need to add AXIS_HAS_FLOATING_SWITCH(axis) macro</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_commands.h</path>
+        <kind>configuration</kind>
+        <symbol>CMD_GETWIDTH</symbol>
+        <lines>66-67</lines>
+        <reason>CMD_GETWIDTH already exists - reuse for WIDTH command or add CMD_WIDTH</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/safety_monitor/include/safety_monitor.h</path>
+        <kind>header</kind>
+        <symbol>safety_limit_callback_t, safety_monitor_register_limit_callback</symbol>
+        <lines>436-449</lines>
+        <reason>Limit callback mechanism - use to hook floating switch handler into limit monitoring</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/safety_monitor/safety_monitor.c</path>
+        <kind>implementation</kind>
+        <symbol>safety_monitor_init, limit_state_cache</symbol>
+        <reason>Integration point for floating switch - register callback for C axis MAX limit changes</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/command_executor/inpos_handler.cpp</path>
+        <kind>handler</kind>
+        <symbol>handle_inpos, inpos_handler_register</symbol>
+        <lines>27-107</lines>
+        <reason>Pattern reference for WIDTH command handler implementation</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/safety_monitor/servo_feedback.c</path>
+        <kind>implementation</kind>
+        <symbol>servo_feedback_init, servo_feedback_get_inpos</symbol>
+        <reason>Pattern reference for new safety_monitor module (floating_switch.c)</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/motion_controller/include/motion_controller.h</path>
+        <kind>header</kind>
+        <symbol>MotionController, getMotor, stopAxis</symbol>
+        <lines>47-230</lines>
+        <reason>Motion controller interface - need to query motor direction and stop motion on floating switch</reason>
+      </file>
+      <file>
+        <path>firmware/components/events/event_manager/include/event_manager.h</path>
+        <kind>header</kind>
+        <symbol>event_publish, EventType</symbol>
+        <lines>110</lines>
+        <reason>Event publication API - use for EVENT WIDTH C value</reason>
+      </file>
+      <file>
+        <path>firmware/components/interface/command_parser/include/response_formatter.h</path>
+        <kind>header</kind>
+        <symbol>Event, EventType, format_ok_data, format_error</symbol>
+        <reason>Response formatting and event types - need to add EVTTYPE_WIDTH if not exists</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/motor_system/motor_system.cpp</path>
+        <kind>implementation</kind>
+        <symbol>register_command_handlers</symbol>
+        <reason>Handler registration point - register WIDTH handler and floating_switch_init()</reason>
+      </file>
+    </code>
+
+    <dependencies>
+      <esp-idf version="5.4">
+        <component>driver/i2c</component>
+        <component>freertos</component>
+      </esp-idf>
+      <managed>
+        <component name="espressif/mcp23017" version="0.1.1">MCP23017 I2C expander driver</component>
+      </managed>
+    </dependencies>
+  </artifacts>
+
+  <interfaces>
+    <interface>
+      <name>safety_limit_callback_t</name>
+      <kind>callback</kind>
+      <signature>void (*)(uint8_t axis, bool min_active, bool max_active, void* ctx)</signature>
+      <path>firmware/components/control/safety_monitor/include/safety_monitor.h:436</path>
+      <usage>Register callback to receive C axis MAX limit changes for floating switch detection</usage>
+    </interface>
+    <interface>
+      <name>motion_controller_get_position</name>
+      <kind>C function</kind>
+      <signature>esp_err_t motion_controller_get_position(uint8_t axis, float* position)</signature>
+      <path>firmware/components/control/motion_controller/include/motion_controller.h:290</path>
+      <usage>Get current C axis position when floating switch triggers for width calculation</usage>
+    </interface>
+    <interface>
+      <name>motion_controller_stop_axis</name>
+      <kind>C function</kind>
+      <signature>esp_err_t motion_controller_stop_axis(uint8_t axis)</signature>
+      <path>firmware/components/control/motion_controller/include/motion_controller.h:263</path>
+      <usage>Stop C axis motion on floating switch activation (graceful stop, not error stop)</usage>
+    </interface>
+    <interface>
+      <name>event_publish</name>
+      <kind>C function</kind>
+      <signature>esp_err_t event_publish(const Event* event)</signature>
+      <path>firmware/components/events/event_manager/include/event_manager.h:110</path>
+      <usage>Publish EVENT WIDTH C value when floating switch triggers</usage>
+    </interface>
+    <interface>
+      <name>cmd_executor_register</name>
+      <kind>C function</kind>
+      <signature>esp_err_t cmd_executor_register(const CommandEntry* entry)</signature>
+      <path>firmware/components/control/command_executor/include/command_executor.h</path>
+      <usage>Register WIDTH command handler</usage>
+    </interface>
+    <interface>
+      <name>IMotor::getDirection</name>
+      <kind>C++ method</kind>
+      <signature>virtual int8_t getDirection() const = 0</signature>
+      <path>firmware/components/motor/include/i_motor.h</path>
+      <usage>Query C axis motor direction to detect closing motion (-1 = closing)</usage>
+    </interface>
+  </interfaces>
+
+  <constraints>
+    <constraint source="tech-spec-epic-4.md" priority="mandatory">
+      Header-Only Configuration: Every configurable value MUST be defined in a header file. No magic numbers in source code.
+    </constraint>
+    <constraint source="tech-spec-epic-4.md" priority="mandatory">
+      Dual-Core Separation: Core 0 handles communication and safety monitoring, Core 1 handles motion control.
+    </constraint>
+    <constraint source="tech-spec-epic-4.md" priority="mandatory">
+      Event-Driven Safety: Safety task is fully event-driven using interrupts and FreeRTOS task notifications.
+    </constraint>
+    <constraint source="architecture" priority="high">
+      I2C Coordination: All MCP23017 access must use mcp23017_wrapper mutex for thread-safe I2C bus access.
+    </constraint>
+    <constraint source="epics.md" priority="high">
+      Floating switch uses C_LIMIT_MAX input (MCP0 GPB3) - shares interrupt with B-E limit switches. Must distinguish from hard limit handling.
+    </constraint>
+    <constraint source="epics.md" priority="high">
+      Only C axis has floating switch feature (picker jaw). WIDTH command must reject other axes.
+    </constraint>
+    <constraint source="story" priority="high">
+      Floating switch detection only valid during closing motion (negative direction). Ignore switch activation during opening.
+    </constraint>
+  </constraints>
+
+  <tests>
+    <standards>
+      Per project testing strategy: Unit tests use Unity framework in component test directories. Integration tests use actual hardware when available. Mock external dependencies (MCP23017, motion_controller) for unit tests. Tests follow naming pattern test_*.c for C tests.
+    </standards>
+    <locations>
+      <location>firmware/components/control/safety_monitor/test/</location>
+      <location>firmware/components/control/command_executor/test/</location>
+      <location>firmware/test/integration/safety/</location>
+    </locations>
+    <ideas>
+      <idea ac="1">Test floating switch triggers stop but not ERROR state - verify axis remains enabled</idea>
+      <idea ac="2">Test width calculation accuracy at various positions - verify precision ±0.1mm</idea>
+      <idea ac="3">Test event publication timing - verify EVENT WIDTH C published within 10ms</idea>
+      <idea ac="4">Test WIDTH C command returns stored value; test -1.000 when no measurement</idea>
+      <idea ac="5">Test floating switch ignored during opening motion - verify no measurement stored</idea>
+      <idea ac="6">Test measurement reset when new close motion starts</idea>
+      <idea ac="7">Test WIDTH X returns error ERR_WIDTH_C_ONLY</idea>
+      <idea ac="8">Test I2C access coordinates with limit_monitor - no bus contention</idea>
+    </ideas>
+  </tests>
+</story-context>

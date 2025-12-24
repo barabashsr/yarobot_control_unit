@@ -51,52 +51,40 @@
  *
  * 200 pulses/rev matches common servo driver PA14 settings.
  */
-// ORIGINAL VALUES (restore tomorrow):
-// #define DEFAULT_PULSES_PER_REV      200.0f
-// #define DEFAULT_UNITS_PER_REV       360.0f
-
-// HARDWARE TEST CONFIG (2025-12-18) - units in mm
 #define DEFAULT_PULSES_PER_REV      200.0f
-#define DEFAULT_UNITS_PER_REV       360.0f
-
-// ============================================================================
-// PER-AXIS HARDWARE TEST CONFIGURATION (2025-12-18)
-// ============================================================================
-// X axis: 350mm stroke, 10000 pulses/rev
-#define X_AXIS_PULSES_PER_REV       10000.0f
-#define X_AXIS_UNITS_PER_REV        350.0f   // mm
-
-// Y axis: 48mm stroke, 10000 pulses/rev
-#define Y_AXIS_PULSES_PER_REV       10000.0f
-#define Y_AXIS_UNITS_PER_REV        48.0f    // mm
-
-// Z axis: 5mm stroke, 312 pulses/rev
-#define Z_AXIS_PULSES_PER_REV       312.0f
-#define Z_AXIS_UNITS_PER_REV        5.0f     // mm
-
-// A axis: 3.8mm stroke, 625 pulses/rev (10000/16)
-#define A_AXIS_PULSES_PER_REV       625.0f
-#define A_AXIS_UNITS_PER_REV        3.8f     // mm
-
-// B axis: 72mm stroke, 10000 pulses/rev
-#define B_AXIS_PULSES_PER_REV       10000.0f
-#define B_AXIS_UNITS_PER_REV        72.0f    // mm
-
-// C axis: 48mm stroke, 3200 pulses/rev (200*16)
-#define C_AXIS_PULSES_PER_REV       3200.0f
-#define C_AXIS_UNITS_PER_REV        48.0f    // mm
-
-// D axis: 48mm stroke, 3200 pulses/rev (same as C)
-#define D_AXIS_PULSES_PER_REV       3200.0f
-#define D_AXIS_UNITS_PER_REV        48.0f    // mm
-// ============================================================================
 
 /**
  * @brief Default units per revolution (degrees)
  *
  * 360 degrees per revolution for human-readable positions.
  */
-// Already defined above in hardware test section
+#define DEFAULT_UNITS_PER_REV       360.0f
+
+// ============================================================================
+// PER-AXIS HARDWARE TEST CONFIGURATION (2025-12-18) - ENABLED
+// Hardware test mode with mm units
+// ============================================================================
+#define X_AXIS_PULSES_PER_REV       10000.0f
+#define X_AXIS_UNITS_PER_REV        350.0f   // mm
+
+#define Y_AXIS_PULSES_PER_REV       10000.0f
+#define Y_AXIS_UNITS_PER_REV        48.0f    // mm
+
+#define Z_AXIS_PULSES_PER_REV       312.0f
+#define Z_AXIS_UNITS_PER_REV        5.0f     // mm
+
+#define A_AXIS_PULSES_PER_REV       625.0f
+#define A_AXIS_UNITS_PER_REV        3.8f     // mm
+
+#define B_AXIS_PULSES_PER_REV       10000.0f
+#define B_AXIS_UNITS_PER_REV        72.0f    // mm
+
+#define C_AXIS_PULSES_PER_REV       3200.0f
+#define C_AXIS_UNITS_PER_REV        48.0f    // mm
+
+#define D_AXIS_PULSES_PER_REV       3200.0f
+#define D_AXIS_UNITS_PER_REV        48.0f    // mm
+// ============================================================================
 
 /** @brief Default axis type (false = linear, true = rotary) */
 #define DEFAULT_IS_ROTARY           false

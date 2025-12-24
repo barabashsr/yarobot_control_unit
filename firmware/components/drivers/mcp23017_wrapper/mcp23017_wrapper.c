@@ -11,6 +11,7 @@
 #include "config_i2c.h"
 #include "config_gpio.h"
 #include "config_timing.h"
+#include "i2c_health_monitor.h"
 
 #include "driver/gpio.h"
 #include "esp_log.h"
@@ -99,8 +100,14 @@ esp_err_t mcp23017_wrapper_init(void)
     ret = mcp23017_check_present(s_mcp_handles[MCP_DEVICE_0]);
     if (ret != ESP_OK) {
         ESP_LOGE(TAG, "MCP23017 #0 not responding at 0x%02X", I2C_ADDR_MCP23017_0);
+        if (i2c_health_is_initialized()) {
+            i2c_health_record_failure(I2C_PORT, I2C_ADDR_MCP23017_0);
+        }
         ret = ESP_ERR_NOT_FOUND;
         goto cleanup;
+    }
+    if (i2c_health_is_initialized()) {
+        i2c_health_record_success(I2C_PORT, I2C_ADDR_MCP23017_0);
     }
     ESP_LOGI(TAG, "MCP23017 #0 (0x%02X) present", I2C_ADDR_MCP23017_0);
 
@@ -116,8 +123,14 @@ esp_err_t mcp23017_wrapper_init(void)
     ret = mcp23017_check_present(s_mcp_handles[MCP_DEVICE_1]);
     if (ret != ESP_OK) {
         ESP_LOGE(TAG, "MCP23017 #1 not responding at 0x%02X", I2C_ADDR_MCP23017_1);
+        if (i2c_health_is_initialized()) {
+            i2c_health_record_failure(I2C_PORT, I2C_ADDR_MCP23017_1);
+        }
         ret = ESP_ERR_NOT_FOUND;
         goto cleanup;
+    }
+    if (i2c_health_is_initialized()) {
+        i2c_health_record_success(I2C_PORT, I2C_ADDR_MCP23017_1);
     }
     ESP_LOGI(TAG, "MCP23017 #1 (0x%02X) present", I2C_ADDR_MCP23017_1);
 

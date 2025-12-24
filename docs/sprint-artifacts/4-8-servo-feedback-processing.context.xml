@@ -1,0 +1,226 @@
+<story-context id="4-8-servo-feedback-processing" v="1.0">
+  <metadata>
+    <epicId>4</epicId>
+    <storyId>8</storyId>
+    <title>Servo Feedback Processing (Basic InPos)</title>
+    <status>ready-for-dev</status>
+    <generatedAt>2025-12-19</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/4-8-servo-feedback-processing.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>user</asA>
+    <iWant>servo InPos feedback signals read and reported</iWant>
+    <soThat>I can query servo position-in-range status</soThat>
+    <tasks>
+      <task id="1">Define servo feedback configuration constants (CMD_INPOS, MCP1_INPOS_x pin mappings)</task>
+      <task id="2">Create ServoFeedbackReader module in safety_monitor component</task>
+      <task id="3">Implement MCP23017 #1 Port B reading for InPos (GPB0-4)</task>
+      <task id="4">Implement CMD_INPOS handler (query all/single axis)</task>
+      <task id="5">Extend STAT response with INPOS field</task>
+      <task id="6">Integration with safety_monitor initialization</task>
+      <task id="7">Unit tests for ServoFeedbackReader</task>
+      <task id="8">Integration tests</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <criterion id="AC1" source="tech-spec-epic-4.md#AC35">InPos signals readable from MCP23017 #1 Port B via servo_feedback_get_inpos(axis)</criterion>
+    <criterion id="AC2" source="tech-spec-epic-4.md#AC35">INPOS command (no params) returns all 5 servo axes: OK X:1 Y:0 Z:1 A:1 B:0</criterion>
+    <criterion id="AC3" source="tech-spec-epic-4.md#AC35">INPOS X returns single axis: OK X 1</criterion>
+    <criterion id="AC4" source="tech-spec-epic-4.md#AC36">STAT response includes INPOS:1 or INPOS:0 field for servo axes</criterion>
+    <criterion id="AC5">INPOS for stepper axes (C,D,E) returns OK C N/A</criterion>
+    <criterion id="AC6">Invalid axis returns ERROR ERR_INVALID_AXIS MSG_AXIS_NOT_FOUND</criterion>
+    <criterion id="AC7">I2C access coordinated via mcp23017_wrapper mutex</criterion>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/sprint-artifacts/tech-spec-epic-4.md</path>
+        <title>Epic 4 Technical Specification</title>
+        <section>Story 4.8 Servo Feedback Processing</section>
+        <snippet>AC35: InPos signals readable from MCP23017 #1 Port B. AC36: InPos state included in STAT response. ServoFeedbackReader module in components/control/safety_monitor/.</snippet>
+      </doc>
+      <doc>
+        <path>docs/epics.md</path>
+        <title>Epics and Stories</title>
+        <section>Story 4.8</section>
+        <snippet>FR37: servo feedback processing (InPos portion). InPos on MCP23017 #1 Port B (GPB0-GPB4). Prerequisites: Story 4.1, Story 3.6.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>System Architecture</title>
+        <section>External Hardware</section>
+        <snippet>MCP23017 #1 at I2C address 0x21 handles ALARM_INPUT on Port A and InPos signals on Port B (GPB0-4 for servo axes X,Y,Z,A,B).</snippet>
+      </doc>
+      <doc>
+        <path>docs/sprint-artifacts/4-7-general-purpose-digital-io.md</path>
+        <title>Previous Story</title>
+        <section>Dev Agent Record</section>
+        <snippet>Handler pattern: din_handler.cpp/dout_handler.cpp. MCP1 Port B access via mcp23017_wrapper. digital_io.c reads GPB5-7 for spare inputs.</snippet>
+      </doc>
+    </docs>
+    <code>
+      <file>
+        <path>firmware/components/drivers/mcp23017_wrapper/include/mcp23017_wrapper.h</path>
+        <kind>driver</kind>
+        <symbol>mcp23017_wrapper_read_port</symbol>
+        <lines>147-147</lines>
+        <reason>API for reading MCP23017 ports - use MCP_DEVICE_1, MCP_PORT_B for InPos</reason>
+      </file>
+      <file>
+        <path>firmware/components/drivers/mcp23017_wrapper/mcp23017_wrapper.c</path>
+        <kind>driver</kind>
+        <symbol>mcp23017_wrapper</symbol>
+        <reason>Implementation of thread-safe MCP23017 access with mutex</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_i2c.h</path>
+        <kind>config</kind>
+        <symbol>MCP1_X_INPOS, MCP1_Y_INPOS, MCP1_Z_INPOS, MCP1_A_INPOS, MCP1_B_INPOS</symbol>
+        <lines>177-191</lines>
+        <reason>InPos pin definitions - GPB0-4 (values 8-12 for Port B pins)</reason>
+      </file>
+      <file>
+        <path>firmware/components/config/include/config_commands.h</path>
+        <kind>config</kind>
+        <symbol>CMD_STAT, ERR_INVALID_AXIS</symbol>
+        <reason>Command and error definitions - add CMD_INPOS here</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/safety_monitor/include/safety_monitor.h</path>
+        <kind>module</kind>
+        <symbol>safety_monitor_init</symbol>
+        <reason>Module structure pattern - servo_feedback follows same pattern</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/safety_monitor/safety_monitor.c</path>
+        <kind>module</kind>
+        <symbol>safety_monitor_task</symbol>
+        <reason>Task structure and initialization pattern for safety_monitor component</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/command_executor/digital_io.c</path>
+        <kind>handler</kind>
+        <symbol>digital_io_read_input</symbol>
+        <reason>Pattern for reading MCP1 inputs - shares Port B with InPos</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/command_executor/din_handler.cpp</path>
+        <kind>handler</kind>
+        <symbol>din_handler</symbol>
+        <reason>Command handler pattern for inpos_handler.cpp</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/command_executor/command_executor.c</path>
+        <kind>dispatcher</kind>
+        <symbol>command_executor_register_handler</symbol>
+        <reason>Handler registration for CMD_INPOS</reason>
+      </file>
+      <file>
+        <path>firmware/components/control/motor_system/motor_system.cpp</path>
+        <kind>system</kind>
+        <symbol>motor_system_init</symbol>
+        <reason>Handler registration location - register inpos_handler here</reason>
+      </file>
+    </code>
+    <dependencies>
+      <esp-idf version="5.4">
+        <component>driver/i2c</component>
+        <component>freertos</component>
+      </esp-idf>
+      <managed-components>
+        <component name="espressif__mcp23017" version="0.1.1">MCP23017 I2C GPIO expander driver</component>
+      </managed-components>
+    </dependencies>
+  </artifacts>
+
+  <interfaces>
+    <interface>
+      <name>mcp23017_wrapper_read_port</name>
+      <kind>function</kind>
+      <signature>esp_err_t mcp23017_wrapper_read_port(mcp_device_t device, mcp_port_t port, uint8_t *value)</signature>
+      <path>firmware/components/drivers/mcp23017_wrapper/include/mcp23017_wrapper.h:147</path>
+    </interface>
+    <interface>
+      <name>servo_feedback_get_inpos (NEW)</name>
+      <kind>function</kind>
+      <signature>bool servo_feedback_get_inpos(uint8_t axis)</signature>
+      <path>firmware/components/control/safety_monitor/include/servo_feedback.h</path>
+    </interface>
+    <interface>
+      <name>servo_feedback_get_all_inpos (NEW)</name>
+      <kind>function</kind>
+      <signature>uint8_t servo_feedback_get_all_inpos(void)</signature>
+      <path>firmware/components/control/safety_monitor/include/servo_feedback.h</path>
+    </interface>
+    <interface>
+      <name>CMD_INPOS handler (NEW)</name>
+      <kind>command</kind>
+      <signature>INPOS [axis] → OK X:1 Y:0... or OK X 1 or OK C N/A</signature>
+      <path>firmware/components/control/command_executor/inpos_handler.cpp</path>
+    </interface>
+    <interface>
+      <name>STAT response extension</name>
+      <kind>response</kind>
+      <signature>OK X POS:100.000 EN:1 MOV:0 ERR:0 LIM:00 HOMED:1 INPOS:1</signature>
+      <path>firmware/components/control/command_executor/stat_handler.cpp</path>
+    </interface>
+  </interfaces>
+
+  <constraints>
+    <constraint type="mandatory" source="bmm-workflow-status.yaml">
+      Header-Only Configuration: Every configurable value MUST be defined in a header file. No magic numbers in source code.
+      - GPIO pins: Use MCP1_X_INPOS, never 8
+      - Commands: Use CMD_INPOS, never "INPOS"
+      - Errors: Use ERR_INVALID_AXIS, never "E002"
+    </constraint>
+    <constraint type="architectural" source="tech-spec-epic-4.md">
+      Dual-Core Separation: Core 0 handles communication and safety monitoring, Core 1 handles motion control.
+      ServoFeedbackReader runs in safety_monitor context on Core 0.
+    </constraint>
+    <constraint type="hardware" source="tech-spec-epic-4.md">
+      InPos Pin Mapping:
+      - MCP1_X_INPOS = 8 (GPB0)
+      - MCP1_Y_INPOS = 9 (GPB1)
+      - MCP1_Z_INPOS = 10 (GPB2)
+      - MCP1_A_INPOS = 11 (GPB3)
+      - MCP1_B_INPOS = 12 (GPB4)
+      Servo axes only: X,Y,Z,A,B. Steppers C,D,E have no InPos.
+    </constraint>
+    <constraint type="i2c" source="architecture.md">
+      MCP23017 #1 Port B is shared:
+      - GPB0-4: InPos signals (this story)
+      - GPB5-7: Spare digital inputs (Story 4.7)
+      Use mcp23017_wrapper mutex for thread-safe access.
+    </constraint>
+    <constraint type="api" source="epics.md">
+      This story implements BASIC InPos reading only (FR37 partial).
+      Advanced InPos processing (motion confirmation, timeout) is Epic 6 Story 6.5.
+    </constraint>
+  </constraints>
+
+  <tests>
+    <standards>
+      Per project testing strategy: Unit tests mock hardware (MCP23017), integration tests use actual hardware.
+      Tests in firmware/components/control/safety_monitor/test/ for unit tests.
+      Integration tests in firmware/test/integration/safety/.
+      Follow existing patterns from test_safety_monitor.c, test_brake_controller.c.
+    </standards>
+    <locations>
+      <location>firmware/components/control/safety_monitor/test/test_servo_feedback.c</location>
+      <location>firmware/test/integration/safety/test_servo_feedback_integration.c</location>
+    </locations>
+    <ideas>
+      <idea ac="AC1">Test servo_feedback_get_inpos() returns correct boolean for each axis</idea>
+      <idea ac="AC2">Test INPOS command with no params returns all 5 servo axes in correct format</idea>
+      <idea ac="AC3">Test INPOS X returns single axis value</idea>
+      <idea ac="AC4">Test STAT response includes INPOS field for servo axes</idea>
+      <idea ac="AC5">Test INPOS C returns "N/A" for stepper axis</idea>
+      <idea ac="AC6">Test INPOS Q returns ERR_INVALID_AXIS</idea>
+      <idea ac="AC7">Test concurrent I2C access with digital_io reads doesn't cause contention</idea>
+    </ideas>
+  </tests>
+</story-context>

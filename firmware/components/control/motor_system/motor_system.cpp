@@ -56,6 +56,31 @@
 #include "brake_controller.h"
 #include "brake_handler.h"
 
+// Position loss (Story 4-6)
+#include "posok_handler.h"
+
+// Digital I/O (Story 4-7)
+#include "digital_io.h"
+#include "din_handler.h"
+#include "dout_handler.h"
+
+// Servo feedback (Story 4-8)
+#include "servo_feedback.h"
+#include "inpos_handler.h"
+
+// Floating switch (Story 4-9)
+#include "floating_switch.h"
+#include "width_handler.h"
+
+// Error manager (Story 4-10)
+#include "error_manager.h"
+#include "errcnt_handler.h"
+#include "clrerr_handler.h"
+
+// I2C health (Story 4-11)
+#include "i2c_health_monitor.h"
+#include "i2c_handler.h"
+
 static const char* TAG = "motor_system";
 
 // ============================================================================
@@ -162,85 +187,85 @@ static bool s_initialized = false;
 // ============================================================================
 
 /**
- * @brief Initialize axis configurations with hardware test values
- *
- * @note Uses per-axis defines from config_defaults.h for hardware testing.
- *       Original code commented below for restoration.
+ * @brief Initialize axis configurations with default values
  */
 static void init_axis_configs(void)
 {
     // ========================================================================
-    // ORIGINAL CODE (uncomment to restore default behavior):
+    // DEFAULT CONFIG - COMMENTED OUT
+    // Uncomment to restore default mode with degrees
     // ========================================================================
     // // Linear servo axes (X, Y, Z) - meters
     // s_config_x = AxisConfig::createDefaultLinear();
-    // s_config_x.alias[0] = 'X'; s_config_x.alias[1] = '\0';
+    // s_config_x.alias[0] = 'X';
+    // s_config_x.alias[1] = '\0';
+    //
     // s_config_y = AxisConfig::createDefaultLinear();
-    // s_config_y.alias[0] = 'Y'; s_config_y.alias[1] = '\0';
+    // s_config_y.alias[0] = 'Y';
+    // s_config_y.alias[1] = '\0';
+    //
     // s_config_z = AxisConfig::createDefaultLinear();
-    // s_config_z.alias[0] = 'Z'; s_config_z.alias[1] = '\0';
+    // s_config_z.alias[0] = 'Z';
+    // s_config_z.alias[1] = '\0';
+    //
     // // Rotary servo axes (A, B) - radians
     // s_config_a = AxisConfig::createDefaultRotary();
-    // s_config_a.alias[0] = 'A'; s_config_a.alias[1] = '\0';
+    // s_config_a.alias[0] = 'A';
+    // s_config_a.alias[1] = '\0';
+    //
     // s_config_b = AxisConfig::createDefaultRotary();
-    // s_config_b.alias[0] = 'B'; s_config_b.alias[1] = '\0';
+    // s_config_b.alias[0] = 'B';
+    // s_config_b.alias[1] = '\0';
+    //
     // // Stepper axes (C, D) - linear defaults
     // s_config_c = AxisConfig::createDefaultLinear();
-    // s_config_c.alias[0] = 'C'; s_config_c.alias[1] = '\0';
+    // s_config_c.alias[0] = 'C';
+    // s_config_c.alias[1] = '\0';
+    //
     // s_config_d = AxisConfig::createDefaultLinear();
-    // s_config_d.alias[0] = 'D'; s_config_d.alias[1] = '\0';
+    // s_config_d.alias[0] = 'D';
+    // s_config_d.alias[1] = '\0';
     // ========================================================================
 
-    // HARDWARE TEST CONFIG (2025-12-18) - per-axis values from config_defaults.h
-
-    // X axis: 350mm stroke, 10000 pulses/rev
+    // ========================================================================
+    // HARDWARE TEST CONFIG (2025-12-18) - ENABLED
+    // Hardware test mode with mm units
+    // ========================================================================
     s_config_x = AxisConfig::createDefaultLinear();
     s_config_x.pulses_per_rev = X_AXIS_PULSES_PER_REV;
     s_config_x.units_per_rev = X_AXIS_UNITS_PER_REV;
-    s_config_x.alias[0] = 'X';
-    s_config_x.alias[1] = '\0';
+    s_config_x.alias[0] = 'X'; s_config_x.alias[1] = '\0';
 
-    // Y axis: 48mm stroke, 10000 pulses/rev
     s_config_y = AxisConfig::createDefaultLinear();
     s_config_y.pulses_per_rev = Y_AXIS_PULSES_PER_REV;
     s_config_y.units_per_rev = Y_AXIS_UNITS_PER_REV;
-    s_config_y.alias[0] = 'Y';
-    s_config_y.alias[1] = '\0';
+    s_config_y.alias[0] = 'Y'; s_config_y.alias[1] = '\0';
 
-    // Z axis: 5mm stroke, 312 pulses/rev
     s_config_z = AxisConfig::createDefaultLinear();
     s_config_z.pulses_per_rev = Z_AXIS_PULSES_PER_REV;
     s_config_z.units_per_rev = Z_AXIS_UNITS_PER_REV;
-    s_config_z.alias[0] = 'Z';
-    s_config_z.alias[1] = '\0';
+    s_config_z.alias[0] = 'Z'; s_config_z.alias[1] = '\0';
 
-    // A axis: 3.8mm stroke, 625 pulses/rev
     s_config_a = AxisConfig::createDefaultLinear();
     s_config_a.pulses_per_rev = A_AXIS_PULSES_PER_REV;
     s_config_a.units_per_rev = A_AXIS_UNITS_PER_REV;
-    s_config_a.alias[0] = 'A';
-    s_config_a.alias[1] = '\0';
+    s_config_a.alias[0] = 'A'; s_config_a.alias[1] = '\0';
 
-    // B axis: 72mm stroke, 10000 pulses/rev
     s_config_b = AxisConfig::createDefaultLinear();
     s_config_b.pulses_per_rev = B_AXIS_PULSES_PER_REV;
     s_config_b.units_per_rev = B_AXIS_UNITS_PER_REV;
-    s_config_b.alias[0] = 'B';
-    s_config_b.alias[1] = '\0';
+    s_config_b.alias[0] = 'B'; s_config_b.alias[1] = '\0';
 
-    // C axis: 48mm stroke, 3200 pulses/rev
     s_config_c = AxisConfig::createDefaultLinear();
     s_config_c.pulses_per_rev = C_AXIS_PULSES_PER_REV;
     s_config_c.units_per_rev = C_AXIS_UNITS_PER_REV;
-    s_config_c.alias[0] = 'C';
-    s_config_c.alias[1] = '\0';
+    s_config_c.alias[0] = 'C'; s_config_c.alias[1] = '\0';
 
-    // D axis: 48mm stroke, 3200 pulses/rev
     s_config_d = AxisConfig::createDefaultLinear();
     s_config_d.pulses_per_rev = D_AXIS_PULSES_PER_REV;
     s_config_d.units_per_rev = D_AXIS_UNITS_PER_REV;
-    s_config_d.alias[0] = 'D';
-    s_config_d.alias[1] = '\0';
+    s_config_d.alias[0] = 'D'; s_config_d.alias[1] = '\0';
+    // ========================================================================
 
     // E axis - discrete actuator (binary 0/1 position)
     s_config_e.pulses_per_rev = E_AXIS_PULSES_PER_UNIT;
@@ -562,7 +587,100 @@ static esp_err_t register_command_handlers(void)
         return ret;
     }
 
-    ESP_LOGI(TAG, "Command handlers registered (MOVE, MOVR, EN, POS, VEL, STOP, LIM, BRAKE)");
+    // Register POSOK handler (Story 4-6)
+    ret = posok_handler_register();
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to register POSOK handler: %s", esp_err_to_name(ret));
+        return ret;
+    }
+
+    // Initialize Digital I/O manager (Story 4-7)
+    ret = digital_io_init();
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to init digital I/O: %s", esp_err_to_name(ret));
+        return ret;
+    }
+
+    // Register DIN handler (Story 4-7)
+    ret = din_handler_register();
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to register DIN handler: %s", esp_err_to_name(ret));
+        return ret;
+    }
+
+    // Register DOUT handler (Story 4-7)
+    ret = dout_handler_register();
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to register DOUT handler: %s", esp_err_to_name(ret));
+        return ret;
+    }
+
+    // Initialize Servo feedback (Story 4-8)
+    ret = servo_feedback_init();
+    if (ret != ESP_OK && ret != ESP_ERR_INVALID_STATE) {
+        ESP_LOGW(TAG, "Servo feedback init failed: %s - INPOS unavailable",
+                 esp_err_to_name(ret));
+        // Continue in degraded mode
+    }
+
+    // Register INPOS handler (Story 4-8)
+    ret = inpos_handler_register();
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to register INPOS handler: %s", esp_err_to_name(ret));
+        return ret;
+    }
+
+    // Initialize Floating switch (Story 4-9)
+    // Note: Must be after safety_monitor_init() and motion controller init
+    // which happens in motor_system_init() steps 10 and 8 respectively.
+    // This is called from register_command_handlers() which is step 9,
+    // so we defer initialization to motor_system_init() after step 10.
+
+    // Register WIDTH handler (Story 4-9)
+    ret = width_handler_register();
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to register WIDTH handler: %s", esp_err_to_name(ret));
+        return ret;
+    }
+
+    // Initialize Error manager (Story 4-10)
+    ret = error_manager_init();
+    if (ret != ESP_OK && ret != ESP_ERR_INVALID_STATE) {
+        ESP_LOGW(TAG, "Error manager init failed: %s - error tracking unavailable",
+                 esp_err_to_name(ret));
+        // Continue in degraded mode
+    }
+
+    // Register ERRCNT handler (Story 4-10)
+    ret = errcnt_handler_register();
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to register ERRCNT handler: %s", esp_err_to_name(ret));
+        return ret;
+    }
+
+    // Register CLRERR handler (Story 4-10)
+    ret = clrerr_handler_register();
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to register CLRERR handler: %s", esp_err_to_name(ret));
+        return ret;
+    }
+
+    // Initialize I2C health monitor (Story 4-11)
+    ret = i2c_health_init();
+    if (ret != ESP_OK && ret != ESP_ERR_INVALID_STATE) {
+        ESP_LOGW(TAG, "I2C health init failed: %s - health tracking unavailable",
+                 esp_err_to_name(ret));
+        // Continue in degraded mode
+    }
+
+    // Register I2C handler (Story 4-11)
+    ret = i2c_handler_register();
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to register I2C handler: %s", esp_err_to_name(ret));
+        return ret;
+    }
+
+    ESP_LOGI(TAG, "Command handlers registered (MOVE, MOVR, EN, POS, VEL, STOP, LIM, BRAKE, POSOK, DIN, DOUT, INPOS, WIDTH, ERRCNT, CLRERR, I2C)");
     return ESP_OK;
 }
 
@@ -656,6 +774,15 @@ esp_err_t motor_system_init(void)
     ret = brake_controller_init();
     if (ret != ESP_OK && ret != ESP_ERR_INVALID_STATE) {
         ESP_LOGW(TAG, "Brake controller init failed: %s - brake control unavailable",
+                 esp_err_to_name(ret));
+        // Continue in degraded mode
+    }
+
+    // Step 12: Initialize floating switch handler (Story 4-9)
+    // Must be after safety_monitor_init() and motion_controller init
+    ret = floating_switch_init();
+    if (ret != ESP_OK && ret != ESP_ERR_INVALID_STATE) {
+        ESP_LOGW(TAG, "Floating switch init failed: %s - WIDTH unavailable",
                  esp_err_to_name(ret));
         // Continue in degraded mode
     }

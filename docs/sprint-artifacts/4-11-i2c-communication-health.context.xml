@@ -1,0 +1,220 @@
+<story-context id="4-11-i2c-communication-health" v="1.0">
+  <metadata>
+    <epicId>4</epicId>
+    <storyId>11</storyId>
+    <title>I2C Communication Health</title>
+    <status>ready-for-dev</status>
+    <generatedAt>2025-12-23</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/4-11-i2c-communication-health.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>user</asA>
+    <iWant>I2C communication health monitored</iWant>
+    <soThat>communication failures are detected, reported, and recovered automatically</soThat>
+    <tasks>
+      <task id="1" acs="1,2,3,4">Define I2C health configuration constants</task>
+      <task id="2" acs="1,2,3,4,7,8">Create I2C Health Monitor module</task>
+      <task id="3" acs="1,2,3">Create I2C wrapper with retry and recovery</task>
+      <task id="4" acs="5,6">Implement CMD_I2C handler</task>
+      <task id="5" acs="4,7">Implement health degradation events</task>
+      <task id="6" acs="1,2,3">Integrate i2c_wrapper into existing I2C users</task>
+      <task id="7" acs="8">Implement graceful degradation</task>
+      <task id="8" acs="4">Hook error counting into I2C failures (deferred from 4.10)</task>
+      <task id="9" acs="1-8">Build verification and integration testing</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1" refs="AC45,FR56">I2C transaction timeouts detected within TIMING_I2C_TIMEOUT_MS (50ms)</ac>
+    <ac id="2" refs="AC46,FR58">Auto-retry on transient failures (up to TIMING_I2C_RETRY_COUNT=3)</ac>
+    <ac id="3" refs="AC47,FR58">Bus recovery on persistent failures (9 clock pulses, reinitialize)</ac>
+    <ac id="4" refs="AC48,FR46">Health degradation events published when failure count exceeds I2C_FAILURE_THRESHOLD</ac>
+    <ac id="5">CMD_I2C returns bus health: OK I2C0:OK(1234) I2C1:OK(5678) or with error counts</ac>
+    <ac id="6">CMD_I2C SCAN lists detected devices: OK 0x20:MCP23017 0x21:MCP23017 0x3C:OLED</ac>
+    <ac id="7" refs="FR56">Device offline detection after I2C_FAILURE_THRESHOLD consecutive failures</ac>
+    <ac id="8">Graceful degradation when MCP23017s go offline (LIMITS_DEGRADED, FEEDBACK_DEGRADED events)</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/sprint-artifacts/tech-spec-epic-4.md" title="Epic 4 Tech Spec" section="Story 4.11">
+        AC45-AC48: I2C health monitoring requirements. I2CHealthMonitor module specification.
+        Bus recovery strategy: timeout -> retry -> reinitialize -> degraded mode.
+      </doc>
+      <doc path="docs/epics.md" title="Epics" section="Story 4.11">
+        FR46: Monitor I2C communication health. FR56: Detect I2C failures.
+        FR58: Recover from transient errors. CMD_I2C and CMD_I2C SCAN response formats.
+      </doc>
+      <doc path="docs/architecture.md" title="Architecture" section="config_i2c.h, config_timing.h">
+        I2C_PORT=I2C_NUM_0, I2C_FREQ_HZ=400kHz. TIMING_I2C_TIMEOUT_MS=50, TIMING_I2C_RETRY_COUNT=3.
+        Device addresses: 0x20 (MCP0), 0x21 (MCP1), 0x3C (OLED on I2C1).
+      </doc>
+      <doc path="docs/sprint-artifacts/4-10-error-tracking-recovery.md" title="Story 4.10" section="Dev Notes">
+        ErrorManager integration: error_manager_increment(ERR_CAT_I2C, AXIS_NONE). Task 9 deferred I2C hook.
+        Handler registration pattern, module initialization pattern, event publication pattern.
+      </doc>
+      <doc path="docs/bmm-workflow-status.yaml" title="Workflow Status" section="mandatory_constraints">
+        Header-only configuration: Use I2C_ADDR_MCP23017_0 never 0x20. Use TIMING_I2C_TIMEOUT_MS never 50.
+      </doc>
+    </docs>
+
+    <code>
+      <file path="firmware/components/drivers/mcp23017_wrapper/mcp23017_wrapper.c" kind="driver" reason="Existing I2C user - integrate i2c_wrapper calls here">
+        <symbol>mcp23017_wrapper_read_port</symbol>
+        <symbol>mcp23017_wrapper_read_all</symbol>
+      </file>
+      <file path="firmware/components/drivers/mcp23017_wrapper/include/mcp23017_wrapper.h" kind="header" reason="MCP23017 API - wrap I2C calls with health tracking">
+        <symbol>mcp_device_t</symbol>
+        <symbol>mcp_port_t</symbol>
+      </file>
+      <file path="firmware/components/control/safety_monitor/error_manager.c" kind="module" reason="Error counting integration - call error_manager_increment for I2C errors">
+        <symbol>error_manager_increment</symbol>
+        <symbol>error_manager_publish_error</symbol>
+        <symbol>ERR_CAT_I2C</symbol>
+      </file>
+      <file path="firmware/components/control/safety_monitor/include/error_manager.h" kind="header" reason="Error manager API for I2C error counting">
+        <symbol>ErrorCategory</symbol>
+        <symbol>error_manager_increment</symbol>
+      </file>
+      <file path="firmware/components/yarobot_hal/i2c_hal/i2c_hal.c" kind="hal" reason="Low-level I2C - extend or wrap with retry/recovery logic">
+        <symbol>i2c_hal_read</symbol>
+        <symbol>i2c_hal_write</symbol>
+        <symbol>i2c_hal_scan_bus</symbol>
+      </file>
+      <file path="firmware/components/yarobot_hal/i2c_hal/include/i2c_hal.h" kind="header" reason="I2C HAL API - base for wrapper">
+        <symbol>i2c_hal_init</symbol>
+        <symbol>i2c_hal_write_read</symbol>
+      </file>
+      <file path="firmware/components/config/include/config_i2c.h" kind="config" reason="I2C addresses and pin mappings">
+        <symbol>I2C_PORT</symbol>
+        <symbol>I2C_ADDR_MCP23017_0</symbol>
+        <symbol>I2C_ADDR_MCP23017_1</symbol>
+      </file>
+      <file path="firmware/components/control/motor_system/motor_system.cpp" kind="integration" lines="530-665" reason="Handler registration pattern - add i2c_handler_register()">
+        <symbol>register_command_handlers</symbol>
+      </file>
+      <file path="firmware/components/control/command_executor/errcnt_handler.cpp" kind="handler" reason="Reference pattern for i2c_handler.cpp">
+        <symbol>errcnt_handler_register</symbol>
+      </file>
+      <file path="firmware/components/control/safety_monitor/safety_monitor.c" kind="module" reason="Integration point for degraded mode flag">
+        <symbol>safety_monitor_init</symbol>
+      </file>
+      <file path="firmware/managed_components/espressif__mcp23017/mcp23017.c" kind="component" reason="ESP Component Registry MCP23017 driver">
+        <symbol>mcp23017_read_port</symbol>
+      </file>
+      <file path="firmware/managed_components/espressif__i2c_bus/i2c_bus.c" kind="component" reason="ESP Component Registry I2C bus abstraction">
+        <symbol>i2c_bus_read_bytes</symbol>
+        <symbol>i2c_bus_write_bytes</symbol>
+      </file>
+    </code>
+
+    <dependencies>
+      <esp-idf version="5.4 LTS">
+        <component>driver/i2c_master</component>
+        <component>freertos/FreeRTOS</component>
+        <component>freertos/semphr</component>
+        <component>esp_timer</component>
+      </esp-idf>
+      <esp-component-registry>
+        <component name="espressif/mcp23017" version="0.1.1"/>
+        <component name="espressif/i2c_bus" version="dependency"/>
+      </esp-component-registry>
+    </dependencies>
+  </artifacts>
+
+  <interfaces>
+    <interface name="i2c_health_init" kind="function" path="firmware/components/control/safety_monitor/include/i2c_health_monitor.h">
+      <signature>esp_err_t i2c_health_init(void)</signature>
+      <note>Initialize I2C health tracking - call from motor_system_init()</note>
+    </interface>
+    <interface name="i2c_health_record_success" kind="function" path="firmware/components/control/safety_monitor/include/i2c_health_monitor.h">
+      <signature>esp_err_t i2c_health_record_success(i2c_port_t port, uint8_t addr)</signature>
+      <note>Record successful transaction - clears consecutive failure count</note>
+    </interface>
+    <interface name="i2c_health_record_failure" kind="function" path="firmware/components/control/safety_monitor/include/i2c_health_monitor.h">
+      <signature>esp_err_t i2c_health_record_failure(i2c_port_t port, uint8_t addr)</signature>
+      <note>Record failed transaction - checks threshold, triggers events</note>
+    </interface>
+    <interface name="i2c_health_is_device_online" kind="function" path="firmware/components/control/safety_monitor/include/i2c_health_monitor.h">
+      <signature>bool i2c_health_is_device_online(uint8_t addr)</signature>
+      <note>Query device online status for degradation checks</note>
+    </interface>
+    <interface name="i2c_wrapper_read" kind="function" path="firmware/components/hal/i2c_hal/include/i2c_wrapper.h">
+      <signature>esp_err_t i2c_wrapper_read(i2c_port_t port, uint8_t addr, uint8_t reg, uint8_t *data, size_t len)</signature>
+      <note>I2C read with automatic retry, recovery, and health tracking</note>
+    </interface>
+    <interface name="i2c_wrapper_recover_bus" kind="function" path="firmware/components/hal/i2c_hal/include/i2c_wrapper.h">
+      <signature>esp_err_t i2c_wrapper_recover_bus(i2c_port_t port)</signature>
+      <note>Bus recovery: 9 clock pulses + reinitialize</note>
+    </interface>
+    <interface name="i2c_handler_register" kind="function" path="firmware/components/control/command_executor/include/i2c_handler.h">
+      <signature>esp_err_t i2c_handler_register(void)</signature>
+      <note>Register CMD_I2C handler - call from motor_system register_command_handlers()</note>
+    </interface>
+    <interface name="error_manager_increment" kind="function" path="firmware/components/control/safety_monitor/include/error_manager.h">
+      <signature>esp_err_t error_manager_increment(ErrorCategory category, uint8_t axis, bool publish_event)</signature>
+      <note>Existing API - call with ERR_CAT_I2C for I2C failures</note>
+    </interface>
+  </interfaces>
+
+  <constraints>
+    <constraint type="mandatory" source="architecture.md">
+      Header-only configuration: Use I2C_ADDR_MCP23017_0 (0x20), never literal 0x20.
+      Use TIMING_I2C_TIMEOUT_MS, TIMING_I2C_RETRY_COUNT from config headers.
+    </constraint>
+    <constraint type="mandatory" source="architecture.md">
+      Thread safety: I2C bus accessed from multiple tasks. Use FreeRTOS mutex for bus access.
+      Follow mcp23017_wrapper mutex pattern.
+    </constraint>
+    <constraint type="pattern" source="story-4.10">
+      Module initialization: Call i2c_health_init() from motor_system, following error_manager_init() pattern.
+      Handler registration: Follow errcnt_handler pattern for i2c_handler.
+    </constraint>
+    <constraint type="event-format" source="epics.md">
+      System errors: EVENT ERROR SYSTEM E020
+      Device errors: EVENT ERROR I2C 0x21
+      Recovery: EVENT I2C RECOVERED
+      Degradation: EVENT WARN LIMITS_DEGRADED, EVENT WARN FEEDBACK_DEGRADED
+    </constraint>
+    <constraint type="response-format" source="epics.md">
+      I2C health: OK I2C0:OK(1234) I2C1:OK(5678)
+      I2C with errors: OK I2C0:WARN(1200/12) I2C1:OK(5678)
+      I2C SCAN: OK 0x20:MCP23017 0x21:MCP23017 0x3C:OLED
+    </constraint>
+    <constraint type="recovery-strategy" source="tech-spec">
+      1. Timeout -> retry once
+      2. Second failure -> reinitialize I2C bus
+      3. Third failure -> EVENT I2C_ERROR, switch to degraded mode
+      4. Bus recovery: Set SDA input, toggle SCL 9 times, STOP condition, reinitialize
+    </constraint>
+    <constraint type="integration" source="story-4.10">
+      Complete deferred Task 9 from Story 4.10: Hook error_manager_increment(ERR_CAT_I2C, AXIS_NONE, true)
+      into I2C failure path.
+    </constraint>
+  </constraints>
+
+  <tests>
+    <standards>
+      Per project testing strategy: Unit tests acceptable, manual testing acceptable per DoD.
+      Tests should verify timeout detection, retry logic, bus recovery, event publication, and command responses.
+      Follow test patterns from Story 4.10 (error_manager).
+    </standards>
+    <locations>
+      <location>firmware/components/control/safety_monitor/test/</location>
+      <location>firmware/components/hal/i2c_hal/test/</location>
+      <location>firmware/test/integration/safety/</location>
+    </locations>
+    <ideas>
+      <idea ac="1">Test timeout detection: Mock I2C transaction that exceeds TIMING_I2C_TIMEOUT_MS</idea>
+      <idea ac="2">Test auto-retry: Mock transient failure followed by success, verify single operation completes</idea>
+      <idea ac="3">Test bus recovery: Mock persistent failures, verify 9 clock pulses sent, bus reinitialized</idea>
+      <idea ac="4">Test health events: Verify EVENT ERROR SYSTEM E020 when failure count exceeds threshold</idea>
+      <idea ac="5">Test CMD_I2C: Verify response format OK I2C0:OK(count) or WARN(success/failure)</idea>
+      <idea ac="6">Test CMD_I2C SCAN: Verify device discovery and offline marking</idea>
+      <idea ac="7">Test device offline: Verify device marked offline after consecutive failures</idea>
+      <idea ac="8">Test degradation: Verify LIMITS_DEGRADED event when MCP23017 #0 offline</idea>
+    </ideas>
+  </tests>
+</story-context>

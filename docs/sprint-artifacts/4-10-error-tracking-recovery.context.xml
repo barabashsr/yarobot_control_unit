@@ -1,0 +1,133 @@
+<story-context id="4-10-error-tracking-recovery" v="1.0">
+  <metadata>
+    <epicId>4</epicId>
+    <storyId>10</storyId>
+    <title>Error Tracking &amp; Recovery</title>
+    <status>ready-for-dev</status>
+    <generatedAt>2025-12-19</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/4-10-error-tracking-recovery.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>user</asA>
+    <iWant>errors tracked and recoverable</iWant>
+    <soThat>I can diagnose issues and resume operation</soThat>
+    <tasks>
+      <task id="1" ac="1,2,7">Define error tracking configuration constants (CMD_ERRCNT, CMD_CLRERR, error categories)</task>
+      <task id="2" ac="1,2,3,7,8">Create ErrorManager module in safety_monitor component</task>
+      <task id="3" ac="4,5,6,8">Implement error state tracking per axis</task>
+      <task id="4" ac="1,2,7">Implement CMD_ERRCNT handler</task>
+      <task id="5" ac="4">Implement CMD_CLRERR handler</task>
+      <task id="6" ac="3">Implement ERROR event publication</task>
+      <task id="7" ac="6">Integrate error checks into motion commands (move, movr, velocity)</task>
+      <task id="8" ac="5">Integrate error clear into axis enable</task>
+      <task id="9" ac="1,3">Hook error counting into existing error sources (limit, estop, poslos)</task>
+      <task id="10" ac="8">Update STAT command for error state</task>
+      <task id="11" ac="1-8">Unit tests for ErrorManager</task>
+      <task id="12" ac="1-8">Integration tests for handlers</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="1" fr="FR45">Error counts tracked per category: I2C, TIMEOUT, LIMIT, ESTOP, POSLOS. ERRCNT returns "OK I2C:3 TIMEOUT:1 LIMIT:5 ESTOP:2 POSLOS:0"</ac>
+    <ac id="2" fr="FR45">Per-axis error counts: ERRCNT X returns "OK X LIMIT:2 POSLOS:0 TIMEOUT:1"</ac>
+    <ac id="3" fr="FR49">ERROR events published with context: "EVENT ERROR SYSTEM E020" for I2C, "EVENT ERROR axis code" for axis errors</ac>
+    <ac id="4" fr="FR60">CLRERR command clears error state: CLRERR X clears X axis error, CLRERR clears all</ac>
+    <ac id="5" fr="FR60">Error state clearable via axis re-enable: EN X 1 clears error state</ac>
+    <ac id="6" fr="FR61">Unsafe operations blocked in ERROR state: MOVE/VEL returns "ERROR ERR_AXIS_ERROR MSG_CLEAR_ERROR_FIRST"</ac>
+    <ac id="7">ERRCNT CLR resets all error counts to zero</ac>
+    <ac id="8">STAT command correctly reports ERROR state and error code</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <file path="docs/sprint-artifacts/tech-spec-epic-4.md" title="Epic 4 Tech Spec" section="Story 4.10: Error Tracking &amp; Recovery" snippet="AC41-AC44: Error counts tracked per category, ERROR events published with context, Error state clearable via RST or axis re-enable, Unsafe operations blocked in ERROR state"/>
+      <file path="docs/epics.md" title="Epics Document" section="Story 4.10" lines="2099-2156" snippet="ERRCNT command format, CLRERR command, error category definitions, technical implementation notes"/>
+      <file path="docs/prd.md" title="PRD" section="Error Handling" snippet="FR45: Track cumulative error counts, FR49: Events for errors and faults, FR60: Clear error conditions, FR61: Prevent unsafe operations in error state"/>
+      <file path="docs/bmm-workflow-status.yaml" title="Workflow Status" section="mandatory_constraints" snippet="header_only_configuration: Every configurable value MUST be defined in a header file. Use config macros, never hardcoded values."/>
+    </docs>
+    <code>
+      <file path="firmware/components/config/include/config_commands.h" kind="config" symbol="ERR_*, MSG_*, EVTTYPE_*, CMD_*" lines="170-260,360-435" reason="Error codes, messages, event types. Add CMD_ERRCNT, CMD_CLRERR, ERR_AXIS_ERROR, MSG_CLEAR_ERROR_FIRST here"/>
+      <file path="firmware/components/control/safety_monitor/include/safety_monitor.h" kind="interface" symbol="safety_monitor_*" reason="Safety monitor API. ErrorManager integrates with limit callbacks and estop handling"/>
+      <file path="firmware/components/control/safety_monitor/include/position_loss.h" kind="interface" symbol="position_loss_*" lines="1-226" reason="Position loss API pattern. ErrorManager follows similar structure and integrates for POSLOS error counting"/>
+      <file path="firmware/components/control/safety_monitor/position_loss.c" kind="implementation" reason="Reference implementation for safety_monitor module pattern. Follow same init/deinit/state tracking approach"/>
+      <file path="firmware/components/control/command_executor/posok_handler.cpp" kind="handler" symbol="handle_posok,posok_handler_register" lines="1-108" reason="Handler pattern reference. Follow same structure for errcnt_handler and clrerr_handler"/>
+      <file path="firmware/components/control/command_executor/include/command_executor.h" kind="interface" symbol="CommandEntry,cmd_executor_register" reason="Command registration API. Use for ERRCNT and CLRERR handler registration"/>
+      <file path="firmware/components/interface/command_parser/include/response_formatter.h" kind="utility" symbol="format_ok,format_ok_data,format_error,format_event,EVTTYPE_ERROR" lines="40-64,140-225" reason="Response formatting utilities. EVTTYPE_ERROR already exists for error events"/>
+      <file path="firmware/components/control/command_executor/move_handler.cpp" kind="handler" reason="Modify to check error state before starting motion (AC6)"/>
+      <file path="firmware/components/control/command_executor/movr_handler.cpp" kind="handler" reason="Modify to check error state before starting motion (AC6)"/>
+      <file path="firmware/components/control/command_executor/velocity_handler.cpp" kind="handler" reason="Modify to check error state before starting motion (AC6)"/>
+      <file path="firmware/components/control/command_executor/enable_handler.cpp" kind="handler" reason="Modify to clear error state when axis enabled (AC5)"/>
+      <file path="firmware/components/control/motor_system/motor_system.cpp" kind="integration" reason="Register error handlers, call error_manager_init(), hook into enable/disable"/>
+      <file path="firmware/components/control/safety_monitor/safety_monitor.c" kind="integration" reason="Hook error counting into limit detection callbacks"/>
+      <file path="firmware/components/config/include/config_limits.h" kind="config" reason="Add LIMIT_ERROR_CATEGORIES count"/>
+      <file path="firmware/components/config/include/config_defaults.h" kind="config" reason="Add error-related default values if needed"/>
+    </code>
+    <dependencies>
+      <esp-idf version="5.4">FreeRTOS (mutex for thread safety), ESP-IDF logging</esp-idf>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint type="mandatory" source="bmm-workflow-status.yaml">Header-Only Configuration: Every configurable value MUST be defined in a header file. Use CMD_ERRCNT, ERR_AXIS_ERROR etc. from config_commands.h. Never hardcode values.</constraint>
+    <constraint type="pattern" source="architecture.md">Command handlers follow posok_handler.cpp pattern: CommandEntry with handler function, register via cmd_executor_register()</constraint>
+    <constraint type="pattern" source="architecture.md">Safety modules follow position_loss pattern: init/deinit, state tracking, extern "C" for C++ compatibility</constraint>
+    <constraint type="thread-safety">Error counts accessed from multiple tasks - use FreeRTOS mutex for protection. Follow mcp23017_wrapper mutex pattern.</constraint>
+    <constraint type="event-format" source="config_commands.h">System errors: "EVENT ERROR SYSTEM code", Axis errors: "EVENT ERROR axis code". Use EVTTYPE_ERROR from response_formatter.h</constraint>
+    <constraint type="response-format">ERRCNT all: "OK I2C:n TIMEOUT:n LIMIT:n ESTOP:n POSLOS:n", ERRCNT axis: "OK X LIMIT:n POSLOS:n TIMEOUT:n"</constraint>
+  </constraints>
+
+  <interfaces>
+    <interface name="error_manager_init" kind="function" path="firmware/components/control/safety_monitor/include/error_manager.h">
+      <signature>esp_err_t error_manager_init(void)</signature>
+      <purpose>Initialize error tracking module, zero all counters</purpose>
+    </interface>
+    <interface name="error_manager_increment" kind="function" path="firmware/components/control/safety_monitor/include/error_manager.h">
+      <signature>esp_err_t error_manager_increment(error_category_t category, uint8_t axis)</signature>
+      <purpose>Increment error counter for category and optional axis</purpose>
+    </interface>
+    <interface name="error_manager_set_axis_error" kind="function" path="firmware/components/control/safety_monitor/include/error_manager.h">
+      <signature>esp_err_t error_manager_set_axis_error(uint8_t axis, const char* error_code)</signature>
+      <purpose>Set axis into ERROR state with specific code</purpose>
+    </interface>
+    <interface name="error_manager_clear_axis_error" kind="function" path="firmware/components/control/safety_monitor/include/error_manager.h">
+      <signature>esp_err_t error_manager_clear_axis_error(uint8_t axis)</signature>
+      <purpose>Clear ERROR state for axis, return to IDLE</purpose>
+    </interface>
+    <interface name="error_manager_is_axis_in_error" kind="function" path="firmware/components/control/safety_monitor/include/error_manager.h">
+      <signature>bool error_manager_is_axis_in_error(uint8_t axis)</signature>
+      <purpose>Check if axis is in ERROR state (motion blocked)</purpose>
+    </interface>
+    <interface name="handle_errcnt" kind="command-handler" path="firmware/components/control/command_executor/errcnt_handler.cpp">
+      <signature>esp_err_t handle_errcnt(const ParsedCommand* cmd, char* response, size_t resp_len)</signature>
+      <purpose>Handle ERRCNT [axis|CLR] command</purpose>
+    </interface>
+    <interface name="handle_clrerr" kind="command-handler" path="firmware/components/control/command_executor/clrerr_handler.cpp">
+      <signature>esp_err_t handle_clrerr(const ParsedCommand* cmd, char* response, size_t resp_len)</signature>
+      <purpose>Handle CLRERR [axis] command</purpose>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>Unit tests in firmware/components/control/safety_monitor/test/ using Unity framework. Integration tests in firmware/test/integration/safety/. Mock existing modules (limit_monitor, estop_handler) for unit tests. Follow test patterns from test_floating_switch.c and test_width_handler.c.</standards>
+    <locations>
+      <dir>firmware/components/control/safety_monitor/test/</dir>
+      <dir>firmware/components/control/command_executor/test/</dir>
+      <dir>firmware/test/integration/safety/</dir>
+    </locations>
+    <ideas>
+      <test ac="1">test_error_increment_per_category: Increment each category, verify counts</test>
+      <test ac="2">test_error_increment_per_axis: Increment axis-specific errors, verify per-axis counts</test>
+      <test ac="3">test_error_event_publication: Trigger error, verify EVENT ERROR published</test>
+      <test ac="4">test_clrerr_single_axis: Set error on X, CLRERR X, verify cleared</test>
+      <test ac="4">test_clrerr_all_axes: Set errors on multiple axes, CLRERR, verify all cleared</test>
+      <test ac="5">test_enable_clears_error: Set error on X, EN X 1, verify error cleared</test>
+      <test ac="6">test_move_blocked_in_error: Set error on X, MOVE X 100, verify ERROR response</test>
+      <test ac="6">test_vel_blocked_in_error: Set error on X, VEL X 10, verify ERROR response</test>
+      <test ac="7">test_errcnt_clear: Increment counts, ERRCNT CLR, verify all zero</test>
+      <test ac="8">test_stat_shows_error: Set error on X, STAT X, verify ERROR state in response</test>
+      <test ac="1-8">test_thread_safety: Concurrent access from multiple tasks</test>
+    </ideas>
+  </tests>
+</story-context>

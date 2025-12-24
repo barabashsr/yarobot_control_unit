@@ -1,0 +1,133 @@
+<story-context id="bmm/workflows/4-implementation/story-context" v="1.0">
+  <metadata>
+    <epicId>4</epicId>
+    <storyId>7</storyId>
+    <title>General-Purpose Digital I/O</title>
+    <status>ready-for-dev</status>
+    <generatedAt>2025-12-19</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/4-7-general-purpose-digital-io.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>user</asA>
+    <iWant>to read inputs and control outputs</iWant>
+    <soThat>I can interface with external sensors and actuators</soThat>
+    <tasks>
+      <task id="1">Define digital I/O configuration constants (CMD_DIN, CMD_DOUT already exist; add ERR_INVALID_PIN E038, ERR_UNKNOWN_ALIAS E039)</task>
+      <task id="2">Create DigitalIOManager module with digital_io_init(), read/write functions, alias resolution</task>
+      <task id="3">Implement input debouncing using TIMING_LIMIT_DEBOUNCE_MS (10ms default)</task>
+      <task id="4">Implement CMD_DIN handler - parse DIN [pin|alias], format response</task>
+      <task id="5">Implement CMD_DOUT handler - parse DOUT [pin|alias] [value], call sr_set_gp_output()</task>
+      <task id="6">Implement input event notifications via event_manager</task>
+      <task id="7">Integrate with MCP23017 #1 I2C reading (GPA7, GPB5-7)</task>
+      <task id="8">Integrate with shift register output (bits 32-39 via sr_set_gp_output)</task>
+      <task id="9">Implement alias storage and lookup</task>
+      <task id="10">Unit tests for DigitalIOManager</task>
+      <task id="11">Integration tests</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <criterion id="AC1" techSpec="AC31">DIN command reads all 4 inputs, returns OK 0b1010 format</criterion>
+    <criterion id="AC2" techSpec="AC31">DIN pin reads single input, returns OK DIN2 1 format</criterion>
+    <criterion id="AC3" techSpec="AC34">DIN alias reads by alias name, echoes alias in response</criterion>
+    <criterion id="AC4" techSpec="AC32">DOUT pin 1 sets output HIGH via shift register SR_GP_OUT_x</criterion>
+    <criterion id="AC5" techSpec="AC32">DOUT pin 0 clears output LOW via shift register</criterion>
+    <criterion id="AC6" techSpec="AC32">DOUT query returns OK 0b00100000 format for all outputs</criterion>
+    <criterion id="AC7" techSpec="AC34">DOUT alias sets output by alias name</criterion>
+    <criterion id="AC8" techSpec="AC33">Input debouncing filters rapid toggling (TIMING_LIMIT_DEBOUNCE_MS = 10ms)</criterion>
+    <criterion id="AC9">Input event notifications: EVENT DIN DINx value on state change</criterion>
+    <criterion id="AC10">Invalid pin/alias returns ERROR ERR_INVALID_PIN or ERR_UNKNOWN_ALIAS</criterion>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/sprint-artifacts/tech-spec-epic-4.md" title="Epic 4 Technical Specification" section="Story 4.7">
+        AC31-AC34 definitions. DIN reads 4 spare inputs from MCP23017 #1. DOUT controls 8 outputs via shift register SR4 bits 32-39. Input debouncing applies TIMING_DEBOUNCE_MS.
+      </doc>
+      <doc path="docs/epics.md" title="Epics" section="Story 4.7: General-Purpose Digital I/O">
+        Detailed AC with pin mappings. DIN0=GPA7, DIN1=GPB5, DIN2=GPB6, DIN3=GPB7. DOUT0-7 = SR4 Q0-Q7 (bits 32-39). FR35-FR36, FR41-FR42 coverage.
+      </doc>
+      <doc path="docs/architecture.md" title="Architecture" section="External Hardware">
+        8 general purpose outputs via shift registers (SR4). MCP23017 spare inputs. I2C0 for expanders, SPI2 for shift registers.
+      </doc>
+      <doc path="docs/sprint-artifacts/4-6-position-loss-detection.md" title="Previous Story" section="Dev Notes">
+        Handler pattern reference: posok_handler.cpp. Error codes E035-E037 defined. Module placement in command_executor for command-driven features.
+      </doc>
+    </docs>
+    <code>
+      <file path="firmware/components/drivers/tpic6b595/include/tpic6b595.h" kind="driver" symbol="sr_set_gp_output" lines="119-129" reason="API for setting GP outputs. Use sr_set_gp_output(pin, level) then sr_update() to latch."/>
+      <file path="firmware/components/drivers/tpic6b595/tpic6b595.c" kind="driver" symbol="sr_set_gp_output" reason="Implementation of GP output control via shift register chain"/>
+      <file path="firmware/components/config/include/config_sr.h" kind="config" symbol="SR_GP_OUT_0..SR_GP_OUT_7" lines="158-175" reason="Bit position defines for GP outputs (bits 32-39)"/>
+      <file path="firmware/components/config/include/config_i2c.h" kind="config" symbol="MCP1_GP_IN_0..MCP1_GP_IN_3" lines="166-199" reason="Pin mappings for spare inputs - GPA7 (pin 7), GPB5-7 (pins 13-15)"/>
+      <file path="firmware/components/config/include/config_commands.h" kind="config" symbol="CMD_DIN,CMD_DOUT" lines="83-87" reason="Command strings already defined"/>
+      <file path="firmware/components/config/include/config_timing.h" kind="config" symbol="TIMING_LIMIT_DEBOUNCE_MS" lines="106" reason="Debounce timing constant (10ms) - reuse for digital inputs"/>
+      <file path="firmware/components/control/command_executor/posok_handler.cpp" kind="handler" symbol="handle_posok,posok_handler_register" reason="Pattern reference for new command handlers. Shows registration, error handling, format_ok/format_error usage."/>
+      <file path="firmware/components/control/command_executor/include/command_executor.h" kind="interface" symbol="CommandHandler,CommandEntry" lines="84-100" reason="Command registration types and dispatch API"/>
+      <file path="firmware/components/control/command_executor/command_executor.c" kind="dispatcher" reason="Where to register new DIN/DOUT handlers"/>
+      <file path="firmware/components/control/safety_monitor/safety_monitor.c" kind="monitor" reason="Uses MCP23017 for limit switches - coordinate I2C access pattern"/>
+      <file path="firmware/components/interface/command_parser/include/response_formatter.h" kind="utility" symbol="format_ok,format_error" reason="Response formatting utilities"/>
+    </code>
+    <dependencies>
+      <esp-idf version="5.4">
+        <component>espressif__mcp23017</component>
+        <driver>i2c</driver>
+        <driver>spi_master</driver>
+      </esp-idf>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint source="architecture.md" type="mandatory">Header-Only Configuration: All configurable values MUST be defined in header files. No magic numbers in source code.</constraint>
+    <constraint source="architecture.md" type="mandatory">Dual-Core Separation: Core 0 handles communication and safety monitoring. Command handlers run on Core 0.</constraint>
+    <constraint source="tech-spec-epic-4.md" type="coordination">I2C Coordination: Spare inputs share MCP23017 #1 with ALARM_INPUT and InPos. Coordinate reads with safety_monitor.</constraint>
+    <constraint source="tech-spec-epic-4.md" type="hardware">MCP1 Pin Layout: GPA7=DIN0, GPB5=DIN1, GPB6=DIN2, GPB7=DIN3 (not contiguous bits)</constraint>
+    <constraint source="tech-spec-epic-4.md" type="hardware">SR4 Bit Layout: DOUT0-7 = bits 32-39 (SR_GP_OUT_0 through SR_GP_OUT_7)</constraint>
+    <constraint source="architecture.md" type="pattern">Command Handler Pattern: Use CommandEntry structure with verb, handler function, allowed_states bitmask</constraint>
+    <constraint source="config_commands.h" type="pattern">Error Code Sequence: Next available error codes are E038 (ERR_INVALID_PIN), E039 (ERR_UNKNOWN_ALIAS)</constraint>
+  </constraints>
+
+  <interfaces>
+    <interface name="sr_set_gp_output" kind="function" path="firmware/components/drivers/tpic6b595/include/tpic6b595.h">
+      esp_err_t sr_set_gp_output(uint8_t pin, bool level); // pin 0-7, updates shadow register
+    </interface>
+    <interface name="sr_update" kind="function" path="firmware/components/drivers/tpic6b595/include/tpic6b595.h">
+      esp_err_t sr_update(void); // Latch shadow register to hardware via SPI
+    </interface>
+    <interface name="sr_get_state" kind="function" path="firmware/components/drivers/tpic6b595/include/tpic6b595.h">
+      uint64_t sr_get_state(void); // Returns current 40-bit shadow register for query
+    </interface>
+    <interface name="mcp23017_read_port" kind="function" path="managed_components/espressif__mcp23017/">
+      esp_err_t mcp23017_read_port(mcp23017_handle_t handle, uint8_t port, uint8_t *value); // Read 8 bits from port A or B
+    </interface>
+    <interface name="cmd_executor_register" kind="function" path="firmware/components/control/command_executor/include/command_executor.h">
+      esp_err_t cmd_executor_register(const CommandEntry* entry); // Register command handler
+    </interface>
+    <interface name="format_ok" kind="function" path="firmware/components/interface/command_parser/include/response_formatter.h">
+      esp_err_t format_ok(char* buf, size_t len); // Format "OK" response
+    </interface>
+    <interface name="format_error" kind="function" path="firmware/components/interface/command_parser/include/response_formatter.h">
+      esp_err_t format_error(char* buf, size_t len, const char* code, const char* msg); // Format error response
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+      Unit tests use ESP-IDF Unity framework. Mock hardware dependencies (MCP23017, shift register) for isolated testing. Integration tests use actual hardware. Test files follow test_*.c naming convention. Tests located in component test/ subdirectories.
+    </standards>
+    <locations>
+      <location>firmware/components/control/command_executor/test/</location>
+      <location>firmware/test/integration/command_executor/</location>
+    </locations>
+    <ideas>
+      <idea ac="AC1,AC2">Test DIN with mocked MCP23017 port reads returning known bit patterns</idea>
+      <idea ac="AC4,AC5,AC6">Test DOUT by verifying sr_set_gp_output calls and sr_get_state returns</idea>
+      <idea ac="AC3,AC7">Test alias resolution with predefined alias table</idea>
+      <idea ac="AC8">Test debounce by simulating rapid input changes, verify stable output</idea>
+      <idea ac="AC9">Test event publication with event_manager mock/spy</idea>
+      <idea ac="AC10">Test error paths for invalid pin numbers (>3 for DIN, >7 for DOUT) and unknown aliases</idea>
+      <idea ac="integration">Full command flow: USB command -> parse -> handler -> hardware -> response</idea>
+    </ideas>
+  </tests>
+</story-context>
