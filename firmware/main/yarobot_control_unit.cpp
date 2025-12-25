@@ -282,6 +282,9 @@ static bool hardware_init_and_verify(void)
         all_ok = false;
     }
 
+    // TEMPORARY TEST MODE: I2C DISABLED for testing without hardware
+    // See docs/LIMIT_SWITCH_TEST_MODE.md for details on re-enabling
+#if 0  // I2C disabled for testing
     // Initialize I2C0 for MCP23017 expanders
     ret = i2c_hal_init(I2C_PORT, GPIO_I2C_SDA, GPIO_I2C_SCL, I2C_FREQ_HZ);
     if (ret != ESP_OK) {
@@ -322,6 +325,10 @@ static bool hardware_init_and_verify(void)
             all_ok = false;
         }
     }
+#else
+    ESP_LOGW(TAG, "TEST MODE: I2C disabled (MCP23017, OLED skipped)");
+    (void)ret;  // Suppress unused warning
+#endif
 
     // Initialize SPI for shift registers
     ret = yarobot_spi_init(SPI2_HOST, GPIO_SR_MOSI, GPIO_SR_SCLK, GPIO_SR_CS);
@@ -401,8 +408,10 @@ extern "C" void app_main(void)
                             NULL, 10, NULL, 0);
     xTaskCreatePinnedToCore(cmd_executor_task, "cmd_exec", STACK_CMD_EXECUTOR_TASK,
                             NULL, 12, NULL, 0);
+#if 0  // I2C disabled for testing - see docs/LIMIT_SWITCH_TEST_MODE.md
     xTaskCreatePinnedToCore(i2c_monitor_task, "i2c_mon", STACK_I2C_MONITOR_TASK,
                             NULL, 8, NULL, 0);
+#endif
     xTaskCreatePinnedToCore(idle_monitor_task, "idle_mon", STACK_IDLE_MONITOR_TASK,
                             NULL, 4, NULL, 0);
 
@@ -414,8 +423,10 @@ extern "C" void app_main(void)
         xTaskCreatePinnedToCore(motion_task, name, STACK_MOTION_TASK,
                                 (void*)(intptr_t)axis, 15, NULL, 1);
     }
+#if 0  // I2C disabled for testing - see docs/LIMIT_SWITCH_TEST_MODE.md
     xTaskCreatePinnedToCore(display_task, "display", STACK_DISPLAY_TASK,
                             NULL, 5, NULL, 1);
+#endif
 
     // Boot notification is now sent by event_manager_init() via EVT_BOOT event (Story 2-7)
     // cmd_executor_init() is called by cmd_executor_task, which initializes event_manager

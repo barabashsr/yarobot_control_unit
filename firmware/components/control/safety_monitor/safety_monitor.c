@@ -622,8 +622,16 @@ void safety_monitor_task(void* arg)
     (void)arg;
     ESP_LOGI(TAG, "safety_monitor_task started on core %d", xPortGetCoreID());
 
-    // Initial cache update
-    safety_monitor_update_cache();
+    // Check if MCP23017 is available for limit switch monitoring
+    bool mcp_available = mcp23017_wrapper_is_initialized();
+    if (!mcp_available) {
+        ESP_LOGW(TAG, "TEST MODE: MCP23017 not available - only E-stop monitoring active");
+    }
+
+    // Initial cache update (only if MCP available)
+    if (mcp_available) {
+        safety_monitor_update_cache();
+    }
 
     for (;;) {
         // Wait for interrupt notification (AC3: within 1ms)
@@ -641,8 +649,8 @@ void safety_monitor_task(void* arg)
             // Continue processing - don't skip limit handling if also notified
         }
 
-        // Skip hardware updates in test mode
-        if (s_monitor.test_mode) {
+        // Skip hardware updates in test mode OR if MCP not available
+        if (s_monitor.test_mode || !mcp_available) {
             continue;
         }
 
@@ -697,11 +705,19 @@ esp_err_t safety_monitor_init(void)
         // Continue anyway - position loss detection will be limited
     }
 
+    // TEMPORARY TEST MODE: Skip MCP23017 check for testing without I2C hardware
+    // See docs/LIMIT_SWITCH_TEST_MODE.md for details on re-enabling
+#if 0  // MCP23017 check disabled for testing
     // Check MCP23017 wrapper is ready
     if (!mcp23017_wrapper_is_initialized()) {
         ESP_LOGE(TAG, "MCP23017 wrapper not initialized");
         return ESP_ERR_INVALID_STATE;
     }
+#else
+    if (!mcp23017_wrapper_is_initialized()) {
+        ESP_LOGW(TAG, "TEST MODE: MCP23017 not initialized - limit switches disabled");
+    }
+#endif
 
     // Create mutex
     s_monitor.mutex = xSemaphoreCreateMutex();
@@ -716,9 +732,11 @@ esp_err_t safety_monitor_init(void)
     // Initialize debounce state
     memset(s_monitor.debounce, 0, sizeof(s_monitor.debounce));
 
-    // Story 4-3: Initialize EndSwitchMode to HARD_STOP (default per ADR-021)
+    // TEMPORARY TEST MODE: Limit switches DISABLED for testing without hardware
+    // See docs/LIMIT_SWITCH_TEST_MODE.md for details on re-enabling
+    // Original: END_SWITCH_MODE_DEFAULT (END_SWITCH_MODE_HARD_STOP)
     for (size_t i = 0; i < sizeof(s_monitor.endswitch_mode); i++) {
-        s_monitor.endswitch_mode[i] = END_SWITCH_MODE_DEFAULT;
+        s_monitor.endswitch_mode[i] = END_SWITCH_MODE_NONE;
     }
 
     // Story 4-3: Initialize fault state and blocked directions

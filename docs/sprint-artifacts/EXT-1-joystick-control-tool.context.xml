@@ -1,0 +1,161 @@
+<story-context id="EXT-1-joystick-control-tool" v="1.0">
+  <metadata>
+    <epicId>EXT</epicId>
+    <storyId>1</storyId>
+    <title>Joystick Control Tool</title>
+    <status>drafted</status>
+    <generatedAt>2025-12-24</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/sprint-artifacts/EXT-1-joystick-control-tool.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>machine operator</asA>
+    <iWant>to control robot axes manually using a PlayStation DualShock 4 controller</iWant>
+    <soThat>I can jog axes, trigger emergency stop, manage brakes and enable states, and quickly return to home positions during testing and setup</soThat>
+    <tasks>
+      <task id="1" acs="AC1,AC2">Project setup - Create tools/joystick_control/ with requirements.txt and config.yaml</task>
+      <task id="2" acs="AC1">Serial communication module - Configurable port/baudrate, send_command(), reconnection</task>
+      <task id="3" acs="AC2">Joystick input module - pygame init, DualShock 4 detection, button/hat events</task>
+      <task id="4" acs="AC3,AC14">Startup sequence - MODE query, set READY, query brake status</task>
+      <task id="5" acs="AC4,AC5,AC6">Axis jog control - VEL/STOP commands, R2 modifier for direction</task>
+      <task id="6" acs="AC7">E-STOP function - Share button sends TEST ESTOP immediately</task>
+      <task id="7" acs="AC8,AC9">Home position management - Save via POS, restore via MOVE</task>
+      <task id="8" acs="AC15,AC18,AC19">Brake control - D-pad Left + axis button toggles BRAKE</task>
+      <task id="9" acs="AC16,AC17,AC18,AC19">Enable control - D-pad Up + axis button toggles EN + POSOK</task>
+      <task id="10" acs="AC18,AC19">Status table display - ASCII table with enable/brake per axis</task>
+      <task id="11" acs="AC10,AC11,AC12">Safety/error handling - Disconnect detection, Ctrl+C graceful exit</task>
+      <task id="12" acs="AC13">Console UI - Real-time command/response logging</task>
+      <task id="13">Documentation - README.md with usage instructions</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="AC1">Script connects to ESP32 via configurable serial port (default /dev/ttyUSB0, 115200 baud)</ac>
+    <ac id="AC2">Script connects to DualShock 4 controller via Bluetooth using pygame</ac>
+    <ac id="AC3">On startup, script queries mode via MODE and sets to READY if in IDLE</ac>
+    <ac id="AC4">Pressing axis button (0-6) sends VEL {axis} {speed} command</ac>
+    <ac id="AC5">Releasing axis button sends STOP {axis} command</ac>
+    <ac id="AC6">Holding R2 (modifier) + axis button sends negative speed value</ac>
+    <ac id="AC7">Pressing Share button sends TEST ESTOP command immediately</ac>
+    <ac id="AC8">Pressing Touchpad queries positions via POS and saves to YAML config</ac>
+    <ac id="AC9">Pressing Options moves all axes sequentially to saved home positions</ac>
+    <ac id="AC10">Script handles serial disconnect gracefully (stops all axes, shows error)</ac>
+    <ac id="AC11">Script handles joystick disconnect gracefully (stops all axes, shows error)</ac>
+    <ac id="AC12">Ctrl+C sends STOP to all axes before exiting</ac>
+    <ac id="AC13">Console shows real-time feedback of commands sent and responses received</ac>
+    <ac id="AC14">On startup, script queries brake status for all servo axes (X, Y, Z, A, B) via BRAKE {axis}</ac>
+    <ac id="AC15">D-pad Left + axis button toggles brake state via BRAKE {axis} 0/1</ac>
+    <ac id="AC16">D-pad Up + axis button toggles enable state via EN {axis} 0/1</ac>
+    <ac id="AC17">When enabling axis, script also sends POSOK {axis} to clear position loss</ac>
+    <ac id="AC18">Status table displays current enable and brake state for all axes</ac>
+    <ac id="AC19">Status table updates after each state change</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/prd.md" title="Product Requirements Document" section="Communication and Commands">
+        USB CDC serial interface at 115200 baud, text commands (MOVE, MOVR, VEL, STOP, etc.), command response within 10ms
+      </doc>
+      <doc path="docs/prd.md" title="Product Requirements Document" section="Safety and Limit Management">
+        Hardware E-stop with immediate motor shutdown, brake control with configurable strategies
+      </doc>
+      <doc path="docs/architecture.md" title="Architecture" section="Behavioral Decisions Summary">
+        Motors disabled by default, smooth acceleration on VEL change, brake timing ~50us software path
+      </doc>
+      <doc path="docs/architecture.md" title="Architecture" section="Command Examples (SI Units)">
+        VEL X 0.030 for jog at 30mm/s, POS X returns position, MOVE for absolute positioning
+      </doc>
+    </docs>
+    <code>
+      <file path="firmware/components/config/include/config_commands.h" kind="header" reason="Defines all command strings (CMD_VEL, CMD_STOP, CMD_BRAKE, CMD_EN, CMD_POS, CMD_MODE, CMD_POSOK) and response formats">
+        <symbols>CMD_VEL, CMD_STOP, CMD_BRAKE, CMD_EN, CMD_POS, CMD_MODE, CMD_POSOK, CMD_MOVE, CMD_RST, CMD_TEST, RESP_OK, RESP_ERROR, MODE_NAME_IDLE, MODE_NAME_READY, MODE_NAME_ESTOP</symbols>
+      </file>
+      <file path="firmware/components/control/command_executor/velocity_handler.cpp" kind="handler" reason="VEL command implementation - shows velocity parameter handling and response format">
+        <symbols>handle_velocity</symbols>
+      </file>
+      <file path="firmware/components/control/command_executor/stop_handler.cpp" kind="handler" reason="STOP command implementation">
+        <symbols>handle_stop</symbols>
+      </file>
+      <file path="firmware/components/control/command_executor/brake_handler.cpp" kind="handler" reason="BRAKE command - shows query (BRAKE X) returns 'ENGAGED/RELEASED', set (BRAKE X 0/1)">
+        <symbols>handle_brake</symbols>
+      </file>
+      <file path="firmware/components/control/command_executor/enable_handler.cpp" kind="handler" reason="EN command implementation">
+        <symbols>handle_enable</symbols>
+      </file>
+      <file path="firmware/components/control/command_executor/posok_handler.cpp" kind="handler" reason="POSOK command to clear position loss">
+        <symbols>handle_posok</symbols>
+      </file>
+      <file path="firmware/components/control/command_executor/position_handler.cpp" kind="handler" reason="POS command - returns axis positions">
+        <symbols>handle_position</symbols>
+      </file>
+      <file path="firmware/components/control/command_executor/command_executor.c" kind="dispatcher" reason="MODE command handling and state management">
+        <symbols>dispatch_command, get_system_state, set_system_state</symbols>
+      </file>
+    </code>
+    <dependencies>
+      <python>
+        <package name="pygame" version="latest" purpose="Joystick/gamepad input handling via SDL"/>
+        <package name="pyserial" version="latest" purpose="USB CDC serial communication"/>
+        <package name="pyyaml" version="latest" purpose="YAML configuration file handling"/>
+      </python>
+      <note>This is a host-side Python tool, not ESP32 firmware. No ESP-IDF dependencies.</note>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint source="architecture">Motors disabled by default at power-on - requires explicit EN command</constraint>
+    <constraint source="architecture">BRAKE command: 0=engage, 1=release (inverted logic)</constraint>
+    <constraint source="architecture">Only axes X, Y, Z, A, B have brake hardware; C, D have no brakes</constraint>
+    <constraint source="architecture">VEL command uses max_acceleration from config by default</constraint>
+    <constraint source="architecture">TEST ESTOP triggers emergency stop, requires RST to clear</constraint>
+    <constraint source="architecture">Position unknown after E-STOP - all axes marked UNHOMED</constraint>
+    <constraint source="story">Tool is host-side Python, NOT firmware modification</constraint>
+    <constraint source="story">Default serial: /dev/ttyUSB0, 115200 baud</constraint>
+    <constraint source="story">Speed values per axis defined in story: X=4, Y=1, Z=2, A=1, B=1, C=2, D=2 mm/s</constraint>
+  </constraints>
+
+  <interfaces>
+    <interface name="Serial Command Protocol" kind="text-protocol">
+      <format>COMMAND [AXIS] [PARAMS...]\r\n</format>
+      <response>OK [DATA] | ERROR Exxx Message</response>
+      <examples>
+        <example cmd="MODE" response="OK IDLE"/>
+        <example cmd="MODE READY" response="OK"/>
+        <example cmd="VEL X 4" response="OK"/>
+        <example cmd="STOP X" response="OK"/>
+        <example cmd="POS" response="OK X:0.150 Y:1.571 Z:0.000 A:0.000 B:0.000 C:0.000 D:0.000"/>
+        <example cmd="BRAKE X" response="OK X ENGAGED"/>
+        <example cmd="BRAKE X 1" response="OK"/>
+        <example cmd="EN X 1" response="OK"/>
+        <example cmd="POSOK X" response="OK"/>
+        <example cmd="TEST ESTOP" response="OK (triggers E-STOP)"/>
+        <example cmd="MOVE X 0.150" response="OK"/>
+      </examples>
+    </interface>
+    <interface name="DualShock 4 Pygame" kind="gamepad-api">
+      <buttons>0=Cross, 1=Circle, 2=Square, 3=Triangle, 4=L1, 5=R1, 6=L2, 7=R2, 8=Share, 9=Options, 13=Touchpad</buttons>
+      <hat>joystick.get_hat(0) returns (x, y): Left=(-1,0), Up=(0,1), Right=(1,0), Down=(0,-1)</hat>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+      This is a Python host tool - use pytest for unit tests. Mock serial communication for testing command/response handling.
+      Test joystick input handling with pygame mock or integration tests with real controller.
+    </standards>
+    <locations>
+      <location>tools/joystick_control/tests/</location>
+    </locations>
+    <ideas>
+      <idea ac="AC1">Test serial connection with mock port, verify reconnection on disconnect</idea>
+      <idea ac="AC4,AC5">Test button press sends VEL, release sends STOP</idea>
+      <idea ac="AC6">Test R2 modifier inverts velocity sign</idea>
+      <idea ac="AC7">Test Share button sends TEST ESTOP immediately</idea>
+      <idea ac="AC8,AC9">Test POS parsing and YAML save/load for home positions</idea>
+      <idea ac="AC15">Test D-pad Left modifier toggles brake correctly</idea>
+      <idea ac="AC16,AC17">Test D-pad Up modifier sends EN then POSOK</idea>
+      <idea ac="AC10,AC11,AC12">Test graceful shutdown on disconnect/Ctrl+C</idea>
+    </ideas>
+  </tests>
+</story-context>

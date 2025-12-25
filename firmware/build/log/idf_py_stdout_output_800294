@@ -1,0 +1,677 @@
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x8 (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x15a0
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xd20
+load:0x403cb700,len:0x2ee4
+entry 0x403c8928
+[0;32mI (27) boot: ESP-IDF v5.4 2nd stage bootloader[0m
+[0;32mI (27) boot: compile time Dec 17 2025 15:19:52[0m
+[0;32mI (27) boot: Multicore bootloader[0m
+[0;32mI (27) boot: chip revision: v0.2[0m
+[0;32mI (30) boot: efuse block revision: v1.3[0m
+[0;32mI (33) boot.esp32s3: Boot SPI Speed : 80MHz[0m
+[0;32mI (37) boot.esp32s3: SPI Mode       : DIO[0m
+[0;32mI (41) boot.esp32s3: SPI Flash Size : 16MB[0m
+[0;32mI (45) boot: Enabling RNG early entropy source...[0m
+[0;32mI (49) boot: Partition Table:[0m
+[0;32mI (52) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (58) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (65) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (71) boot:  2 factory          factory app      00 00 00010000 00300000[0m
+[0;32mI (78) boot:  3 storage          Unknown data     01 82 00310000 00100000[0m
+[0;32mI (84) boot: End of partition table[0m
+[0;32mI (87) esp_image: segment 0: paddr=00010020 vaddr=3c050020 size=1bb9ch (113564) map[0m
+[0;32mI (115) esp_image: segment 1: paddr=0002bbc4 vaddr=3fc97300 size=03ab8h ( 15032) load[0m
+[0;32mI (118) esp_image: segment 2: paddr=0002f684 vaddr=40374000 size=00994h (  2452) load[0m
+[0;32mI (119) esp_image: segment 3: paddr=00030020 vaddr=42000020 size=46e74h (290420) map[0m
+[0;32mI (178) esp_image: segment 4: paddr=00076e9c vaddr=40374994 size=128a4h ( 75940) load[0m
+[0;32mI (194) esp_image: segment 5: paddr=00089748 vaddr=600fe100 size=0001ch (    28) load[0m
+[0;32mI (202) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (202) boot: Disabling RNG early entropy source...[0m
+[0;32mI (212) octal_psram: vendor id    : 0x0d (AP)[0m
+[0;32mI (212) octal_psram: dev id       : 0x02 (generation 3)[0m
+[0;32mI (212) octal_psram: density      : 0x03 (64 Mbit)[0m
+[0;32mI (214) octal_psram: good-die     : 0x01 (Pass)[0m
+[0;32mI (219) octal_psram: Latency      : 0x01 (Fixed)[0m
+[0;32mI (223) octal_psram: VCC          : 0x01 (3V)[0m
+[0;32mI (227) octal_psram: SRF          : 0x01 (Fast Refresh)[0m
+[0;32mI (232) octal_psram: BurstType    : 0x01 (Hybrid Wrap)[0m
+[0;32mI (237) octal_psram: BurstLen     : 0x01 (32 Byte)[0m
+[0;32mI (241) octal_psram: Readlatency  : 0x02 (10 cycles@Fixed)[0m
+[0;32mI (247) octal_psram: DriveStrength: 0x00 (1/1)[0m
+[0;32mI (251) esp_psram: Found 8MB PSRAM device[0m
+[0;32mI (255) esp_psram: Speed: 40MHz[0m
+[0;32mI (258) cpu_start: Multicore app[0m
+[0;32mI (991) esp_psram: SPI SRAM memory test OK[0m
+[0;32mI (1000) cpu_start: Pro cpu start user code[0m
+[0;32mI (1000) cpu_start: cpu freq: 240000000 Hz[0m
+[0;32mI (1000) app_init: Application information:[0m
+[0;32mI (1001) app_init: Project name:     yarobot_control_unit[0m
+[0;32mI (1006) app_init: App version:      8dc2cb2-dirty[0m
+[0;32mI (1010) app_init: Compile time:     Dec 19 2025 09:25:43[0m
+[0;32mI (1015) app_init: ELF file SHA256:  9762d15cf...[0m
+[0;32mI (1020) app_init: ESP-IDF:          v5.4[0m
+[0;32mI (1024) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (1027) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (1032) efuse_init: Chip rev:         v0.2[0m
+[0;32mI (1036) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (1042) heap_init: At 3FC9D8B8 len 0004BE58 (303 KiB): RAM[0m
+[0;32mI (1047) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM[0m
+[0;32mI (1052) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM[0m
+[0;32mI (1058) heap_init: At 600FE11C len 00001ECC (7 KiB): RTCRAM[0m
+[0;32mI (1063) esp_psram: Adding pool of 8192K of PSRAM memory to heap allocator[0m
+[0;32mI (1070) spi_flash: detected chip: boya[0m
+[0;32mI (1073) spi_flash: flash io: dio[0m
+[0;32mI (1077) sleep_gpio: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (1083) sleep_gpio: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (1090) main_task: Started on CPU0[0m
+[0;32mI (1093) esp_psram: Reserving pool of 32K of internal memory for DMA/internal allocations[0m
+[0;32mI (1101) main_task: Calling app_main()[0m
+[0;32mI (3104) main: Hello from app_main[0m
+[0;32mI (3104) main: PSRAM detected: 8388608 bytes (8.0 MB)[0m
+[0;32mI (3104) main: Firmware: YAROBOT_CONTROL_UNIT v1.0.0[0m
+[0;32mI (3105) main: Axes: 8 (Servos:5, Steppers:2, Discrete:1)[0m
+[0;32mI (3110) main: GPIO X_STEP: 4, I2C MCP0: 0x20[0m
+[0;32mI (3114) main: Initializing USB CDC interface...[0m
+[0;32mI (3119) usb_cdc: Initializing USB CDC interface[0m
+[0;33mW (3123) tusb_desc: No Device descriptor provided, using default.[0m
+[0;33mW (3129) tusb_desc: No FullSpeed configuration descriptor provided, using default.[0m
+[0;33mW (3136) tusb_desc: No String descriptors provided, using default.[0m
+[0;32mI (3142) tusb_desc: [0m
+┌─────────────────────────────────┐
+│  USB Device Descriptor Summary  │
+├───────────────────┬─────────────┤
+│bDeviceClass       │ 239         │
+├───────────────────┼─────────────┤
+│bDeviceSubClass    │ 2           │
+├───────────────────┼─────────────┤
+│bDeviceProtocol    │ 1           │
+├───────────────────┼─────────────┤
+│bMaxPacketSize0    │ 64          │
+├───────────────────┼─────────────┤
+│idVendor           │ 0x303a      │
+├───────────────────┼─────────────┤
+│idProduct          │ 0x4001      │
+├───────────────────┼─────────────┤
+│bcdDevice          │ 0x100       │
+├───────────────────┼─────────────┤
+│iManufacturer      │ 0x1         │
+├───────────────────┼─────────────┤
+│iProduct           │ 0x2         │
+├───────────────────┼─────────────┤
+│iSerialNumber      │ 0x3         │
+├───────────────────┼─────────────┤
+│bNumConfigurations │ 0x1         │
+└───────────────────┴─────────────┘
+[0;32mI (3310) TinyUSB: TinyUSB Driver installed[0m
+[0;32mI (3313) usb_cdc: USB CDC initialized successfully[0m
+[0;32mI (3317) main: USB CDC initialized successfully[0m
+[0;32mI (3322) main: ========================================[0m
+[0;32mI (3327) main: Hardware Initialization Starting[0m
+[0;32mI (3331) main: ========================================[0m
+[0;32mI (3336) gpio_hal: Initializing GPIO HAL[0m
+[0;32mI (3340) gpio: GPIO[4]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3348) gpio: GPIO[5]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3356) gpio: GPIO[6]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3365) gpio: GPIO[7]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3373) gpio: GPIO[15]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3381) gpio: GPIO[16]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3390) gpio: GPIO[17]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3398) gpio: GPIO[13]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3407) gpio: GPIO[1]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3415) gpio: GPIO[2]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3423) gpio: GPIO[40]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3432) gpio: GPIO[41]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3440) gpio: GPIO[42]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3448) gpio: GPIO[38]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3457) gpio: GPIO[39]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3465) gpio: GPIO[47]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3474) gpio: GPIO[48]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3482) gpio_hal: GPIO HAL initialized successfully[0m
+[0;32mI (3487) i2c_hal: Initializing I2C0: SDA=8, SCL=18, freq=400000 Hz[0m
+[0;32mI (3493) i2c_hal: I2C0 initialized successfully[0m
+[0;32mI (3497) main: MCP23017 #0 (0x20) IODIR_A=0xFF[0m
+[0;32mI (3501) main: MCP23017 #1 (0x21) IODIR_A=0xFF[0m
+[0;32mI (3505) i2c_hal: Initializing I2C1: SDA=14, SCL=21, freq=400000 Hz[0m
+[0;32mI (3512) i2c_hal: I2C1 initialized successfully[0m
+[0;32mI (3543) main: OLED initialized with test pattern[0m
+[0;32mI (3543) i2c_hal: Scanning I2C0 bus...[0m
+[0;32mI (3547) i2c_hal: I2C0: Found device at 0x20[0m
+[0;32mI (3547) i2c_hal: I2C0: Found device at 0x21[0m
+[0;32mI (3560) i2c_hal: I2C0 scan complete: 2 device(s) found[0m
+[0;32mI (3560) main: I2C bus isolation verified: I2C0 still operational[0m
+[0;32mI (3560) spi_hal: Initializing SPI1: MOSI=11, SCLK=12, CS=10[0m
+[0;32mI (3566) gpio: GPIO[9]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3573) spi_hal: SPI initialized successfully, OE pin=9 (disabled)[0m
+[0;32mI (3579) tpic6b595: Initializing TPIC6B595 driver[0m
+[0;32mI (3584) spi_hal: SR outputs ENABLED[0m
+[0;32mI (3587) tpic6b595: TPIC6B595 driver initialized, 40-bit chain ready[0m
+[0;32mI (3593) main: TPIC6B595 shift register initialized (test skipped)[0m
+[0;32mI (3599) main: ========================================[0m
+[0;32mI (3604) main: Hardware Initialization: ALL PASSED[0m
+[0;32mI (3608) main: ========================================[0m
+[0;32mI (3613) main: Creating FreeRTOS tasks...[0m
+[0;32mI (3617) tasks: Task usb_rx started on core 0[0m
+[0;32mI (3621) tasks: Task usb_tx started on core 0[0m
+[0;32mI (3625) tasks: Task cmd_exec started on core 0[0m
+[0;32mI (3630) tasks: Task i2c_mon started on core 0[0m
+[0;32mI (3634) tasks: Task idle_mon started on core 0[0m
+[0;32mI (3638) tasks: Task motion_X (axis 0) started on core 1[0m
+[0;32mI (3639) tasks: Task motion_B (axis 4) started on core 1[0m
+[0;32mI (3638) tasks: Task motion_Z (axis 2) started on core 1[0m
+[0;32mI (3639) tasks: Task motion_C (axis 5) started on core 1[0m
+[0;32mI (3638) tasks: Task motion_Y (axis 1) started on core 1[0m
+[0;32mI (3639) tasks: Task motion_D (axis 6) started on core 1[0m
+[0;32mI (3638) tasks: Task motion_A (axis 3) started on core 1[0m
+[0;32mI (3639) tasks: Task motion_E (axis 7) started on core 1[0m
+[0;32mI (3638) main: YaRobot Control Unit - All tasks started[0m
+[0;32mI (3678) tasks: Task display started on core 1[0m
+[0;32mI (3683) main_task: Returned from app_main()[0m
+mode ready
+[0;32mI (9130) CMD_EXEC: Initialized with 6 built-in commands[0m
+[0;32mI (9130) EVENT_MGR: Event processor task started[0m
+[0;32mI (9130) EVENT_MGR: Initialized (queue=32, max_subs=8)[0m
+[0;32mI (9133) tasks: Command executor initialized[0m
+[0;32mI (9137) motor_system: ========================================[0m
+[0;32mI (9142) motor_system: Motor System Initialization Starting[0m
+[0;32mI (9148) motor_system: ========================================[0m
+[0;33mW (9153) tpic6b595: Already initialized[0m
+[0;32mI (9157) i2c_bus: I2C Bus V2 uses the externally initialized bus handle[0m
+[0;32mI (9163) mcp23017_wrapper: I2C bus created on port 0 at 400000 Hz[0m
+[0;32mI (9174) i2c_bus: found i2c device address = 0x20[0m
+[0;32mI (9174) i2c_bus: found i2c device address = 0x21[0m
+[0;32mI (9191) mcp23017_wrapper: I2C scan found 2 device(s)[0m
+[0;32mI (9191) mcp23017_wrapper:   Device at 0x20[0m
+[0;32mI (9191) mcp23017_wrapper:   Device at 0x21[0m
+[0;32mI (9193) mcp23017_wrapper: MCP23017 #0 (0x20) present[0m
+[0;32mI (9198) mcp23017_wrapper: MCP23017 #1 (0x21) present[0m
+[0;32mI (9202) mcp23017_wrapper: MCP23017 #0 configured: all inputs with pull-ups[0m
+[0;32mI (9209) mcp23017_wrapper: MCP23017 #1 configured: all inputs with pull-ups[0m
+[0;32mI (9215) mcp23017_wrapper: MCP23017 wrapper initialized successfully[0m
+[0;32mI (9221) motor_system: Axis configurations initialized[0m
+[0;32mI (9226) RMT_PULSE: Initializing RMT channel 0 on GPIO 4 (step)[0m
+[0;32mI (9232) RMT_PULSE: RMT channel 0 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (9239) RMT_PULSE: Initializing RMT channel 1 on GPIO 6 (step)[0m
+[0;32mI (9233) RMT_PULSE: Ramp task started for channel 0[0m
+[0;32mI (9245) RMT_PULSE: RMT channel 1 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (9257) RMT_PULSE: Initializing RMT channel 2 on GPIO 7 (step)[0m
+[0;32mI (9263) RMT_PULSE: RMT channel 2 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (9270) RMT_PULSE: Initializing RMT channel 3 on GPIO 15 (step)[0m
+[0;32mI (9264) RMT_PULSE: Ramp task started for channel 2[0m
+[0;32mI (9276) RMT_PULSE: RMT channel 3 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (9288) MCPWM_PULSE: Initializing MCPWM timer 0 on GPIO 5 with PCNT unit 0[0m
+[0;32mI (9295) gpio: GPIO[5]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;33mW (9304) MCPWM_PULSE: DEBUG init: MCPWM generator created on GPIO 5 with io_loop_back=true[0m
+[0;32mI (9311) MCPWM_PULSE: GPIO 5 input enabled for PCNT loopback, settling for 700000 µs[0m
+[0;32mI (9250) RMT_PULSE: Ramp task started for channel 1[0m
+[0;32mI (9281) RMT_PULSE: Ramp task started for channel 3[0m
+[0;32mI (10019) MCPWM_PULSE: GPIO 5 loopback settled and ready[0m
+[0;33mW (10019) MCPWM_PULSE: DEBUG init: Creating PCNT channel on GPIO 5[0m
+[0;32mI (10019) MCPWM_PULSE: PCNT started for continuous position tracking (baseline: 0)[0m
+[0;32mI (10026) MCPWM_PULSE: MCPWM timer 0 with PCNT unit 0 initialized successfully[0m
+[0;32mI (10033) MCPWM_PULSE: Initializing MCPWM timer 1 on GPIO 16 with PCNT unit 1[0m
+[0;32mI (10040) gpio: GPIO[16]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;33mW (10049) MCPWM_PULSE: DEBUG init: MCPWM generator created on GPIO 16 with io_loop_back=true[0m
+[0;32mI (10056) MCPWM_PULSE: GPIO 16 input enabled for PCNT loopback, settling for 700000 µs[0m
+[0;32mI (10764) MCPWM_PULSE: GPIO 16 loopback settled and ready[0m
+[0;33mW (10764) MCPWM_PULSE: DEBUG init: Creating PCNT channel on GPIO 16[0m
+[0;32mI (10764) MCPWM_PULSE: PCNT started for continuous position tracking (baseline: 0)[0m
+[0;32mI (10771) MCPWM_PULSE: MCPWM timer 1 with PCNT unit 1 initialized successfully[0m
+[0;32mI (10778) LEDC_PULSE: Initializing LEDC timer 2, channel 2 on GPIO 17[0m
+[0;32mI (10784) gpio: GPIO[17]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (10793) LEDC_PULSE: Configured GPIO 17 for PCNT internal loopback[0m
+[0;32mI (10799) LEDC_PULSE: PCNT unit 2 initialized for hardware position tracking[0m
+[0;32mI (10806) LEDC_PULSE: LEDC timer 2 initialized successfully[0m
+[0;32mI (10806) LEDC_PULSE: Completion task started for LEDC timer 2[0m
+[0;32mI (10811) motor_system: All pulse generators initialized[0m
+[0;32mI (10822) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (10826) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (10831) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (10835) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (10840) TIME_TRACKER: Time tracker initialized with travel time 1000 ms[0m
+[0;32mI (10846) motor_system: All position trackers initialized[0m
+[0;32mI (10851) motor_system: Pulse generators wired to position trackers[0m
+[0;32mI (10857) motor_system: Motor objects created[0m
+[0;32mI (10861) motor_base: Axis 0 initialized (28.571 pulses/unit)[0m
+[0;32mI (10867) motor_base: Axis 1 initialized (208.333 pulses/unit)[0m
+[0;32mI (10872) motor_base: Axis 2 initialized (62.400 pulses/unit)[0m
+[0;32mI (10878) motor_base: Axis 3 initialized (164.474 pulses/unit)[0m
+[0;32mI (10883) motor_base: Axis 4 initialized (138.889 pulses/unit)[0m
+[0;32mI (10889) motor_base: Axis 5 initialized (66.667 pulses/unit)[0m
+[0;32mI (10894) LEDC_PULSE: setPositionTracker: tracker=0x3fc9c1dc (PcntTracker for hardware PCNT)[0m
+[0;32mI (10903) motor_base: Axis 6 initialized (66.667 pulses/unit)[0m
+[0;33mW (10908) TIME_TRACKER: Time tracker already initialized[0m
+[0;32mI (10913) discrete_axis: Axis 7 initialized (discrete actuator, travel time 1000 ms)[0m
+[0;32mI (10920) motor_system: All motor objects initialized[0m
+[0;32mI (10925) MOTION_CTRL: Initialized with 8 axes[0m
+[0;32mI (10929) motor_system: Motion controller initialized with 8 axes[0m
+[0;32mI (10935) MOVE_HDL: Registered MOVE handler[0m
+[0;32mI (10939) MOVR_HDL: Registered MOVR handler[0m
+[0;32mI (10943) EN_HDL: Registered EN handler[0m
+[0;32mI (10947) POS_HDL: Registered POS handler[0m
+[0;32mI (10950) VEL_HDL: Registered VEL handler[0m
+[0;32mI (10954) STOP_HDL: Registered STOP handler[0m
+[0;32mI (10958) LIM_HDL: Registered LIM and LIMT handlers[0m
+[0;32mI (10963) BRAKE_HDL: Registered BRAKE handler[0m
+[0;32mI (10967) POSOK_HDL: Registered POSOK handler[0m
+[0;32mI (10971) DIO: MCP1 raw: PortA=0xFF PortB=0xFF[0m
+[0;32mI (10975) DIO: DIN: d0=0 d1=0 d2=0 d3=0 (raw: 1 1 1 1)[0m
+[0;32mI (10980) DIO: Initialized: 4 inputs, 8 outputs, 0 aliases[0m
+[0;32mI (10985) DIN_HDL: Registered DIN handler[0m
+[0;32mI (10989) DOUT_HDL: Registered DOUT handler[0m
+[0;32mI (10993) SERVO_FB: Initialized: 5 servo axes with InPos feedback[0m
+[0;32mI (10998) INPOS_HDL: Registered INPOS handler[0m
+[0;32mI (11003) WIDTH_HDL: Registered WIDTH handler[0m
+[0;32mI (11007) error_mgr: Error manager initialized - all counters zeroed[0m
+[0;32mI (11013) ERRCNT_HDL: Registered ERRCNT handler[0m
+[0;32mI (11017) CLRERR_HDL: Registered CLRERR handler[0m
+[0;32mI (11021) i2c_health: Registered device 0x20 (MCP23017) on I2C0[0m
+[0;32mI (11027) i2c_health: Registered device 0x21 (MCP23017) on I2C0[0m
+[0;32mI (11032) i2c_health: I2C health monitor initialized - 2 devices tracked[0m
+[0;32mI (11039) I2C_HDL: Registered I2C handler[0m
+[0;32mI (11043) motor_system: Command handlers registered (MOVE, MOVR, EN, POS, VEL, STOP, LIM, BRAKE, POSOK, DIN, DOUT, INPOS, WIDTH, ERRCNT, CLRERR, I2C)[0m
+[0;32mI (11056) poslos: Position loss detector initialized - all servos POSLOS[0m
+[0;32mI (11062) poslos: Published EVENT POSLOS X[0m
+[0;32mI (11066) poslos: Published EVENT POSLOS Y[0m
+[0;32mI (11070) poslos: Published EVENT POSLOS Z[0m
+[0;32mI (11074) poslos: Published EVENT POSLOS A[0m
+[0;32mI (11077) poslos: Published EVENT POSLOS B[0m
+[0;32mI (11081) safety: safety_monitor_task started on core 0[0m
+[0;32mI (11086) mcp23017_wrapper: Registered notify task: safety_mon[0m
+[0;32mI (11094) mcp23017_wrapper: MCP0 interrupt-on-change enabled for all 16 limit switch pins[0m
+[0;32mI (11100) gpio: GPIO[47]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:2 [0m
+[0;32mI (11108) gpio: GPIO[48]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:2 [0m
+[0;32mI (11117) gpio: GPIO[39]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:2 [0m
+[0;32mI (11125) gpio: GPIO[38]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:2 [0m
+[0;32mI (11134) mcp23017_wrapper: MCP23017 GPIO ISRs installed on pins 47, 48, 39, 38[0m
+[0;32mI (11141) gpio: GPIO[13]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:2 [0m
+[1;31mE (11149) gpio: gpio_install_isr_service(502): GPIO isr service already installed[0m
+[0;32mI (11156) safety: E-stop GPIO configured on GPIO13 (falling edge)[0m
+[0;32mI (11162) safety: Safety monitor initialized (with E-stop, position loss)[0m
+[0;32mI (11169) brake: Brake controller initialized[0m
+[0;32mI (11173) FLOAT_SW: Initialized: C axis floating switch handler[0m
+[0;32mI (11178) motor_system: ========================================[0m
+[0;32mI (11184) motor_system: Motor System Initialization: SUCCESS[0m
+[0;32mI (11190) motor_system:   Servos: 5 (X, Y, Z, A, B)[0m
+[0;32mI (11194) motor_system:   Steppers: 2 (C, D)[0m
+[0;32mI (11198) motor_system:   Discrete: 1 (E)[0m
+[0;32mI (11202) motor_system: ========================================[0m
+[0;32mI (11208) CMD_EXEC: CMD: MODE -[0m
+OK READY
+brake z 1
+[0;32mI (14592) CMD_EXEC: CMD: BRAKE Z 1.0000[0m
+[0;32mI (14592) brake: Axis Z brake released[0m
+OK
+en z 1
+[0;32mI (23433) CMD_EXEC: CMD: EN Z 1.0000[0m
+[0;32mI (23434) motor_base: Axis 2 enabled[0m
+OK
+[1;31mE (23525) safety: FAULT: Both limits active on axis 4[0m
+[0;32mI (23525) safety: Stopped axis 4 motion due to limit[0m
+[1;31mE (23525) safety: FAULT: Both limits active on axis 5[0m
+[0;32mI (23528) safety: Stopped axis 5 motion due to limit[0m
+[1;31mE (23533) safety: FAULT: Both limits active on axis 6[0m
+[0;32mI (23538) safety: Stopped axis 6 motion due to limit[0m
+[1;31mE (23543) safety: FAULT: Both limits active on axis 0[0m
+[0;32mI (23547) safety: Stopped axis 0 motion due to limit[0m
+[1;31mE (23552) safety: FAULT: Both limits active on axis 1[0m
+[0;32mI (23556) safety: Stopped axis 1 motion due to limit[0m
+[1;31mE (23561) safety: FAULT: Both limits active on axis 2[0m
+[0;32mI (23566) safety: Stopped axis 2 motion due to limit[0m
+[1;31mE (23571) safety: FAULT: Both limits active on axis 3[0m
+[0;32mI (23575) safety: Stopped axis 3 motion due to limit[0m
+[0;32mI (64541) safety: MIN limit activated on axis 1, mode=1[0m
+[0;33mW (64541) error_mgr: Error LIMIT on axis Y (count: 1)[0m
+[0;32mI (64541) safety: Published EVENT LIMIT axis=1 MIN[0m
+[0;32mI (64544) safety: Stopped axis 1 motion due to limit[0m
+[0;32mI (64549) safety: MIN limit activated on axis 3, mode=1[0m
+[0;33mW (64554) error_mgr: Error LIMIT on axis A (count: 1)[0m
+[0;32mI (64559) safety: Published EVENT LIMIT axis=3 MIN[0m
+[0;32mI (64563) safety: Stopped axis 3 motion due to limit[0m
+[0;32mI (65811) safety: MAX limit activated on axis 1, mode=1[0m
+[0;33mW (65812) error_mgr: Error LIMIT on axis Y (count: 2)[0m
+[0;32mI (65812) safety: Published EVENT LIMIT axis=1 MAX[0m
+[0;32mI (65815) safety: Stopped axis 1 motion due to limit[0m
+[0;32mI (66142) safety: MIN limit activated on axis 3, mode=1[0m
+[0;33mW (66143) error_mgr: Error LIMIT on axis A (count: 2)[0m
+[0;32mI (66143) safety: Published EVENT LIMIT axis=3 MIN[0m
+[0;32mI (66146) safety: Stopped axis 3 motion due to limit[0m
+[0;32mI (66940) safety: MAX limit activated on axis 0, mode=1[0m
+[0;33mW (66940) error_mgr: Error LIMIT on axis X (count: 1)[0m
+[0;32mI (66941) safety: Published EVENT LIMIT axis=0 MAX[0m
+[0;32mI (66944) safety: Stopped axis 0 motion due to limit[0m
+[0;32mI (67390) safety: MAX limit activated on axis 0, mode=1[0m
+[0;33mW (67391) error_mgr: Error LIMIT on axis X (count: 2)[0m
+[0;32mI (67391) safety: Published EVENT LIMIT axis=0 MAX[0m
+[0;32mI (67394) safety: Stopped axis 0 motion due to limit[0m
+[0;32mI (67399) safety: MIN limit activated on axis 1, mode=1[0m
+[0;33mW (67403) error_mgr: Error LIMIT on axis Y (count: 3)[0m
+[0;32mI (67408) safety: Published EVENT LIMIT axis=1 MIN[0m
+[0;32mI (67413) safety: Stopped axis 1 motion due to limit[0m
+[0;32mI (67417) safety: MAX limit activated on axis 2, mode=1[0m
+[0;33mW (67422) error_mgr: Error LIMIT on axis Z (count: 1)[0m
+[0;32mI (67427) safety: Published EVENT LIMIT axis=2 MAX[0m
+[0;32mI (67432) safety: Stopped axis 2 motion due to limit[0m
+[0;32mI (70500) safety: MIN limit activated on axis 1, mode=1[0m
+[0;33mW (70500) error_mgr: Error LIMIT on axis Y (count: 4)[0m
+[0;32mI (70500) safety: Published EVENT LIMIT axis=1 MIN[0m
+[0;32mI (70503) safety: Stopped axis 1 motion due to limit[0m
+[0;32mI (70508) safety: MAX limit activated on axis 2, mode=1[0m
+[0;33mW (70513) error_mgr: Error LIMIT on axis Z (count: 2)[0m
+[0;32mI (70517) safety: Published EVENT LIMIT axis=2 MAX[0m
+[0;32mI (70522) safety: Stopped axis 2 motion due to limit[0m
+[0;32mI (70527) safety: MIN limit activated on axis 3, mode=1[0m
+[0;33mW (70531) error_mgr: Error LIMIT on axis A (count: 3)[0m
+[0;32mI (70536) safety: Published EVENT LIMIT axis=3 MIN[0m
+[0;32mI (70541) safety: Stopped axis 3 motion due to limit[0m
+[0;32mI (70547) safety: MAX limit activated on axis 0, mode=1[0m
+[0;33mW (70550) error_mgr: Error LIMIT on axis X (count: 3)[0m
+[0;32mI (70555) safety: Published EVENT LIMIT axis=0 MAX[0m
+[0;32mI (70560) safety: Stopped axis 0 motion due to limit[0m
+[0;32mI (70661) safety: MIN limit activated on axis 1, mode=1[0m
+[0;33mW (70661) error_mgr: Error LIMIT on axis Y (count: 5)[0m
+[0;32mI (70661) safety: Published EVENT LIMIT axis=1 MIN[0m
+[0;32mI (70664) safety: Stopped axis 1 motion due to limit[0m
+[0;32mI (70670) safety: MAX limit activated on axis 0, mode=1[0m
+[0;33mW (70674) error_mgr: Error LIMIT on axis X (count: 4)[0m
+[0;32mI (70678) safety: Published EVENT LIMIT axis=0 MAX[0m
+[0;32mI (70683) safety: Stopped axis 0 motion due to limit[0m
+[0;32mI (72870) safety: MAX limit activated on axis 0, mode=1[0m
+[0;33mW (72871) error_mgr: Error LIMIT on axis X (count: 5)[0m
+[0;32mI (72871) safety: Published EVENT LIMIT axis=0 MAX[0m
+[0;32mI (72874) safety: Stopped axis 0 motion due to limit[0m
+[0;32mI (72878) safety: MIN limit activated on axis 1, mode=1[0m
+[0;33mW (72883) error_mgr: Error LIMIT on axis Y (count: 6)[0m
+[0;32mI (72888) safety: Published EVENT LIMIT axis=1 MIN[0m
+[0;32mI (72892) safety: Stopped axis 1 motion due to limit[0m
+[0;32mI (72897) safety: MAX limit activated on axis 2, mode=1[0m
+[0;33mW (72902) error_mgr: Error LIMIT on axis Z (count: 3)[0m
+[0;32mI (72907) safety: Published EVENT LIMIT axis=2 MAX[0m
+[0;32mI (72911) safety: Stopped axis 2 motion due to limit[0m
+[0;32mI (72916) safety: MIN limit activated on axis 3, mode=1[0m
+[0;33mW (72921) error_mgr: Error LIMIT on axis A (count: 4)[0m
+[0;32mI (72926) safety: Published EVENT LIMIT axis=3 MIN[0m
+[0;32mI (72930) safety: Stopped axis 3 motion due to limit[0m
+[0;32mI (73360) safety: MIN limit activated on axis 1, mode=1[0m
+[0;33mW (73360) error_mgr: Error LIMIT on axis Y (count: 7)[0m
+[0;32mI (73360) safety: Published EVENT LIMIT axis=1 MIN[0m
+[0;32mI (73363) safety: Stopped axis 1 motion due to limit[0m
+[0;32mI (73560) safety: MIN limit activated on axis 1, mode=1[0m
+[0;33mW (73560) error_mgr: Error LIMIT on axis Y (count: 8)[0m
+[0;32mI (73560) safety: Published EVENT LIMIT axis=1 MIN[0m
+[0;32mI (73563) safety: Stopped axis 1 motion due to limit[0m
+[0;32mI (73840) safety: MIN limit activated on axis 1, mode=1[0m
+[0;33mW (73840) error_mgr: Error LIMIT on axis Y (count: 9)[0m
+[0;32mI (73840) safety: Published EVENT LIMIT axis=1 MIN[0m
+[0;32mI (73843) safety: Stopped axis 1 motion due to limit[0m
+[0;32mI (73848) safety: MAX limit activated on axis 2, mode=1[0m
+[0;33mW (73853) error_mgr: Error LIMIT on axis Z (count: 4)[0m
+[0;32mI (73858) safety: Published EVENT LIMIT axis=2 MAX[0m
+[0;32mI (73862) safety: Stopped axis 2 motion due to limit[0m
+[0;32mI (73958) safety: MIN limit activated on axis 1, mode=1[0m
+[0;33mW (73959) error_mgr: Error LIMIT on axis Y (count: 10)[0m
+[0;32mI (73959) safety: Published EVENT LIMIT axis=1 MIN[0m
+[0;32mI (73962) safety: Stopped axis 1 motion due to limit[0m
+[0;32mI (73967) safety: MAX limit activated on axis 2, mode=1[0m
+[0;33mW (73972) error_mgr: Error LIMIT on axis Z (count: 5)[0m
+[0;32mI (73976) safety: Published EVENT LIMIT axis=2 MAX[0m
+[0;32mI (73981) safety: Stopped axis 2 motion due to limit[0m
+[0;32mI (91927) safety: MAX limit activated on axis 1, mode=1[0m
+[0;33mW (91927) error_mgr: Error LIMIT on axis Y (count: 11)[0m
+[0;32mI (91927) safety: Published EVENT LIMIT axis=1 MAX[0m
+[0;32mI (91930) safety: Stopped axis 1 motion due to limit[0m
+[0;32mI (91936) safety: MIN limit activated on axis 3, mode=1[0m
+[0;33mW (91940) error_mgr: Error LIMIT on axis A (count: 5)[0m
+[0;32mI (91945) safety: Published EVENT LIMIT axis=3 MIN[0m
+[0;32mI (91949) safety: Stopped axis 3 motion due to limit[0m
+[1;31mE (92108) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (92109) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (92110) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (92339) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (92339) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (92587) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (92587) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (92588) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (92648) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (92648) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (92650) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (93061) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (93061) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (93063) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (93467) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (93467) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (93469) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (93489) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (93489) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (93491) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (93952) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (93952) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (94430) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (94430) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (94565) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (94565) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (94567) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (94837) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (94837) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (94839) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (95202) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (95202) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (95287) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (95287) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (95289) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (95540) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (95540) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (95645) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (95646) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (95647) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (95906) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (95906) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (95917) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (95917) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (95921) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (95949) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (95949) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (95951) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (96205) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (96205) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (96274) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (96274) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (96276) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (96359) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (96360) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (96361) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (96438) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (96438) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (96440) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (96861) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (96861) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (96916) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (96916) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (96918) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (97151) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (97151) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (97394) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (97394) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (97657) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (97657) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (97659) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (97707) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (97707) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (97709) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (97752) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (97752) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (97754) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (98059) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (98059) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (98060) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (98288) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (98288) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (98318) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (98318) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (98320) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (98644) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (98644) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (98975) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (98975) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (99050) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (99050) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (99051) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (99087) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (99088) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (99089) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (99533) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (99534) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (99535) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (99938) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (99938) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (100374) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (100374) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (100974) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (100974) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (100976) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (101271) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (101271) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (101308) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (101308) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (101310) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (101979) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (101979) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (102400) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (102400) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (102948) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (102948) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (102950) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (103684) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (103684) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (103686) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (103729) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (103729) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (103731) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (103954) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (103955) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (103956) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (104225) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (104225) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (104227) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (104386) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (104386) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (104388) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (104401) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (104402) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (104408) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (104454) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (104455) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (104456) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (104585) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (104586) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (104587) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (104599) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (104600) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (104607) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[0;32mI (104626) safety: MIN limit activated on axis 0, mode=1[0m
+[0;33mW (104626) error_mgr: Error LIMIT on axis X (count: 6)[0m
+[0;32mI (104626) safety: Published EVENT LIMIT axis=0 MIN[0m
+[0;32mI (104629) safety: Stopped axis 0 motion due to limit[0m
+[1;31mE (105368) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (105368) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (105370) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (105918) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (105918) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (105919) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (106085) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (106085) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (106087) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (106503) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (106503) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (106703) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (106703) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (106705) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (106732) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (106732) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (106734) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (107068) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (107068) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (107220) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (107220) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (107222) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (107449) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (107449) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (107469) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (107469) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (107471) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (107842) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (107842) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (107844) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (107980) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (107980) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (107982) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (108172) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (108172) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (108174) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (108350) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (108351) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (108352) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (108400) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (108400) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (108402) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (108438) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (108438) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (108440) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (108734) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (108734) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (108736) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (108829) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (108829) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (108831) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[0;32mI (108851) safety: MAX limit activated on axis 2, mode=1[0m
+[0;33mW (108851) error_mgr: Error LIMIT on axis Z (count: 6)[0m
+[0;32mI (108851) safety: Published EVENT LIMIT axis=2 MAX[0m
+[0;32mI (108854) safety: Stopped axis 2 motion due to limit[0m
+[1;31mE (108913) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (108913) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (108915) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (109366) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (109366) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (109368) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (109421) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (109422) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (109423) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (109462) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (109462) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (109464) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (109723) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (109723) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (109823) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (109823) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (109825) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (110332) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (110332) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (110334) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (110588) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (110588) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (110794) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (110794) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (111205) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (111205) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (111240) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (111240) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (111242) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (111399) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (111399) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (111401) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (111963) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (111963) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (111965) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (112280) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (112280) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (112282) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (113082) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (113082) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (113084) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m
+[1;31mE (113117) i2c.master: I2C transaction unexpected nack detected[0m
+[1;31mE (113117) i2c.master: s_i2c_synchronous_transaction(918): I2C transaction failed[0m
+[1;31mE (113119) i2c.master: i2c_master_transmit_receive(1214): I2C transaction failed[0m

@@ -1,0 +1,951 @@
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x8 (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x15a0
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xd20
+load:0x403cb700,len:0x2ee4
+entry 0x403c8928
+[0;32mI (27) boot: ESP-IDF v5.4 2nd stage bootloader[0m
+[0;32mI (27) boot: compile time Dec 17 2025 15:19:52[0m
+[0;32mI (27) boot: Multicore bootloader[0m
+[0;32mI (27) boot: chip revision: v0.2[0m
+[0;32mI (30) boot: efuse block revision: v1.3[0m
+[0;32mI (33) boot.esp32s3: Boot SPI Speed : 80MHz[0m
+[0;32mI (37) boot.esp32s3: SPI Mode       : DIO[0m
+[0;32mI (41) boot.esp32s3: SPI Flash Size : 16MB[0m
+[0;32mI (45) boot: Enabling RNG early entropy source...[0m
+[0;32mI (49) boot: Partition Table:[0m
+[0;32mI (52) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (58) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (65) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (71) boot:  2 factory          factory app      00 00 00010000 00300000[0m
+[0;32mI (78) boot:  3 storage          Unknown data     01 82 00310000 00100000[0m
+[0;32mI (84) boot: End of partition table[0m
+[0;32mI (87) esp_image: segment 0: paddr=00010020 vaddr=3c050020 size=1b8cch (112844) map[0m
+[0;32mI (115) esp_image: segment 1: paddr=0002b8f4 vaddr=3fc97300 size=03ab8h ( 15032) load[0m
+[0;32mI (118) esp_image: segment 2: paddr=0002f3b4 vaddr=40374000 size=00c64h (  3172) load[0m
+[0;32mI (119) esp_image: segment 3: paddr=00030020 vaddr=42000020 size=46838h (288824) map[0m
+[0;32mI (177) esp_image: segment 4: paddr=00076860 vaddr=40374c64 size=125d4h ( 75220) load[0m
+[0;32mI (194) esp_image: segment 5: paddr=00088e3c vaddr=600fe100 size=0001ch (    28) load[0m
+[0;32mI (201) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (201) boot: Disabling RNG early entropy source...[0m
+[0;32mI (212) octal_psram: vendor id    : 0x0d (AP)[0m
+[0;32mI (212) octal_psram: dev id       : 0x02 (generation 3)[0m
+[0;32mI (212) octal_psram: density      : 0x03 (64 Mbit)[0m
+[0;32mI (214) octal_psram: good-die     : 0x01 (Pass)[0m
+[0;32mI (218) octal_psram: Latency      : 0x01 (Fixed)[0m
+[0;32mI (223) octal_psram: VCC          : 0x01 (3V)[0m
+[0;32mI (227) octal_psram: SRF          : 0x01 (Fast Refresh)[0m
+[0;32mI (232) octal_psram: BurstType    : 0x01 (Hybrid Wrap)[0m
+[0;32mI (236) octal_psram: BurstLen     : 0x01 (32 Byte)[0m
+[0;32mI (241) octal_psram: Readlatency  : 0x02 (10 cycles@Fixed)[0m
+[0;32mI (246) octal_psram: DriveStrength: 0x00 (1/1)[0m
+[0;32mI (250) esp_psram: Found 8MB PSRAM device[0m
+[0;32mI (254) esp_psram: Speed: 40MHz[0m
+[0;32mI (257) cpu_start: Multicore app[0m
+[0;32mI (991) esp_psram: SPI SRAM memory test OK[0m
+[0;32mI (1000) cpu_start: Pro cpu start user code[0m
+[0;32mI (1000) cpu_start: cpu freq: 240000000 Hz[0m
+[0;32mI (1000) app_init: Application information:[0m
+[0;32mI (1000) app_init: Project name:     yarobot_control_unit[0m
+[0;32mI (1005) app_init: App version:      1065e10-dirty[0m
+[0;32mI (1010) app_init: Compile time:     Dec 24 2025 08:16:24[0m
+[0;32mI (1015) app_init: ELF file SHA256:  e20678c1d...[0m
+[0;32mI (1019) app_init: ESP-IDF:          v5.4[0m
+[0;32mI (1023) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (1027) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (1031) efuse_init: Chip rev:         v0.2[0m
+[0;32mI (1035) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (1041) heap_init: At 3FC9D8A8 len 0004BE68 (303 KiB): RAM[0m
+[0;32mI (1047) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM[0m
+[0;32mI (1052) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM[0m
+[0;32mI (1057) heap_init: At 600FE11C len 00001ECC (7 KiB): RTCRAM[0m
+[0;32mI (1063) esp_psram: Adding pool of 8192K of PSRAM memory to heap allocator[0m
+[0;32mI (1070) spi_flash: detected chip: boya[0m
+[0;32mI (1073) spi_flash: flash io: dio[0m
+[0;32mI (1076) sleep_gpio: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (1082) sleep_gpio: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (1089) main_task: Started on CPU0[0m
+[0;32mI (1092) esp_psram: Reserving pool of 32K of internal memory for DMA/internal allocations[0m
+[0;32mI (1100) main_task: Calling app_main()[0m
+[0;32mI (3103) main: Hello from app_main[0m
+[0;32mI (3103) main: PSRAM detected: 8388608 bytes (8.0 MB)[0m
+[0;32mI (3103) main: Firmware: YAROBOT_CONTROL_UNIT v1.0.0[0m
+[0;32mI (3104) main: Axes: 8 (Servos:5, Steppers:2, Discrete:1)[0m
+[0;32mI (3109) main: GPIO X_STEP: 4, I2C MCP0: 0x20[0m
+[0;32mI (3113) main: Initializing USB CDC interface...[0m
+[0;32mI (3118) usb_cdc: Initializing USB CDC interface[0m
+[0;33mW (3122) tusb_desc: No Device descriptor provided, using default.[0m
+[0;33mW (3128) tusb_desc: No FullSpeed configuration descriptor provided, using default.[0m
+[0;33mW (3135) tusb_desc: No String descriptors provided, using default.[0m
+[0;32mI (3141) tusb_desc: [0m
+┌─────────────────────────────────┐
+│  USB Device Descriptor Summary  │
+├───────────────────┬─────────────┤
+│bDeviceClass       │ 239         │
+├───────────────────┼─────────────┤
+│bDeviceSubClass    │ 2           │
+├───────────────────┼─────────────┤
+│bDeviceProtocol    │ 1           │
+├───────────────────┼─────────────┤
+│bMaxPacketSize0    │ 64          │
+├───────────────────┼─────────────┤
+│idVendor           │ 0x303a      │
+├───────────────────┼─────────────┤
+│idProduct          │ 0x4001      │
+├───────────────────┼─────────────┤
+│bcdDevice          │ 0x100       │
+├───────────────────┼─────────────┤
+│iManufacturer      │ 0x1         │
+├───────────────────┼─────────────┤
+│iProduct           │ 0x2         │
+├───────────────────┼─────────────┤
+│iSerialNumber      │ 0x3         │
+├───────────────────┼─────────────┤
+│bNumConfigurations │ 0x1         │
+└───────────────────┴─────────────┘
+[0;32mI (3309) TinyUSB: TinyUSB Driver installed[0m
+[0;32mI (3312) usb_cdc: USB CDC initialized successfully[0m
+[0;32mI (3316) main: USB CDC initialized successfully[0m
+[0;32mI (3321) main: ========================================[0m
+[0;32mI (3326) main: Hardware Initialization Starting[0m
+[0;32mI (3330) main: ========================================[0m
+[0;32mI (3335) gpio_hal: Initializing GPIO HAL[0m
+[0;32mI (3339) gpio: GPIO[4]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3347) gpio: GPIO[5]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3355) gpio: GPIO[6]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3364) gpio: GPIO[7]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3372) gpio: GPIO[15]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3380) gpio: GPIO[16]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3389) gpio: GPIO[17]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3397) gpio: GPIO[13]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3406) gpio: GPIO[1]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3414) gpio: GPIO[2]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3422) gpio: GPIO[40]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3431) gpio: GPIO[41]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3439) gpio: GPIO[42]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 1| Intr:0 [0m
+[0;32mI (3447) gpio: GPIO[38]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3456) gpio: GPIO[39]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3464) gpio: GPIO[47]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3473) gpio: GPIO[48]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (3481) gpio_hal: GPIO HAL initialized successfully[0m
+[0;33mW (3486) main: TEST MODE: I2C disabled (MCP23017, OLED skipped)[0m
+[0;32mI (3491) spi_hal: Initializing SPI1: MOSI=11, SCLK=12, CS=10[0m
+[0;32mI (3498) gpio: GPIO[9]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (3505) spi_hal: SPI initialized successfully, OE pin=9 (disabled)[0m
+[0;32mI (3511) tpic6b595: Initializing TPIC6B595 driver[0m
+[0;32mI (3516) spi_hal: SR outputs ENABLED[0m
+[0;32mI (3519) tpic6b595: TPIC6B595 driver initialized, 40-bit chain ready[0m
+[0;32mI (3525) main: TPIC6B595 shift register initialized (test skipped)[0m
+[0;32mI (3531) main: ========================================[0m
+[0;32mI (3536) main: Hardware Initialization: ALL PASSED[0m
+[0;32mI (3540) main: ========================================[0m
+[0;32mI (3545) main: Creating FreeRTOS tasks...[0m
+[0;32mI (3549) tasks: Task usb_rx started on core 0[0m
+[0;32mI (3553) tasks: Task usb_tx started on core 0[0m
+[0;32mI (3557) tasks: Task cmd_exec started on core 0[0m
+[0;32mI (3562) tasks: Task idle_mon started on core 0[0m
+[0;32mI (3566) tasks: Task motion_Z (axis 2) started on core 1[0m
+[0;32mI (3566) tasks: Task motion_Y (axis 1) started on core 1[0m
+[0;32mI (3566) tasks: Task motion_A (axis 3) started on core 1[0m
+[0;32mI (3567) tasks: Task motion_D (axis 6) started on core 1[0m
+[0;32mI (3566) tasks: Task motion_X (axis 0) started on core 1[0m
+[0;32mI (3567) tasks: Task motion_E (axis 7) started on core 1[0m
+[0;32mI (3566) tasks: Task motion_B (axis 4) started on core 1[0m
+[0;32mI (3567) tasks: Task motion_C (axis 5) started on core 1[0m
+[0;32mI (3566) main: YaRobot Control Unit - All tasks started[0m
+[0;32mI (3611) main_task: Returned from app_main()[0m
+mode ready
+[0;32mI (7692) CMD_EXEC: Initialized with 6 built-in commands[0m
+[0;32mI (7692) EVENT_MGR: Event processor task started[0m
+[0;32mI (7692) EVENT_MGR: Initialized (queue=32, max_subs=8)[0m
+[0;32mI (7695) tasks: Command executor initialized[0m
+[0;32mI (7699) motor_system: ========================================[0m
+[0;32mI (7704) motor_system: Motor System Initialization Starting[0m
+[0;32mI (7710) motor_system: ========================================[0m
+[0;33mW (7715) tpic6b595: Already initialized[0m
+[0;33mW (7719) motor_system: TEST MODE: MCP23017 disabled - limit switches unavailable[0m
+[0;32mI (7726) motor_system: Axis configurations initialized[0m
+[0;32mI (7731) RMT_PULSE: Initializing RMT channel 0 on GPIO 4 (step)[0m
+[0;32mI (7737) RMT_PULSE: RMT channel 0 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (7744) RMT_PULSE: Initializing RMT channel 1 on GPIO 6 (step)[0m
+[0;32mI (7738) RMT_PULSE: Ramp task started for channel 0[0m
+[0;32mI (7750) RMT_PULSE: RMT channel 1 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (7762) RMT_PULSE: Initializing RMT channel 2 on GPIO 7 (step)[0m
+[0;32mI (7755) RMT_PULSE: Ramp task started for channel 1[0m
+[0;32mI (7768) RMT_PULSE: RMT channel 2 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (7780) RMT_PULSE: Initializing RMT channel 3 on GPIO 15 (step)[0m
+[0;32mI (7786) RMT_PULSE: RMT channel 3 initialized successfully (FastAccelStepper pattern)[0m
+[0;32mI (7793) MCPWM_PULSE: Initializing MCPWM timer 0 on GPIO 5 with PCNT unit 0[0m
+[0;32mI (7800) gpio: GPIO[5]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;33mW (7809) MCPWM_PULSE: DEBUG init: MCPWM generator created on GPIO 5 with io_loop_back=true[0m
+[0;32mI (7816) MCPWM_PULSE: GPIO 5 input enabled for PCNT loopback, settling for 700000 µs[0m
+[0;32mI (7772) RMT_PULSE: Ramp task started for channel 2[0m
+[0;32mI (7786) RMT_PULSE: Ramp task started for channel 3[0m
+[0;32mI (8523) MCPWM_PULSE: GPIO 5 loopback settled and ready[0m
+[0;33mW (8524) MCPWM_PULSE: DEBUG init: Creating PCNT channel on GPIO 5[0m
+[0;32mI (8524) MCPWM_PULSE: PCNT started for continuous position tracking (baseline: 0)[0m
+[0;32mI (8531) MCPWM_PULSE: MCPWM timer 0 with PCNT unit 0 initialized successfully[0m
+[0;32mI (8537) MCPWM_PULSE: Initializing MCPWM timer 1 on GPIO 16 with PCNT unit 1[0m
+[0;32mI (8544) gpio: GPIO[16]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;33mW (8553) MCPWM_PULSE: DEBUG init: MCPWM generator created on GPIO 16 with io_loop_back=true[0m
+[0;32mI (8560) MCPWM_PULSE: GPIO 16 input enabled for PCNT loopback, settling for 700000 µs[0m
+[0;32mI (9268) MCPWM_PULSE: GPIO 16 loopback settled and ready[0m
+[0;33mW (9268) MCPWM_PULSE: DEBUG init: Creating PCNT channel on GPIO 16[0m
+[0;32mI (9269) MCPWM_PULSE: PCNT started for continuous position tracking (baseline: 0)[0m
+[0;32mI (9275) MCPWM_PULSE: MCPWM timer 1 with PCNT unit 1 initialized successfully[0m
+[0;32mI (9282) LEDC_PULSE: Initializing LEDC timer 2, channel 2 on GPIO 17[0m
+[0;32mI (9288) gpio: GPIO[17]| InputEn: 1| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (9297) LEDC_PULSE: Configured GPIO 17 for PCNT internal loopback[0m
+[0;32mI (9303) LEDC_PULSE: PCNT unit 2 initialized for hardware position tracking[0m
+[0;32mI (9309) LEDC_PULSE: Completion task started for LEDC timer 2[0m
+[0;32mI (9309) LEDC_PULSE: LEDC timer 2 initialized successfully[0m
+[0;32mI (9320) motor_system: All pulse generators initialized[0m
+[0;32mI (9325) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (9329) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (9334) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (9338) SW_TRACKER: Software tracker initialized[0m
+[0;32mI (9342) TIME_TRACKER: Time tracker initialized with travel time 1000 ms[0m
+[0;32mI (9349) motor_system: All position trackers initialized[0m
+[0;32mI (9354) motor_system: Pulse generators wired to position trackers[0m
+[0;32mI (9360) motor_system: Motor objects created[0m
+[0;32mI (9364) motor_base: Axis 0 initialized (28.571 pulses/unit)[0m
+[0;32mI (9369) motor_base: Axis 1 initialized (208.333 pulses/unit)[0m
+[0;32mI (9375) motor_base: Axis 2 initialized (62.400 pulses/unit)[0m
+[0;32mI (9380) motor_base: Axis 3 initialized (164.474 pulses/unit)[0m
+[0;32mI (9385) motor_base: Axis 4 initialized (138.889 pulses/unit)[0m
+[0;32mI (9391) motor_base: Axis 5 initialized (66.667 pulses/unit)[0m
+[0;32mI (9396) LEDC_PULSE: setPositionTracker: tracker=0x3fc9c1c4 (PcntTracker for hardware PCNT)[0m
+[0;32mI (9404) motor_base: Axis 6 initialized (66.667 pulses/unit)[0m
+[0;33mW (9410) TIME_TRACKER: Time tracker already initialized[0m
+[0;32mI (9415) discrete_axis: Axis 7 initialized (discrete actuator, travel time 1000 ms)[0m
+[0;32mI (9422) motor_system: All motor objects initialized[0m
+[0;32mI (9427) MOTION_CTRL: Initialized with 8 axes[0m
+[0;32mI (9431) motor_system: Motion controller initialized with 8 axes[0m
+[0;32mI (9437) MOVE_HDL: Registered MOVE handler[0m
+[0;32mI (9440) MOVR_HDL: Registered MOVR handler[0m
+[0;32mI (9444) EN_HDL: Registered EN handler[0m
+[0;32mI (9448) POS_HDL: Registered POS handler[0m
+[0;32mI (9451) VEL_HDL: Registered VEL handler[0m
+[0;32mI (9455) STOP_HDL: Registered STOP handler[0m
+[0;32mI (9459) LIM_HDL: Registered LIM and LIMT handlers[0m
+[0;32mI (9463) BRAKE_HDL: Registered BRAKE handler[0m
+[0;32mI (9467) POSOK_HDL: Registered POSOK handler[0m
+[1;31mE (9471) DIO: Failed to read MCP1 Port A: ESP_ERR_INVALID_STATE[0m
+[0;32mI (9477) DIO: Initialized: 4 inputs, 8 outputs, 0 aliases[0m
+[0;32mI (9482) DIN_HDL: Registered DIN handler[0m
+[0;32mI (9486) DOUT_HDL: Registered DOUT handler[0m
+[1;31mE (9490) SERVO_FB: mcp23017_wrapper not initialized[0m
+[0;32mI (9494) INPOS_HDL: Registered INPOS handler[0m
+[0;32mI (9498) WIDTH_HDL: Registered WIDTH handler[0m
+[0;32mI (9502) error_mgr: Error manager initialized - all counters zeroed[0m
+[0;32mI (9508) ERRCNT_HDL: Registered ERRCNT handler[0m
+[0;32mI (9512) CLRERR_HDL: Registered CLRERR handler[0m
+[0;32mI (9517) i2c_health: Registered device 0x20 (MCP23017) on I2C0[0m
+[0;32mI (9522) i2c_health: Registered device 0x21 (MCP23017) on I2C0[0m
+[0;32mI (9528) i2c_health: I2C health monitor initialized - 2 devices tracked[0m
+[0;32mI (9534) I2C_HDL: Registered I2C handler[0m
+[0;32mI (9538) motor_system: Command handlers registered (MOVE, MOVR, EN, POS, VEL, STOP, LIM, BRAKE, POSOK, DIN, DOUT, INPOS, WIDTH, ERRCNT, CLRERR, I2C)[0m
+[0;32mI (9551) poslos: Position loss detector initialized - all servos POSLOS[0m
+[0;32mI (9557) poslos: Published EVENT POSLOS X[0m
+[0;32mI (9561) poslos: Published EVENT POSLOS Y[0m
+[0;32mI (9564) poslos: Published EVENT POSLOS Z[0m
+[0;32mI (9568) poslos: Published EVENT POSLOS A[0m
+[0;32mI (9572) poslos: Published EVENT POSLOS B[0m
+[0;33mW (9576) safety: TEST MODE: MCP23017 not initialized - limit switches disabled[0m
+[0;32mI (9583) safety: safety_monitor_task started on core 0[0m
+[0;33mW (9587) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;32mI (9593) mcp23017_wrapper: Registered notify task: safety_mon[0m
+[0;33mW (9598) safety: Failed to configure MCP0 interrupts: ESP_ERR_INVALID_STATE[0m
+[0;33mW (9603) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[1;31mE (9610) mcp23017_wrapper: Not initialized[0m
+[0;32mI (9614) gpio: GPIO[13]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:2 [0m
+[0;33mW (9620) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;32mI (9628) safety: E-stop GPIO configured on GPIO13 (falling edge)[0m
+[0;32mI (9633) safety: Safety monitor initialized (with E-stop, position loss)[0m
+[0;33mW (9638) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;32mI (9645) brake: Brake controller initialized[0m
+[0;32mI (9649) FLOAT_SW: Initialized: C axis floating switch handler[0m
+[0;33mW (9655) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;32mI (9660) motor_system: ========================================[0m
+[0;32mI (9666) motor_system: Motor System Initialization: SUCCESS[0m
+[0;33mW (9670) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;32mI (9676) motor_system:   Servos: 5 (X, Y, Z, A, B)[0m
+[0;32mI (9681) motor_system:   Steppers: 2 (C, D)[0m
+[0;32mI (9685) motor_system:   Discrete: 1 (E)[0m
+[0;33mW (9686) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;32mI (9694) motor_system: ========================================[0m
+[0;32mI (9699) CMD_EXEC: CMD: MODE -[0m
+OK READY
+[0;33mW (9704) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (9718) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (9728) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (9738) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (9748) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (9758) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (9768) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (9778) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (9788) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (9798) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (9808) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (9818) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (9828) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (9838) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (9848) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (9858) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (9868) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (9878) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (9888) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (9898) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (9908) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (9918) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (9928) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (9938) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (9948) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (9958) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (9968) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (9978) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (9988) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (9998) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10008) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10018) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10028) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10038) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10048) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10058) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10068) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10078) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10088) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10098) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10108) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10118) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10128) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10138) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10148) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10158) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10168) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10178) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10188) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10198) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10208) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10218) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10228) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10238) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10248) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10258) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10268) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10278) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10288) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10298) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10308) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10318) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10328) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10338) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10348) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10358) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10368) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10378) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10388) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10398) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10408) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10418) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10428) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10438) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10448) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10458) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10468) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10478) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10488) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10498) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10508) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10518) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10528) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10538) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10548) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10558) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10568) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10578) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10588) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10598) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10608) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10618) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10628) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10638) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10648) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10658) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10668) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10678) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10688) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10698) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10708) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10718) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10728) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10738) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10748) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10758) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10768) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10778) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10788) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10798) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10808) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10818) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10828) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10838) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10848) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10858) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10868) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10878) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10888) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10898) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10908) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10918) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10928) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10938) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10948) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10958) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10968) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10978) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10988) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (10998) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11008) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11018) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11028) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11038) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11048) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11058) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11068) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11078) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11088) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11098) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11108) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11118) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11128) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11138) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11148) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11158) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11168) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11178) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11188) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11198) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11208) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11218) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11228) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11238) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11248) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11258) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11268) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11278) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11288) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11298) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11308) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11318) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11328) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11338) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11348) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11358) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11368) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11378) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11388) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11398) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11408) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11418) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11428) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11438) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11448) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11458) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11468) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11478) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11488) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11498) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11508) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11518) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11528) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11538) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11548) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11558) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11568) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11578) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11588) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11598) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11608) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11618) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11628) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11638) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11648) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11658) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11668) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11678) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11688) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11698) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11708) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11718) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11728) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11738) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11748) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11758) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11768) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11778) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11788) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11798) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11808) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11818) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11828) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11838) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11848) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11858) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11868) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11878) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11888) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11898) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11908) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11918) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11928) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11938) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11948) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11958) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11968) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11978) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11988) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (11998) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12008) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12018) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12028) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12038) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12048) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12058) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12068) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12078) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12088) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12098) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12108) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12118) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12128) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12138) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12148) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12158) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12168) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12178) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12188) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12198) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12208) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12218) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12228) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12238) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12248) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12258) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12268) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12278) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12288) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12298) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12308) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12318) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12328) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12338) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12348) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12358) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12368) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12378) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12388) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12398) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12408) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12418) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12428) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12438) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12448) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12458) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12468) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12478) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12488) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12498) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12508) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12518) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12528) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12538) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12548) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12558) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12568) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12578) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12588) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12598) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12608) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12618) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12628) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12638) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12648) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12658) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12668) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12678) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12688) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12698) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12708) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12718) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12728) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12738) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12748) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12758) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12768) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12778) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12788) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12798) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12808) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12818) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12828) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12838) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12848) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12858) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12868) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12878) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12888) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12898) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12908) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12918) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12928) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12938) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12948) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12958) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12968) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12978) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12988) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (12998) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13008) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13018) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13028) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13038) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13048) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13058) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13068) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13078) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13088) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13098) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13108) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13118) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13128) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13138) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13148) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13158) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13168) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13178) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13188) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13198) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13208) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13218) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13228) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13238) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13248) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13258) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13268) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13278) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13288) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13298) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13308) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13318) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13328) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13338) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13348) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13358) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13368) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13378) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13388) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13398) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13408) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13418) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13428) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13438) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13448) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13458) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13468) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13478) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13488) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13498) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13508) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13518) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13528) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13538) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13548) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13558) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13568) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13578) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13588) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13598) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13608) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13618) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13628) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13638) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13648) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13658) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13668) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13678) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13688) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13698) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13708) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13718) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13728) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13738) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13748) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13758) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13768) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13778) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13788) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13798) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13808) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13818) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13828) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13838) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13848) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13858) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13868) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13878) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13888) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13898) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13908) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13918) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13928) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13938) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13948) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13958) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13968) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13978) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13988) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (13998) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14008) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14018) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14028) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14038) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14048) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14058) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14068) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14078) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14088) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14098) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14108) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14118) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14128) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14138) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14148) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14158) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14168) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14178) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14188) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14198) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14208) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14218) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14228) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14238) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14248) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14258) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14268) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14278) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14288) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14298) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14308) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14318) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14328) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14338) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14348) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14358) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14368) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14378) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14388) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14398) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14408) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14418) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14428) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14438) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14448) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14458) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14468) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14478) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14488) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14498) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14508) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14518) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14528) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14538) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14548) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14558) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14568) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14578) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14588) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14598) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14608) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14618) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14628) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14638) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14648) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14658) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14668) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14678) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14688) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14698) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14708) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14718) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14728) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14738) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14748) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14758) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14768) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14778) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14788) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14798) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14808) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14818) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14828) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14838) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14848) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14858) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14868) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14878) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14888) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14898) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14908) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14918) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14928) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14938) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14948) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14958) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14968) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14978) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14988) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (14998) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15008) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15018) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15028) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15038) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15048) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15058) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15068) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15078) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15088) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15098) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15108) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15118) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15128) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15138) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15148) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15158) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15168) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15178) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15188) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15198) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15208) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15218) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15228) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15238) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15248) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15258) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15268) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15278) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15288) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15298) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15308) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15318) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15328) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15338) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15348) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15358) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15368) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15378) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15388) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15398) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15408) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15418) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15428) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15438) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15448) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15458) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15468) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15478) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15488) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15498) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15508) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15518) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15528) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15538) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15548) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15558) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15568) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15578) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15588) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15598) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15608) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15618) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15628) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15638) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15648) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15658) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15668) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15678) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15688) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15698) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15708) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15718) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15728) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15738) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15748) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15758) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15768) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15778) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15788) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15798) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15808) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15818) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15828) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15838) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15848) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15858) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15868) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15878) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15888) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15898) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15908) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15918) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15928) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15938) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15948) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15958) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15968) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15978) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15988) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (15998) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16008) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16018) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16028) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16038) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16048) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16058) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16068) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16078) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16088) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16098) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16108) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16118) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16128) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16138) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16148) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16158) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16168) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16178) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16188) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16198) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16208) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16218) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16228) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16238) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16248) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16258) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16268) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16278) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16288) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16298) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16308) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16318) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16328) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16338) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16348) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16358) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16368) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16378) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m
+[0;33mW (16388) safety: Failed to read MCP0: ESP_ERR_INVALID_STATE[0m

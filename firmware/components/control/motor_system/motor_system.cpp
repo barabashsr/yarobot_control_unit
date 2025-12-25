@@ -709,6 +709,9 @@ esp_err_t motor_system_init(void)
         return ret;
     }
 
+    // TEMPORARY TEST MODE: MCP23017 disabled for testing without I2C hardware
+    // See docs/LIMIT_SWITCH_TEST_MODE.md for details on re-enabling
+#if 0  // MCP23017 disabled for testing
     // Step 1b: Initialize MCP23017 I/O expanders (Story 4-2)
     // Required for limit switch monitoring
     ret = mcp23017_wrapper_init();
@@ -718,6 +721,9 @@ esp_err_t motor_system_init(void)
                  esp_err_to_name(ret));
         // Continue in degraded mode - motion still works without limit monitoring
     }
+#else
+    ESP_LOGW(TAG, "TEST MODE: MCP23017 disabled - limit switches unavailable");
+#endif
 
     // Step 2: Initialize axis configurations
     init_axis_configs();
