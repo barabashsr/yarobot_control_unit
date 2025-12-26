@@ -142,6 +142,10 @@ esp_err_t MotorBase::moveAbsolute(float position, float velocity)
     // Handle zero-distance move
     if (std::fabs(delta) < (1.0f / config_.getPulsesPerUnit())) {
         ESP_LOGW(TAG, "DEBUG Axis %d: target position already reached (delta=%.6f)", axis_id_, delta);
+        // Invoke motion complete callback so host knows move is "done"
+        if (motion_complete_cb_) {
+            motion_complete_cb_(axis_id_, current_pos);
+        }
         return ESP_OK;
     }
 

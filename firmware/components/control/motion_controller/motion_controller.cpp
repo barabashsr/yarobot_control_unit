@@ -14,6 +14,7 @@
 #include "config_commands.h"
 #include "safety_monitor.h"
 #include "floating_switch.h"  // Story 4-9: C axis width measurement
+#include "usb_cdc.h"          // For EVENT DONE messages to host
 
 #include "esp_log.h"
 #include "esp_timer.h"
@@ -386,6 +387,15 @@ esp_err_t MotionController::stopAllAxes()
 void MotionController::onMotionComplete(uint8_t axis, float position)
 {
     ESP_LOGD(TAG, "Motion complete: axis=%d pos=%.3f", axis, position);
+
+    // Send EVENT DONE via USB CDC for host-side motion tracking
+    static const char* axis_names[] = {"X", "Y", "Z", "A", "B", "C", "D", "E"};
+    if (axis < LIMIT_NUM_AXES) {
+        char event_msg[64];
+        snprintf(event_msg, sizeof(event_msg), "EVENT DONE %s %.4f",
+                 axis_names[axis], position);
+        usb_cdc_send_line(event_msg);
+    }
 
     // Publish EVT_MOTION_COMPLETE event (AC13)
     Event event = {

@@ -256,14 +256,11 @@ static void init_axis_configs(void)
     s_config_b.units_per_rev = B_AXIS_UNITS_PER_REV;
     s_config_b.alias[0] = 'B'; s_config_b.alias[1] = '\0';
 
+    // C and D axes use DEFAULT values (200 pulses/rev, 360 degrees/rev)
     s_config_c = AxisConfig::createDefaultLinear();
-    s_config_c.pulses_per_rev = C_AXIS_PULSES_PER_REV;
-    s_config_c.units_per_rev = C_AXIS_UNITS_PER_REV;
     s_config_c.alias[0] = 'C'; s_config_c.alias[1] = '\0';
 
     s_config_d = AxisConfig::createDefaultLinear();
-    s_config_d.pulses_per_rev = D_AXIS_PULSES_PER_REV;
-    s_config_d.units_per_rev = D_AXIS_UNITS_PER_REV;
     s_config_d.alias[0] = 'D'; s_config_d.alias[1] = '\0';
     // ========================================================================
 

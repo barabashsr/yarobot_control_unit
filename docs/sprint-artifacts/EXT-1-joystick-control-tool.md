@@ -51,6 +51,13 @@ Python host-side utility that connects to ESP32 via USB serial and accepts input
 | **Options** | 9 | **Go Home** | `MOVE {axis} {pos}` per axis |
 | **Touchpad** | 13 | **Save Home** | `POS` → save to YAML |
 
+### Keyboard Controls
+
+| Key | Function | Command |
+|-----|----------|---------|
+| **1-5** | **Go to box_N** | `MOVE {axis} {pos}` per axis |
+| **Shift+1-5** | **Save box_N** | `POS` → save to YAML |
+
 ## Control Logic
 
 ### Startup Sequence
@@ -180,13 +187,68 @@ ON button_press(OPTIONS):
         PRINT "[ERROR] No home positions saved. Press Touchpad first."
         RETURN
 
-    FOR each axis in [X, Y, Z, A, B, C, D]:
+    # Step 1: X and Z move together (parallel)
+    SEND "MOVE X {home_position} {speed}"
+    SEND "MOVE Z {home_position} {speed}"
+    WAIT for "Axis N: motion complete" log messages for X and Z
+    SLEEP 1 second
+
+    # Step 2: A, B, C, D one by one
+    FOR each axis in [A, B, C, D]:
         IF home_positions[axis] is not null:
-            PRINT "[HOME] Moving {axis} to {position}..."
-            SEND "MOVE {axis} {home_position}"
-            WAIT for OK response
+            SEND "MOVE {axis} {home_position} {speed}"
+            WAIT for "Axis N: motion complete" log message
+            SLEEP 1 second
+
+    # Step 3: Y last
+    SEND "MOVE Y {home_position} {speed}"
+    WAIT for "Axis 1: motion complete" log message
+    SLEEP 1 second
 
     PRINT "[HOME] All axes at home position"
+```
+
+### Save Box Position (Shift+1-5)
+
+```
+ON key_press(1-5) WITH shift_pressed:
+    box_num = key - '0'
+    SEND "POS"
+    PARSE response → extract X, Y, Z, A, B, C, D positions
+    UPDATE config.yaml → box_positions.box_{num} section
+    SAVE config.yaml
+    PRINT "[SAVED] Box {num} position saved to config.yaml"
+```
+
+### Go to Box Position (1-5)
+
+```
+ON key_press(1-5):
+    box_num = key - '0'
+    READ box_positions.box_{num} from config.yaml
+    IF box_positions.box_{num} not set:
+        PRINT "[ERROR] Box {num} not saved. Press Shift+{num} first."
+        RETURN
+
+    # Step 1: X and Z move together (parallel)
+    SEND "MOVE X {position} {speed}"
+    SEND "MOVE Z {position} {speed}"
+    WAIT for "Axis N: motion complete" log messages for X and Z
+    SLEEP 1 second
+
+    # Step 2: A, B, C, D one by one
+    FOR each axis in [A, B, C, D]:
+        IF box_positions[axis] is not null:
+            SEND "MOVE {axis} {position} {speed}"
+            WAIT for "Axis N: motion complete" log message
+            SLEEP 1 second
+
+    # Step 3: Y last
+    SEND "MOVE Y {position} {speed}"
+    WAIT for "Axis 1: motion complete" log message
+    SLEEP 1 second
+
+    PRINT "[BOX] Box {num} sequence complete"
 ```
 
 ## Acceptance Criteria
@@ -210,6 +272,9 @@ ON button_press(OPTIONS):
 17. **AC17**: When enabling axis, script also sends `POSOK {axis}` to clear position loss
 18. **AC18**: Status table displays current enable and brake state for all axes
 19. **AC19**: Status table updates after each state change
+20. **AC20**: Pressing Shift+1-5 saves current positions as box_1..5 to config.yaml
+21. **AC21**: Pressing 1-5 moves all axes to saved box_N positions using configured axis speeds
+22. **AC22**: Status display shows keyboard controls for box positions
 
 ## Tasks / Subtasks
 
@@ -292,6 +357,14 @@ ON button_press(OPTIONS):
   - [x] Document button mapping and controls
   - [x] Add example configuration
 
+- [x] Task 14: Box positions feature (AC20, AC21, AC22)
+  - [x] Add box_positions to Config dataclass
+  - [x] Load/save box_positions from/to config.yaml
+  - [x] Implement keyboard event handling for 1-5 and Shift+1-5
+  - [x] Implement _do_save_box() to save current positions as box_N
+  - [x] Implement _do_go_box() to move to box_N positions
+  - [x] Update status display with keyboard controls help
+
 ## Speed Configuration (Initial Values)
 
 | Axis | Speed (mm/s) | Min Allowed |
@@ -370,6 +443,14 @@ home_positions:
   B: null
   C: null
   D: null
+
+# Box positions (populated by Shift+1-5 keyboard shortcuts)
+box_positions:
+  box_1: null
+  box_2: null
+  box_3: null
+  box_4: null
+  box_5: null
 ```
 
 ## Console Status Table
@@ -504,6 +585,16 @@ Claude Opus 4.5 (claude-opus-4-5-20251101)
 - Enable toggle via D-pad Up + axis button (EN 0/1 + POSOK)
 - Graceful shutdown on Ctrl+C, serial disconnect, or joystick disconnect
 - Speed values use SI units (m/s) matching firmware expectations
+- Added box_positions feature: 5 named waypoints (box_1..5) separate from home
+- Keyboard shortcuts: 1-5 to go to box_N, Shift+1-5 to save current position as box_N
+- Box positions use configured axis speeds from config.axes[axis].speed
+- Motion sequence for Go Home/Go Box: X+Z parallel first, then A,B,C,D sequential, Y last
+- Motion complete detection via ESP-IDF log messages: "Axis N: motion complete at position" or "Axis N: target position already reached"
+- Axis index to letter mapping: 0=X, 1=Y, 2=Z, 3=A, 4=B, 5=C, 6=D
+- Event callback system with poll_events() for async serial event handling
+- 1 second settle delay after each axis motion complete before starting next
+- POS command uses multi-line response reading to capture full position data
+- SerialConnection.event_callback for handling async events separately from command responses
 
 ### File List
 - tools/joystick_control/joystick_control.py (NEW) - Main script, all functionality

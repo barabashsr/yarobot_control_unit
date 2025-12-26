@@ -93,6 +93,7 @@ class Config:
     save_home_button: int = 13  # Touchpad
     axes: Dict[str, AxisConfig] = field(default_factory=dict)
     home_positions: Dict[str, Optional[float]] = field(default_factory=dict)
+    box_positions: Dict[str, Optional[Dict[str, float]]] = field(default_factory=dict)
     config_path: str = ""
 
 
@@ -105,12 +106,14 @@ class SerialConnection:
 
     def __init__(self, port: str, baudrate: int, timeout: float,
                  on_disconnect: Optional[Callable] = None,
-                 log_callback: Optional[Callable[[str, str], None]] = None):
+                 log_callback: Optional[Callable[[str, str], None]] = None,
+                 event_callback: Optional[Callable[[str], None]] = None):
         self.port = port
         self.baudrate = baudrate
         self.timeout = timeout
         self.on_disconnect = on_disconnect
         self.log_callback = log_callback
+        self.event_callback = event_callback  # Called for EVENT messages
         self.serial: Optional[serial.Serial] = None
         self.lock = threading.Lock()
         self._connected = False
@@ -155,7 +158,7 @@ class SerialConnection:
         """Check if connected."""
         return self._connected and self.serial is not None and self.serial.is_open
 
-    def send_command(self, command: str, wait_response: bool = True) -> Optional[str]:
+    def send_command(self, command: str, wait_response: bool = True, multi_line: bool = False) -> Optional[str]:
         """
         Send a command and optionally wait for response.
 
@@ -176,7 +179,7 @@ class SerialConnection:
                     return "OK"
 
                 # Read response
-                response = self._read_response()
+                response = self._read_response(multi_line=multi_line)
                 if response:
                     self._log("RX", response)
                 return response
@@ -188,14 +191,20 @@ class SerialConnection:
                     self.on_disconnect()
                 return None
 
-    def _read_response(self, timeout_ms: int = 500) -> Optional[str]:
-        """Read response, skipping ESP-IDF log messages."""
+    def _read_response(self, timeout_ms: int = 500, multi_line: bool = False) -> Optional[str]:
+        """Read response, skipping ESP-IDF log messages and handling EVENT messages."""
         start_time = time.time()
         timeout_sec = timeout_ms / 1000.0
+        lines = []
 
         while (time.time() - start_time) < timeout_sec:
             try:
                 if self.serial.in_waiting == 0:
+                    # If we have lines and multi_line mode, wait a bit more for additional data
+                    if lines and multi_line:
+                        time.sleep(0.05)
+                        if self.serial.in_waiting == 0:
+                            break  # No more data coming
                     time.sleep(0.01)
                     continue
 
@@ -203,27 +212,77 @@ class SerialConnection:
                 if not line:
                     continue
 
-                # Skip ESP-IDF log messages: "I (12345) tag: message"
-                # These start with I/W/E/D followed by space and parenthesis
+                # Check ESP-IDF log messages for motion events before skipping
+                # Format: "W (1655450) motor_base: Axis 6: motion complete"
                 if len(line) > 2 and line[0] in 'IWED' and line[1] == ' ' and '(' in line[:10]:
+                    # Check for motion complete messages
+                    if 'motion complete' in line or 'target position already reached' in line:
+                        if self.event_callback:
+                            self.event_callback(line)
+                        self._log("EVT", line)
                     continue
 
                 # Skip empty lines and prompts
                 if line in ['', '>', 'esp>']:
                     continue
 
-                # This is the actual response
-                return line
+                # Handle EVENT messages separately (async events from ESP32)
+                if line.startswith("EVENT"):
+                    if self.event_callback:
+                        self.event_callback(line)
+                    self._log("EVT", line)
+                    continue  # Don't include in response, keep reading
+
+                # Collect lines
+                lines.append(line)
+
+                # If not multi_line mode, return first valid line
+                if not multi_line:
+                    return line
 
             except Exception:
                 return None
 
-        return None
+        # Return all collected lines joined
+        return ' '.join(lines) if lines else None
 
     def _log(self, direction: str, message: str):
         """Log a message."""
         if self.log_callback:
             self.log_callback(direction, message)
+
+    def poll_events(self):
+        """Read any pending data from serial to process events."""
+        if not self.is_connected():
+            return
+
+        with self.lock:
+            try:
+                while self.serial.in_waiting > 0:
+                    line = self.serial.readline().decode('utf-8').strip()
+                    if not line:
+                        continue
+
+                    # Skip empty lines and prompts
+                    if line in ['', '>', 'esp>']:
+                        continue
+
+                    # Check for motion complete in ESP-IDF log messages
+                    # Format: "W (1655450) motor_base: Axis 6: motion complete at position"
+                    # Also: "W (2073169) motor_base: DEBUG Axis 6: target position already reached"
+                    if 'motion complete' in line or 'target position already reached' in line:
+                        if self.event_callback:
+                            self.event_callback(line)
+                        self._log("EVT", line)
+                        continue
+
+                    # Handle EVENT messages
+                    if line.startswith("EVENT"):
+                        if self.event_callback:
+                            self.event_callback(line)
+                        self._log("EVT", line)
+            except Exception:
+                pass
 
 
 # =============================================================================
@@ -289,6 +348,16 @@ class JoystickController:
         except pygame.error:
             self._handle_disconnect()
             return (0, 0)
+
+    def get_axis(self, axis_id: int) -> float:
+        """Get analog stick axis value (-1.0 to 1.0)."""
+        if not self.is_connected():
+            return 0.0
+        try:
+            return self.joystick.get_axis(axis_id)
+        except pygame.error:
+            self._handle_disconnect()
+            return 0.0
 
     def process_events(self) -> List[pygame.event.Event]:
         """Process and return pygame events."""
@@ -380,10 +449,12 @@ class StatusDisplay:
         lines.append("-" * 50)
         lines.append("")
         lines.append("Controls: Cross/Circle/Square/Triangle/L1/R1/L2 = Jog axes")
-        lines.append("          R2 = Negative direction | Share = E-STOP")
+        lines.append("          R2 = Negative direction | Share = E-STOP | D-Down = RST")
         lines.append("          D-Left + Axis = Toggle Brake | D-Up + Axis = Toggle Enable")
-        lines.append("          D-Down = RST + MODE READY | D-Right = Save Home")
-        lines.append("          Options = Go Home | Ctrl+C = Exit")
+        lines.append("          Right Stick Up/Down = E axis 1/0 | Ctrl+C = Exit")
+        lines.append("")
+        lines.append("Left Stick + Options: Left=Home, Up=Box1, Right=Box2, Down=Box3")
+        lines.append("Left Stick + D-Right: Left=Save Home, Up/Right/Down=Save Box 1/2/3")
 
         return "\n".join(lines)
 
@@ -411,6 +482,11 @@ class JoystickControlApp:
         self.running = False
         self.button_states: Dict[int, bool] = {}  # Track button states
         self._needs_redraw = True
+        self._motion_done_events: Dict[str, bool] = {}  # Track EVENT DONE per axis
+        self._e_axis_commanded: Optional[int] = None  # Last E axis command (0 or 1) to avoid repeats
+        self._e_axis_deadzone = 0.5  # Stick threshold for E axis control
+        self._position_stick_commanded: Optional[str] = None  # Last position command to avoid repeats
+        self._position_stick_deadzone = 0.7  # Stick threshold for position commands
 
         # Set up signal handler for Ctrl+C
         signal.signal(signal.SIGINT, self._signal_handler)
@@ -446,23 +522,30 @@ class JoystickControlApp:
             if 'home_positions' in data:
                 config.home_positions = data['home_positions']
 
+            if 'box_positions' in data:
+                config.box_positions = data['box_positions'] or {}
+            else:
+                # Initialize empty box positions
+                config.box_positions = {f'box_{i}': None for i in range(1, 6)}
+
         except Exception as e:
             print(f"[WARN] Failed to load config: {e}, using defaults")
 
         return config
 
-    def _save_config(self):
+    def _save_config(self, message: str = "Config saved"):
         """Save configuration to YAML file."""
         try:
             with open(self.config.config_path, 'r') as f:
                 data = yaml.safe_load(f)
 
             data['home_positions'] = self.config.home_positions
+            data['box_positions'] = self.config.box_positions
 
             with open(self.config.config_path, 'w') as f:
                 yaml.dump(data, f, default_flow_style=False)
 
-            self.display.add_log("INFO", "Home positions saved to config.yaml")
+            self.display.add_log("INFO", message)
         except Exception as e:
             self.display.add_log("ERROR", f"Failed to save config: {e}")
 
@@ -511,6 +594,33 @@ class JoystickControlApp:
         self.display.add_log(direction, message)
         self._needs_redraw = True
 
+    def _event_callback(self, event_line: str):
+        """Callback for EVENT messages from ESP32."""
+        # Axis index to letter mapping
+        axis_map = {0: 'X', 1: 'Y', 2: 'Z', 3: 'A', 4: 'B', 5: 'C', 6: 'D'}
+
+        # Parse ESP-IDF log format:
+        # "W (1655450) motor_base: Axis 6: motion complete at position"
+        # "W (2073169) motor_base: DEBUG Axis 6: target position already reached"
+        if 'motion complete' in event_line or 'target position already reached' in event_line:
+            match = re.search(r'Axis\s+(\d+):', event_line)
+            if match:
+                axis_idx = int(match.group(1))
+                axis = axis_map.get(axis_idx)
+                if axis:
+                    self._motion_done_events[axis] = True
+                    self.display.add_log("EVT", f"Axis {axis} ({axis_idx}) motion done detected")
+                    self._needs_redraw = True
+            return
+
+        # Parse "EVENT DONE X 123.456" format (fallback)
+        parts = event_line.split()
+        if len(parts) >= 3 and parts[0] == "EVENT" and parts[1] == "DONE":
+            axis = parts[2]
+            self._motion_done_events[axis] = True
+            self.display.add_log("EVT", f"Axis {axis} EVENT DONE detected")
+            self._needs_redraw = True
+
     def run(self):
         """Main application loop."""
         print("[INIT] Starting Joystick Control Tool...")
@@ -521,6 +631,7 @@ class JoystickControlApp:
             baudrate=self.config.serial_baudrate,
             timeout=self.config.serial_timeout,
             on_disconnect=self._on_serial_disconnect,
+            event_callback=self._event_callback,
             log_callback=self._log_callback
         )
 
@@ -641,31 +752,141 @@ class JoystickControlApp:
         return positions
 
     def _process_input(self):
-        """Process joystick input."""
+        """Process joystick and keyboard input."""
         events = self.joystick.process_events()
 
         # Get modifier states
         r2_pressed = self.joystick.get_button(self.config.direction_modifier)
+        options_pressed = self.joystick.get_button(self.config.go_home_button)
         hat = self.joystick.get_hat(0)
         dpad_left = hat[0] == -1
+        dpad_right = hat[0] == 1
         dpad_up = hat[1] == 1
         dpad_down = hat[1] == -1
 
         for event in events:
+            # Keyboard events for box positions
+            if event.type == pygame.KEYDOWN:
+                self._handle_keyboard(event)
+                continue
+
             if event.type == pygame.JOYHATMOTION:
                 # D-pad Down alone = RST + MODE READY
                 if hat[1] == -1 and hat[0] == 0:
                     self._do_reset_and_ready()
-                    continue
-                # D-pad Right alone = Save Home
-                if hat[0] == 1 and hat[1] == 0:
-                    self._do_save_home()
                     continue
 
             if event.type == pygame.JOYBUTTONDOWN:
                 self._handle_button_press(event.button, r2_pressed, dpad_left, dpad_up)
             elif event.type == pygame.JOYBUTTONUP:
                 self._handle_button_release(event.button)
+
+        # Left stick for Go/Save positions (Options or D-Right + stick direction)
+        left_stick_x = self.joystick.get_axis(0)  # Left/Right
+        left_stick_y = -self.joystick.get_axis(1)  # Up/Down (inverted)
+        self._handle_position_stick(left_stick_x, left_stick_y, options_pressed, dpad_right)
+
+        # E axis control via right stick Y (axis 3)
+        # Note: pygame Y axis is inverted (up = negative)
+        right_stick_y = -self.joystick.get_axis(3)  # Invert so up = positive
+        self._handle_e_axis(right_stick_y)
+
+    def _handle_e_axis(self, stick_value: float):
+        """Handle E axis control via analog stick."""
+        if stick_value > self._e_axis_deadzone:
+            # Stick up -> MOVE E 1
+            if self._e_axis_commanded != 1:
+                self._e_axis_commanded = 1
+                self.serial.send_command("MOVE E 1", wait_response=False)
+                self.display.add_log("CMD", "E axis -> 1 (up)")
+                self._needs_redraw = True
+        elif stick_value < -self._e_axis_deadzone:
+            # Stick down -> MOVE E 0
+            if self._e_axis_commanded != 0:
+                self._e_axis_commanded = 0
+                self.serial.send_command("MOVE E 0", wait_response=False)
+                self.display.add_log("CMD", "E axis -> 0 (down)")
+                self._needs_redraw = True
+        else:
+            # Stick centered - reset commanded state to allow next command
+            self._e_axis_commanded = None
+
+    def _handle_position_stick(self, stick_x: float, stick_y: float,
+                                options_pressed: bool, dpad_right: bool):
+        """Handle Go/Save position commands via left stick + modifier."""
+        threshold = self._position_stick_deadzone
+
+        # Determine stick direction
+        direction = None
+        if stick_x < -threshold:
+            direction = "left"
+        elif stick_x > threshold:
+            direction = "right"
+        elif stick_y > threshold:
+            direction = "up"
+        elif stick_y < -threshold:
+            direction = "down"
+
+        # No direction or no modifier - reset state
+        if direction is None or (not options_pressed and not dpad_right):
+            self._position_stick_commanded = None
+            return
+
+        # Build command key to avoid repeats
+        mode = "go" if options_pressed else "save"
+        cmd_key = f"{mode}_{direction}"
+
+        if self._position_stick_commanded == cmd_key:
+            return  # Already executed this command
+
+        self._position_stick_commanded = cmd_key
+
+        # Execute the command
+        if options_pressed:
+            # Go commands: Options + stick
+            if direction == "left":
+                self._do_go_home()
+            elif direction == "up":
+                self._do_go_box(1)
+            elif direction == "right":
+                self._do_go_box(2)
+            elif direction == "down":
+                self._do_go_box(3)
+        elif dpad_right:
+            # Save commands: D-Right + stick
+            if direction == "left":
+                self._do_save_home()
+            elif direction == "up":
+                self._do_save_box(1)
+            elif direction == "right":
+                self._do_save_box(2)
+            elif direction == "down":
+                self._do_save_box(3)
+
+    def _handle_keyboard(self, event):
+        """Handle keyboard events for box positions."""
+        # Map keys to box numbers
+        key_to_box = {
+            pygame.K_1: 1,
+            pygame.K_2: 2,
+            pygame.K_3: 3,
+            pygame.K_4: 4,
+            pygame.K_5: 5,
+        }
+
+        box_num = key_to_box.get(event.key)
+        if box_num is None:
+            return
+
+        # Check if Shift is held
+        shift_held = event.mod & pygame.KMOD_SHIFT
+
+        if shift_held:
+            # Shift + 1-5: Save current position as box_N
+            self._do_save_box(box_num)
+        else:
+            # 1-5: Go to box_N
+            self._do_go_box(box_num)
 
     def _handle_button_press(self, button: int, r2_pressed: bool,
                              dpad_left: bool, dpad_up: bool):
@@ -677,10 +898,7 @@ class JoystickControlApp:
             self._do_estop()
             return
 
-        # Go Home (Options)
-        if button == self.config.go_home_button:
-            self._do_go_home()
-            return
+        # Note: Go Home is now handled via Options + Left Stick (see _handle_position_stick)
 
         # Check if this is an axis button
         axis = self._button_to_axis(button)
@@ -744,15 +962,95 @@ class JoystickControlApp:
 
     def _do_save_home(self):
         """Save current positions as home."""
-        response = self.serial.send_command("POS")
+        response = self.serial.send_command("POS", multi_line=True)
         if response:
             positions = self._parse_position_response(response)
             if positions:
                 self.config.home_positions = positions
-                self._save_config()
-                self.display.add_log("INFO", f"Home positions saved: {positions}")
+                self._save_config("Home positions saved to config.yaml")
+                self.display.add_log("INFO", f"Home: {positions}")
             else:
                 self.display.add_log("ERROR", "Failed to parse position response")
+
+    def _wait_for_motion_complete(self, axes: List[str], timeout_sec: float = 60.0) -> bool:
+        """Wait for EVENT DONE for specified axes."""
+        # Don't clear events here - they may have been set during command response reading
+        pending = set(axes)
+        start_time = time.time()
+
+        self.display.add_log("WAIT", f"Waiting for {list(pending)}, events={dict(self._motion_done_events)}")
+        self.display.print_status()
+
+        while pending and (time.time() - start_time) < timeout_sec:
+            if not self.serial.is_connected():
+                for axis in pending:
+                    self.display.add_log("FAIL", f"{axis} motion NOT complete (disconnected)")
+                return False
+
+            # Poll serial for events
+            self.serial.poll_events()
+            time.sleep(0.02)
+
+            # Check which axes have completed
+            for axis in list(pending):
+                if self._motion_done_events.get(axis, False):
+                    pending.discard(axis)
+                    self.display.add_log("DONE", f"{axis} motion complete")
+                    self.display.print_status()
+
+        # Log timeout for any remaining axes
+        if pending:
+            for axis in pending:
+                self.display.add_log("FAIL", f"{axis} motion NOT complete (timeout)")
+            self.display.print_status()
+
+        return len(pending) == 0
+
+    def _move_axis(self, axis: str, positions: Dict[str, float], log_prefix: str) -> bool:
+        """Send MOVE command for a single axis. Returns True if command sent."""
+        pos = positions.get(axis)
+        if pos is None:
+            return False
+
+        axis_config = self.config.axes.get(axis)
+        speed = axis_config.speed if axis_config else 0.001
+
+        # Clear motion done event BEFORE sending command
+        self._motion_done_events[axis] = False
+
+        self.display.add_log(log_prefix, f"Moving {axis} to {pos:.6f} at {speed:.4f} m/s")
+        self.display.print_status()
+        response = self.serial.send_command(f"MOVE {axis} {pos:.6f} {speed:.6f}")
+        if not response or not response.startswith("OK"):
+            self.display.add_log("WARN", f"Failed to move {axis}")
+            return False
+        return True
+
+    def _execute_move_sequence(self, positions: Dict[str, float], log_prefix: str):
+        """Execute move sequence: X+Z together, then A,B,C,D one by one, Y last."""
+        settle_delay = 1.0  # Delay after motion complete
+
+        # Step 1: X and Z move together
+        moving = []
+        if self._move_axis('X', positions, log_prefix):
+            moving.append('X')
+        if self._move_axis('Z', positions, log_prefix):
+            moving.append('Z')
+
+        if moving:
+            self._wait_for_motion_complete(moving)
+            time.sleep(settle_delay)
+
+        # Step 2: A, B, C, D one by one
+        for axis in ['A', 'B', 'C', 'D']:
+            if self._move_axis(axis, positions, log_prefix):
+                self._wait_for_motion_complete([axis])
+                time.sleep(settle_delay)
+
+        # Step 3: Y last
+        if self._move_axis('Y', positions, log_prefix):
+            self._wait_for_motion_complete(['Y'])
+            time.sleep(settle_delay)
 
     def _do_go_home(self):
         """Move all axes to home positions using configured speeds."""
@@ -761,22 +1059,43 @@ class JoystickControlApp:
             return
 
         self.display.add_log("INFO", "Moving to home positions...")
-
-        for axis in AXES:
-            pos = self.config.home_positions.get(axis)
-            if pos is not None:
-                # Get speed from axis config
-                axis_config = self.config.axes.get(axis)
-                speed = axis_config.speed if axis_config else 0.001
-
-                self.display.add_log("HOME", f"Moving {axis} to {pos:.6f} at {speed:.4f} m/s")
-                response = self.serial.send_command(f"MOVE {axis} {pos:.6f} {speed:.6f}")
-                if not response or not response.startswith("OK"):
-                    self.display.add_log("WARN", f"Failed to move {axis}")
-                # Brief delay between axes
-                time.sleep(0.05)
-
+        self._execute_move_sequence(self.config.home_positions, "HOME")
         self.display.add_log("INFO", "Home sequence complete")
+
+    def _do_save_box(self, box_num: int):
+        """Save current positions as box_N."""
+        if box_num < 1 or box_num > 5:
+            self.display.add_log("ERROR", f"Invalid box number: {box_num}")
+            return
+
+        response = self.serial.send_command("POS", multi_line=True)
+        if response:
+            positions = self._parse_position_response(response)
+            if positions:
+                box_name = f"box_{box_num}"
+                self.config.box_positions[box_name] = positions
+                self._save_config(f"Box {box_num} position saved to config.yaml")
+                self.display.add_log("INFO", f"Box {box_num}: {positions}")
+                self._needs_redraw = True
+            else:
+                self.display.add_log("ERROR", "Failed to parse position response")
+
+    def _do_go_box(self, box_num: int):
+        """Move all axes to box_N positions using configured speeds."""
+        if box_num < 1 or box_num > 5:
+            self.display.add_log("ERROR", f"Invalid box number: {box_num}")
+            return
+
+        box_name = f"box_{box_num}"
+        box_pos = self.config.box_positions.get(box_name)
+
+        if not box_pos:
+            self.display.add_log("ERROR", f"Box {box_num} not saved. Press Shift+{box_num} first.")
+            return
+
+        self.display.add_log("INFO", f"Moving to box {box_num}...")
+        self._execute_move_sequence(box_pos, "BOX")
+        self.display.add_log("INFO", f"Box {box_num} sequence complete")
 
     def _do_axis_jog_start(self, axis: str, negative: bool):
         """Start jogging an axis."""
